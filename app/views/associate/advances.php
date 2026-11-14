@@ -78,7 +78,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Preferred Tenure (Months)</label>
-                                <select name="tenure_months" class="form-select">
+                                <select aria-label="Tenure months" name="tenure_months" class="form-select">
                                     <option value="1">1 Month (100% fast recovery)</option>
                                     <option value="2">2 Months (50% per payout)</option>
                                     <option value="3" selected>3 Months (25% per payout)</option>
@@ -87,7 +87,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Purpose of Advance <span class="text-danger">*</span></label>
-                                <textarea name="purpose" class="form-control" rows="2" placeholder="e.g. Festival advance, vehicle fuel expenses, client site visit hospitality" required></textarea>
+                                <textarea aria-label="Purpose" name="purpose" class="form-control" rows="2" placeholder="e.g. Festival advance, vehicle fuel expenses, client site visit hospitality" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 fw-bold py-2">
                                 <i class="fas fa-paper-plane me-1"></i>Submit Advance Request

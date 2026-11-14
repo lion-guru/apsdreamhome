@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Customer</label>
-                            <select name="customer_id" class="form-select">
+                            <select aria-label="Customer id" name="customer_id" class="form-select">
                                 <?php foreach ($users as $customer): ?>
                                     <option value="<?php echo e($customer['id']); ?>" <?php echo ($ticket['customer_id'] ?? '') == $customer['id'] ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($customer['name'] . ' (' . $customer['email'] . ')'); ?>
@@ -33,7 +33,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Assigned To</label>
-                            <select name="assigned_agent_id" class="form-select">
+                            <select aria-label="Assigned agent id" name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php foreach ($users as $agent): ?>
                                     <option value="<?php echo e($agent['id']); ?>" <?php echo ($ticket['assigned_agent_id'] ?? '') == $agent['id'] ? 'selected' : ''; ?>>
@@ -51,13 +51,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="4" required><?php echo htmlspecialchars($ticket['description'] ?? ''); ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="4" required><?php echo htmlspecialchars($ticket['description'] ?? ''); ?></textarea>
                     </div>
                     
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category" class="form-select">
+                            <select aria-label="Category" name="category" class="form-select">
                                 <option value="general" <?php echo ($ticket['category'] ?? '') === 'general' ? 'selected' : ''; ?>>General</option>
                                 <option value="technical" <?php echo ($ticket['category'] ?? '') === 'technical' ? 'selected' : ''; ?>>Technical</option>
                                 <option value="billing" <?php echo ($ticket['category'] ?? '') === 'billing' ? 'selected' : ''; ?>>Billing</option>
@@ -67,7 +67,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Priority</label>
-                            <select name="priority" class="form-select">
+                            <select aria-label="Priority" name="priority" class="form-select">
                                 <option value="low" <?php echo ($ticket['priority'] ?? '') === 'low' ? 'selected' : ''; ?>>Low</option>
                                 <option value="medium" <?php echo ($ticket['priority'] ?? '') === 'medium' ? 'selected' : ''; ?>>Medium</option>
                                 <option value="high" <?php echo ($ticket['priority'] ?? '') === 'high' ? 'selected' : ''; ?>>High</option>
@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="open" <?php echo ($ticket['status'] ?? '') === 'open' ? 'selected' : ''; ?>>Open</option>
                                 <option value="in_progress" <?php echo ($ticket['status'] ?? '') === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                                 <option value="resolved" <?php echo ($ticket['status'] ?? '') === 'resolved' ? 'selected' : ''; ?>>Resolved</option>

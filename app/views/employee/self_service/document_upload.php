@@ -30,7 +30,7 @@ $categories = $categories ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                        <select name="category_id" class="form-select" required id="categorySelect">
+                        <select aria-label="Category id" name="category_id" class="form-select" required id="categorySelect">
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat['id'] ?>" data-requires-expiry="<?= $cat['requires_expiry'] ? '1' : '0' ?>" data-allowed="<?= htmlspecialchars($cat['allowed_types'] ?? '[]') ?>" data-max-size="<?= $cat['max_size_mb'] ?? 10 ?>">
@@ -63,7 +63,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Access Level</label>
-                        <select name="access_level" class="form-select">
+                        <select aria-label="Access level" name="access_level" class="form-select">
                             <option value="self" selected>Self Only</option>
                             <option value="hr">HR & Management</option>
                             <option value="all">All Authorized</option>

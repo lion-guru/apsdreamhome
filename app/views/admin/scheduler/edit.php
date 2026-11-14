@@ -21,11 +21,11 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'schedule' => '', 'desc
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($task['description'] ?? '') ?></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($task['description'] ?? '') ?></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Task Type <span class="text-danger">*</span></label>
-                            <select name="type" class="form-select" required>
+                            <select aria-label="Type" name="type" class="form-select" required>
                                 <option value="email" <?= ($task['type'] ?? '') === 'email' ? 'selected' : '' ?>>Email Notification</option>
                                 <option value="report" <?= ($task['type'] ?? '') === 'report' ? 'selected' : '' ?>>Report Generation</option>
                                 <option value="cleanup" <?= ($task['type'] ?? '') === 'cleanup' ? 'selected' : '' ?>>Database Cleanup</option>

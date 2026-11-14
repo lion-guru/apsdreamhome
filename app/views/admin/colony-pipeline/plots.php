@@ -22,7 +22,7 @@ $cid = (int)($colony['id'] ?? 0);
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
         <form method="GET" class="row g-2">
-            <div class="col-md-4"><select name="status" class="form-select" onchange="this.form.submit()"><option value="">All statuses</option><?php foreach (['available','booked','sold','hold','reserved'] as $s): ?><option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?></select></div>
+            <div class="col-md-4"><select aria-label="Status" name="status" class="form-select" onchange="this.form.submit()"><option value="">All statuses</option><?php foreach (['available','booked','sold','hold','reserved'] as $s): ?><option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?></select></div>
             <div class="col-md-4"><input type="text" name="block" class="form-control" placeholder="Block" value="<?= htmlspecialchars($filters['block'] ?? '') ?>"></div>
             <div class="col-md-4"><button type="submit" class="btn btn-outline-primary">Filter</button> <a href="?" class="btn btn-light border">Clear</a></div>
         </form>

@@ -156,7 +156,7 @@ $statusBadges = [
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><?= __('assoc_doc_upload_type', [], 'Document Type') ?></label>
-                        <select name="document_type" class="form-select" required>
+                        <select aria-label="Document type" name="document_type" class="form-select" required>
                             <option value="general">General Document</option>
                             <option value="aadhaar">Aadhaar Card</option>
                             <option value="pan">PAN Card</option>

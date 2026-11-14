@@ -24,7 +24,7 @@ $exportUrl = BASE_URL . '/admin/reports/tds-194h/export?fy=' . urlencode($fy) . 
         <form method="GET" action="<?php echo BASE_URL; ?>/admin/reports/tds-194h" class="row g-3 align-items-end">
             <div class="col-md-3">
                 <label class="form-label">Financial Year</label>
-                <select name="fy" class="form-select">
+                <select aria-label="Fy" name="fy" class="form-select">
                     <?php foreach ($fy_options as $o): ?>
                     <option value="<?php echo $o; ?>" <?php echo $o === $fy ? 'selected' : ''; ?>><?php echo $o; ?></option>
                     <?php endforeach; ?>
@@ -32,7 +32,7 @@ $exportUrl = BASE_URL . '/admin/reports/tds-194h/export?fy=' . urlencode($fy) . 
             </div>
             <div class="col-md-3">
                 <label class="form-label">Quarter</label>
-                <select name="quarter" class="form-select">
+                <select aria-label="Quarter" name="quarter" class="form-select">
                     <option value="" <?php echo $quarter === '' ? 'selected' : ''; ?>>All quarters</option>
                     <?php foreach (['Q1' => 'Q1 (Apr–Jun)', 'Q2' => 'Q2 (Jul–Sep)', 'Q3' => 'Q3 (Oct–Dec)', 'Q4' => 'Q4 (Jan–Mar)'] as $k => $l): ?>
                     <option value="<?php echo $k; ?>" <?php echo $quarter === $k ? 'selected' : ''; ?>><?php echo $l; ?></option>

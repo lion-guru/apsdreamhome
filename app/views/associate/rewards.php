@@ -267,7 +267,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
 
                                         <div class="mb-3">
                                             <label class="form-label fw-bold small">Preferred Delivery Method</label>
-                                            <select name="delivery_type" class="form-select" id="deliveryTypeSelect<?php echo $rewardId; ?>" onchange="toggleDeliveryFields(<?php echo $rewardId; ?>)">
+                                            <select aria-label="Delivery type" name="delivery_type" class="form-select" id="deliveryTypeSelect<?php echo $rewardId; ?>" onchange="toggleDeliveryFields(<?php echo $rewardId; ?>)">
                                                 <option value="physical_handover">🏢 Office Ceremony Handover (Gorakhpur Head Office / Gala Event)</option>
                                                 <option value="courier_dispatch">📦 Doorstep Courier Dispatch (To My Address)</option>
                                                 <option value="wallet_cash_equivalent">💳 Convert to Direct Cash in My Wallet (₹<?php echo number_format($r['reward_value']); ?>)</option>
@@ -284,14 +284,14 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
 
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold small">Delivery / Shipping Address</label>
-                                                <textarea name="shipping_address" class="form-control" rows="2"
+                                                <textarea aria-label="Shipping address" name="shipping_address" class="form-control" rows="2"
                                                           placeholder="Full street address with landmark and PIN code"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label fw-bold small">Additional Notes (Optional)</label>
-                                            <textarea name="notes" class="form-control" rows="2" placeholder="Any preferences, device color, or handover remarks..."></textarea>
+                                            <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="Any preferences, device color, or handover remarks..."></textarea>
                                         </div>
 
                                         <div class="alert alert-info py-2 small mb-0">

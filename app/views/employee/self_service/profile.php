@@ -73,7 +73,7 @@ $user = $user ?? [];
                         </div>
                         <div class="col-12">
                             <label class="form-label">Address</label>
-                            <textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
+                            <textarea aria-label="Address" name="address" class="form-control" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Emergency Contact</label>

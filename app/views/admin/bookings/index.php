@@ -117,7 +117,7 @@ $active_page = 'bookings';
                 </div>
                 <div class="col-md-2">
                     <label for="status" class="form-label"><?= __('admin_status') ?></label>
-                    <select class="form-select" id="status" name="status">
+                    <select aria-label="Status" class="form-select" id="status" name="status">
                          <option value="">All Statuses</option>
                          <option value="token_paid" <?= $filters['status'] == 'token_paid' ? 'selected' : '' ?>>Token Paid</option>
                          <option value="agreement_signed" <?= $filters['status'] == 'agreement_signed' ? 'selected' : '' ?>>Agreement Signed</option>
@@ -131,7 +131,7 @@ $active_page = 'bookings';
                 </div>
                  <div class="col-md-2">
                      <label for="colony_id" class="form-label">Colony</label>
-                     <select class="form-select" id="colony_id" name="colony_id">
+                     <select aria-label="Colony id" class="form-select" id="colony_id" name="colony_id">
                          <option value="">All Colonies</option>
                          <?php foreach ($colonies ?? [] as $col): ?>
                              <option value="<?= $col['id'] ?>" <?= ($filters['colony_id'] ?? '') == $col['id'] ? 'selected' : '' ?>>
@@ -142,7 +142,7 @@ $active_page = 'bookings';
                  </div>
                  <div class="col-md-2">
                      <label for="associate_id" class="form-label"><?= __('admin_associate') ?></label>
-                     <select class="form-select" id="associate_id" name="associate_id">
+                     <select aria-label="Associate id" class="form-select" id="associate_id" name="associate_id">
                          <option value="">All Associates</option>
                          <?php foreach ($associates ?? [] as $assoc): ?>
                              <option value="<?= $assoc['id'] ?>" <?= ($filters['associate_id'] ?? '') == $assoc['id'] ? 'selected' : '' ?>>
@@ -179,7 +179,7 @@ $active_page = 'bookings';
         <div class="card border-0 shadow-sm mb-3 d-none" id="bulkActionsBar">
             <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
                 <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
-                <select id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                <select aria-label="Bulk status" id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">
                     <option value="pending">Pending</option>
                     <option value="token_paid">Token Paid</option>
                     <option value="agreement_signed">Agreement Signed</option>

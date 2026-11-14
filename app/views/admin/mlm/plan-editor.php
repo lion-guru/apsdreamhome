@@ -272,7 +272,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Min Qualifying Rank</label>
-                    <select name="settings[infinity_min_rank]" class="form-select">
+                    <select aria-label="Settings" name="settings[infinity_min_rank]" class="form-select">
                         <?php
                         $rankOptions = ['associate'=>'Associate','sr_associate'=>'Sr. Associate','bdm'=>'BDM','sr_bdm'=>'Sr. BDM','vice_president'=>'Vice President','president'=>'President','site_manager'=>'Site Manager'];
                         $curRank = $settings['infinity_min_rank'] ?? 'vice_president';

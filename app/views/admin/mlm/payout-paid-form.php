@@ -12,7 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Payment Mode <span class="text-danger">*</span></label>
-                    <select name="payment_mode" class="form-select" required>
+                    <select aria-label="Payment mode" name="payment_mode" class="form-select" required>
                         <option value="bank_transfer">Bank Transfer (NEFT/RTGS/IMPS)</option>
                         <option value="upi">UPI</option>
                         <option value="cheque">Cheque</option>

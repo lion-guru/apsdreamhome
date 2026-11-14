@@ -98,7 +98,7 @@ if (!is_dir(__DIR__)) {
                 <input type="text" name="search" class="form-control" placeholder="Search by name, phone..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
             </div>
             <div class="col-md-3">
-                <select name="service" class="form-select">
+                <select aria-label="Service" name="service" class="form-select">
                     <option value="">All Services</option>
                     <?php foreach ($serviceLabels as $key => $label): ?>
                     <option value="<?php echo e($key); ?>" <?php echo $serviceType === $key ? 'selected' : ''; ?>><?php echo $label; ?></option>
@@ -106,7 +106,7 @@ if (!is_dir(__DIR__)) {
                 </select>
             </div>
             <div class="col-md-3">
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All Status</option>
                     <option value="new" <?php echo $status === 'new' ? 'selected' : ''; ?>>New</option>
                     <option value="contacted" <?php echo $status === 'contacted' ? 'selected' : ''; ?>>Contacted</option>

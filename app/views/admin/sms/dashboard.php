@@ -78,7 +78,7 @@ $page_title = "SMS Dashboard";
             <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <select class="form-select" id="typeFilter">
+                        <select aria-label="Type filter" class="form-select" id="typeFilter">
                             <option value="all">All Types</option>
                             <option value="OTP">OTP</option>
                             <option value="WELCOME">Welcome</option>
@@ -88,7 +88,7 @@ $page_title = "SMS Dashboard";
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-select" id="statusFilter">
+                        <select aria-label="Status filter" class="form-select" id="statusFilter">
                             <option value="all">All Status</option>
                             <option value="success">Success</option>
                             <option value="error">Error</option>
@@ -157,7 +157,7 @@ $page_title = "SMS Dashboard";
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message</label>
-                            <textarea class="form-control" name="message" rows="4" maxlength="160" required></textarea>
+                            <textarea aria-label="Message" class="form-control" name="message" rows="4" maxlength="160" required></textarea>
                             <div class="form-text"><span id="charCount">0</span>/160 characters</div>
                         </div>
                     </form>

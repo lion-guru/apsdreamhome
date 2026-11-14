@@ -20,7 +20,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Describe what this goal aims to achieve"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Describe what this goal aims to achieve"></textarea>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -29,7 +29,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Unit</label>
-                                <select name="unit" class="form-select">
+                                <select aria-label="Unit" name="unit" class="form-select">
                                     <option value="count">Count</option>
                                     <option value="percentage">Percentage</option>
                                     <option value="amount">Amount (₹)</option>
@@ -43,7 +43,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Assigned Team</label>
-                                <select name="assigned_team" class="form-select">
+                                <select aria-label="Assigned team" name="assigned_team" class="form-select">
                                     <option value="">Select Team...</option>
                                     <option value="sales">Sales</option>
                                     <option value="marketing">Marketing</option>

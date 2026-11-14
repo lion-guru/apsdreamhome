@@ -92,7 +92,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Address</label>
-                                    <textarea name="address" class="form-control" rows="3"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
+                                    <textarea aria-label="Address" name="address" class="form-control" rows="3"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
                                 </div>
                                 <div class="col-12">
                                     <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>

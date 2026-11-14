@@ -60,7 +60,7 @@ $assignees = $assignees ?? [];
                     
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-bold">Status</label>
-                        <select class="form-select" name="status">
+                        <select aria-label="Status" class="form-select" name="status">
                             <?php foreach ($statuses as $status): ?>
                                 <option value="<?= $status['status_name'] ?>" 
                                     <?= ($lead['status'] === $status['status_name']) ? 'selected' : '' ?>>
@@ -72,7 +72,7 @@ $assignees = $assignees ?? [];
                     
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-bold">Source</label>
-                        <select class="form-select" name="source_id">
+                        <select aria-label="Source id" class="form-select" name="source_id">
                             <option value="">-- Select Source --</option>
                             <?php foreach ($sources as $source): ?>
                                 <option value="<?= $source['id'] ?>" 
@@ -85,7 +85,7 @@ $assignees = $assignees ?? [];
                     
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-bold">Assigned To</label>
-                        <select class="form-select" name="assigned_to">
+                        <select aria-label="Assigned to" class="form-select" name="assigned_to">
                             <option value="">-- Unassigned --</option>
                             <?php foreach ($assignees as $assignee): ?>
                                 <option value="<?= $assignee['id'] ?>" 
@@ -98,7 +98,7 @@ $assignees = $assignees ?? [];
                     
                     <div class="col-12 mb-3">
                         <label class="form-label fw-bold">Message/Requirements</label>
-                        <textarea class="form-control" name="message" rows="4"><?= htmlspecialchars($lead['message'] ?? '') ?></textarea>
+                        <textarea aria-label="Message" class="form-control" name="message" rows="4"><?= htmlspecialchars($lead['message'] ?? '') ?></textarea>
                     </div>
                 </div>
 

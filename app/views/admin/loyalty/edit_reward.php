@@ -22,7 +22,7 @@ $isEdit = $reward !== null;
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($reward['description'] ?? '') ?></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= htmlspecialchars($reward['description'] ?? '') ?></textarea>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -35,7 +35,7 @@ $isEdit = $reward !== null;
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Category</label>
-                                <select name="category" class="form-select">
+                                <select aria-label="Category" name="category" class="form-select">
                                     <option value="general" <?= ($reward['category'] ?? '') === 'general' ? 'selected' : '' ?>>General</option>
                                     <option value="voucher" <?= ($reward['category'] ?? '') === 'voucher' ? 'selected' : '' ?>>Voucher</option>
                                     <option value="merchandise" <?= ($reward['category'] ?? '') === 'merchandise' ? 'selected' : '' ?>>Merchandise</option>
@@ -53,7 +53,7 @@ $isEdit = $reward !== null;
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="active" <?= ($reward['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>Active</option>
                                 <option value="inactive" <?= ($reward['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                             </select>

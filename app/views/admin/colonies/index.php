@@ -40,7 +40,7 @@ foreach ($colonies as $c) {
 <form method="GET" action="<?= BASE_URL ?>/admin/colonies" class="row g-2 mb-4 align-items-end">
     <div class="col-md-3">
         <label class="form-label small mb-1">State</label>
-        <select name="state_id" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="State id" name="state_id" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="0">All States</option>
             <?php foreach ($states as $s): ?>
                 <option value="<?= (int)($s['id'] ?? 0) ?>" <?= ((int)$state_id === (int)($s['id'] ?? 0) && (int)$state_id > 0) ? 'selected' : '' ?>>
@@ -51,7 +51,7 @@ foreach ($colonies as $c) {
     </div>
     <div class="col-md-3">
         <label class="form-label small mb-1">District</label>
-        <select name="district_id" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="District id" name="district_id" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="0">All Districts</option>
             <?php foreach ($districts as $d): ?>
                 <option value="<?= (int)($d['id'] ?? 0) ?>" <?= ((int)$district_id === (int)($d['id'] ?? 0) && (int)$district_id > 0) ? 'selected' : '' ?>>

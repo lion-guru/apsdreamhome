@@ -14,13 +14,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Answer</label>
-                            <textarea name="answer" class="form-control" rows="5" required><?php echo htmlspecialchars($faq['answer'] ?? ''); ?></textarea>
+                            <textarea aria-label="Answer" name="answer" class="form-control" rows="5" required><?php echo htmlspecialchars($faq['answer'] ?? ''); ?></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Category</label>
-                                    <select name="category" class="form-select">
+                                    <select aria-label="Category" name="category" class="form-select">
                                         <option value="">Select Category</option>
                                         <option value="General" <?php echo ($faq['category'] == 'General') ? 'selected' : ''; ?>>General</option>
                                         <option value="Property" <?php echo ($faq['category'] == 'Property') ? 'selected' : ''; ?>>Property</option>
@@ -39,7 +39,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="active" <?php echo ($faq['status'] == 'active') ? 'selected' : ''; ?>>Active</option>
                                         <option value="inactive" <?php echo ($faq['status'] == 'inactive') ? 'selected' : ''; ?>>Inactive</option>
                                     </select>

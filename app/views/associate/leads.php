@@ -117,11 +117,11 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <div id="bulkIds"></div>
         <strong><span id="bulkCount">0</span> <?= __('assoc_leads_selected', [], 'selected') ?></strong>
-        <select name="bulk_action" class="form-select form-select-sm" style="width:auto">
+        <select aria-label="Bulk action" name="bulk_action" class="form-select form-select-sm" style="width:auto">
             <option value="status"><?= __('assoc_leads_bulk_status', [], 'Set status') ?></option>
             <option value="assign"><?= __('assoc_leads_bulk_assign', [], 'Assign to') ?></option>
         </select>
-        <select name="bulk_status" class="form-select form-select-sm" style="width:auto">
+        <select aria-label="Bulk status" name="bulk_status" class="form-select form-select-sm" style="width:auto">
             <option value="contacted">contacted</option><option value="qualified">qualified</option><option value="site_visit">site_visit</option><option value="proposal">proposal</option><option value="negotiation">negotiation</option><option value="closed_won">closed_won</option><option value="closed_lost">closed_lost</option><option value="nurture">nurture</option><option value="new">new</option>
         </select>
         <input type="number" name="bulk_assign_to" class="form-control form-control-sm" style="width:110px" placeholder="<?= __('assoc_leads_bulk_userid', [], 'user id') ?>">

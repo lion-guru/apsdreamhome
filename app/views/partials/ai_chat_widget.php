@@ -68,7 +68,7 @@ $user_role = $this->getUserRole() ?? 'customer';
         <!-- Role Selector (if multiple roles available) -->
         <?php if (isset($available_roles) && count($available_roles) > 1): ?>
         <div class="ai-role-selector">
-            <select id="ai-role-select" onchange="changeAIRole()">
+            <select aria-label="Ai role select" id="ai-role-select" onchange="changeAIRole()">
                 <?php foreach ($available_roles as $role_key => $role_name): ?>
                     <option value="<?php echo e($role_key); ?>" 
                             <?php echo $role_key === $user_role ? 'selected' : ''; ?>>

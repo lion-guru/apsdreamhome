@@ -124,14 +124,14 @@ $doc_type_labels = $doc_type_labels ?? [];
 
         <form class="ocr-filter-bar" method="GET" action="<?= BASE_URL ?>/admin/ocr">
             <input type="text" name="q" placeholder="Search filename..." value="<?= htmlspecialchars($search ?? '') ?>" >
-            <select name="status">
+            <select aria-label="Status" name="status">
                 <option value="">All Status</option>
                 <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>
                 <option value="processing" <?= $status === 'processing' ? 'selected' : '' ?>>Processing</option>
                 <option value="completed" <?= $status === 'completed' ? 'selected' : '' ?>>Completed</option>
                 <option value="failed" <?= $status === 'failed' ? 'selected' : '' ?>>Failed</option>
             </select>
-            <select name="doctype">
+            <select aria-label="Doctype" name="doctype">
                 <option value="">All Types</option>
                 <?php foreach ($doc_types as $dt): ?>
                     <option value="<?= $dt ?>" <?= $doctype === $dt ? 'selected' : '' ?>><?= $doc_type_labels[$dt] ?? $dt ?></option>

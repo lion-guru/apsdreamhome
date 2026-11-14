@@ -63,7 +63,7 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_frequency', [], 'Alert Frequency') ?> *</label>
-                                <select class="form-select" name="frequency" required>
+                                <select aria-label="Frequency" class="form-select" name="frequency" required>
                                     <option value="instant" <?= ($_POST['frequency'] ?? '') === 'instant' ? 'selected' : '' ?>><?= __('alert_sub_instant', [], 'Instant (as soon as listed)') ?></option>
                                     <option value="daily" <?= ($_POST['frequency'] ?? 'daily') === 'daily' ? 'selected' : '' ?>><?= __('alert_sub_daily', [], 'Daily Digest') ?></option>
                                     <option value="weekly" <?= ($_POST['frequency'] ?? '') === 'weekly' ? 'selected' : '' ?>><?= __('alert_sub_weekly', [], 'Weekly Summary') ?></option>
@@ -75,7 +75,7 @@ $logged_in = $logged_in ?? false;
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_property_type', [], 'Property Type') ?> *</label>
-                                <select class="form-select" name="property_type" required>
+                                <select aria-label="Property type" class="form-select" name="property_type" required>
                                     <option value=""><?= __('alert_sub_any_type', [], 'Any Type') ?></option>
                                     <option value="plot" <?= ($_POST['property_type'] ?? '') === 'plot' ? 'selected' : '' ?>><?= __('alert_sub_plot', [], 'Plot / Land') ?></option>
                                     <option value="house" <?= ($_POST['property_type'] ?? '') === 'house' ? 'selected' : '' ?>><?= __('alert_sub_house', [], 'House') ?></option>
@@ -87,7 +87,7 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_listing_type', [], 'Listing Type') ?> *</label>
-                                <select class="form-select" name="listing_type" required>
+                                <select aria-label="Listing type" class="form-select" name="listing_type" required>
                                     <option value=""><?= __('alert_sub_any', [], 'Any') ?></option>
                                     <option value="sale" <?= ($_POST['listing_type'] ?? '') === 'sale' ? 'selected' : '' ?>><?= __('alert_sub_for_sale', [], 'For Sale') ?></option>
                                     <option value="rent" <?= ($_POST['listing_type'] ?? '') === 'rent' ? 'selected' : '' ?>><?= __('alert_sub_for_rent', [], 'For Rent') ?></option>
@@ -126,7 +126,7 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('alert_sub_bedrooms', [], 'Bedrooms') ?></label>
-                                <select class="form-select" name="bedrooms">
+                                <select aria-label="Bedrooms" class="form-select" name="bedrooms">
                                     <option value=""><?= __('alert_sub_any', [], 'Any') ?></option>
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($_POST['bedrooms'] ?? '') == $i ? 'selected' : '' ?>><?= $i ?>+</option>

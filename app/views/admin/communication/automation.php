@@ -274,7 +274,7 @@ $recent_logs = $recent_logs ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Channel</label>
-                        <select name="channel" class="form-select" required>
+                        <select aria-label="Channel" name="channel" class="form-select" required>
                             <option value="">Select Channel</option>
                             <option value="whatsapp">WhatsApp</option>
                             <option value="telegram">Telegram</option>
@@ -289,7 +289,7 @@ $recent_logs = $recent_logs ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Message</label>
-                        <textarea name="message" class="form-control" rows="3" placeholder="Enter your test message..." required></textarea>
+                        <textarea aria-label="Message" name="message" class="form-control" rows="3" placeholder="Enter your test message..." required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

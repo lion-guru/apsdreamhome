@@ -71,7 +71,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="mb-2">
                         <label class="form-label small">Platform</label>
-                        <select name="platform" class="form-select">
+                        <select aria-label="Platform" name="platform" class="form-select">
                             <option value="facebook">Facebook</option>
                             <option value="instagram">Instagram</option>
                             <option value="linkedin">LinkedIn</option>
@@ -79,7 +79,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="mb-2">
                         <label class="form-label small">Objective</label>
-                        <select name="objective" class="form-select">
+                        <select aria-label="Objective" name="objective" class="form-select">
                             <option value="lead_generation">Lead Generation</option>
                             <option value="traffic">Traffic</option>
                             <option value="brand_awareness">Brand Awareness</option>
@@ -88,7 +88,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="mb-2">
                         <label class="form-label small">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active">Active</option>
                             <option value="paused">Paused</option>
                             <option value="archived">Archived</option>

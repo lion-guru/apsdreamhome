@@ -42,7 +42,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Plot Type *</label>
-                                        <select class="form-select" name="plot_type" required>
+                                        <select aria-label="Plot type" class="form-select" name="plot_type" required>
                                             <option value="residential" <?= ($plot['plot_type'] ?? '') === 'residential' ? 'selected' : '' ?>>Residential</option>
                                             <option value="commercial" <?= ($plot['plot_type'] ?? '') === 'commercial' ? 'selected' : '' ?>>Commercial</option>
                                             <option value="industrial" <?= ($plot['plot_type'] ?? '') === 'industrial' ? 'selected' : '' ?>>Industrial</option>
@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Status *</label>
-                                        <select class="form-select" name="status" required>
+                                        <select aria-label="Status" class="form-select" name="status" required>
                                             <option value="available" <?= ($plot['status'] ?? '') === 'available' ? 'selected' : '' ?>>Available</option>
                                             <option value="booked" <?= ($plot['status'] ?? '') === 'booked' ? 'selected' : '' ?>>Booked</option>
                                             <option value="sold" <?= ($plot['status'] ?? '') === 'sold' ? 'selected' : '' ?>>Sold</option>
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Facing</label>
-                                        <select class="form-select" name="facing">
+                                        <select aria-label="Facing" class="form-select" name="facing">
                                             <option value="">Select</option>
                                             <option value="north" <?= ($plot['facing'] ?? '') === 'north' ? 'selected' : '' ?>>North</option>
                                             <option value="south" <?= ($plot['facing'] ?? '') === 'south' ? 'selected' : '' ?>>South</option>
@@ -72,7 +72,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Gata / Khasra <span class="text-muted">(zameen source)</span></label>
-                                        <select class="form-select" name="land_parcel_id">
+                                        <select aria-label="Land parcel id" class="form-select" name="land_parcel_id">
                                             <option value="">— Bina link ke —</option>
                                             <?php foreach (($gata_parcels ?? []) as $gp): ?>
                                                 <option value="<?= (int)$gp['id'] ?>" <?= ((int)($plot['land_parcel_id'] ?? 0) === (int)$gp['id']) ? 'selected' : '' ?>>
@@ -221,7 +221,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Payment Status</label>
-                                        <select class="form-select" name="payment_status">
+                                        <select aria-label="Payment status" class="form-select" name="payment_status">
                                             <option value="pending" <?= ($plot['payment_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                                             <option value="partial" <?= ($plot['payment_status'] ?? '') === 'partial' ? 'selected' : '' ?>>Partial</option>
                                             <option value="completed" <?= ($plot['payment_status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
@@ -240,7 +240,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" rows="3"><?= htmlspecialchars($plot['description'] ?? '') ?></textarea>
+                                    <textarea aria-label="Description" class="form-control" name="description" rows="3"><?= htmlspecialchars($plot['description'] ?? '') ?></textarea>
                                 </div>
                             </div>
                         </div>

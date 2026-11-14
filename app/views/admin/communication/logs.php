@@ -27,7 +27,7 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Channel</label>
-                    <select name="channel" class="form-select">
+                    <select aria-label="Channel" name="channel" class="form-select">
                         <option value="">All Channels</option>
                         <?php foreach ($channels as $ch): ?>
                             <option value="<?= htmlspecialchars($ch ?? '') ?>" <?= $filters['channel'] === $ch ? 'selected' : '' ?>><?= ucfirst($ch) ?></option>
@@ -36,7 +36,7 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Direction</label>
-                    <select name="direction" class="form-select">
+                    <select aria-label="Direction" name="direction" class="form-select">
                         <option value="">All</option>
                         <option value="inbound" <?= $filters['direction'] === 'inbound' ? 'selected' : '' ?>>Inbound</option>
                         <option value="outbound" <?= $filters['direction'] === 'outbound' ? 'selected' : '' ?>>Outbound</option>

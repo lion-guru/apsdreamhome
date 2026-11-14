@@ -28,12 +28,12 @@ $page_description = 'Create a new training course';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea name="course_description" class="form-control" rows="4"></textarea>
+                        <textarea aria-label="Course description" name="course_description" class="form-control" rows="4"></textarea>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Category</label>
-                            <select name="course_category" class="form-select">
+                            <select aria-label="Course category" name="course_category" class="form-select">
                                 <option value="sales">Sales</option>
                                 <option value="product">Product</option>
                                 <option value="compliance">Compliance</option>
@@ -44,7 +44,7 @@ $page_description = 'Create a new training course';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Difficulty Level</label>
-                            <select name="difficulty_level" class="form-select">
+                            <select aria-label="Difficulty level" name="difficulty_level" class="form-select">
                                 <option value="beginner">Beginner</option>
                                 <option value="intermediate">Intermediate</option>
                                 <option value="advanced">Advanced</option>
@@ -64,15 +64,15 @@ $page_description = 'Create a new training course';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Course Objectives</label>
-                        <textarea name="course_objectives" class="form-control" rows="3" placeholder="List key learning objectives"></textarea>
+                        <textarea aria-label="Course objectives" name="course_objectives" class="form-control" rows="3" placeholder="List key learning objectives"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Prerequisites</label>
-                        <textarea name="prerequisites" class="form-control" rows="2" placeholder="Any prerequisites for this course"></textarea>
+                        <textarea aria-label="Prerequisites" name="prerequisites" class="form-control" rows="2" placeholder="Any prerequisites for this course"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Target Audience</label>
-                        <textarea name="target_audience" class="form-control" rows="2" placeholder="Who should take this course"></textarea>
+                        <textarea aria-label="Target audience" name="target_audience" class="form-control" rows="2" placeholder="Who should take this course"></textarea>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">

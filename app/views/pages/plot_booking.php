@@ -50,7 +50,7 @@ $userBookings = $userBookings ?? [];
 
                     <div class="mb-3">
                         <label class="form-label" for="booking_type"><?= __('plot_book_proceed', [], 'How would you like to proceed?') ?></label>
-                        <select class="form-select" name="booking_type" id="booking_type">
+                        <select aria-label="Booking type" class="form-select" name="booking_type" id="booking_type">
                             <option value="site_visit"><?= __('plot_book_visit_first', [], 'I want to visit the site first') ?></option>
                             <option value="online_consultation"><?= __('plot_book_direct', [], 'Online consultation / Direct booking') ?></option>
                         </select>
@@ -88,7 +88,7 @@ $userBookings = $userBookings ?? [];
 
                     <div class="mb-3">
                         <label class="form-label" for="booking_notes"><?= __('plot_book_notes', [], 'Notes / Special Requests (optional)') ?></label>
-                        <textarea class="form-control" name="notes" id="booking_notes" rows="3" placeholder="<?= __('plot_book_notes_ph', [], 'Any specific requirements or questions...') ?>"></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" id="booking_notes" rows="3" placeholder="<?= __('plot_book_notes_ph', [], 'Any specific requirements or questions...') ?>"></textarea>
                     </div>
 
                     <div class="emi-note mb-3" id="plot_payment_terms_box">

@@ -20,7 +20,7 @@ $statuses = ['available' => 'Available', 'hold' => 'Hold', 'reserved' => 'Reserv
             <form method="GET" action="<?= BASE_URL ?>/admin/plots/batch-pricing" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Colony *</label>
-                    <select name="colony_id" class="form-select" required>
+                    <select aria-label="Colony id" name="colony_id" class="form-select" required>
                         <option value="">Select colony</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= (int)$c['id'] ?>" <?= ((int)$params['colony_id'] === (int)$c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -29,7 +29,7 @@ $statuses = ['available' => 'Available', 'hold' => 'Hold', 'reserved' => 'Reserv
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <?php foreach ($statuses as $k => $v): ?>
                             <option value="<?= $k ?>" <?= ((string)$params['status'] === $k) ? 'selected' : '' ?>><?= $v ?></option>
                         <?php endforeach; ?>
@@ -37,7 +37,7 @@ $statuses = ['available' => 'Available', 'hold' => 'Hold', 'reserved' => 'Reserv
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Adjustment</label>
-                    <select name="mode" class="form-select">
+                    <select aria-label="Mode" name="mode" class="form-select">
                         <option value="flat" <?= ((string)$params['mode'] === 'flat') ? 'selected' : '' ?>>+ ₹ per sq.ft</option>
                         <option value="pct" <?= ((string)$params['mode'] === 'pct') ? 'selected' : '' ?>>+ % hike</option>
                     </select>

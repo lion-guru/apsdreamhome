@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status">
+                            <select aria-label="Status" class="form-select" id="status" name="status">
                                 <option value="">All</option>
                                 <option value="1" <?= ($status ?? '') === '1' ? 'selected' : '' ?>>Active</option>
                                 <option value="0" <?= ($status ?? '') === '0' ? 'selected' : '' ?>>Inactive</option>

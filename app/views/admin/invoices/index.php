@@ -91,7 +91,7 @@
             <form method="GET" action="<?= BASE_URL ?>/admin/invoices/manage" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Statuses</option>
                         <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="sent" <?= ($filters['status'] ?? '') === 'sent' ? 'selected' : '' ?>>Sent</option>

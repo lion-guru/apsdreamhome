@@ -41,7 +41,7 @@ $total_amount = $total_amount ?? 0;
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Select users for Payout</label>
-                        <select name="agent_ids[]" class="form-select" multiple size="5">
+                        <select aria-label="Agent ids" name="agent_ids[]" class="form-select" multiple size="5">
                             <option value="all" selected>All Pending users</option>
                         </select>
                         <small class="text-muted">Hold Ctrl/Cmd to select multiple. Choose "All Pending users" to process all.</small>

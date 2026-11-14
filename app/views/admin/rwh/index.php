@@ -116,7 +116,7 @@ $currentColony = $current_colony ?? null;
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-light"><i class="fas fa-city text-muted"></i></span>
-                        <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                             <option value="">-- All Township Colonies --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>" <?= ($currentColony == $c['id']) ? 'selected' : '' ?>>
@@ -237,7 +237,7 @@ $currentColony = $current_colony ?? null;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Township Colony <span class="text-danger">*</span></label>
-                            <select name="colony_id" class="form-select form-select-sm" required>
+                            <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" required>
                                 <option value="">-- Select Colony --</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>" <?= ($currentColony == $c['id']) ? 'selected' : '' ?>>
@@ -256,7 +256,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Recharge Structure Type</label>
-                            <select name="recharge_type" class="form-select form-select-sm">
+                            <select aria-label="Recharge type" name="recharge_type" class="form-select form-select-sm">
                                 <option value="borewell_recharge_shaft">Borewell Recharge Shaft (Dual Bore with Filter)</option>
                                 <option value="percolation_tank">Percolation Tank (Granular Sump)</option>
                                 <option value="injection_well">Injection Well (Deep Stratum)</option>
@@ -277,7 +277,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Filtration Media Status</label>
-                            <select name="filtration_media_status" class="form-select form-select-sm">
+                            <select aria-label="Filtration media status" name="filtration_media_status" class="form-select form-select-sm">
                                 <option value="clean_gravel_sand">Clean Gravel / Coarse Sand Layer</option>
                                 <option value="needs_flushing">Filter Needs Backwashing / Flushing</option>
                                 <option value="replaced_charcoal">Activated Charcoal Media Replaced</option>
@@ -286,7 +286,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Monsoon Readiness Score</label>
-                            <select name="monsoon_readiness_score" class="form-select form-select-sm">
+                            <select aria-label="Monsoon readiness score" name="monsoon_readiness_score" class="form-select form-select-sm">
                                 <option value="optimal_ready">Optimal Ready (100% Prepared for Inflow)</option>
                                 <option value="needs_cleaning">Needs Surface Trash Cleaning</option>
                                 <option value="urgent_civil_repair">Urgent Silt Chamber Desilting Needed</option>
@@ -295,7 +295,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">UP Groundwater Dept NOC Status</label>
-                            <select name="up_groundwater_noc_status" class="form-select form-select-sm">
+                            <select aria-label="Up groundwater noc status" name="up_groundwater_noc_status" class="form-select form-select-sm">
                                 <option value="compliant_valid">Compliant & Valid (RERA RWH Approved)</option>
                                 <option value="inspection_due">NOC Annual Inspection Due</option>
                                 <option value="renewal_applied">Renewal Application Submitted</option>
@@ -322,7 +322,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Engineering Remarks</label>
-                            <textarea name="remarks" class="form-control form-control-sm" rows="2" placeholder="Aquifer recharge velocity, surrounding slope gradient notes, etc."></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2" placeholder="Aquifer recharge velocity, surrounding slope gradient notes, etc."></textarea>
                         </div>
                     </div>
                 </div>

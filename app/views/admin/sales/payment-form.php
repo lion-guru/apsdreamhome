@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_mode_label') ?></label>
-                    <select name="payment_mode" class="form-select" id="payMode" required>
+                    <select aria-label="Payment mode" name="payment_mode" class="form-select" id="payMode" required>
                         <?php foreach (['cash', 'cheque', 'dd', 'neft', 'rtgs', 'upi', 'card', 'bank_transfer'] as $m): ?>
                             <option value="<?= $m ?>"><?= strtoupper($m) ?></option>
                         <?php endforeach; ?>
@@ -62,7 +62,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_status_label') ?></label>
-                    <select name="status" class="form-select" required>
+                    <select aria-label="Status" name="status" class="form-select" required>
                         <option value="cleared"><?= __('sale_cleared') ?></option>
                         <option value="pending"><?= __('sale_pending_clearing') ?></option>
                         <option value="bounced"><?= __('sale_bounced') ?></option>
@@ -70,7 +70,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('sale_notes') ?></label>
-                    <textarea name="notes" class="form-control" rows="2"></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea>
                 </div>
             </div>
             <div class="mt-3 d-flex gap-2">

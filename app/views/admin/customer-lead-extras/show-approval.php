@@ -149,7 +149,7 @@ $page_description = 'Detailed view of lead assignment approval request';
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
                                     <label class="form-label">Update Status</label>
-                                    <select class="form-select" name="status" required>
+                                    <select aria-label="Status" class="form-select" name="status" required>
                                         <option value="">Select Status</option>
                                         <option value="approved">Approve Request</option>
                                         <option value="rejected">Reject Request</option>
@@ -157,7 +157,7 @@ $page_description = 'Detailed view of lead assignment approval request';
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Admin Notes (Optional)</label>
-                                    <textarea class="form-control" name="admin_notes" rows="3" placeholder="Add any notes about this decision..."></textarea>
+                                    <textarea aria-label="Admin notes" class="form-control" name="admin_notes" rows="3" placeholder="Add any notes about this decision..."></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary me-2">
                                     <i class="fas fa-save me-2"></i> Update Status

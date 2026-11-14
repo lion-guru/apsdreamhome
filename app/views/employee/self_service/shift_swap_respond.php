@@ -114,7 +114,7 @@ $swap = $swap ?? [];
                                 <div class="row mb-3" id="rejectionReasonRow" style="display: none;">
                                     <label for="rejection_reason" class="col-sm-3 col-form-label fw-bold">Rejection Reason <span class="text-danger">*</span></label>
                                     <div class="col-sm-9">
-                                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" placeholder="Explain why you cannot accept this swap..."></textarea>
+                                        <textarea aria-label="Rejection reason" class="form-control" id="rejection_reason" name="rejection_reason" rows="3" placeholder="Explain why you cannot accept this swap..."></textarea>
                                     </div>
                                 </div>
 

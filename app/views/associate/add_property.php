@@ -93,7 +93,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <div class="row g-3">
                 <div class="col-6">
                     <label class="form-label"><?= __('assoc_ap_state', [], 'State') ?></label>
-                    <select name="state_id" class="form-select">
+                    <select aria-label="State id" name="state_id" class="form-select">
                         <option value=""><?= __('assoc_ap_select', [], 'Select') ?></option>
                         <?php foreach ($states as $s): ?>
                             <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
@@ -107,13 +107,13 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
             <div class="mt-3">
                 <label class="form-label"><?= __('assoc_ap_address', [], 'Full Address') ?></label>
-                <textarea name="address" class="form-control" rows="2" placeholder="<?= __('assoc_ap_address_placeholder', [], 'Plot no, street, landmark...') ?>"></textarea>
+                <textarea aria-label="Address" name="address" class="form-control" rows="2" placeholder="<?= __('assoc_ap_address_placeholder', [], 'Plot no, street, landmark...') ?>"></textarea>
             </div>
         </div>
 
         <div class="prop-section">
             <h6><i class="fas fa-align-left"></i><?= __('assoc_ap_description', [], 'Description') ?></h6>
-            <textarea name="description" class="form-control" rows="3" placeholder="<?= __('assoc_ap_desc_placeholder', [], 'Plot size, road width, nearby landmarks, features...') ?>"></textarea>
+            <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="<?= __('assoc_ap_desc_placeholder', [], 'Plot size, road width, nearby landmarks, features...') ?>"></textarea>
         </div>
 
         <div class="prop-section">

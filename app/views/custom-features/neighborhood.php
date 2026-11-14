@@ -17,7 +17,7 @@ $base = $base ?? BASE_URL;
           </button>
         </div>
         <div class="col-md-3">
-          <select id="quickProperty" class="form-select" onchange="document.getElementById('propertyId').value=this.value">
+          <select aria-label="Quick property" id="quickProperty" class="form-select" onchange="document.getElementById('propertyId').value=this.value">
             <option value="">Quick select...</option>
           </select>
         </div>

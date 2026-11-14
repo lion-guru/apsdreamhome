@@ -133,7 +133,7 @@ ob_start();
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="nominee_relation"><?= __('user_insurance_label_nominee_relation', null, 'Nominee Relation') ?></label>
-                    <select name="nominee_relation" id="nominee_relation" class="aps-cp-input" required>
+                    <select aria-label="Nominee relation" name="nominee_relation" id="nominee_relation" class="aps-cp-input" required>
                         <option value=""><?= __('user_insurance_select', null, 'Select') ?></option>
                         <option value="spouse"><?= __('user_insurance_relation_spouse', null, 'Spouse') ?></option>
                         <option value="parent"><?= __('user_insurance_relation_parent', null, 'Parent') ?></option>

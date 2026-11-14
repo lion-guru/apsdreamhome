@@ -206,7 +206,7 @@ $templates = $templates ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select employee</option>
                             <?php 
                             $activeEmployees = $this->db->fetchAll("SELECT e.id, u.name, e.employee_code FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");

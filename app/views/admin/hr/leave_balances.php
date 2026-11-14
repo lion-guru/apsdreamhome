@@ -12,7 +12,7 @@ $page_title = $page_title ?? 'Leave Balances';
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label small">Year</label>
-                <select name="year" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Year" name="year" class="form-select" onchange="this.form.submit()">
                     <?php for ($y = date('Y') - 1; $y <= date('Y') + 1; $y++): ?>
                         <option value="<?= $y ?>" <?= ($year ?? date('Y')) == $y ? 'selected' : '' ?>><?= $y ?></option>
                     <?php endfor; ?>

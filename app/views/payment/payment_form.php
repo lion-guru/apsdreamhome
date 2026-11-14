@@ -25,7 +25,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
-                            <select name="method" class="form-select" required>
+                            <select aria-label="Method" name="method" class="form-select" required>
                                 <option value="">Select method</option>
                                 <option value="card" <?= ($_POST['method'] ?? '') === 'card' ? 'selected' : '' ?>>Credit/Debit Card</option>
                                 <option value="upi" <?= ($_POST['method'] ?? $method ?? '') === 'upi' ? 'selected' : '' ?>>UPI</option>

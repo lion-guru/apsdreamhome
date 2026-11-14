@@ -441,7 +441,7 @@ $categories = [
                 <div class="row">
                     <div class="col-md-4">
                         <label class="form-label">Category</label>
-                        <select name="category" class="form-select" required>
+                        <select aria-label="Category" name="category" class="form-select" required>
                             <?php foreach ($categories as $key => $label): ?>
                                 <option value="<?php echo e($key); ?>"><?php echo $label; ?></option>
                             <?php endforeach; ?>
@@ -455,7 +455,7 @@ $categories = [
                 </div>
                 <div class="mt-3">
                     <label class="form-label">Question Variations (one per line)</label>
-                    <textarea name="variations" class="form-control" rows="2"
+                    <textarea aria-label="Variations" name="variations" class="form-control" rows="2"
                         placeholder="suryoday plot rate&#10;suryoday me plot kitne ka hai"></textarea>
                 </div>
                 <div class="mt-3">
@@ -465,7 +465,7 @@ $categories = [
                 </div>
                 <div class="mt-3">
                     <label class="form-label">Answer</label>
-                    <textarea name="answer" class="form-control" rows="4" required
+                    <textarea aria-label="Answer" name="answer" class="form-control" rows="4" required
                         placeholder="?? Suryoday Heights me plots ?5.5 Lakh se shuru hote hain!&#10;&#10;?? Location: Gorakhpur&#10;?? Sizes: 1000-5000 sq ft&#10;&#10;?? Call karein: +91 92771 21112"></textarea>
                 </div>
                 <div class="mt-3">
@@ -521,7 +521,7 @@ $categories = [
 
                             <div class="col-md-3 mb-2">
                                 <label class="small text-muted">Category</label>
-                                <select name="category" class="form-select form-select-sm">
+                                <select aria-label="Category" name="category" class="form-select form-select-sm">
                                     <?php foreach ($categories as $key => $label): ?>
                                         <option value="<?php echo e($key); ?>" <?php echo $qa['category'] == $key ? 'selected' : ''; ?>>
                                             <?php echo e($label); ?>
@@ -538,7 +538,7 @@ $categories = [
 
                             <div class="col-md-12 mb-2">
                                 <label class="small text-muted">Answer</label>
-                                <textarea name="answer" class="form-control" rows="2"><?php echo htmlspecialchars($qa['answer'] ?? ''); ?></textarea>
+                                <textarea aria-label="Answer" name="answer" class="form-control" rows="2"><?php echo htmlspecialchars($qa['answer'] ?? ''); ?></textarea>
                             </div>
 
                             <div class="col-md-12 text-end">
@@ -564,12 +564,12 @@ $categories = [
                 <input type="hidden" name="action" value="bulk_import">
                 <div class="mb-3">
                     <label class="form-label">Format: Question | Answer | Keywords (optional)</label>
-                    <textarea name="bulk_data" class="form-control bulk-import-area" rows="10"
+                    <textarea aria-label="Bulk data" name="bulk_data" class="form-control bulk-import-area" rows="10"
                         placeholder="suryoday ka price kya hai | Suryoday me plots ?5.5 Lakh se shuru | suryoday, price, plot&#10;raghunath city center kaha hai | Raghunath City Center Gorakhpur me hai | raghunath, location&#10;emi calculator | EMI calculator ke liye yeh link use karein... | emi, loan, calculator"></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Default Category</label>
-                    <select name="bulk_category" class="form-select">
+                    <select aria-label="Bulk category" name="bulk_category" class="form-select">
                         <?php foreach ($categories as $key => $label): ?>
                             <option value="<?php echo e($key); ?>"><?php echo $label; ?></option>
                         <?php endforeach; ?>

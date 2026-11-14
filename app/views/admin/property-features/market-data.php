@@ -19,7 +19,7 @@
                     <form method="GET">
                         <div class="mb-3">
                             <label class="form-label small">Location</label>
-                            <select name="location" class="form-select">
+                            <select aria-label="Location" name="location" class="form-select">
                                 <option value="">All Locations</option>
                                 <?php foreach ($locations as $l): ?>
                                     <option value="<?= htmlspecialchars($l['location'] ?? '') ?>" <?= ($filter_location ?? '') === $l['location'] ? 'selected' : '' ?>><?= htmlspecialchars($l['location'] ?? '') ?></option>
@@ -28,7 +28,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small">Property Type</label>
-                            <select name="type" class="form-select">
+                            <select aria-label="Type" name="type" class="form-select">
                                 <option value="">All Types</option>
                                 <?php foreach ($types as $t): ?>
                                     <option value="<?= htmlspecialchars($t['property_type'] ?? '') ?>" <?= ($filter_type ?? '') === $t['property_type'] ? 'selected' : '' ?>><?= htmlspecialchars(ucfirst($t['property_type'])) ?></option>
@@ -51,7 +51,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><input type="text" name="location" class="form-control form-control-sm" placeholder="Location *" required></div>
                         <div class="mb-2">
-                            <select name="property_type" class="form-select form-select-sm" required>
+                            <select aria-label="Property type" name="property_type" class="form-select form-select-sm" required>
                                 <option value="">Type *</option>
                                 <option value="apartment">Apartment</option>
                                 <option value="house">House</option>
@@ -75,7 +75,7 @@
                         <div class="row g-2 mb-2">
                             <div class="col-6"><input type="number" step="0.01" name="rental_yield_avg" class="form-control form-control-sm" placeholder="Rental Yield %"></div>
                             <div class="col-6">
-                                <select name="market_sentiment" class="form-select form-select-sm">
+                                <select aria-label="Market sentiment" name="market_sentiment" class="form-select form-select-sm">
                                     <option value="bullish">Bullish</option>
                                     <option value="neutral" selected>Neutral</option>
                                     <option value="bearish">Bearish</option>

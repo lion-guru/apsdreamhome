@@ -18,7 +18,7 @@
                     <input type="text" name="search" class="form-control" placeholder="Search by number or client..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Statuses</option>
                         <?php foreach (['draft','sent','viewed','paid','overdue','cancelled'] as $s): ?>
                             <option value="<?= $s ?>" <?= ($status ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

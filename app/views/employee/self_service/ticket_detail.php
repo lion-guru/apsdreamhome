@@ -139,7 +139,7 @@ $replies = $ticket['replies'] ?? [];
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="row mb-3">
                             <div class="col-12">
-                                <textarea class="form-control" name="message" rows="4" required placeholder="Type your reply..."></textarea>
+                                <textarea aria-label="Message" class="form-control" name="message" rows="4" required placeholder="Type your reply..."></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">

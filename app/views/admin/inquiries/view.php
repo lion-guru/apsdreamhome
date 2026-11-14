@@ -96,7 +96,7 @@ $assignedUser = $assignedUser ?? null;
                     <input type="hidden" name="id" value="<?php echo e($inquiry['id']); ?>">
                     <div class="mb-3">
                         <label for="assigned_to_select" class="form-label small fw-semibold">Assign / Reassign Staff</label>
-                        <select name="assigned_to" id="assigned_to_select" class="form-select" required>
+                        <select aria-label="Assigned to" name="assigned_to" id="assigned_to_select" class="form-select" required>
                             <option value="">-- Select Staff Member --</option>
                             <?php foreach ($staffList as $staff): ?>
                                 <option value="<?php echo e($staff['id']); ?>" <?php echo (!empty($inquiry['assigned_to']) && $inquiry['assigned_to'] == $staff['id']) ? 'selected' : ''; ?>>

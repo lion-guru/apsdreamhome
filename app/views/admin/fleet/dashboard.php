@@ -136,7 +136,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                 <div class="col-6"><label class="form-label small">On-Spot Tokens</label>
                     <input type="number" min="0" name="tokens_collected" class="form-control" value="0"></div>
                 <div class="col-12"><label class="form-label small">Outcome Notes</label>
-                    <textarea name="outcome_notes" class="form-control" rows="2"></textarea></div>
+                    <textarea aria-label="Outcome notes" name="outcome_notes" class="form-control" rows="2"></textarea></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>

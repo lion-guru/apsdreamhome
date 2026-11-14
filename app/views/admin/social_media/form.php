@@ -19,7 +19,7 @@ $isEdit = !empty($account);
 
                     <div class="mb-3">
                         <label class="form-label">Platform</label>
-                        <select name="platform" class="form-select" <?= $isEdit ? 'disabled' : 'required' ?>>
+                        <select aria-label="Platform" name="platform" class="form-select" <?= $isEdit ? 'disabled' : 'required' ?>>
                             <option value="">Select Platform</option>
                             <?php foreach ($platforms as $key => $label): ?>
                                 <option value="<?= $key ?>" <?= $isEdit && $account['platform'] === $key ? 'selected' : '' ?>><?= $label ?></option>
@@ -41,7 +41,7 @@ $isEdit = !empty($account);
 
                     <div class="mb-3">
                         <label class="form-label">Account Type</label>
-                        <select name="account_type" class="form-select">
+                        <select aria-label="Account type" name="account_type" class="form-select">
                             <option value="personal" <?= $isEdit && ($account['account_type'] ?? '') === 'personal' ? 'selected' : '' ?>>Personal</option>
                             <option value="business_page" <?= $isEdit && ($account['account_type'] ?? 'business_page') === 'business_page' ? 'selected' : '' ?>>Business Page</option>
                             <option value="group" <?= $isEdit && ($account['account_type'] ?? '') === 'group' ? 'selected' : '' ?>>Group</option>
@@ -51,7 +51,7 @@ $isEdit = !empty($account);
 
                     <div class="mb-3">
                         <label class="form-label">Access Token <small class="text-muted">(long-lived)</small></label>
-                        <textarea name="access_token" class="form-control" rows="3" placeholder="Paste the platform access token"><?= $isEdit ? htmlspecialchars($account['access_token'] ?? '') : '' ?></textarea>
+                        <textarea aria-label="Access token" name="access_token" class="form-control" rows="3" placeholder="Paste the platform access token"><?= $isEdit ? htmlspecialchars($account['access_token'] ?? '') : '' ?></textarea>
                     </div>
 
                     <div class="row">
@@ -67,7 +67,7 @@ $isEdit = !empty($account);
 
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="connected" <?= $isEdit && ($account['status'] ?? 'connected') === 'connected' ? 'selected' : '' ?>>Connected</option>
                             <option value="expired" <?= $isEdit && ($account['status'] ?? '') === 'expired' ? 'selected' : '' ?>>Expired</option>
                             <option value="revoked" <?= $isEdit && ($account['status'] ?? '') === 'revoked' ? 'selected' : '' ?>>Revoked</option>

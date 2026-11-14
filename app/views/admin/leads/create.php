@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="source_id" class="form-label fw-semibold">Source</label>
-                            <select class="form-select" id="source_id" name="source_id">
+                            <select aria-label="Source id" class="form-select" id="source_id" name="source_id">
                                 <option value="">-- Select Source --</option>
                                 <?php foreach (($sources ?? []) as $source): ?>
                                     <option value="<?php echo $source['id']; ?>"><?php echo htmlspecialchars($source['name'] ?? ''); ?></option>
@@ -44,7 +44,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label fw-semibold">Status</label>
-                            <select class="form-select" id="status" name="status">
+                            <select aria-label="Status" class="form-select" id="status" name="status">
                                 <?php foreach (($statuses ?? []) as $status): ?>
                                     <option value="<?php echo $status['status_name'] ?? ''; ?>"><?php echo ucfirst($status['status_name'] ?? ''); ?></option>
                                 <?php endforeach; ?>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="assigned_to" class="form-label fw-semibold">Assigned To</label>
-                            <select class="form-select" id="assigned_to" name="assigned_to">
+                            <select aria-label="Assigned to" class="form-select" id="assigned_to" name="assigned_to">
                                 <option value="">-- Unassigned --</option>
                                 <?php foreach (($assignees ?? []) as $assignee): ?>
                                     <option value="<?php echo $assignee['id']; ?>"><?php echo htmlspecialchars($assignee['name'] ?? ''); ?></option>
@@ -63,7 +63,7 @@
 
                     <div class="mb-4">
                         <label for="message" class="form-label fw-semibold">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="3" placeholder="Lead requirements or message..."></textarea>
+                        <textarea aria-label="Message" class="form-control" id="message" name="message" rows="3" placeholder="Lead requirements or message..."></textarea>
                     </div>
 
                     <div class="mb-4">

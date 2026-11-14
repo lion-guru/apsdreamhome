@@ -73,7 +73,7 @@ $statusLabels = [
                     <input type="text" class="form-control" name="search" placeholder="Search name, email, content..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="status">
+                    <select aria-label="Status" class="form-select" name="status">
                         <option value="">All Statuses</option>
                         <option value="pending" <?= ($status ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="approved" <?= ($status ?? '') === 'approved' ? 'selected' : '' ?>>Approved</option>

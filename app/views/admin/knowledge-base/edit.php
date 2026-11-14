@@ -14,13 +14,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Content</label>
-                            <textarea name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($article['content'] ?? ''); ?></textarea>
+                            <textarea aria-label="Content" name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($article['content'] ?? ''); ?></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Category</label>
-                                    <select name="category" class="form-select">
+                                    <select aria-label="Category" name="category" class="form-select">
                                         <option value="">Select Category</option>
                                         <option value="Getting Started" <?php echo ($article['category'] == 'Getting Started') ? 'selected' : ''; ?>>Getting Started</option>
                                         <option value="Properties" <?php echo ($article['category'] == 'Properties') ? 'selected' : ''; ?>>Properties</option>
@@ -33,7 +33,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="draft" <?php echo ($article['status'] == 'draft') ? 'selected' : ''; ?>>Draft</option>
                                         <option value="published" <?php echo ($article['status'] == 'published') ? 'selected' : ''; ?>>Published</option>
                                     </select>

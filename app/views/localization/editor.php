@@ -24,7 +24,7 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
         </div>
         <div class="card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/localization/editor" class="d-flex gap-2 flex-wrap align-items-center">
-                <select name="locale" id="locale-select" class="form-select form-select-sm">
+                <select aria-label="Locale" name="locale" id="locale-select" class="form-select form-select-sm">
                     <?php foreach ($supported_locales as $code => $info): ?>
                         <option value="<?= htmlspecialchars($code ?? '') ?>" <?= $code === $locale ? 'selected' : '' ?>>
                             <?= htmlspecialchars($info['name'] ?? $code) ?> (<?= htmlspecialchars($code ?? '') ?>)

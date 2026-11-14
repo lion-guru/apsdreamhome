@@ -48,7 +48,7 @@ $ranks = [
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan Type</label>
-                    <select name="plan_type" class="cp-input">
+                    <select aria-label="Plan type" name="plan_type" class="cp-input">
                         <option value="hybrid">Hybrid</option>
                         <option value="binary">Binary</option>
                         <option value="unilevel">Unilevel</option>

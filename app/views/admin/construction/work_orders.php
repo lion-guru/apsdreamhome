@@ -88,7 +88,7 @@ $current_status = $current_status ?? 'all';
             <form method="GET" action="/admin/work-orders" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <label for="filterColony" class="form-label small fw-semibold text-muted mb-0">Colony / Township</label>
-                    <select name="colony_id" id="filterColony" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" id="filterColony" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All Colonies</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= ($current_colony == $c['id']) ? 'selected' : '' ?>>
@@ -99,7 +99,7 @@ $current_status = $current_status ?? 'all';
                 </div>
                 <div class="col-md-4">
                     <label for="filterStatus" class="form-label small fw-semibold text-muted mb-0">Contract Status</label>
-                    <select name="status" id="filterStatus" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Status" name="status" id="filterStatus" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="all" <?= ($current_status === 'all') ? 'selected' : '' ?>>All Statuses</option>
                         <option value="active" <?= ($current_status === 'active') ? 'selected' : '' ?>>Active</option>
                         <option value="completed" <?= ($current_status === 'completed') ? 'selected' : '' ?>>Completed</option>
@@ -213,7 +213,7 @@ $current_status = $current_status ?? 'all';
             <div class="modal-body row g-3">
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Colony / Township <span class="text-danger">*</span></label>
-                    <select name="colony_id" class="form-select" required>
+                    <select aria-label="Colony id" name="colony_id" class="form-select" required>
                         <option value="">Select Colony</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -222,7 +222,7 @@ $current_status = $current_status ?? 'all';
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Work Category <span class="text-danger">*</span></label>
-                    <select name="work_category" class="form-select" required>
+                    <select aria-label="Work category" name="work_category" class="form-select" required>
                         <option value="boundary_wall">Boundary Wall & Demarcation</option>
                         <option value="road_tarring">CC Road & Tarring</option>
                         <option value="drainage">Underground Drainage & Sewerage</option>
@@ -275,7 +275,7 @@ $current_status = $current_status ?? 'all';
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Scope of Work & Milestone Terms</label>
-                    <textarea name="scope_description" rows="3" class="form-control" placeholder="Detailed technical specifications, milestone payment stages, material grade (e.g. M20 concrete, Fe550 steel)..."></textarea>
+                    <textarea aria-label="Scope description" name="scope_description" rows="3" class="form-control" placeholder="Detailed technical specifications, milestone payment stages, material grade (e.g. M20 concrete, Fe550 steel)..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">

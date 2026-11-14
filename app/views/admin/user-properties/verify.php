@@ -110,7 +110,7 @@
                             <input type="hidden" name="action" value="approve">
                             <div class="mb-3">
                                 <label class="form-label">Admin Notes</label>
-                                <textarea name="admin_notes" class="form-control" rows="3" placeholder="Optional notes..."></textarea>
+                                <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="3" placeholder="Optional notes..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-success w-100 mb-2">
                                 <i class="fas fa-check me-1"></i> Approve Property

@@ -27,7 +27,7 @@
 
                 <div class="mb-3">
                     <label for="auto_ad_code" class="form-label"><i class="fas fa-code me-1"></i>AdSense Auto Ads Code</label>
-                    <textarea class="form-control" id="auto_ad_code" name="auto_ad_code" rows="6"
+                    <textarea aria-label="Auto ad code" class="form-control" id="auto_ad_code" name="auto_ad_code" rows="6"
                               placeholder="&lt;script async src=&quot;https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxxxxxx&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;"><?= htmlspecialchars($auto_ad_code ?? '') ?></textarea>
                     <div class="form-text">Paste the Auto Ads script tag from your AdSense account. This will be injected into the site header.</div>
                 </div>

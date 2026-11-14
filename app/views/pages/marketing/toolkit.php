@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <p class="text-muted small mb-3">Apna preferred AI provider choose karo. API key dalo (optional - Ollama free hai). Ye setting AI Post Writer, Video Caption, Morning Post me kaam aayegi.</            <form id="aiProviderForm" class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">AI Provider</label>
-                    <select class="form-select" name="ai_provider" id="aiProviderSelect">
+                    <select aria-label="Ai provider" class="form-select" name="ai_provider" id="aiProviderSelect">
                         <option value="ollama">Ollama (Local, Free, Unlimited)</option>
                         <option value="groq">Groq (Fastest, Free tier: 30 RPM)</option>
                         <option value="xai_grok">xAI Grok (Free tier via xAI API)</option>
@@ -102,7 +102,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label">Position</label>
-                                <select class="form-select" name="position">
+                                <select aria-label="Position" class="form-select" name="position">
                                     <option value="bottom-right">Bottom Right</option>
                                     <option value="bottom-left">Bottom Left</option>
                                     <option value="top-right">Top Right</option>
@@ -112,7 +112,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             </div>
                             <div class="col-6">
                                 <label class="form-label">Opacity</label>
-                                <select class="form-select" name="opacity">
+                                <select aria-label="Opacity" class="form-select" name="opacity">
                                     <option value="80" selected>80%</option>
                                     <option value="60">60%</option>
                                     <option value="100">100%</option>
@@ -209,7 +209,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <form id="stickerForm" enctype="multipart/form-data">
                         <div class="mb-2"><input type="file" class="form-control" name="photo" accept="image/*" required></div>
                         <div class="mb-2">
-                            <select class="form-select" name="sticker_type">
+                            <select aria-label="Sticker type" class="form-select" name="sticker_type">
                                 <option value="new_launch">NEW LAUNCH</option>
                                 <option value="price_drop">PRICE DROP</option>
                                 <option value="offer">SPECIAL OFFER</option>
@@ -234,7 +234,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <form id="collageForm" enctype="multipart/form-data">
                         <div class="mb-2"><input type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
                         <div class="mb-3">
-                            <select class="form-select" name="layout">
+                            <select aria-label="Layout" class="form-select" name="layout">
                                 <option value="grid2x2">2x2 Grid (4 photos)</option>
                                 <option value="row2">Side by side (2 photos)</option>
                                 <option value="row3">3 in a row</option>
@@ -254,7 +254,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <p class="text-muted small">Diwali/Holi/New Year greeting + apni branding auto.</p>
                     <form id="festivalForm">
                         <div class="mb-3">
-                            <select class="form-select" name="festival">
+                            <select aria-label="Festival" class="form-select" name="festival">
                                 <option value="diwali">Diwali 🪔</option>
                                 <option value="holi">Holi 🎨</option>
                                 <option value="newyear">New Year 🎉</option>
@@ -353,7 +353,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">Template chuno → tumhara naam/number auto → <strong>Copy</strong> karke SMS/WhatsApp me paste karo. Tumhare phone ke 300 free SMS kaam aayenge — <strong>koi TRAI block nahi</strong> (tum khud bhej rahe ho).</p>
                     <div class="mb-2">
-                        <select class="form-select" id="textTplSelect">
+                        <select aria-label="Text tpl select" class="form-select" id="textTplSelect">
                             <option value="new_launch">New Launch</option>
                             <option value="price_drop">Price Drop</option>
                             <option value="emi_reminder">EMI Offer</option>

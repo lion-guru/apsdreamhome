@@ -17,7 +17,7 @@ $stBadge = ['pending' => 'warning text-dark', 'decided_in_favor' => 'success', '
     </div>
     <form method="GET" class="d-flex gap-2">
         <input type="text" name="q" class="form-control form-control-sm" placeholder="Khasra / village / case no." value="<?= $e($q) ?>">
-        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="">All statuses</option>
             <?php foreach (['pending', 'decided_in_favor', 'decided_against', 'settled'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status_filter === $s ? 'selected' : '' ?>><?= ucwords(str_replace('_', ' ', $s)) ?></option>
@@ -63,7 +63,7 @@ $stBadge = ['pending' => 'warning text-dark', 'decided_in_favor' => 'success', '
                     <form method="POST" action="<?= $base ?>/admin/land-inventory/litigations/update/<?= (int)$r['id'] ?>" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                         <input type="hidden" name="stay_order_active" value="<?= !empty($r['stay_order_active']) ? '1' : '' ?>">
-                        <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                        <select aria-label="Status" name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
                             <?php foreach (['pending', 'decided_in_favor', 'decided_against', 'settled'] as $s): ?>
                                 <option value="<?= $s ?>" <?= ($r['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucwords(str_replace('_', ' ', $s)) ?></option>
                             <?php endforeach; ?>

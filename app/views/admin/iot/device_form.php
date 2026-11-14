@@ -20,7 +20,7 @@ $statuses = ['offline'=>'Offline','online'=>'Online','configuring'=>'Configuring
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Catalog Template</label>
-                    <select name="catalog_id" class="form-select" id="catalogSel">
+                    <select aria-label="Catalog id" name="catalog_id" class="form-select" id="catalogSel">
                         <option value="">— None / Custom —</option>
                         <?php foreach ($catalog as $c): ?><option value="<?= $c['id'] ?>" <?= $isEdit && ($device['catalog_id'] ?? '')==$c['id']?'selected':'' ?> data-cat="<?= $c['category'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?>
                     </select>
@@ -30,11 +30,11 @@ $statuses = ['offline'=>'Offline','online'=>'Online','configuring'=>'Configuring
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Category</label>
-                    <select name="category" class="form-select" id="catSel">
+                    <select aria-label="Category" name="category" class="form-select" id="catSel">
                         <?php foreach ($cats as $k=>$l): ?><option value="<?= $k ?>" <?= $isEdit && ($device['category'] ?? '')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-4 mb-3"><label class="form-label">Status</label><select name="status" class="form-select"><?php foreach ($statuses as $k=>$l): ?><option value="<?= $k ?>" <?= $isEdit && ($device['status'] ?? '')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><?php foreach ($statuses as $k=>$l): ?><option value="<?= $k ?>" <?= $isEdit && ($device['status'] ?? '')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select></div>
                 <div class="col-md-4 mb-3"><label class="form-label">Firmware</label><input type="text" name="firmware_version" class="form-control" value="<?= $isEdit ? htmlspecialchars($device['firmware_version'] ?? '') : '' ?>"></div>
             </div>
             <div class="row">

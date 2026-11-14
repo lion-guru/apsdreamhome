@@ -36,7 +36,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Category')) ?> <span class="text-danger">*</span></label>
-                                <select name="category" class="form-select" required>
+                                <select aria-label="Category" name="category" class="form-select" required>
                                     <option value=""><?= h($mlSupport->translate('Select Category')) ?></option>
                                     <option value="Sales"><?= h($mlSupport->translate('Sales')) ?></option>
                                     <option value="Services"><?= h($mlSupport->translate('Services')) ?></option>
@@ -46,7 +46,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Payment Method')) ?></label>
-                                <select name="payment_method" class="form-select">
+                                <select aria-label="Payment method" name="payment_method" class="form-select">
                                     <option value="cash"><?= h($mlSupport->translate('Cash')) ?></option>
                                     <option value="bank_transfer"><?= h($mlSupport->translate('Bank Transfer')) ?></option>
                                     <option value="cheque"><?= h($mlSupport->translate('Cheque')) ?></option>
@@ -58,7 +58,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Customer')) ?></label>
-                                <select name="customer_id" class="form-select">
+                                <select aria-label="Customer id" name="customer_id" class="form-select">
                                     <option value=""><?= h($mlSupport->translate('Select Customer (Optional)')) ?></option>
                                     <?php if (!empty($users)): ?>
                                         <?php foreach ($users as $customer): ?>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Project')) ?></label>
-                                <select name="project_id" class="form-select">
+                                <select aria-label="Project id" name="project_id" class="form-select">
                                     <option value=""><?= h($mlSupport->translate('Select Project (Optional)')) ?></option>
                                     <?php if (!empty($projects)): ?>
                                         <?php foreach ($projects as $project): ?>
@@ -82,7 +82,7 @@
 
                         <div class="mb-4">
                             <label class="form-label"><?= h($mlSupport->translate('Description')) ?></label>
-                            <textarea name="description" class="form-control" rows="3"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3"></textarea>
                         </div>
 
                         <div class="text-end">

@@ -7,13 +7,13 @@
   <form class="row g-2 mb-4" method="get">
     <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto"><input type="date" name="date" class="form-control" value="<?= $filter_date ?>"></div>
-    <div class="col-auto"><select name="log_type" class="form-select">
+    <div class="col-auto"><select aria-label="Log type" name="log_type" class="form-select">
       <option value=""><?= __('admin_all_types') ?></option>
       <?php foreach(['site_visit','client_meeting','collection','payment_received','cheque_collected','document_submission','registry','mutation','legal_update','construction_update','other'] as $t): ?>
         <option value="<?= $t ?>" <?= ($filters['log_type'] ?? '') === $t ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$t)) ?></option>
       <?php endforeach; ?>
     </select></div>
-    <div class="col-auto"><select name="status" class="form-select">
+    <div class="col-auto"><select aria-label="Status" name="status" class="form-select">
       <option value=""><?= __('admin_all_status') ?></option>
       <?php foreach(['completed','in_progress','pending','cancelled'] as $s): ?>
         <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>

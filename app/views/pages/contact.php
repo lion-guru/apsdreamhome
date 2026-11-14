@@ -91,7 +91,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                             </div>
                             <div class="aps-form-field mb-3">
                                 <label for="subject" class="form-label fw-bold mb-1"><?php echo __('subject'); ?> *</label>
-                                <select name="subject" id="subject" class="form-select form-select-lg animate-focus" required >
+                                <select aria-label="Subject" name="subject" id="subject" class="form-select form-select-lg animate-focus" required >
                                     <option value=""><?php echo __('select_subject'); ?></option>
                                     <option value="buy"><?php echo __('subject_buy'); ?></option>
                                     <option value="sell"><?php echo __('subject_sell'); ?></option>
@@ -105,7 +105,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                             </div>
                             <div class="aps-form-field mb-3">
                                 <label for="message" class="form-label fw-bold mb-1"><?php echo __('message_label'); ?> *</label>
-                                <textarea name="message" id="message" class="form-control form-control-lg animate-focus" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required></textarea>
+                                <textarea aria-label="Message" name="message" id="message" class="form-control form-control-lg animate-focus" rows="4" placeholder="<?php echo __('message_placeholder_contact'); ?>" required></textarea>
                                 <div class="aps-field-error" role="alert"></div>
                             </div>
 <button type="submit" class="btn btn-primary btn-lg w-100 shadow-hover">

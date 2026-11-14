@@ -20,7 +20,7 @@ ob_start();
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-auto">
                 <label class="form-label small">Financial Year</label>
-                <select name="fy" class="form-select form-select-sm">
+                <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
                         <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
@@ -28,7 +28,7 @@ ob_start();
             </div>
             <div class="col-auto">
                 <label class="form-label small">Quarter</label>
-                <select name="quarter" class="form-select form-select-sm">
+                <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                     <?php for ($q = 1; $q <= 4; $q++): ?>
                         <option value="Q<?= $q ?>" <?= "Q$q" === $quarter ? 'selected' : '' ?>>Q<?= $q ?></option>
                     <?php endfor; ?>
@@ -78,14 +78,14 @@ ob_start();
         <form method="POST" action="<?= BASE_URL ?>/admin/efiling/tds/generate" class="row g-2 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="col-auto">
-                <select name="fy" class="form-select form-select-sm">
+                <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
                         <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-auto">
-                <select name="quarter" class="form-select form-select-sm">
+                <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                     <?php for ($q = 1; $q <= 4; $q++): ?>
                         <option value="Q<?= $q ?>" <?= "Q$q" === $quarter ? 'selected' : '' ?>>Q<?= $q ?></option>
                     <?php endfor; ?>

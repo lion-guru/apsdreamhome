@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label >Batch Type</label>
-                                <select name="batch_type" class="form-select">
+                                <select aria-label="Batch type" name="batch_type" class="form-select">
                                     <option value="commission">Commission Payout</option>
                                     <option value="salary">Salary</option>
                                     <option value="bonus">Bonus</option>
@@ -45,7 +45,7 @@
                         </div>
                         <div class="mt-3">
                             <label >Notes</label>
-                            <textarea name="notes" class="form-control" rows="3" placeholder="Optional notes about this batch..."
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Optional notes about this batch..."
                                       ></textarea>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label >Commission Type (optional filter)</label>
-                                <select name="populate_type" class="form-select">
+                                <select aria-label="Populate type" name="populate_type" class="form-select">
                                     <option value="">All Types</option>
                                     <option value="direct_sale">Direct Sale</option>
                                     <option value="override">Override</option>

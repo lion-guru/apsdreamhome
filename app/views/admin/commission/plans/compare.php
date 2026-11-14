@@ -35,7 +35,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="row align-items-end">
                 <div class="col-md-4">
                     <label >Plan A</label>
-                    <select name="plan_a" class="cp-input">
+                    <select aria-label="Plan a" name="plan_a" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planIdA == $p['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)
@@ -45,7 +45,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4">
                     <label >Plan B</label>
-                    <select name="plan_b" class="cp-input">
+                    <select aria-label="Plan b" name="plan_b" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planIdB == $p['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?> (<?= $p['plan_code'] ?>)

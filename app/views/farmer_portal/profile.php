@@ -73,7 +73,7 @@ $profile = $profile ?? [];
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Address</label>
-                            <textarea name="address" class="form-control" rows="3"><?php echo htmlspecialchars($farmer['address'] ?? ''); ?></textarea>
+                            <textarea aria-label="Address" name="address" class="form-control" rows="3"><?php echo htmlspecialchars($farmer['address'] ?? ''); ?></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-success">

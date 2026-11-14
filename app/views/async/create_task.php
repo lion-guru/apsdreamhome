@@ -42,7 +42,7 @@ $errors = $errors ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Task Type <span class="text-danger">*</span></label>
-                        <select name="task_type" class="form-select" id="taskType" required onchange="showTypeFields()">
+                        <select aria-label="Task type" name="task_type" class="form-select" id="taskType" required onchange="showTypeFields()">
                             <option value="">Select Type</option>
                             <?php foreach ($task_types as $type): ?>
                                 <option value="<?= $type ?>" <?= ($old_input['task_type'] ?? '') === $type ? 'selected' : '' ?>><?= ucfirst(str_replace('_', ' ', $type)) ?></option>
@@ -54,7 +54,7 @@ $errors = $errors ?? [];
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Priority</label>
-                        <select name="priority" class="form-select">
+                        <select aria-label="Priority" name="priority" class="form-select">
                             <?php foreach ($priorities as $val => $label): ?>
                                 <option value="<?= e($val ?? '') ?>" <?= ($old_input['priority'] ?? 2) == $val ? 'selected' : '' ?>><?= e($label ?? '') ?></option>
                             <?php endforeach; ?>
@@ -90,7 +90,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-12">
                             <label class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea name="email_message" class="form-control" rows="5"><?= htmlspecialchars($old_input['email_message'] ?? '') ?></textarea>
+                            <textarea aria-label="Email message" name="email_message" class="form-control" rows="5"><?= htmlspecialchars($old_input['email_message'] ?? '') ?></textarea>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -110,7 +110,7 @@ $errors = $errors ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Output Format</label>
-                            <select name="output_format" class="form-select">
+                            <select aria-label="Output format" name="output_format" class="form-select">
                                 <option value="jpg" <?= ($old_input['output_format'] ?? 'jpg') === 'jpg' ? 'selected' : '' ?>>JPG</option>
                                 <option value="png" <?= ($old_input['output_format'] ?? '') === 'png' ? 'selected' : '' ?>>PNG</option>
                                 <option value="webp" <?= ($old_input['output_format'] ?? '') === 'webp' ? 'selected' : '' ?>>WebP</option>
@@ -131,7 +131,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Report Type <span class="text-danger">*</span></label>
-                            <select name="report_type" class="form-select" required>
+                            <select aria-label="Report type" name="report_type" class="form-select" required>
                                 <option value="">Select Report Type</option>
                                 <option value="sales" <?= ($old_input['report_type'] ?? '') === 'sales' ? 'selected' : '' ?>>Sales Report</option>
                                 <option value="commission" <?= ($old_input['report_type'] ?? '') === 'commission' ? 'selected' : '' ?>>Commission Report</option>
@@ -142,7 +142,7 @@ $errors = $errors ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Format</label>
-                            <select name="report_format" class="form-select">
+                            <select aria-label="Report format" name="report_format" class="form-select">
                                 <option value="pdf" <?= ($old_input['report_format'] ?? 'pdf') === 'pdf' ? 'selected' : '' ?>>PDF</option>
                                 <option value="excel" <?= ($old_input['report_format'] ?? '') === 'excel' ? 'selected' : '' ?>>Excel</option>
                                 <option value="csv" <?= ($old_input['report_format'] ?? '') === 'csv' ? 'selected' : '' ?>>CSV</option>
@@ -166,7 +166,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Export Type <span class="text-danger">*</span></label>
-                            <select name="export_type" class="form-select" required>
+                            <select aria-label="Export type" name="export_type" class="form-select" required>
                                 <option value="">Select Type</option>
                                 <option value="full" <?= ($old_input['export_type'] ?? '') === 'full' ? 'selected' : '' ?>>Full Export</option>
                                 <option value="incremental" <?= ($old_input['export_type'] ?? '') === 'incremental' ? 'selected' : '' ?>>Incremental</option>
@@ -180,7 +180,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-12">
                             <label class="form-label">Filters (JSON)</label>
-                            <textarea name="export_filters" class="form-control" rows="4"><?= htmlspecialchars($old_input['export_filters'] ?? '{}') ?></textarea>
+                            <textarea aria-label="Export filters" name="export_filters" class="form-control" rows="4"><?= htmlspecialchars($old_input['export_filters'] ?? '{}') ?></textarea>
                             <div class="form-text">JSON format: {"status": "active", "created_after": "2024-01-01"}</div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Backup Type</label>
-                            <select name="backup_type" class="form-select">
+                            <select aria-label="Backup type" name="backup_type" class="form-select">
                                 <option value="full" <?= ($old_input['backup_type'] ?? 'full') === 'full' ? 'selected' : '' ?>>Full Backup</option>
                                 <option value="incremental" <?= ($old_input['backup_type'] ?? '') === 'incremental' ? 'selected' : '' ?>>Incremental</option>
                                 <option value="schema" <?= ($old_input['backup_type'] ?? '') === 'schema' ? 'selected' : '' ?>>Schema Only</option>
@@ -199,7 +199,7 @@ $errors = $errors ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Target</label>
-                            <select name="backup_target" class="form-select">
+                            <select aria-label="Backup target" name="backup_target" class="form-select">
                                 <option value="local" <?= ($old_input['backup_target'] ?? 'local') === 'local' ? 'selected' : '' ?>>Local</option>
                                 <option value="s3" <?= ($old_input['backup_target'] ?? '') === 's3' ? 'selected' : '' ?>>AWS S3</option>
                                 <option value="ftp" <?= ($old_input['backup_target'] ?? '') === 'ftp' ? 'selected' : '' ?>>FTP</option>

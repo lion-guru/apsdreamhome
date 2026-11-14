@@ -40,7 +40,7 @@ $filter_status = $filter_status ?? '';
         <form method="GET" class="row g-3">
             <div class="col-md-3">
                 <label class="form-label">Status</label>
-                <select name="status" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Status" name="status" class="form-select" onchange="this.form.submit()">
                     <option value="">All</option>
                     <?php foreach (['pending','approved','rejected','paid'] as $st): ?>
                     <option value="<?= $st ?>" <?= $filter_status === $st ? 'selected' : '' ?>><?= ucfirst($st) ?></option>
@@ -101,7 +101,7 @@ $filter_status = $filter_status ?? '';
                                 <div class="modal-header"><h5 class="modal-title">Reject Claim #<?= (int)$c['id'] ?></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                 <div class="modal-body"><label class="form-label">Reason</label>
-                                <textarea name="rejection_reason" class="form-control" rows="2" required></textarea></div>
+                                <textarea aria-label="Rejection reason" name="rejection_reason" class="form-control" rows="2" required></textarea></div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-danger">Reject</button>

@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Employee</label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>" <?= ($emp['id'] == ($payroll['employee_id'] ?? 0)) ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Payment Status</label>
-                        <select name="payment_status" class="form-select">
+                        <select aria-label="Payment status" name="payment_status" class="form-select">
                             <option value="pending" <?= ($payroll['payment_status'] ?? '') == 'pending' ? 'selected' : '' ?>>Pending</option>
                             <option value="paid" <?= ($payroll['payment_status'] ?? '') == 'paid' ? 'selected' : '' ?>>Paid</option>
                             <option value="advance" <?= ($payroll['payment_status'] ?? '') == 'advance' ? 'selected' : '' ?>>Advance</option>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Notes</label>
-                    <textarea name="notes" class="form-control" rows="2"><?= htmlspecialchars($payroll['notes'] ?? '') ?></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="2"><?= htmlspecialchars($payroll['notes'] ?? '') ?></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update</button>
             </form>

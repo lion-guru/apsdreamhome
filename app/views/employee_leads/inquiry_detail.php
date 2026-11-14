@@ -158,7 +158,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                         <div class="mb-3">
                             <label for="statusSelect" class="form-label text-muted small fw-semibold">Status Stage</label>
-                            <select id="statusSelect" name="status" class="form-select">
+                            <select aria-label="Status" id="statusSelect" name="status" class="form-select">
                                 <option value="pending" <?= $statusKey === 'pending' ? 'selected' : '' ?>>Pending (Needs Action)</option>
                                 <option value="in_progress" <?= $statusKey === 'in_progress' ? 'selected' : '' ?>>In Progress (Contacting / Site Visit)</option>
                                 <option value="completed" <?= $statusKey === 'completed' ? 'selected' : '' ?>>Completed (Customer Converted / Booked)</option>
@@ -190,7 +190,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                         <div class="mb-3">
                             <label for="followupNote" class="form-label text-muted small fw-semibold">Interaction Notes & Feedback</label>
-                            <textarea id="followupNote" name="followup_note" class="form-control" rows="3" placeholder="e.g., Called customer, interested in Plot A-12, scheduled site visit for Sunday morning..." required></textarea>
+                            <textarea aria-label="Followup note" id="followupNote" name="followup_note" class="form-control" rows="3" placeholder="e.g., Called customer, interested in Plot A-12, scheduled site visit for Sunday morning..." required></textarea>
                         </div>
                         <button type="submit" class="btn btn-success w-100">
                             <i class="fas fa-paper-plane me-1"></i>Log Follow-up & Touch Timeline

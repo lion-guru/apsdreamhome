@@ -80,7 +80,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Type</label>
-                    <select name="type" class="form-select form-select-sm">
+                    <select aria-label="Type" name="type" class="form-select form-select-sm">
                         <option value="">All Types</option>
                         <option value="booking_confirmation" <?= ($filters['type'] ?? '') === 'booking_confirmation' ? 'selected' : '' ?>>Booking Confirmation</option>
                         <option value="payment_receipt" <?= ($filters['type'] ?? '') === 'payment_receipt' ? 'selected' : '' ?>>Payment Receipt</option>
@@ -90,7 +90,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Channel</label>
-                    <select name="channel" class="form-select form-select-sm">
+                    <select aria-label="Channel" name="channel" class="form-select form-select-sm">
                         <option value="">All Channels</option>
                         <option value="email" <?= ($filters['channel'] ?? '') === 'email' ? 'selected' : '' ?>>Email</option>
                         <option value="sms" <?= ($filters['channel'] ?? '') === 'sms' ? 'selected' : '' ?>>SMS</option>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="sent" <?= ($filters['status'] ?? '') === 'sent' ? 'selected' : '' ?>>Sent</option>
                         <option value="failed" <?= ($filters['status'] ?? '') === 'failed' ? 'selected' : '' ?>>Failed</option>

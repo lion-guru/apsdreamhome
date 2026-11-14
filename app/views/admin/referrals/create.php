@@ -9,7 +9,7 @@
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3">
                             <label class="form-label">Referrer *</label>
-                            <select name="referrer_id" class="form-select" required>
+                            <select aria-label="Referrer id" name="referrer_id" class="form-select" required>
                                 <option value="">Select User</option>
                                 <?php foreach ($users as $u): ?>
                                     <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)</option>

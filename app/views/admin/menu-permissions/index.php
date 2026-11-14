@@ -183,7 +183,7 @@ $active_page = 'menu-permissions';
         <div class="row mb-4">
             <div class="col-md-6">
                 <label class="form-label fw-bold">Select User</label>
-                <select class="form-select select2" id="userSelect" style="width: 100%;">
+                <select aria-label="User select" class="form-select select2" id="userSelect" style="width: 100%;">
                     <option value="">-- Select a user --</option>
                 </select>
             </div>

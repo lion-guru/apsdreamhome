@@ -40,7 +40,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
                     <form method="POST" action="<?= BASE_URL ?>/user/nri-desk/save" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?= $e($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-2"><label class="form-label small">Booking *</label>
-                            <select name="booking_id" class="form-select" required>
+                            <select aria-label="Booking id" name="booking_id" class="form-select" required>
                                 <?php foreach ($bookings as $b): ?>
                                 <option value="<?= (int)$b['id'] ?>"><?= $e($b['booking_number'] ?? '') ?> — Plot <?= $e($b['plot_number'] ?? '') ?></option>
                                 <?php endforeach; ?>
@@ -51,7 +51,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
                             <div class="col-md-6"><label class="form-label small">Passport number *</label><input type="text" name="passport_number" class="form-control" required maxlength="50"></div>
                             <div class="col-md-6"><label class="form-label small">Visa type</label><input type="text" name="visa_type" class="form-control" maxlength="50" placeholder="e.g. Employment"></div>
                             <div class="col-md-6"><label class="form-label small">Bank account</label>
-                                <select name="bank_account_type" class="form-select"><option>NRE</option><option>NRO</option><option>FCNR</option></select>
+                                <select aria-label="Bank account type" name="bank_account_type" class="form-select"><option>NRE</option><option>NRO</option><option>FCNR</option></select>
                             </div>
                             <div class="col-12"><label class="form-label small">FIRC number (from your bank)</label><input type="text" name="firc_number" class="form-control" maxlength="100"></div>
                             <div class="col-md-6"><label class="form-label small">FIRC document (pdf/doc/txt ≤5MB)</label><input type="file" name="firc_doc" class="form-control" accept=".pdf,.doc,.docx,.csv,.txt"></div>

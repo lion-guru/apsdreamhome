@@ -116,7 +116,7 @@ $bookingDocCategories = [
                 </div>
                 <div class="col-md-4">
                     <label for="category" class="form-label"><?= __('common_category') ?></label>
-                    <select class="form-select" id="category" name="category">
+                    <select aria-label="Category" class="form-select" id="category" name="category">
                         <option value=""><?= __('documents_all_categories') ?></option>
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?= htmlspecialchars($cat['category'] ?? '') ?>" <?= $selectedCategory === ($cat['category'] ?? '') ? 'selected' : '' ?>>

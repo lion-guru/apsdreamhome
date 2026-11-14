@@ -99,7 +99,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Auto-assign to Agent</label>
-                            <select class="form-select" name="assign_to" id="modalAssignTo">
+                            <select aria-label="Assign to" class="form-select" name="assign_to" id="modalAssignTo">
                                 <option value="">Don't auto-assign</option>
                                 <?php
                                 try {
@@ -114,7 +114,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Drip Campaign (optional)</label>
-                            <select class="form-select" name="drip_campaign" id="modalDripCampaign">
+                            <select aria-label="Drip campaign" class="form-select" name="drip_campaign" id="modalDripCampaign">
                                 <option value="">None</option>
                                 <?php
                                 try {

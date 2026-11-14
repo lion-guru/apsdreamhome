@@ -124,7 +124,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold"><?= __('admin_new_status') ?></label>
-                            <select name="status" class="form-select" required>
+                            <select aria-label="Status" name="status" class="form-select" required>
                                 <option value="">— Select —</option>
                                 <option value="appointment_scheduled" <?= $registry['status'] === 'appointment_scheduled' ? 'selected' : '' ?>><?= __('admin_appointment_scheduled') ?></option>
                                 <option value="documents_submitted" <?= $registry['status'] === 'documents_submitted' ? 'selected' : '' ?>><?= __('admin_documents_submitted') ?></option>
@@ -142,7 +142,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold"><?= __('admin_notes_label') ?></label>
-                            <textarea name="notes" class="form-control" rows="2" placeholder="<?= __('admin_status_update_notes_placeholder') ?>"></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="<?= __('admin_status_update_notes_placeholder') ?>"></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i><?= __('admin_update_status') ?></button>

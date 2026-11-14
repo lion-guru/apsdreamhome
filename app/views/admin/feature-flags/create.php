@@ -20,11 +20,11 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="2" placeholder="What does this flag control?"></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="What does this flag control?"></textarea>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Group</label>
-                        <select name="group" class="form-select">
+                        <select aria-label="Group" name="group" class="form-select">
                             <?php foreach (($groups ?? ['general']) as $g): ?>
                                 <option value="<?= htmlspecialchars($g) ?>"><?= htmlspecialchars($g) ?></option>
                             <?php endforeach; ?>

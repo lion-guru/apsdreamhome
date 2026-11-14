@@ -116,7 +116,7 @@ $completedCount = count($completedMeetings);
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="scheduled" <?= ($_GET['status'] ?? '') === 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
                         <option value="completed" <?= ($_GET['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>

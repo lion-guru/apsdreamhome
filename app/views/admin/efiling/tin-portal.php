@@ -91,7 +91,7 @@ ob_start();
                     <input type="hidden" name="form_type" value="26Q">
                     <div class="mb-3">
                         <label class="form-label small">Financial Year</label>
-                        <select name="fy" class="form-select form-select-sm">
+                        <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                             <?php foreach ($fy_list as $val => $label): ?>
                                 <option value="<?= $val ?>" <?= $val === $fy ? 'selected' : '' ?>><?= $label ?></option>
                             <?php endforeach; ?>
@@ -99,7 +99,7 @@ ob_start();
                     </div>
                     <div class="mb-3">
                         <label class="form-label small">Quarter</label>
-                        <select name="quarter" class="form-select form-select-sm">
+                        <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                             <?php foreach (['Q1','Q2','Q3','Q4'] as $q): ?>
                                 <option value="<?= $q ?>" <?= $q === $quarter ? 'selected' : '' ?>><?= $q ?></option>
                             <?php endforeach; ?>
@@ -122,7 +122,7 @@ ob_start();
                     <input type="hidden" name="form_type" value="27Q">
                     <div class="mb-3">
                         <label class="form-label small">Financial Year</label>
-                        <select name="fy" class="form-select form-select-sm">
+                        <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                             <?php foreach ($fy_list as $val => $label): ?>
                                 <option value="<?= $val ?>" <?= $val === $fy ? 'selected' : '' ?>><?= $label ?></option>
                             <?php endforeach; ?>
@@ -130,7 +130,7 @@ ob_start();
                     </div>
                     <div class="mb-3">
                         <label class="form-label small">Quarter</label>
-                        <select name="quarter" class="form-select form-select-sm">
+                        <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                             <?php foreach (['Q1','Q2','Q3','Q4'] as $q): ?>
                                 <option value="<?= $q ?>" <?= $q === $quarter ? 'selected' : '' ?>><?= $q ?></option>
                             <?php endforeach; ?>

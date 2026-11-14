@@ -44,7 +44,7 @@ $docTypes = [
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-2">
                             <label class="form-label small">Document Type <span class="text-danger">*</span></label>
-                            <select name="doc_type" class="form-select form-select-sm" required>
+                            <select aria-label="Doc type" name="doc_type" class="form-select form-select-sm" required>
                                 <?php foreach ($docTypes as $k => $v): ?>
                                     <option value="<?= $k ?>"><?= $v ?></option>
                                 <?php endforeach; ?>
@@ -64,7 +64,7 @@ $docTypes = [
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Verification Status</label>
-                            <select name="verification_status" class="form-select form-select-sm">
+                            <select aria-label="Verification status" name="verification_status" class="form-select form-select-sm">
                                 <option value="pending">Pending</option>
                                 <option value="verified">Verified</option>
                                 <option value="missing">Missing</option>
@@ -73,7 +73,7 @@ $docTypes = [
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Remarks</label>
-                            <textarea name="remarks" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-upload me-1"></i>Upload

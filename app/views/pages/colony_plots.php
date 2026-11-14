@@ -112,7 +112,7 @@
             <!-- Block Filter -->
             <div class="col-md-3">
                 <label class="form-label"><?= __('colony_block_label') ?></label>
-                <select name="block" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Block" name="block" class="form-select" onchange="this.form.submit()">
                     <option value=""><?= __('colony_all_blocks') ?></option>
                     <?php foreach ($blocks as $b): ?>
                         <?php $blk = $b['block'] ?? ''; ?>
@@ -126,7 +126,7 @@
             <!-- Status Filter -->
             <div class="col-md-2">
                 <label class="form-label"><?= __('colony_status_label') ?></label>
-                <select name="status" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Status" name="status" class="form-select" onchange="this.form.submit()">
                     <option value="available" <?= $current_status === 'available' ? 'selected' : '' ?>><?= __('colony_status_available') ?></option>
                     <option value="booked" <?= $current_status === 'booked' ? 'selected' : '' ?>><?= __('colony_status_booked') ?></option>
                     <option value="sold" <?= $current_status === 'sold' ? 'selected' : '' ?>><?= __('colony_status_sold') ?></option>
@@ -146,7 +146,7 @@
             <!-- Sort -->
             <div class="col-md-2">
                 <label class="form-label"><?= __('colony_sort_by') ?></label>
-                <select name="sort" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Sort" name="sort" class="form-select" onchange="this.form.submit()">
                     <option value="plot_number" <?= $current_sort === 'plot_number' ? 'selected' : '' ?>><?= __('colony_sort_plot_no') ?></option>
                     <option value="price_asc" <?= $current_sort === 'price_asc' ? 'selected' : '' ?>><?= __('colony_sort_price_low') ?></option>
                     <option value="price_desc" <?= $current_sort === 'price_desc' ? 'selected' : '' ?>><?= __('colony_sort_price_high') ?></option>

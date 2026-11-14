@@ -104,7 +104,7 @@ $isCancelled = $currentStatus === 'cancelled';
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="notes" rows="2" placeholder="Document details, IDs collected..."><?= htmlspecialchars($booking['registry_notes'] ?? '') ?></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="2" placeholder="Document details, IDs collected..."><?= htmlspecialchars($booking['registry_notes'] ?? '') ?></textarea>
                         </div>
                         <button type="submit" name="status" value="stamp_duty_pending" class="btn btn-success"><i class="fas fa-check"></i> Mark Documents Collected</button>
                     </form>
@@ -134,7 +134,7 @@ $isCancelled = $currentStatus === 'cancelled';
                             </div>
                         </div>
                         <div class="mb-2">
-                            <textarea class="form-control" name="notes" rows="1" placeholder="Payment reference..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="1" placeholder="Payment reference..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-info text-white"><i class="fas fa-save"></i> Record Payment</button>
                     </form>
@@ -167,7 +167,7 @@ $isCancelled = $currentStatus === 'cancelled';
                             </div>
                         </div>
                         <div class="mb-2">
-                            <textarea class="form-control" name="notes" rows="1" placeholder="Appointment details..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="1" placeholder="Appointment details..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Schedule Appointment</button>
                     </form>
@@ -198,7 +198,7 @@ $isCancelled = $currentStatus === 'cancelled';
                             </div>
                         </div>
                         <div class="mb-2">
-                            <textarea class="form-control" name="notes" rows="1" placeholder="Registration notes..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="1" placeholder="Registration notes..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-success"><i class="fas fa-check-double"></i> Mark Registered</button>
                     </form>
@@ -228,7 +228,7 @@ $isCancelled = $currentStatus === 'cancelled';
                         <div class="row g-2 mb-2">
                             <div class="col-4">
                                 <label class="form-label">Status</label>
-                                <select class="form-select" name="mutation_status">
+                                <select aria-label="Mutation status" class="form-select" name="mutation_status">
                                     <option value="pending" <?= ($booking['mutation_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                                     <option value="in_progress" <?= ($booking['mutation_status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
                                     <option value="completed" <?= ($booking['mutation_status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
@@ -244,7 +244,7 @@ $isCancelled = $currentStatus === 'cancelled';
                             </div>
                         </div>
                         <div class="mb-2">
-                            <textarea class="form-control" name="notes" rows="1" placeholder="Mutation notes..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="1" placeholder="Mutation notes..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-dark"><i class="fas fa-sync"></i> Update Mutation</button>
                     </form>

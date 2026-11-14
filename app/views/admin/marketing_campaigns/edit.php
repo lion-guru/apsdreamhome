@@ -31,7 +31,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Channel</label>
-                        <select name="type" class="form-select">
+                        <select aria-label="Type" name="type" class="form-select">
                             <?php foreach (['email' => 'Email', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp'] as $k => $v): ?>
                                 <option value="<?= $k ?>" <?= ($campaign['type'] ?? '') === $k ? 'selected' : '' ?>><?= $v ?></option>
                             <?php endforeach; ?>
@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                     <div class="col-12">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($campaign['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($campaign['description'] ?? '') ?></textarea>
                     </div>
                     <?php if (($campaign['type'] ?? '') === 'email'): ?>
                     <div class="col-12">
@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <?php endif; ?>
                     <div class="col-12">
                         <label class="form-label">Message Body</label>
-                        <textarea name="content" class="form-control" rows="10" required><?= htmlspecialchars($campaign['content'] ?? '') ?></textarea>
+                        <textarea aria-label="Content" name="content" class="form-control" rows="10" required><?= htmlspecialchars($campaign['content'] ?? '') ?></textarea>
                         <small class="text-muted">Variables: <code>{{name}}</code> <code>{{first_name}}</code> <code>{{email}}</code> <code>{{phone}}</code> <code>{{unsubscribe_url}}</code></small>
                     </div>
                     <div class="col-md-6">

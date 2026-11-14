@@ -12,7 +12,7 @@
                     <form method="post" action="<?= BASE_URL ?>/admin/commission/associate/structure/store">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Rank Name</label>
-                            <select name="rank_name" class="form-select" required>
+                            <select aria-label="Rank name" name="rank_name" class="form-select" required>
                                 <option value="associate">Associate</option>
                                 <option value="bronze">Bronze</option>
                                 <option value="silver">Silver</option>

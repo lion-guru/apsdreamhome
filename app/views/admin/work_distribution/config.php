@@ -56,7 +56,7 @@ $algorithms = $algorithms ?? ['hybrid', 'least_loaded', 'skill_based', 'performa
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Algorithm <span class="text-danger">*</span></label>
-                    <select name="assignment_algorithm" class="form-select" required>
+                    <select aria-label="Assignment algorithm" name="assignment_algorithm" class="form-select" required>
                         <?php foreach ($algorithms as $algo): ?>
                             <option value="<?= $algo ?>" <?= ($config['assignment_algorithm'] ?? 'hybrid') === $algo ? 'selected' : '' ?>>
                                 <?= ucfirst(str_replace('_', ' ', $algo)) ?>
@@ -121,7 +121,7 @@ $algorithms = $algorithms ?? ['hybrid', 'least_loaded', 'skill_based', 'performa
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">AI Model</label>
-                    <select name="ai_model" class="form-select">
+                    <select aria-label="Ai model" name="ai_model" class="form-select">
                         <option value="hybrid_algorithm" <?= ($config['ai_model'] ?? 'hybrid_algorithm') === 'hybrid_algorithm' ? 'selected' : '' ?>>Hybrid Algorithm</option>
                         <option value="gpt-4" <?= ($config['ai_model'] ?? '') === 'gpt-4' ? 'selected' : '' ?>>GPT-4</option>
                         <option value="claude" <?= ($config['ai_model'] ?? '') === 'claude' ? 'selected' : '' ?>>Claude</option>

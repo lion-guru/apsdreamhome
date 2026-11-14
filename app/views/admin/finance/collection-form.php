@@ -28,7 +28,7 @@ $bookings = $bookings ?? [];
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Collector <span >*</span></label>
-                        <select name="collector_id" class="aps-cp-form-select" required>
+                        <select aria-label="Collector id" name="collector_id" class="aps-cp-form-select" required>
                             <option value="">-- Select --</option>
                             <?php foreach ($collectors as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -48,7 +48,7 @@ $bookings = $bookings ?? [];
                     </div>
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Payment Method</label>
-                        <select name="payment_method" class="aps-cp-form-select">
+                        <select aria-label="Payment method" name="payment_method" class="aps-cp-form-select">
                             <option value="cash">Cash</option>
                             <option value="cheque">Cheque</option>
                             <option value="upi">UPI</option>
@@ -64,7 +64,7 @@ $bookings = $bookings ?? [];
                     </div>
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Booking (Optional)</label>
-                        <select name="booking_id" class="aps-cp-form-select">
+                        <select aria-label="Booking id" name="booking_id" class="aps-cp-form-select">
                             <option value="">-- None --</option>
                             <?php foreach ($bookings as $b): ?>
                                 <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['booking_number'] ?? '') ?></option>
@@ -81,7 +81,7 @@ $bookings = $bookings ?? [];
 
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Notes</label>
-                    <textarea name="notes" class="aps-cp-form-textarea" rows="3" placeholder="Any additional notes..."></textarea>
+                    <textarea aria-label="Notes" name="notes" class="aps-cp-form-textarea" rows="3" placeholder="Any additional notes..."></textarea>
                 </div>
 
                 <div >

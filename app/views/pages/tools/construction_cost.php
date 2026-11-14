@@ -15,7 +15,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="quality"><?php echo __('construction_quality', [], 'Construction Quality'); ?></label>
-                                <select class="form-select" id="quality" onchange="calcConstr()">
+                                <select aria-label="Quality" class="form-select" id="quality" onchange="calcConstr()">
                                     <option value="basic"><?php echo __('basic', [], 'Basic (₹1,400/sqft)'); ?></option>
                                     <option value="standard" selected><?php echo __('standard', [], 'Standard (₹1,800/sqft)'); ?></option>
                                     <option value="premium"><?php echo __('premium', [], 'Premium (₹2,400/sqft)'); ?></option>
@@ -26,7 +26,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="floors"><?php echo __('num_floors', [], 'Number of Floors'); ?></label>
-                                <select class="form-select" id="floors" onchange="calcConstr()">
+                                <select aria-label="Floors" class="form-select" id="floors" onchange="calcConstr()">
                                     <option value="1"><?php echo __('single', [], 'Single Floor'); ?></option>
                                     <option value="2" selected><?php echo __('double', [], 'Double Floor'); ?></option>
                                     <option value="3"><?php echo __('triple', [], 'Triple Floor'); ?></option>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="finish"><?php echo __('finish_level', [], 'Finish Level'); ?></label>
-                                <select class="form-select" id="finish" onchange="calcConstr()">
+                                <select aria-label="Finish" class="form-select" id="finish" onchange="calcConstr()">
                                     <option value="0.85"><?php echo __('basic_finish', [], 'Basic'); ?></option>
                                     <option value="1" selected><?php echo __('standard_finish', [], 'Standard'); ?></option>
                                     <option value="1.3"><?php echo __('premium_finish', [], 'Premium'); ?></option>
@@ -42,7 +42,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="locFac"><?php echo __('location_factor', [], 'Location Factor'); ?></label>
-                                <select class="form-select" id="locFac" onchange="calcConstr()">
+                                <select aria-label="Loc fac" class="form-select" id="locFac" onchange="calcConstr()">
                                     <option value="0.9"><?php echo __('tier3', [], 'Tier-3 City / Village'); ?></option>
                                     <option value="1" selected><?php echo __('tier2', [], 'Tier-2 City'); ?></option>
                                     <option value="1.15"><?php echo __('tier1', [], 'Tier-1 City'); ?></option>

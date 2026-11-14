@@ -96,7 +96,7 @@ $templates = $templates ?? [];
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-semibold"><i class="fas fa-tasks me-2"></i>Checklist Items</h5>
             <div class="d-flex gap-2">
-                <select class="form-select form-select-sm" id="statusFilter" onchange="filterItems(this.value)">
+                <select aria-label="Status filter" class="form-select form-select-sm" id="statusFilter" onchange="filterItems(this.value)">
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
                     <option value="in_progress">In Progress</option>
@@ -223,7 +223,7 @@ $templates = $templates ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Select Template <span class="text-danger">*</span></label>
-                        <select name="template_id" class="form-select" required>
+                        <select aria-label="Template id" name="template_id" class="form-select" required>
                             <option value="">Select a template</option>
                             <?php foreach ($templates as $t): ?>
                                 <option value="<?= $t['id'] ?>" data-items="<?= $t['item_count'] ?? 0 ?>">
@@ -259,11 +259,11 @@ $templates = $templates ?? [];
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Notes</label>
-                            <textarea name="notes" class="form-control" rows="4" placeholder="Add notes about this item..."></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="4" placeholder="Add notes about this item..."></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Update Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="pending">Pending</option>
                                 <option value="in_progress">In Progress</option>
                                 <option value="completed">Completed</option>

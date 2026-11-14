@@ -69,7 +69,7 @@ $page_description = $page_description ?? 'Request a salary advance or loan with 
                         <div class="row mb-3">
                             <label for="installments" class="col-sm-2 col-form-label fw-bold">Repayment Installments <span class="text-danger">*</span></label>
                             <div class="col-sm-10">
-                                <select class="form-select" id="installments" name="installments" required>
+                                <select aria-label="Installments" class="form-select" id="installments" name="installments" required>
                                     <option value="1">1 Month (Next Salary)</option>
                                     <option value="2">2 Months</option>
                                     <option value="3">3 Months</option>
@@ -96,7 +96,7 @@ $page_description = $page_description ?? 'Request a salary advance or loan with 
                         <div class="row mb-3">
                             <label for="reason" class="col-sm-2 col-form-label fw-bold">Reason <span class="text-danger">*</span></label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="reason" name="reason" rows="4" required placeholder="Explain why you need this advance/loan (e.g., medical emergency, home repair, education, wedding, etc.)"></textarea>
+                                <textarea aria-label="Reason" class="form-control" id="reason" name="reason" rows="4" required placeholder="Explain why you need this advance/loan (e.g., medical emergency, home repair, education, wedding, etc.)"></textarea>
                                 <div class="form-text">Please provide a clear reason for your request.</div>
                             </div>
                         </div>

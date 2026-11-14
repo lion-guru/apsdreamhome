@@ -52,7 +52,7 @@ include __DIR__ . '/../layouts/header.php'; ?>
 
                         <div class="mb-3">
                             <label for="payment_method" class="form-label">Payment Method</label>
-                            <select class="form-select" id="payment_method" name="payment_method" required>
+                            <select aria-label="Payment method" class="form-select" id="payment_method" name="payment_method" required>
                                 <option value="card">Credit/Debit Card</option>
                                 <option value="netbanking">Net Banking</option>
                                 <option value="upi">UPI</option>

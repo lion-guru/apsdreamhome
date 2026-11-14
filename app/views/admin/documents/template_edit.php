@@ -17,7 +17,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Type</label>
-                            <select name="type" class="form-select">
+                            <select aria-label="Type" name="type" class="form-select">
                                 <?php foreach (['document','agreement','letter','certificate','report'] as $opt): ?>
                                     <option value="<?= $opt ?>" <?= ($template['type'] ?? '') === $opt ? 'selected' : '' ?>><?= ucfirst($opt) ?></option>
                                 <?php endforeach; ?>
@@ -25,7 +25,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category_id" class="form-select">
+                            <select aria-label="Category id" name="category_id" class="form-select">
                                 <option value="">-- None --</option>
                                 <?php if (!empty($categories)): ?>
                                     <?php foreach ($categories as $cat): ?>
@@ -37,11 +37,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($template['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($template['description'] ?? '') ?></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Content <span class="text-danger">*</span></label>
-                        <textarea name="content" class="form-control" rows="12" required><?= htmlspecialchars($template['content'] ?? '') ?></textarea>
+                        <textarea aria-label="Content" name="content" class="form-control" rows="12" required><?= htmlspecialchars($template['content'] ?? '') ?></textarea>
                         <small class="text-muted">Use {{placeholders}} for dynamic values (e.g. {{customer_name}}, {{date}})</small>
                     </div>
                     <div class="mb-3 form-check">

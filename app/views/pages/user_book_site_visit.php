@@ -12,7 +12,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label"><?php echo __('book_site_visit_property', [], 'Property/Project'); ?> <span class="text-danger">*</span></label>
-                            <select name="property_id" class="form-select" required>
+                            <select aria-label="Property id" name="property_id" class="form-select" required>
                                 <option value=""><?php echo __('book_site_visit_select_property', [], '-- Select Property --'); ?></option>
                                 <?php if (!empty($properties)): foreach ($properties as $p): ?>
                                     <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name'] ?? $p['title'] ?? 'Property #'.$p['id']) ?></option>
@@ -27,7 +27,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?php echo __('book_site_visit_time', [], 'Preferred Time'); ?></label>
-                                <select name="visit_time" class="form-select">
+                                <select aria-label="Visit time" name="visit_time" class="form-select">
                                     <option value="09:00-11:00">9:00 AM - 11:00 AM</option>
                                     <option value="11:00-13:00">11:00 AM - 1:00 PM</option>
                                     <option value="13:00-15:00">1:00 PM - 3:00 PM</option>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?php echo __('book_site_visit_notes', [], 'Notes'); ?></label>
-                            <textarea name="notes" class="form-control" rows="3" placeholder="<?php echo __('book_site_visit_notes_placeholder', [], 'Any specific requirements...'); ?>"></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="<?php echo __('book_site_visit_notes_placeholder', [], 'Any specific requirements...'); ?>"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i><?php echo __('book_site_visit_submit', [], 'Submit Request'); ?></button>
                     </form>

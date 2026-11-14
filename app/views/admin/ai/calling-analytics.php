@@ -12,7 +12,7 @@ $days = $days ?? 30;
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Calling Analytics</h2>
         <div class="d-flex gap-2">
-            <select id="daysFilter" class="form-select form-select-sm" onchange="window.location='?days='+this.value">
+            <select aria-label="Days filter" id="daysFilter" class="form-select form-select-sm" onchange="window.location='?days='+this.value">
                 <?php foreach ([7=>7,14=>14,30=>30,60=>60,90=>90] as $v=>$l): ?>
                     <option value="<?= $v ?>" <?= $days == $v ? 'selected' : '' ?>>Last <?= $l ?> days</option>
                 <?php endforeach; ?>

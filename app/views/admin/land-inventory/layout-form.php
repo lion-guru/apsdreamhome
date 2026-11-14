@@ -25,7 +25,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Layout Type</label>
-                        <select name="layout_type" class="form-select form-select-sm">
+                        <select aria-label="Layout type" name="layout_type" class="form-select form-select-sm">
                             <option value="residential">Residential</option>
                             <option value="commercial">Commercial</option>
                             <option value="mixed">Mixed Use</option>
@@ -77,7 +77,7 @@ $colonyId = (int)($colony['id'] ?? 0);
 
                     <div class="col-12">
                         <label class="form-label small">Notes</label>
-                        <textarea name="notes" class="form-control form-control-sm" rows="3"></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="mt-3">

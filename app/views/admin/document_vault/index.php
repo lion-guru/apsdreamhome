@@ -76,7 +76,7 @@ $stats = $stats ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Employee</label>
-                    <select name="employee_id" class="form-select form-select-sm">
+                    <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $emp): ?>
                             <option value="<?= $emp['id'] ?>" <?= ($filters['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
@@ -85,7 +85,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Category</label>
-                    <select name="category_id" class="form-select form-select-sm">
+                    <select aria-label="Category id" name="category_id" class="form-select form-select-sm">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?= $cat['id'] ?>" <?= ($filters['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
@@ -94,7 +94,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="verification_status" class="form-select form-select-sm">
+                    <select aria-label="Verification status" name="verification_status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="not_verified" <?= ($filters['verification_status'] ?? '') === 'not_verified' ? 'selected' : '' ?>>Not Verified</option>
                         <option value="pending" <?= ($filters['verification_status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -105,7 +105,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Expiring Within</label>
-                    <select name="expiring_within" class="form-select form-select-sm">
+                    <select aria-label="Expiring within" name="expiring_within" class="form-select form-select-sm">
                         <option value="">None</option>
                         <option value="7" <?= ($filters['expiring_within'] ?? '') == '7' ? 'selected' : '' ?>>7 Days</option>
                         <option value="30" <?= ($filters['expiring_within'] ?? '') == '30' ? 'selected' : '' ?>>30 Days</option>

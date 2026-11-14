@@ -14,7 +14,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
-                            <select class="form-select" id="propType">
+                            <select aria-label="Prop type" class="form-select" id="propType">
                                 <option value="affordable"><?php echo __('affordable_housing', [], 'Affordable Housing (Up to ₹45L, ≤60 sqm)'); ?></option>
                                 <option value="under_construction"><?php echo __('under_construction', [], 'Under Construction'); ?></option>
                                 <option value="ready"><?php echo __('ready_to_move', [], 'Ready to Move (No GST)'); ?></option>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="itcOpt"><?php echo __('input_tax_credit', [], 'Input Tax Credit (ITC)?'); ?></label>
-                            <select class="form-select" id="itcOpt">
+                            <select aria-label="Itc opt" class="form-select" id="itcOpt">
                                 <option value="yes"><?php echo __('yes_with_itc', [], 'Yes - ITC Available (1% without ITC)'); ?></option>
                                 <option value="no"><?php echo __('no_itc', [], 'No - Without ITC (5% without ITC)'); ?></option>
                             </select>

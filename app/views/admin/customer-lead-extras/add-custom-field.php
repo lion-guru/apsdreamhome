@@ -37,7 +37,7 @@ $page_description = 'Create a new custom field for lead tracking';
                         
                         <div class="mb-3">
                             <label class="form-label">Field Type</label>
-                            <select class="form-select" name="field_type" required>
+                            <select aria-label="Field type" class="form-select" name="field_type" required>
                                 <option value="text">Text</option>
                                 <option value="number">Number</option>
                                 <option value="date">Date</option>

@@ -137,7 +137,7 @@ $statusColors = [
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_mandate_type', [], 'Mandate Type') ?></label>
-                                <select name="mandate_type" class="form-select">
+                                <select aria-label="Mandate type" name="mandate_type" class="form-select">
                                     <option value="emandate"><?= __('nach_type_emandate', [], 'e-Mandate (Online - Recommended)') ?></option>
                                     <option value="nach"><?= __('nach_type_physical_form', [], 'NACH Physical Form') ?></option>
                                     <option value="physical"><?= __('nach_type_physical', [], 'Physical Mandate') ?></option>

@@ -86,7 +86,7 @@ try {
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Service Interested *</label>
-                                    <select name="service" class="form-select" required>
+                                    <select aria-label="Service" name="service" class="form-select" required>
                                         <option value="">Select a Service</option>
                                         <?php foreach ($services as $svc): ?>
                                             <option value="<?= htmlspecialchars($svc['slug'] ?? $svc['title']) ?>"><?= htmlspecialchars($svc['title'] ?? '') ?></option>
@@ -95,7 +95,7 @@ try {
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-bold">Your Message</label>
-                                    <textarea name="message" class="form-control" rows="4" placeholder="Tell us about your requirement..."></textarea>
+                                    <textarea aria-label="Message" name="message" class="form-control" rows="4" placeholder="Tell us about your requirement..."></textarea>
                                 </div>
                             </div>
                             

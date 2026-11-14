@@ -29,7 +29,7 @@ ob_start();
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Lead</label>
-                                <select class="form-select" name="lead_id" id="leadSelect">
+                                <select aria-label="Lead id" class="form-select" name="lead_id" id="leadSelect">
                                     <option value="">Choose a lead...</option>
                                     <?php foreach ($leads as $lead): ?>
                                         <option value="<?= $lead['id'] ?>" data-name="<?= htmlspecialchars($lead['name'] ?? '') ?>" data-phone="<?= htmlspecialchars($lead['phone'] ?? '') ?>">
@@ -40,7 +40,7 @@ ob_start();
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Property</label>
-                                <select class="form-select" name="property_id" required>
+                                <select aria-label="Property id" class="form-select" name="property_id" required>
                                     <option value="">Choose a property...</option>
                                     <?php foreach ($properties as $property): ?>
                                         <option value="<?= $property['id'] ?>">
@@ -66,7 +66,7 @@ ob_start();
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Visit Type</label>
-                                <select class="form-select" name="visit_type">
+                                <select aria-label="Visit type" class="form-select" name="visit_type">
                                     <option value="site_visit">Site Visit</option>
                                     <option value="virtual_tour">Virtual Tour</option>
                                     <option value="office_meeting">Office Meeting</option>
@@ -86,7 +86,7 @@ ob_start();
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Assign Agent</label>
-                                <select class="form-select" name="agent_id">
+                                <select aria-label="Agent id" class="form-select" name="agent_id">
                                     <option value="">Select Agent</option>
                                     <?php foreach ($users as $agent): ?>
                                         <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
@@ -97,7 +97,7 @@ ob_start();
 
                         <div class="mb-3">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="notes" rows="3" placeholder="Any special instructions or notes for the visit..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="Any special instructions or notes for the visit..."></textarea>
                         </div>
 
                         <div class="d-grid">

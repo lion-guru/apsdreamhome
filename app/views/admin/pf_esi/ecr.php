@@ -9,7 +9,7 @@ $month_years = $month_years ?? [];
         <div>
             <form method="GET" class="d-inline">
                 <label class="me-2" style="margin-bottom:0;">Month:</label>
-                <select name="month_year" class="form-select form-select-sm d-inline w-auto">
+                <select aria-label="Month year" name="month_year" class="form-select form-select-sm d-inline w-auto">
                     <?php foreach ($month_years as $my): ?>
                         <option value="<?= $my['month_year'] ?>" <?= $my['month_year'] === $month_year ? 'selected' : '' ?>><?= htmlspecialchars($my['month_year']) ?></option>
                     <?php endforeach; ?>

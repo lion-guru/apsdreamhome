@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Service Name *</label>
-                                <select name="service_name" class="form-select" required>
+                                <select aria-label="Service name" name="service_name" class="form-select" required>
                                     <option value="">Select Service</option>
                                     <?php foreach ($providers as $p): ?>
                                         <option value="<?= $p ?>"><?= $p ?></option>
@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Key Type</label>
-                                <select name="key_type" class="form-select">
+                                <select aria-label="Key type" name="key_type" class="form-select">
                                     <option value="api_key">API Key</option>
                                     <option value="token">Token</option>
                                     <option value="password">Password</option>
@@ -51,7 +51,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Notes about this API key..."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Notes about this API key..."></textarea>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">

@@ -23,7 +23,7 @@ $merge_fields = $merge_fields ?? [];
                     <div class="aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">AI Prompt Template</label>
-                            <select name="prompt_id" class="form-select" id="promptSelect" onchange="loadPrompt()">
+                            <select aria-label="Prompt id" name="prompt_id" class="form-select" id="promptSelect" onchange="loadPrompt()">
                                 <option value="0">Custom Prompt (write your own below)</option>
                                 <?php foreach ($prompts as $p): ?>
                                     <option value="<?= $p['id'] ?>" data-category="<?= htmlspecialchars($p['document_category'] ?? '') ?>"><?= htmlspecialchars($p['name'] ?? '') ?></option>
@@ -32,7 +32,7 @@ $merge_fields = $merge_fields ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Custom Prompt</label>
-                            <textarea name="custom_prompt" id="customPrompt" class="form-control font-monospace" rows="10" placeholder="Write a custom prompt or select a template above... Use {{customer_name}}, {{plot_no}} etc."></textarea>
+                            <textarea aria-label="Custom prompt" name="custom_prompt" id="customPrompt" class="form-control font-monospace" rows="10" placeholder="Write a custom prompt or select a template above... Use {{customer_name}}, {{plot_no}} etc."></textarea>
                             <small class="text-muted">Available merge fields: <?php $all = []; foreach ($merge_fields as $g => $fs) { foreach ($fs as $k => $l) { $all[] = $k; } } echo implode(', ', $all); ?></small>
                         </div>
                     </div>
@@ -49,7 +49,7 @@ $merge_fields = $merge_fields ?? [];
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Max Tokens</label>
-                                <select name="max_tokens" class="form-select">
+                                <select aria-label="Max tokens" name="max_tokens" class="form-select">
                                     <option value="1024">1,024</option>
                                     <option value="2048" selected>2,048</option>
                                     <option value="4096">4,096</option>
@@ -58,7 +58,7 @@ $merge_fields = $merge_fields ?? [];
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Language</label>
-                                <select name="language" class="form-select">
+                                <select aria-label="Language" name="language" class="form-select">
                                     <option value="en">English</option>
                                     <option value="hi">Hindi</option>
                                 </select>
@@ -71,11 +71,11 @@ $merge_fields = $merge_fields ?? [];
                     <div class="aps-cp-card-header"><i class="fas fa-link me-2"></i>3. Merge Data & Entity</div>
                     <div class="aps-cp-card-body">
                         <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label">Customer</label><select name="customer_id" class="form-select"><option value="">None</option><?php foreach ($customers as $cu): ?><option value="<?= $cu['id'] ?>" data-name="<?= htmlspecialchars($cu['name'] ?? '') ?>" data-phone="<?= htmlspecialchars($cu['phone'] ?? '') ?>" data-email="<?= htmlspecialchars($cu['email'] ?? '') ?>"><?= htmlspecialchars($cu['name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                            <div class="col-md-6"><label class="form-label">Entity Type</label><select name="entity_type" class="form-select"><option value="general">General</option><option value="booking">Booking</option><option value="customer">Customer</option><option value="associate">Associate</option><option value="colony">Colony</option><option value="plot">Plot</option><option value="loan">Loan</option></select></div>
+                            <div class="col-md-6"><label class="form-label">Customer</label><select aria-label="Customer id" name="customer_id" class="form-select"><option value="">None</option><?php foreach ($customers as $cu): ?><option value="<?= $cu['id'] ?>" data-name="<?= htmlspecialchars($cu['name'] ?? '') ?>" data-phone="<?= htmlspecialchars($cu['phone'] ?? '') ?>" data-email="<?= htmlspecialchars($cu['email'] ?? '') ?>"><?= htmlspecialchars($cu['name'] ?? '') ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-6"><label class="form-label">Entity Type</label><select aria-label="Entity type" name="entity_type" class="form-select"><option value="general">General</option><option value="booking">Booking</option><option value="customer">Customer</option><option value="associate">Associate</option><option value="colony">Colony</option><option value="plot">Plot</option><option value="loan">Loan</option></select></div>
                             <div class="col-12">
                                 <label class="form-label">Additional Context (optional)</label>
-                                <textarea name="context" class="form-control" rows="2" placeholder="Any specific instructions for the AI..."></textarea>
+                                <textarea aria-label="Context" name="context" class="form-control" rows="2" placeholder="Any specific instructions for the AI..."></textarea>
                             </div>
                         </div>
                     </div>

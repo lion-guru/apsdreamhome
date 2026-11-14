@@ -162,7 +162,7 @@ $variantNames = array_keys($results);
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? '') ?>">
                             <div class="mb-2">
                                 <label class="form-label small">Declare winner (optional)</label>
-                                <select name="winner" class="form-select form-select-sm">
+                                <select aria-label="Winner" name="winner" class="form-select form-select-sm">
                                     <option value="">— No winner —</option>
                                     <?php foreach ($variantNames as $vn): ?>
                                         <option value="<?= htmlspecialchars($vn ?? '') ?>"><?= htmlspecialchars($vn ?? '') ?></option>

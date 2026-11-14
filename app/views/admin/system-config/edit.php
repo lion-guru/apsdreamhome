@@ -111,7 +111,7 @@ $base = BASE_URL;
                                             <input type="number" name="value" class="form-control" value="<?= htmlspecialchars((string)$value) ?>" step="<?= $type === 'float' ? '0.01' : '1' ?>">
                                             
                                         <?php elseif ($type === 'json' || $type === 'array'): ?>
-                                            <textarea name="value" class="form-control json-editor" rows="10" style="font-size: 0.85rem;"><?= htmlspecialchars(is_array($value) ? json_encode($value, JSON_PRETTY_PRINT) : $value) ?></textarea>
+                                            <textarea aria-label="Value" name="value" class="form-control json-editor" rows="10" style="font-size: 0.85rem;"><?= htmlspecialchars(is_array($value) ? json_encode($value, JSON_PRETTY_PRINT) : $value) ?></textarea>
                                             <div class="form-text">Valid JSON format required</div>
                                             
                                         <?php else: ?>
@@ -136,7 +136,7 @@ $base = BASE_URL;
                                     <div class="row mb-3">
                                         <label class="col-sm-2 col-form-label">Validation Rules (JSON)</label>
                                         <div class="col-sm-10">
-                                            <textarea name="validation_rules" class="form-control json-editor" rows="3"><?= htmlspecialchars(json_encode($config['validation_rules'] ?? [], JSON_PRETTY_PRINT)) ?></textarea>
+                                            <textarea aria-label="Validation rules" name="validation_rules" class="form-control json-editor" rows="3"><?= htmlspecialchars(json_encode($config['validation_rules'] ?? [], JSON_PRETTY_PRINT)) ?></textarea>
                                             <div class="form-text">e.g., {"min": 0, "max": 100, "pattern": "^[a-z]+$"}</div>
                                         </div>
                                     </div>
@@ -144,7 +144,7 @@ $base = BASE_URL;
                                     <div class="row mb-3">
                                         <label class="col-sm-2 col-form-label">Options (JSON)</label>
                                         <div class="col-sm-10">
-                                            <textarea name="options" class="form-control json-editor" rows="3"><?= htmlspecialchars(json_encode($config['options'] ?? [], JSON_PRETTY_PRINT)) ?></textarea>
+                                            <textarea aria-label="Options" name="options" class="form-control json-editor" rows="3"><?= htmlspecialchars(json_encode($config['options'] ?? [], JSON_PRETTY_PRINT)) ?></textarea>
                                             <div class="form-text">For select/radio types: [{"value": "opt1", "label": "Option 1"}]</div>
                                         </div>
                                     </div>

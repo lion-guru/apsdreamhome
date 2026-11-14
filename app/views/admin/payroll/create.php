@@ -47,7 +47,7 @@ $page_title = $page_title ?? 'Create Payroll Run';
                 <h5 class="mb-0 fw-semibold"><i class="fas fa-sticky-note me-2"></i>Notes</h5>
             </div>
             <div class="card-body">
-                <textarea name="notes" class="form-control" rows="3" placeholder="Optional notes for this payroll run..."></textarea>
+                <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Optional notes for this payroll run..."></textarea>
             </div>
         </div>
 

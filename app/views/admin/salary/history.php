@@ -7,7 +7,7 @@
             <form method="get" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
-                    <select name="employee_id" class="form-select">
+                    <select aria-label="Employee id" name="employee_id" class="form-select">
                         <option value="">All users</option>
                         <?php foreach ($users ?? [] as $e): ?>
                         <option value="<?= $e['id'] ?>" <?= ($filter_employee ?? 0) == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name'] ?? '') ?></option>

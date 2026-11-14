@@ -79,7 +79,7 @@ $error = $error ?? null;
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Statuses</option>
                         <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="processed" <?= $status === 'processed' ? 'selected' : '' ?>>Processed</option>

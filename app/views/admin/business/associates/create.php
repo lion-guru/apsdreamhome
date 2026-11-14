@@ -33,14 +33,14 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active" <?= ($old['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                             <option value="inactive" <?= ($old['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                         </select>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Address</label>
-                        <textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($old['address'] ?? '') ?></textarea>
+                        <textarea aria-label="Address" name="address" class="form-control" rows="2"><?= htmlspecialchars($old['address'] ?? '') ?></textarea>
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Create Associate</button>

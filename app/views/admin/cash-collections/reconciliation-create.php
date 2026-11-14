@@ -23,7 +23,7 @@ ob_start();
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Collector (Field Agent) *</label>
-                                <select class="form-select" name="collector_id" required>
+                                <select aria-label="Collector id" class="form-select" name="collector_id" required>
                                     <option value="">Select collector...</option>
                                     <?php foreach ($collectors as $c): ?>
                                         <option value="<?= $c['collector_id'] ?? $c['id'] ?? '' ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -36,7 +36,7 @@ ob_start();
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Notes</label>
-                                <textarea class="form-control" name="notes" rows="3" placeholder="Any notes about this reconciliation session..."></textarea>
+                                <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="Any notes about this reconciliation session..."></textarea>
                             </div>
                         </div>
                     </div>

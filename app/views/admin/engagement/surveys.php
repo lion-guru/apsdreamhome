@@ -72,7 +72,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="scheduled" <?= ($filters['status'] ?? '') === 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
@@ -83,7 +83,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Type</label>
-                    <select name="survey_type" class="form-select form-select-sm">
+                    <select aria-label="Survey type" name="survey_type" class="form-select form-select-sm">
                         <option value="">All Types</option>
                         <?php foreach ($types as $key => $label): ?>
                             <option value="<?= $key ?>" <?= ($filters['survey_type'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>

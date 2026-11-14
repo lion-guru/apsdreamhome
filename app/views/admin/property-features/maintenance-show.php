@@ -76,7 +76,7 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/maintenance/update-status/<?= $r['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <select name="status" class="form-select mb-3">
+                        <select aria-label="Status" name="status" class="form-select mb-3">
                             <option value="open" <?= ($r['status'] ?? '') === 'open' ? 'selected' : '' ?>>Open</option>
                             <option value="in_progress" <?= ($r['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
                             <option value="completed" <?= ($r['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
@@ -92,7 +92,7 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/maintenance/assign/<?= $r['id'] ?>">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <select name="assigned_to" class="form-select mb-3">
+                        <select aria-label="Assigned to" name="assigned_to" class="form-select mb-3">
                             <option value="">-- Select Staff --</option>
                             <?php foreach ($staff as $s): ?>
                                 <option value="<?= $s['id'] ?>" <?= (($r['assigned_to'] ?? 0) == $s['id']) ? 'selected' : '' ?>><?= htmlspecialchars($s['name'] ?? '') ?></option>

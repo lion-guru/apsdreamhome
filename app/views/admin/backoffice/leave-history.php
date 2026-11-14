@@ -4,7 +4,7 @@
   <form class="row g-2 mb-4" method="get">
     <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto">
-      <select name="status" class="form-select">
+      <select aria-label="Status" name="status" class="form-select">
         <option value=""><?= __('bko_all_status') ?></option>
         <option value="pending" <?= $status_filter==='pending'?'selected':'' ?>><?= __('bko_pending') ?></option>
         <option value="approved" <?= $status_filter==='approved'?'selected':'' ?>><?= __('bko_approved') ?></option>

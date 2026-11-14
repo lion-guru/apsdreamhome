@@ -31,7 +31,7 @@ $content = $content ?? '';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?= __('user_ai_valuation_label_location', 'Location') ?></label>
-                                <select class="form-select" id="location" name="location" required>
+                                <select aria-label="Location" class="form-select" id="location" name="location" required>
                                     <option value=""><?= __('user_ai_valuation_select_location', 'Select Location') ?></option>
                                     <?php foreach ($locations as $location): ?>
                                         <option value="<?= htmlspecialchars($location ?? '') ?>"><?= htmlspecialchars($location ?? '') ?></option>
@@ -46,7 +46,7 @@ $content = $content ?? '';
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?= __('user_ai_valuation_label_property_type', 'Property Type') ?></label>
-                                <select class="form-select" id="property_type" name="property_type" required>
+                                <select aria-label="Property type" class="form-select" id="property_type" name="property_type" required>
                                     <option value=""><?= __('user_ai_valuation_select_type', 'Select Type') ?></option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= htmlspecialchars($type, ENT_QUOTES, 'UTF-8') ?>"><?= ucfirst($type) ?></option>

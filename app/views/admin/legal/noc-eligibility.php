@@ -14,7 +14,7 @@
 
             <div class="col-md-6">
                 <label class="form-label fw-medium">Booking</label>
-                <select name="booking_id" class="form-select" required>
+                <select aria-label="Booking id" name="booking_id" class="form-select" required>
                     <option value="">-- Select Booking --</option>
                     <?php foreach (($bookings ?? []) as $bk): ?>
                     <option value="<?= (int)$bk['id'] ?>" <?= ((int)($booking_id ?? 0) === (int)$bk['id']) ? 'selected' : '' ?>>
@@ -28,7 +28,7 @@
 
             <div class="col-md-4">
                 <label class="form-label fw-medium">Check Type</label>
-                <select name="check_type" class="form-select">
+                <select aria-label="Check type" name="check_type" class="form-select">
                     <option value="registry" <?= (($check_type ?? 'registry') === 'registry') ? 'selected' : '' ?>>Registry</option>
                     <option value="noc" <?= (($check_type ?? '') === 'noc') ? 'selected' : '' ?>>NOC</option>
                 </select>

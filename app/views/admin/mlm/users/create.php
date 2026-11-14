@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Sponsor</label>
-                    <select name="sponsor_id" class="form-select" id="sponsorSelect">
+                    <select aria-label="Sponsor id" name="sponsor_id" class="form-select" id="sponsorSelect">
                         <option value="">No Sponsor (Top Level)</option>
                         <?php foreach ($sponsors as $s): ?>
                             <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] . ' (' . $s['email'] . ')') ?></option>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Level</label>
-                    <select name="level" class="form-select">
+                    <select aria-label="Level" name="level" class="form-select">
                         <?php foreach ($levels as $l): ?>
                             <option value="<?= $l ?>"><?= ucfirst($l) ?></option>
                         <?php endforeach; ?>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                         <option value="suspended">Suspended</option>
@@ -54,7 +54,7 @@
                 <div class="col-12"><hr><h6 class="text-muted"><i class="fas fa-user-tag"></i> Agent Track, Brokerage & Telecaller Settings</h6></div>
                 <div class="col-md-4">
                     <label class="form-label">Agent Track</label>
-                    <select name="agent_track" id="agentTrack" class="form-select" onchange="toggleBrokerageFields()">
+                    <select aria-label="Agent track" name="agent_track" id="agentTrack" class="form-select" onchange="toggleBrokerageFields()">
                         <option value="mlm">MLM (Network Marketing)</option>
                         <option value="independent">Independent Agent (Flat Commission)</option>
                         <option value="telecaller">Telecaller / Freelancer (Incentives & Overrides)</option>
@@ -65,7 +65,7 @@
                 <!-- Independent Broker fields -->
                 <div class="col-md-4 brokerage-field">
                     <label class="form-label">Brokerage Model</label>
-                    <select name="brokerage_model" id="brokerageModel" class="form-select" onchange="toggleBrokerageRate()">
+                    <select aria-label="Brokerage model" name="brokerage_model" id="brokerageModel" class="form-select" onchange="toggleBrokerageRate()">
                         <option value="differential">Differential (MLM Default)</option>
                         <option value="flat_percentage">Flat Percentage (%)</option>
                         <option value="flat_rate_sqft">Flat Rate per SqFt (₹)</option>
@@ -83,7 +83,7 @@
                 <!-- Telecaller/Freelancer fields -->
                 <div class="col-md-4 telecaller-field">
                     <label class="form-label">Telecaller Team Lead / Parent</label>
-                    <select name="telecaller_parent_id" class="form-select">
+                    <select aria-label="Telecaller parent id" name="telecaller_parent_id" class="form-select">
                         <option value="">No Team Lead (Top level)</option>
                         <?php if (!empty($telecallers)): foreach ($telecallers as $tc): ?>
                             <option value="<?= $tc['id'] ?>"><?= htmlspecialchars($tc['name'] . ' (' . $tc['email'] . ')') ?></option>

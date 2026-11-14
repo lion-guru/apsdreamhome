@@ -45,7 +45,7 @@ $total_circle_rates = $total_circle_rates ?? 0;
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Property Type</label>
-                            <select name="property_type" class="form-select">
+                            <select aria-label="Property type" name="property_type" class="form-select">
                                 <option value="residential">Residential</option>
                                 <option value="commercial">Commercial</option>
                                 <option value="industrial">Industrial</option>

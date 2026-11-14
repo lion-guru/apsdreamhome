@@ -67,7 +67,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Comment <span class="text-danger">*</span></label>
-                                <textarea class="form-control" name="comment" rows="4" required placeholder="Share your thoughts..."></textarea>
+                                <textarea aria-label="Comment" class="form-control" name="comment" rows="4" required placeholder="Share your thoughts..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Submit Comment</button>
                             <small class="text-muted ms-2">Your comment will be reviewed before publishing.</small>

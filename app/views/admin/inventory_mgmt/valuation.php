@@ -9,7 +9,7 @@ $method = $method ?? 'weighted_average';
             <form method="get" class="d-inline" onsubmit="return confirm('Change valuation method to ' + document.querySelector('select[name=\"method\"]').value + '?');">
                 <input type="hidden" name="method" id="methodSelect" value="<?= htmlspecialchars($method) ?>">
                 <label class="me-2" style="margin-bottom:0;">Method:</label>
-                <select name="method" class="form-select form-select-sm d-inline w-auto" style="display:none;" id="methodField">
+                <select aria-label="Method" name="method" class="form-select form-select-sm d-inline w-auto" style="display:none;" id="methodField">
                     <option value="weighted_average" <?= $method === 'weighted_average' ? 'selected' : '' ?>>Weighted Average</option>
                     <option value="fifo" <?= $method === 'fifo' ? 'selected' : '' ?>>FIFO</option>
                     <option value="lifo" <?= $method === 'lifo' ? 'selected' : '' ?>>LIFO</option>

@@ -31,7 +31,7 @@
                     <input type="text" name="city" class="form-control" placeholder="City..." value="<?= htmlspecialchars($city ?? '') ?>">
                 </div>
                 <div class="col-md-2">
-                    <select name="sort" class="form-control">
+                    <select aria-label="Sort" name="sort" class="form-control">
                         <option value="latest" <?= $sort === 'latest' ? 'selected' : '' ?>>Latest</option>
                         <option value="rating" <?= $sort === 'rating' ? 'selected' : '' ?>>Top Rated</option>
                         <option value="views" <?= $sort === 'views' ? 'selected' : '' ?>>Most Viewed</option>

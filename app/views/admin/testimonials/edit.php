@@ -26,7 +26,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Rating</label>
-                                    <select name="rating" class="form-select" required>
+                                    <select aria-label="Rating" name="rating" class="form-select" required>
                                         <?php for ($i = 5; $i >= 1; $i--): ?>
                                             <option value="<?php echo e($i); ?>" <?php echo ($testimonial['rating'] == $i) ? 'selected' : ''; ?>>
                                                 <?php echo str_repeat('⭐', $i); ?> (<?php echo e($i); ?> Star<?php echo $i > 1 ? 's' : ''; ?>)
@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="pending" <?php echo ($testimonial['status'] == 'pending') ? 'selected' : ''; ?>>Pending</option>
                                         <option value="approved" <?php echo ($testimonial['status'] == 'approved') ? 'selected' : ''; ?>>Approved</option>
                                         <option value="rejected" <?php echo ($testimonial['status'] == 'rejected') ? 'selected' : ''; ?>>Rejected</option>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Testimonial Content</label>
-                            <textarea name="content" class="form-control" rows="5" required placeholder="Customer's feedback..."><?php echo htmlspecialchars($testimonial['content'] ?? ''); ?></textarea>
+                            <textarea aria-label="Content" name="content" class="form-control" rows="5" required placeholder="Customer's feedback..."><?php echo htmlspecialchars($testimonial['content'] ?? ''); ?></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Update Testimonial</button>
                         <a href="<?php echo BASE_URL; ?>/admin/testimonials" class="btn btn-secondary">Cancel</a>

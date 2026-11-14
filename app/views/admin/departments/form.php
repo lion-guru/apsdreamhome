@@ -53,7 +53,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select name="status" class="form-control">
+                                    <select aria-label="Status" name="status" class="form-control">
                                         <option value="active" <?= ($department['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                                         <option value="inactive" <?= ($department['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                                     </select>
@@ -63,7 +63,7 @@
 
                         <div class="form-group">
                             <label>Description</label>
-                            <textarea name="description" class="form-control" rows="3"
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3"
                                       placeholder="Brief description of department responsibilities"><?= htmlspecialchars($department['description'] ?? '') ?></textarea>
                         </div>
 
@@ -71,7 +71,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Department Head</label>
-                                    <select name="head_user_id" class="form-control">
+                                    <select aria-label="Head user id" name="head_user_id" class="form-control">
                                         <option value="">— Select Head —</option>
                                         <?php foreach ($users as $u): ?>
                                             <option value="<?= $u['id'] ?>" <?= ($department['head_user_id'] ?? '') == $u['id'] ? 'selected' : '' ?>>
@@ -84,7 +84,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Parent Department</label>
-                                    <select name="parent_dept_id" class="form-control">
+                                    <select aria-label="Parent dept id" name="parent_dept_id" class="form-control">
                                         <option value="">— None (Root) —</option>
                                         <?php foreach ($departments as $d): ?>
                                             <?php if (!$department || $d['id'] != $department['id']): ?>

@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Role <span class="text-danger">*</span></label>
-                            <select class="form-select" name="role" id="roleSelect" required>
+                            <select aria-label="Role" class="form-select" name="role" id="roleSelect" required>
                                 <?php if (!empty($roleGroups) && is_array($roleGroups)): ?>
                                     <?php foreach ($roleGroups as $groupLabel => $groupRoles): ?>
                                         <?php
@@ -87,7 +87,7 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Department</label>
-                                    <select class="form-select" name="department">
+                                    <select aria-label="Department" class="form-select" name="department">
                                         <option value="General">General</option>
                                         <option value="HR">HR</option>
                                         <option value="IT">IT</option>

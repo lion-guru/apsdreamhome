@@ -42,7 +42,7 @@ $holiday_types = $holiday_types ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
-                        <select name="type" class="form-select" required>
+                        <select aria-label="Type" name="type" class="form-select" required>
                             <option value="">Select type</option>
                             <?php foreach ($holiday_types as $key => $label): ?>
                                 <option value="<?= $key ?>" <?= ($holiday['type'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
@@ -51,7 +51,7 @@ $holiday_types = $holiday_types ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Region</label>
-                        <select name="region" class="form-select">
+                        <select aria-label="Region" name="region" class="form-select">
                             <option value="">All Regions</option>
                             <option value="IN" <?= ($holiday['region'] ?? '') === 'IN' ? 'selected' : '' ?>>India</option>
                             <option value="US" <?= ($holiday['region'] ?? '') === 'US' ? 'selected' : '' ?>>United States</option>
@@ -86,7 +86,7 @@ $holiday_types = $holiday_types ?? [];
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Description</label>
-                    <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($holiday['description'] ?? '') ?></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= htmlspecialchars($holiday['description'] ?? '') ?></textarea>
                 </div>
                 <div class="row g-3">
                     <div class="col-md-6">

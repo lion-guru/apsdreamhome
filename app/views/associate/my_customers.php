@@ -187,7 +187,7 @@ $customers = $customers ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold"><?= __('assoc_cust_invite_message', [], 'Personal Message') ?> (<?= __('assoc_cust_optional', [], 'Optional') ?>)</label>
-                    <textarea id="inviteMessage" class="form-control" rows="3" placeholder="<?= __('assoc_cust_invite_placeholder', [], 'Hi! I\'ve been working with APS Dream Home and it\'s been great. You should check it out too!') ?>"><?= __('assoc_cust_invite_default_msg', [], 'Hi! I\'ve been working with APS Dream Home and earning good commissions. You should join as an associate too - let me know if you\'re interested!') ?></textarea>
+                    <textarea aria-label="Invite message" id="inviteMessage" class="form-control" rows="3" placeholder="<?= __('assoc_cust_invite_placeholder', [], 'Hi! I\'ve been working with APS Dream Home and it\'s been great. You should check it out too!') ?>"><?= __('assoc_cust_invite_default_msg', [], 'Hi! I\'ve been working with APS Dream Home and earning good commissions. You should join as an associate too - let me know if you\'re interested!') ?></textarea>
                 </div>
             </div>
             <div class="modal-footer">

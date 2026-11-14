@@ -16,7 +16,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-auto">
                 <label class="form-label small">Account</label>
-                <select name="account_id" class="form-select">
+                <select aria-label="Account id" name="account_id" class="form-select">
                     <option value="">All Accounts</option>
                     <?php foreach ($accounts as $a): ?>
                         <option value="<?= $a['id'] ?>" <?= ($filters['account_id'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['account_name'] ?? '') ?></option>
@@ -25,7 +25,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-auto">
                 <label class="form-label small">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All</option>
                     <?php foreach (['new','contacted','qualified','converted','junk','duplicate'] as $s): ?>
                         <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

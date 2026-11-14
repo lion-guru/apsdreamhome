@@ -148,7 +148,7 @@ $frequencyOptions = [
                 <div class="col-md-6">
                     <h5 class="mb-3"><i class="fas fa-clock me-2 text-warning"></i><?= __('notif_freq_title', null, 'Delivery Frequency') ?></h5>
                     <p class="text-muted small mb-2"><?= __('notif_freq_desc', null, 'How often would you like non-urgent notifications grouped together?') ?></p>
-                    <select name="frequency" class="form-select" id="frequency-select">
+                    <select aria-label="Frequency" name="frequency" class="form-select" id="frequency-select">
                         <?php foreach ($frequencyOptions as $val => $label): ?>
                             <option value="<?= htmlspecialchars($val ?? '') ?>" <?= $frequency === $val ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($label ?? '') ?>

@@ -81,7 +81,7 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="pending" <?= $currentStatus === 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="approved" <?= $currentStatus === 'approved' ? 'selected' : '' ?>>Approved</option>
@@ -92,7 +92,7 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">User Type</label>
-                    <select name="user_type" class="form-select form-select-sm">
+                    <select aria-label="User type" name="user_type" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="customer" <?= $currentUserType === 'customer' ? 'selected' : '' ?>>Customer</option>
                         <option value="associate" <?= $currentUserType === 'associate' ? 'selected' : '' ?>>Associate</option>
@@ -282,7 +282,7 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
                     <p>Are you sure you want to <strong>approve</strong> this withdrawal request?</p>
                     <div class="mb-3">
                         <label class="form-label">Admin Notes (Optional)</label>
-                        <textarea name="admin_notes" class="form-control" rows="2" placeholder="Add notes for the user..."></textarea>
+                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="2" placeholder="Add notes for the user..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -310,7 +310,7 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
                     <p class="text-danger"><strong>Warning:</strong> This will reject the withdrawal and refund the amount to the user's wallet.</p>
                     <div class="mb-3">
                         <label class="form-label">Rejection Reason <span class="text-danger">*</span></label>
-                        <textarea name="admin_notes" class="form-control" rows="3" required placeholder="Enter reason for rejection..."></textarea>
+                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="3" required placeholder="Enter reason for rejection..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -338,7 +338,7 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
                     <p>Mark this approved withdrawal as <strong>completed</strong>?</p>
                     <div class="mb-3">
                         <label class="form-label">Admin Notes (Optional)</label>
-                        <textarea name="admin_notes" class="form-control" rows="2" placeholder="Add completion notes..."></textarea>
+                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="2" placeholder="Add completion notes..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

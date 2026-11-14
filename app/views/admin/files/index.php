@@ -105,7 +105,7 @@
         <div class="card-body aps-cp-card-body">
             <form method="GET" class="row">
                 <div class="col-md-3">
-                    <select name="category" class="form-control">
+                    <select aria-label="Category" name="category" class="form-control">
                         <option value="">All Categories</option>
                         <option value="property" <?= $category === 'property' ? 'selected' : '' ?>>Property</option>
                         <option value="user" <?= $category === 'user' ? 'selected' : '' ?>>User</option>

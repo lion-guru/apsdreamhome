@@ -82,7 +82,7 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
 <form method="GET" class="row g-3 mb-4">
     <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-md-2">
-        <select class="form-select" name="type">
+        <select aria-label="Type" class="form-select" name="type">
             <option value="">All Types</option>
             <?php foreach (['sale_deed' => 'Sale Deed', 'allotment' => 'Allotment', 'mortgage' => 'Mortgage', 'lease' => 'Lease', 'nda' => 'NDA', 'joint_venture' => 'Joint Venture', 'other' => 'Other'] as $val => $label): ?>
                 <option value="<?= $val ?>" <?= ($filters['type'] ?? '') === $val ? 'selected' : '' ?>><?= $label ?></option>
@@ -90,7 +90,7 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
         </select>
     </div>
     <div class="col-md-2">
-        <select class="form-select" name="status">
+        <select aria-label="Status" class="form-select" name="status">
             <option value="">All Status</option>
             <?php foreach (['draft' => 'Draft', 'pending_signature' => 'Pending Signature', 'signed' => 'Signed', 'registered' => 'Registered', 'cancelled' => 'Cancelled', 'expired' => 'Expired'] as $val => $label): ?>
                 <option value="<?= $val ?>" <?= ($filters['status'] ?? '') === $val ? 'selected' : '' ?>><?= $label ?></option>

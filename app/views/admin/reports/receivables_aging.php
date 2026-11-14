@@ -33,7 +33,7 @@ $buckets = $data['buckets'] ?? [];
                         </div>
                         <div class="col-md-3">
                             <label>Colony</label>
-                            <select name="colony_id" class="form-control">
+                            <select aria-label="Colony id" name="colony_id" class="form-control">
                                 <option value="0">All Colonies</option>
                                 <?php foreach ($colonies as $c) : ?>
                                     <option value="<?php echo (int)$c['id']; ?>" <?php if ($colonyId === (int)$c['id']) echo 'selected'; ?>><?php echo htmlspecialchars($c['name']); ?></option>

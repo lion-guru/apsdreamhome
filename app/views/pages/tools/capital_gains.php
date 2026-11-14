@@ -21,7 +21,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="holdPeriod"><?php echo __('holding_period', [], 'Holding Period'); ?></label>
-                                <select class="form-select" id="holdPeriod">
+                                <select aria-label="Hold period" class="form-select" id="holdPeriod">
                                     <option value="short"><?php echo __('short_term', [], 'Short Term (≤ 2 years)'); ?></option>
                                     <option value="long" selected><?php echo __('long_term', [], 'Long Term (> 2 years)'); ?></option>
                                 </select>
@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="indexation"><?php echo __('indexation', [], 'Indexation Benefit?'); ?></label>
-                                <select class="form-select" id="indexation">
+                                <select aria-label="Indexation" class="form-select" id="indexation">
                                     <option value="yes"><?php echo __('yes', [], 'Yes'); ?></option>
                                     <option value="no"><?php echo __('no', [], 'No'); ?></option>
                                 </select>

@@ -61,7 +61,7 @@ ob_start();
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label small">Month</label>
-                            <select name="month" class="form-select form-select-sm">
+                            <select aria-label="Month" name="month" class="form-select form-select-sm">
                                 <?php foreach ($months as $k => $v): ?>
                                     <option value="<?= $k ?>" <?= $k == $month ? 'selected' : '' ?>><?= $v ?></option>
                                 <?php endforeach; ?>
@@ -73,7 +73,7 @@ ob_start();
                         </div>
                         <div class="col-12">
                             <label class="form-label small">FY</label>
-                            <select name="fy" class="form-select form-select-sm">
+                            <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                                 <?php foreach ($fy_list as $k => $v): ?>
                                     <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                                 <?php endforeach; ?>
@@ -95,7 +95,7 @@ ob_start();
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label small">Month</label>
-                            <select name="month" class="form-select form-select-sm">
+                            <select aria-label="Month" name="month" class="form-select form-select-sm">
                                 <?php foreach ($months as $k => $v): ?>
                                     <option value="<?= $k ?>" <?= $k == $month ? 'selected' : '' ?>><?= $v ?></option>
                                 <?php endforeach; ?>
@@ -107,7 +107,7 @@ ob_start();
                         </div>
                         <div class="col-12">
                             <label class="form-label small">FY</label>
-                            <select name="fy" class="form-select form-select-sm">
+                            <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                                 <?php foreach ($fy_list as $k => $v): ?>
                                     <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                                 <?php endforeach; ?>

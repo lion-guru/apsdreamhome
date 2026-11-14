@@ -12,7 +12,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="5"><?php echo htmlspecialchars($event['description'] ?? ''); ?></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="5"><?php echo htmlspecialchars($event['description'] ?? ''); ?></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Event Date</label>
@@ -24,7 +24,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-control">
+                            <select aria-label="Status" name="status" class="form-control">
                                 <option value="active" <?php echo (isset($event['status']) && $event['status'] == 'active') ? 'selected' : ''; ?>>Active</option>
                                 <option value="inactive" <?php echo (isset($event['status']) && $event['status'] == 'inactive') ? 'selected' : ''; ?>>Inactive</option>
                             </select>

@@ -17,7 +17,7 @@ $filters = $filters ?? [];
         <div class="card-body py-2">
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-auto">
-                    <select name="employee_id" class="form-select form-select-sm">
+                    <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm">
                         <option value="">All users</option>
                         <?php foreach ($users as $emp): ?>
                             <option value="<?= $emp['id'] ?>" <?= ($filters['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -25,7 +25,7 @@ $filters = $filters ?? [];
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="shift_type_id" class="form-select form-select-sm">
+                    <select aria-label="Shift type id" name="shift_type_id" class="form-select form-select-sm">
                         <option value="">All Shift Types</option>
                         <?php foreach ($shift_types as $st): ?>
                             <option value="<?= $st['id'] ?>" <?= ($filters['shift_type_id'] ?? '') == $st['id'] ? 'selected' : '' ?>><?= htmlspecialchars($st['name'] ?? '') ?></option>
@@ -33,7 +33,7 @@ $filters = $filters ?? [];
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="scheduled" <?= ($filters['status'] ?? '') == 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
                         <option value="confirmed" <?= ($filters['status'] ?? '') == 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
@@ -103,7 +103,7 @@ $filters = $filters ?? [];
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
                         <label class="form-label" for="asEmployee">Employee *</label>
-                        <select class="form-select" id="asEmployee" name="employee_id" required>
+                        <select aria-label="Employee id" class="form-select" id="asEmployee" name="employee_id" required>
                             <option value="">Select employee</option>
                             <?php foreach ($users as $emp): ?>
                                 <option value="<?= (int)$emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? ('ID ' . $emp['id'])) ?></option>
@@ -112,7 +112,7 @@ $filters = $filters ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="asShiftType">Shift Type *</label>
-                        <select class="form-select" id="asShiftType" name="shift_type_id" required>
+                        <select aria-label="Shift type id" class="form-select" id="asShiftType" name="shift_type_id" required>
                             <option value="">Select shift type</option>
                             <?php foreach ($shift_types as $st): ?>
                                 <option value="<?= (int)$st['id'] ?>" data-start="<?= htmlspecialchars($st['start_time'] ?? '') ?>" data-end="<?= htmlspecialchars($st['end_time'] ?? '') ?>"><?= htmlspecialchars($st['name'] ?? '') ?><?= !empty($st['start_time']) ? ' (' . htmlspecialchars($st['start_time'] . '-' . ($st['end_time'] ?? '')) . ')' : '' ?></option>

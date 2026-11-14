@@ -83,7 +83,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Category</label>
-                        <select name="category" class="form-select">
+                        <select aria-label="Category" name="category" class="form-select">
                             <option value="school">School</option>
                             <option value="hospital">Hospital</option>
                             <option value="mall">Mall</option>

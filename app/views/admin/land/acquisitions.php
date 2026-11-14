@@ -75,7 +75,7 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <label class="form-label small mb-1">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="in_progress" <?php echo ($filters['status'] ?? '') === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                         <option value="registered" <?php echo ($filters['status'] ?? '') === 'registered' ? 'selected' : ''; ?>>Registered</option>
@@ -86,7 +86,7 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
                 </div>
                 <div class="col-auto">
                     <label class="form-label small mb-1">Mutation Status</label>
-                    <select name="mutation_status" class="form-select form-select-sm">
+                    <select aria-label="Mutation status" name="mutation_status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="not_started" <?php echo ($filters['mutation_status'] ?? '') === 'not_started' ? 'selected' : ''; ?>>Not Started</option>
                         <option value="applied" <?php echo ($filters['mutation_status'] ?? '') === 'applied' ? 'selected' : ''; ?>>Applied</option>

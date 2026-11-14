@@ -12,7 +12,7 @@ $report = $report ?? null;
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
                 <label class="form-label small">Employee</label>
-                <select name="employee_id" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Employee id" name="employee_id" class="form-select" onchange="this.form.submit()">
                     <option value="">Select Employee</option>
                     <?php foreach ($users ?? [] as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= ($emp_id ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>

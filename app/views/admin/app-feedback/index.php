@@ -113,7 +113,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
-                    <select name="type" class="form-select">
+                    <select aria-label="Type" name="type" class="form-select">
                         <option value="">All Types</option>
                         <option value="bug" <?= ($filters['type'] ?? '') === 'bug' ? 'selected' : '' ?>>Bug</option>
                         <option value="feature" <?= ($filters['type'] ?? '') === 'feature' ? 'selected' : '' ?>>Feature</option>
@@ -123,7 +123,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select name="platform" class="form-select">
+                    <select aria-label="Platform" name="platform" class="form-select">
                         <option value="">All Platforms</option>
                         <option value="android" <?= ($filters['platform'] ?? '') === 'android' ? 'selected' : '' ?>>Android</option>
                         <option value="ios" <?= ($filters['platform'] ?? '') === 'ios' ? 'selected' : '' ?>>iOS</option>

@@ -15,7 +15,7 @@ $today = $today ?? date('Y-m-d');
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Purchase Order <span class="text-danger">*</span></label>
-                    <select name="purchase_order_id" id="purchase_order_id" class="form-select" required onchange="loadPoItems(this.value)">
+                    <select aria-label="Purchase order id" name="purchase_order_id" id="purchase_order_id" class="form-select" required onchange="loadPoItems(this.value)">
                         <option value="">-- Select an approved/received PO --</option>
                         <?php foreach ($pos as $po): ?>
                         <option value="<?= $po['id'] ?>"><?= htmlspecialchars($po['order_number']) ?> — <?= htmlspecialchars($po['vendor_name']) ?> (₹<?= number_format($po['total_amount'] ?? 0, 2) ?>)</option>
@@ -51,7 +51,7 @@ $today = $today ?? date('Y-m-d');
 
             <div class="mt-4">
                 <label class="form-label">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="draft">Draft</option>
                     <option value="verified">Verified</option>
                     <option value="accepted">Accepted</option>

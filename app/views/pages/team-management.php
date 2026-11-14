@@ -185,7 +185,7 @@ $base = $base ?? BASE_URL;
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('team_label_position', [], 'Position') ?></label>
-                        <select name="position" class="form-control">
+                        <select aria-label="Position" name="position" class="form-control">
                             <option value="left">Left</option>
                             <option value="right">Right</option>
                         </select>

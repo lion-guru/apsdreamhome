@@ -14,7 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <form method="get" class="row g-2 mb-3 align-items-end">
             <div class="col-md-4">
                 <label class="form-label small"><?= __('sale_colony') ?></label>
-                <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                     <?php foreach ($colonies as $c): ?>
                         <option value="<?= (int)($c['id'] ?? 0) ?>" <?= ((int)($c['id'] ?? 0) === $selected_colony) ? 'selected' : '' ?>>
                             <?= htmlspecialchars((string)($c['name'] ?? '')) ?>
@@ -66,7 +66,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small"><?= __('sale_quarter') ?></label>
-                    <select name="quarter" class="form-select form-select-sm" required>
+                    <select aria-label="Quarter" name="quarter" class="form-select form-select-sm" required>
                         <?php foreach (['Q1', 'Q2', 'Q3', 'Q4'] as $q): ?>
                             <option value="<?= $q ?>"><?= $q ?></option>
                         <?php endforeach; ?>

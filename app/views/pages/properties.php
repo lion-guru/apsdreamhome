@@ -171,7 +171,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="type" class="form-label"><?= __('filter_type') ?></label>
-                        <select class="form-select" id="type" name="type">
+                        <select aria-label="Type" class="form-select" id="type" name="type">
                             <option value=""><?= __('all') ?></option>
                             <?php foreach (['plot','house','flat','shop','farmhouse','villa','land'] as $t): ?>
                                 <option value="<?= e($t ?? '') ?>" <?= ($_GET['type'] ?? '') === $t ? 'selected' : ''; ?>><?= ucfirst($t) ?></option>
@@ -180,7 +180,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="listing" class="form-label"><?= __('filter_listing') ?></label>
-                        <select class="form-select" id="listing" name="listing">
+                        <select aria-label="Listing" class="form-select" id="listing" name="listing">
                             <option value=""><?= __('buy_and_rent') ?></option>
                             <option value="sell" <?= ($_GET['listing'] ?? '') === 'sell' ? 'selected' : ''; ?>><?= __('for_sale') ?></option>
                             <option value="rent" <?= ($_GET['listing'] ?? '') === 'rent' ? 'selected' : ''; ?>><?= __('for_rent') ?></option>
@@ -188,7 +188,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="location" class="form-label"><?= __('filter_location') ?></label>
-                        <select class="form-select" id="location" name="location">
+                        <select aria-label="Location" class="form-select" id="location" name="location">
                             <option value=""><?= __('all') ?></option>
                             <?php foreach (($locations ?? []) as $loc): ?>
                                 <option value="<?= htmlspecialchars($loc ?? '') ?>" <?= ($_GET['location'] ?? '') === $loc ? 'selected' : ''; ?>><?= htmlspecialchars($loc ?? '') ?></option>
@@ -197,7 +197,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="sort" class="form-label"><?= __('sort_by') ?></label>
-                        <select class="form-select" id="sort" name="sort" onchange="document.getElementById('propertyFilterForm').submit()">
+                        <select aria-label="Sort" class="form-select" id="sort" name="sort" onchange="document.getElementById('propertyFilterForm').submit()">
                             <option value="newest" <?= ($_GET['sort'] ?? 'newest') === 'newest' ? 'selected' : ''; ?>><?= __('newest_first') ?></option>
                             <option value="oldest" <?= ($_GET['sort'] ?? '') === 'oldest' ? 'selected' : ''; ?>><?= __('oldest_first') ?></option>
                             <option value="price_low" <?= ($_GET['sort'] ?? '') === 'price_low' ? 'selected' : ''; ?>><?= __('price_low_high') ?></option>
@@ -207,7 +207,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="bedrooms" class="form-label"><?= __('bedrooms_min') ?></label>
-                        <select class="form-select" id="bedrooms" name="bedrooms">
+                        <select aria-label="Bedrooms" class="form-select" id="bedrooms" name="bedrooms">
                             <option value=""><?= __('any') ?></option>
                             <?php foreach ([1,2,3,4,5] as $b): ?>
                                 <option value="<?= $b ?>" <?= ($_GET['bedrooms'] ?? '') == $b ? 'selected' : ''; ?>><?= $b ?>+ <?= __('bhk') ?></option>
@@ -216,7 +216,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="bathrooms" class="form-label"><?= __('bathrooms_min') ?></label>
-                        <select class="form-select" id="bathrooms" name="bathrooms">
+                        <select aria-label="Bathrooms" class="form-select" id="bathrooms" name="bathrooms">
                             <option value=""><?= __('any') ?></option>
                             <?php foreach ([1,2,3,4] as $b): ?>
                                 <option value="<?= $b ?>" <?= ($_GET['bathrooms'] ?? '') == $b ? 'selected' : ''; ?>><?= $b ?>+</option>
@@ -225,7 +225,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="furnished" class="form-label"><?= __('furnished') ?></label>
-                        <select class="form-select" id="furnished" name="furnished">
+                        <select aria-label="Furnished" class="form-select" id="furnished" name="furnished">
                             <option value=""><?= __('any') ?></option>
                             <option value="unfurnished" <?= ($_GET['furnished'] ?? '') === 'unfurnished' ? 'selected' : ''; ?>><?= __('unfurnished') ?></option>
                             <option value="semi-furnished" <?= ($_GET['furnished'] ?? '') === 'semi-furnished' ? 'selected' : ''; ?>><?= __('semi_furnished') ?></option>
@@ -234,7 +234,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="min_price" class="form-label"><?= __('min_price') ?></label>
-                        <select class="form-select" id="min_price" name="min_price">
+                        <select aria-label="Min price" class="form-select" id="min_price" name="min_price">
                             <option value=""><?= __('no_min') ?></option>
                             <?php foreach ([100000=>'1L',500000=>'5L',1000000=>'10L',2000000=>'20L',5000000=>'50L',10000000=>'1Cr'] as $val=>$lbl): ?>
                                 <option value="<?= $val ?>" <?= ($_GET['min_price'] ?? '') == $val ? 'selected' : ''; ?>>&#8377;<?= $lbl ?></option>
@@ -243,7 +243,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="max_price" class="form-label"><?= __('max_price') ?></label>
-                        <select class="form-select" id="max_price" name="max_price">
+                        <select aria-label="Max price" class="form-select" id="max_price" name="max_price">
                             <option value=""><?= __('no_max') ?></option>
                             <?php foreach ([500000=>'5L',1000000=>'10L',2000000=>'20L',5000000=>'50L',10000000=>'1Cr',20000000=>'2Cr',50000000=>'5Cr'] as $val=>$lbl): ?>
                                 <option value="<?= $val ?>" <?= ($_GET['max_price'] ?? '') == $val ? 'selected' : ''; ?>>&#8377;<?= $lbl ?></option>
@@ -650,13 +650,13 @@ function submitPropertyInterest(e) {
                 <form id="aiSearchForm">
                     <div class="mb-3">
                         <label class="form-label fw-medium"><?= __('describe_your_dream_home') ?></label>
-                        <textarea class="form-control" name="query" rows="4" placeholder="<?= __('ai_search_placeholder') ?>" required></textarea>
+                        <textarea aria-label="Query" class="form-control" name="query" rows="4" placeholder="<?= __('ai_search_placeholder') ?>" required></textarea>
                         <div class="form-text"><?= __('ai_search_help') ?></div>
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label"><?= __('budget_range') ?></label>
-                            <select class="form-select" name="budget_range">
+                            <select aria-label="Budget range" class="form-select" name="budget_range">
                                 <option value=""><?= __('any_budget') ?></option>
                                 <option value="0-500000"><?= __('under_5l') ?></option>
                                 <option value="500000-1000000"><?= __('5l_10l') ?></option>
@@ -668,7 +668,7 @@ function submitPropertyInterest(e) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label"><?= __('property_type') ?></label>
-                            <select class="form-select" name="property_type">
+                            <select aria-label="Property type" class="form-select" name="property_type">
                                 <option value=""><?= __('any_type') ?></option>
                                 <option value="plot">Plot</option>
                                 <option value="flat">Flat/Apartment</option>

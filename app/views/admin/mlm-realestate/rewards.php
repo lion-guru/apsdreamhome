@@ -280,7 +280,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Admin Dispatch Notes</label>
-                                                                        <textarea name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Dispatch instructions or remarks..."></textarea>
+                                                                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Dispatch instructions or remarks..."></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer bg-light p-2">
@@ -313,7 +313,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Remarks & Handover Notes</label>
-                                                                        <textarea name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Keys / Device officially handed over in presence of Management..."></textarea>
+                                                                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Keys / Device officially handed over in presence of Management..."></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer bg-light p-2">
@@ -344,7 +344,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Ledger Memo</label>
-                                                                        <textarea name="notes" class="form-control form-control-sm" rows="2">Cash equivalent disbursed for <?php echo htmlspecialchars($c['reward_name']); ?></textarea>
+                                                                        <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2">Cash equivalent disbursed for <?php echo htmlspecialchars($c['reward_name']); ?></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer bg-light p-2">
@@ -369,7 +369,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                 <div class="modal-body p-3">
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Reason for Rejection</label>
-                                                                        <textarea name="reason" class="form-control form-control-sm" rows="3" required placeholder="Specify why the claim was rejected (e.g. team legs criteria not met, unverified bookings)..."></textarea>
+                                                                        <textarea aria-label="Reason" name="reason" class="form-control form-control-sm" rows="3" required placeholder="Specify why the claim was rejected (e.g. team legs criteria not met, unverified bookings)..."></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer bg-light p-2">

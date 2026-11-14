@@ -102,7 +102,7 @@ $stored = $health['stored_models'] ?? [];
             <form id="ragModelForm" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label small">Embedding model</label>
-                    <select class="form-select" name="model" id="ragModel">
+                    <select aria-label="Model" class="form-select" name="model" id="ragModel">
                         <option value="gemini-embedding-001" <?= (($health['configured_model'] ?? '') === 'gemini-embedding-001') ? 'selected' : '' ?>>Gemini gemini-embedding-001 (FREE, 3072-dim)</option>
                         <option value="hf-all-MiniLM-L6-v2" <?= (($health['configured_model'] ?? '') === 'hf-all-MiniLM-L6-v2') ? 'selected' : '' ?>>HuggingFace all-MiniLM-L6-v2 (needs PRO)</option>
                     </select>
@@ -110,7 +110,7 @@ $stored = $health['stored_models'] ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Mode</label>
-                    <select class="form-select" name="mode">
+                    <select aria-label="Mode" class="form-select" name="mode">
                         <option value="incremental">Stale chunks only (idempotent)</option>
                         <option value="force">Force — rewrite every chunk</option>
                     </select>

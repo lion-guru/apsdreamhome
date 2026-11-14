@@ -23,7 +23,7 @@ $colony = $colony ?? null;
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Layout Type</label>
-            <select name="layout_type" class="form-select bg-dark text-white border-secondary">
+            <select aria-label="Layout type" name="layout_type" class="form-select bg-dark text-white border-secondary">
               <option value="residential">Residential</option>
               <option value="commercial">Commercial</option>
               <option value="mixed">Mixed Use</option>
@@ -55,7 +55,7 @@ $colony = $colony ?? null;
           </div>
           <div class="col-md-12">
             <label class="form-label text-white">Notes</label>
-            <textarea name="notes" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Additional planning notes..."></textarea>
+            <textarea aria-label="Notes" name="notes" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Additional planning notes..."></textarea>
           </div>
         </div>
 

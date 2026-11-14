@@ -124,7 +124,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('visit_type_label', [], 'Visit Type') ?></label>
-                                <select class="form-select" name="visit_type">
+                                <select aria-label="Visit type" class="form-select" name="visit_type">
                                     <option value="site_visit">🏠 <?= __('visit_type_site', [], 'Site Visit (in-person)') ?></option>
                                     <option value="virtual_tour">ðŸ'» <?= __('visit_type_virtual', [], 'Virtual Tour (video)') ?></option>
                                     <option value="office_meeting">🏠¢ <?= __('visit_type_office', [], 'Office Meeting') ?></option>

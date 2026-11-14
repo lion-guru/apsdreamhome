@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">State</label>
-                        <select name="state_id" class="form-select" onchange="loadDistricts(this.value)">
+                        <select aria-label="State id" name="state_id" class="form-select" onchange="loadDistricts(this.value)">
                             <option value="">Select State</option>
                             <?php foreach ($states as $s): ?>
                             <option value="<?php echo $s['id']; ?>"><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
@@ -28,18 +28,18 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">District *</label>
-                        <select name="district_id" class="form-select" id="district_select">
+                        <select aria-label="District id" name="district_id" class="form-select" id="district_select">
                             <option value="">Select State First</option>
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="4" placeholder="Full description of the colony"></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="4" placeholder="Full description of the colony"></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Amenities (one per line)</label>
-                    <textarea name="amenities" class="form-control" rows="3" placeholder="Park&#10;24hr Water&#10;Security&#10;Community Hall"></textarea>
+                    <textarea aria-label="Amenities" name="amenities" class="form-control" rows="3" placeholder="Park&#10;24hr Water&#10;Security&#10;Community Hall"></textarea>
                 </div>
             </div></div>
 
@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Pipeline Stage</label>
-                        <select name="pipeline_stage" class="form-select">
+                        <select aria-label="Pipeline stage" name="pipeline_stage" class="form-select">
                             <option value="planning">Planning</option>
                             <option value="approval">Approval</option>
                             <option value="development">Development</option>
@@ -81,11 +81,11 @@
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Key Highlights (JSON array)</label>
-                    <textarea name="key_highlights" class="form-control" rows="3" placeholder='["Prime Location","Bank Loans Available","Park Facing","Corner Plots"]'></textarea>
+                    <textarea aria-label="Key highlights" name="key_highlights" class="form-control" rows="3" placeholder='["Prime Location","Bank Loans Available","Park Facing","Corner Plots"]'></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Nearby Places (JSON array of objects)</label>
-                    <textarea name="nearby_places" class="form-control" rows="3" placeholder='[{"name":"Railway Station","distance":"2km"},{"name":"Hospital","distance":"1km"}]'></textarea>
+                    <textarea aria-label="Nearby places" name="nearby_places" class="form-control" rows="3" placeholder='[{"name":"Railway Station","distance":"2km"},{"name":"Hospital","distance":"1km"}]'></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -120,7 +120,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Gallery Images (JSON array of paths)</label>
-                    <textarea name="gallery_images" class="form-control" rows="2" placeholder='["/assets/images/colonies/img1.jpg","/assets/images/colonies/img2.jpg"]'></textarea>
+                    <textarea aria-label="Gallery images" name="gallery_images" class="form-control" rows="2" placeholder='["/assets/images/colonies/img1.jpg","/assets/images/colonies/img2.jpg"]'></textarea>
                 </div>
             </div></div>
         </div>
@@ -173,7 +173,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Meta Description</label>
-                    <textarea name="meta_description" class="form-control" rows="2"></textarea>
+                    <textarea aria-label="Meta description" name="meta_description" class="form-control" rows="2"></textarea>
                 </div>
             </div></div>
 

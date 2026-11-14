@@ -224,7 +224,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Festival / Tag</label>
-                            <select name="festival_name" class="form-select">
+                            <select aria-label="Festival name" name="festival_name" class="form-select">
                                 <option value="Festival Special">Festival Special</option>
                                 <option value="Diwali Dhamaka">Diwali Dhamaka</option>
                                 <option value="Navratri Utsav">Navratri Utsav</option>
@@ -244,7 +244,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Colony / Township Scope</label>
-                            <select name="colony_id" class="form-select">
+                            <select aria-label="Colony id" name="colony_id" class="form-select">
                                 <option value="">All Townships &amp; Colonies (Universal)</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -254,7 +254,7 @@ $today = date('Y-m-d');
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Discount Concession Type <span class="text-danger">*</span></label>
-                            <select name="discount_type" id="modal_discount_type" class="form-select" onchange="toggleDiscountFields()">
+                            <select aria-label="Discount type" name="discount_type" id="modal_discount_type" class="form-select" onchange="toggleDiscountFields()">
                                 <option value="percentage">Percentage Off (% of Plot Value)</option>
                                 <option value="flat_amount" selected>Flat Cash Concession (₹ Off Token / Agreement)</option>
                                 <option value="per_sqft">Per Sq.ft Concession (₹ per Sqft Discount)</option>
@@ -293,7 +293,7 @@ $today = date('Y-m-d');
 
                         <div class="col-12">
                             <label class="form-label fw-bold">Offer Description &amp; Customer Terms</label>
-                            <textarea name="description" class="form-control" rows="2" placeholder="e.g. Flat ₹21,000 instant festive concession on any plot booking token across all townships."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="e.g. Flat ₹21,000 instant festive concession on any plot booking token across all townships."></textarea>
                         </div>
                     </div>
                 </div>

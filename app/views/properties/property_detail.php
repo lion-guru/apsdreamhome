@@ -362,7 +362,7 @@ min-width: auto;
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="inquiryMessage">Message</label>
-                        <textarea class="form-control" id="inquiryMessage" name="message" rows="3" maxlength="2000" placeholder="I would like to know more about this property..."></textarea>
+                        <textarea aria-label="Message" class="form-control" id="inquiryMessage" name="message" rows="3" maxlength="2000" placeholder="I would like to know more about this property..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100" id="inquirySubmitBtn">
                         <i class="bi bi-send me-1"></i>Submit Inquiry

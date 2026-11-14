@@ -50,7 +50,7 @@ $users = $users ?? [];
             <div class="modal-header"><h5 class="modal-title">Activate Salary Grant</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div class="mb-3"><label class="form-label">Associate / Agent <span class="text-danger">*</span></label>
-                    <select name="user_id" class="form-select" required>
+                    <select aria-label="User id" name="user_id" class="form-select" required>
                         <option value="">Select</option>
                         <?php foreach ($users as $u): ?><option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?></option><?php endforeach; ?>
                     </select></div>

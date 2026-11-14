@@ -63,7 +63,7 @@ ob_start();
                                 <input type="text" name="phone" class="form-control" placeholder="Phone Number" required>
                             </div>
                             <div class="mb-3">
-                                <textarea name="message" class="form-control" rows="3" placeholder="I am interested in Ram Nagri..."></textarea>
+                                <textarea aria-label="Message" name="message" class="form-control" rows="3" placeholder="I am interested in Ram Nagri..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 rounded-pill">Submit Inquiry</button>
                         </form>

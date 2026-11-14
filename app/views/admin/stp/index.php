@@ -116,7 +116,7 @@ $currentColony = $current_colony ?? null;
                 <div class="col-md-5">
                     <div class="input-group">
                         <label class="input-group-text bg-light border-0"><i class="fas fa-city text-primary"></i></label>
-                        <select name="colony_id" class="form-select border-0 bg-light" onchange="this.form.submit()">
+                        <select aria-label="Colony id" name="colony_id" class="form-select border-0 bg-light" onchange="this.form.submit()">
                             <option value="">-- All Township Colonies --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>" <?= ($currentColony == $c['id']) ? 'selected' : '' ?>>
@@ -251,7 +251,7 @@ $currentColony = $current_colony ?? null;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Township Colony <span class="text-danger">*</span></label>
-                            <select name="colony_id" class="form-select" required>
+                            <select aria-label="Colony id" name="colony_id" class="form-select" required>
                                 <option value="">-- Select Colony --</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>" <?= ($currentColony == $c['id']) ? 'selected' : '' ?>>
@@ -329,7 +329,7 @@ $currentColony = $current_colony ?? null;
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Treated Water Recycling Destination</label>
-                            <select name="water_reuse_purpose" class="form-select">
+                            <select aria-label="Water reuse purpose" name="water_reuse_purpose" class="form-select">
                                 <option value="gardening_horticulture" selected>Park & Avenue Gardening (Horticulture)</option>
                                 <option value="toilet_dual_flush">Township Dual-Plumbing Toilet Flush</option>
                                 <option value="road_washing_dust_suppression">Road Washing & Dust Suppression</option>
@@ -355,7 +355,7 @@ $currentColony = $current_colony ?? null;
 
                         <div class="col-12">
                             <label class="form-label small fw-bold">Engineering Remarks & Chemical Dosage</label>
-                            <textarea name="remarks" class="form-control" rows="2" placeholder="Poly-electrolyte dosage added to secondary clarifier, blowers operating at optimal DO 2.5 mg/L."></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Poly-electrolyte dosage added to secondary clarifier, blowers operating at optimal DO 2.5 mg/L."></textarea>
                         </div>
                     </div>
                 </div>

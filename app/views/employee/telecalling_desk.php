@@ -53,12 +53,12 @@ $nextSunday = date('Y-m-d', strtotime('next sunday'));
                     <input type="hidden" name="lead_id" id="logLeadId" value="<?= (int)($first['id'] ?? 0) ?>">
                     <div class="row g-2">
                         <div class="col-6"><label class="form-label small">Status</label>
-                            <select name="call_status" class="form-select form-select-sm"><option>connected</option><option>busy</option><option>not_reachable</option></select></div>
+                            <select aria-label="Call status" name="call_status" class="form-select form-select-sm"><option>connected</option><option>busy</option><option>not_reachable</option></select></div>
                         <div class="col-6"><label class="form-label small">Outcome</label>
-                            <select name="outcome" class="form-select form-select-sm"><option value="interested">Interested</option><option value="follow_up">Call later</option><option value="no_answer">No answer</option><option value="not_interested">Not interested</option><option value="converted">Converted</option></select></div>
+                            <select aria-label="Outcome" name="outcome" class="form-select form-select-sm"><option value="interested">Interested</option><option value="follow_up">Call later</option><option value="no_answer">No answer</option><option value="not_interested">Not interested</option><option value="converted">Converted</option></select></div>
                         <div class="col-6"><label class="form-label small">Duration (sec)</label><input type="number" name="duration" class="form-control form-control-sm" value="0" min="0"></div>
                         <div class="col-6"><label class="form-label small">Follow-up date</label><input type="date" name="next_follow_up" class="form-control form-control-sm"></div>
-                        <div class="col-12"><label class="form-label small">Notes</label><textarea name="notes" class="form-control form-control-sm" rows="2"></textarea></div>
+                        <div class="col-12"><label class="form-label small">Notes</label><textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2"></textarea></div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm w-100 mt-2">Log Call</button>
                 </form>
@@ -72,7 +72,7 @@ $nextSunday = date('Y-m-d', strtotime('next sunday'));
                     <input type="hidden" name="lead_id" id="visitLeadId" value="<?= (int)($first['id'] ?? 0) ?>">
                     <div class="mb-2"><label class="form-label small">Sunday date</label><input type="date" name="visit_date" class="form-control" value="<?= $e($nextSunday) ?>" required></div>
                     <div class="mb-2"><label class="form-label small">Pickup point</label><input type="text" name="pickup_point" class="form-control" placeholder="e.g. Gorakhpur station"></div>
-                    <div class="mb-2"><label class="form-label small">Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-2"><label class="form-label small">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea></div>
                     <button type="submit" class="btn btn-success w-100"><i class="fas fa-calendar-check me-1"></i>Schedule Free Sunday Cab</button>
                 </form>
                 <div id="visitResult" class="mt-2"></div>

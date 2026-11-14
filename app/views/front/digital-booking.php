@@ -157,7 +157,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">EMI Type</label>
-                    <select name="type" class="form-select">
+                    <select aria-label="Type" name="type" class="form-select">
                         <option value="reducing">Reducing Balance</option>
                         <option value="fixed">Fixed/Flat Rate</option>
                     </select>

@@ -47,7 +47,7 @@ $old = $old ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Occupation *</label>
-                    <select name="occupation" class="form-select" required>
+                    <select aria-label="Occupation" name="occupation" class="form-select" required>
                         <?php $occ = $old['occupation'] ?? ($state['form_data']['occupation'] ?? ''); ?>
                         <option value="">-- Select --</option>
                         <?php foreach (['Salaried','Self-Employed','Business Owner','Professional','Student','Homemaker','Retired','Other'] as $o): ?>
@@ -57,7 +57,7 @@ $old = $old ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Annual Income Range *</label>
-                    <select name="income_range" class="form-select" required>
+                    <select aria-label="Income range" name="income_range" class="form-select" required>
                         <?php $inc = $old['income_range'] ?? ($state['form_data']['income_range'] ?? ''); ?>
                         <option value="">-- Select --</option>
                         <?php foreach (['Under 3 Lakh','3-6 Lakh','6-10 Lakh','10-20 Lakh','20-50 Lakh','Above 50 Lakh'] as $i): ?>

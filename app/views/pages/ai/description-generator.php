@@ -13,7 +13,7 @@
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <label for="propertyType" class="form-label fw-bold"><?= __('aigen_label_type', [], 'Property Type') ?></label>
-                                <select id="propertyType" class="form-select py-2" required>
+                                <select aria-label="Property type" id="propertyType" class="form-select py-2" required>
                                     <option value=""><?= __('aigen_select', [], 'Select') ?></option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= h($type['type_name']); ?>">
@@ -46,7 +46,7 @@
                             
                             <div class="col-12">
                                 <label for="additionalFeatures" class="form-label fw-bold"><?= __('aigen_label_features', [], 'Additional Features') ?></label>
-                                <textarea id="additionalFeatures" class="form-control py-2" rows="4" placeholder="<?= __('aigen_placeholder_features', [], 'Enter additional features like parking, garden, security, etc...') ?>"></textarea>
+                                <textarea aria-label="Additional features" id="additionalFeatures" class="form-control py-2" rows="4" placeholder="<?= __('aigen_placeholder_features', [], 'Enter additional features like parking, garden, security, etc...') ?>"></textarea>
                             </div>
                             
                             <div class="col-12 text-center mt-4">

@@ -67,7 +67,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Category</label>
-                    <select name="category" class="form-select form-select-sm">
+                    <select aria-label="Category" name="category" class="form-select form-select-sm">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $key => $label): ?>
                             <option value="<?= $key ?>" <?= ($filters['category'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
@@ -76,7 +76,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="is_active" class="form-select form-select-sm">
+                    <select aria-label="Is active" name="is_active" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="1" <?= ($filters['is_active'] ?? '') === '1' ? 'selected' : '' ?>>Active</option>
                         <option value="0" <?= ($filters['is_active'] ?? '') === '0' ? 'selected' : '' ?>>Inactive</option>

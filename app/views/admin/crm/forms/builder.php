@@ -134,7 +134,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Field Type</label>
-                                <select class="form-select" id="fieldType" disabled>
+                                <select aria-label="Field type" class="form-select" id="fieldType" disabled>
                                     <option value="text">Text</option>
                                     <option value="email">Email</option>
                                     <option value="phone">Phone</option>
@@ -146,7 +146,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                             </div>
                             <div class="mb-3" id="selectOptionsContainer" >
                                 <label class="form-label fw-bold">Options (one per line)</label>
-                                <textarea class="form-control" id="fieldOptions" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                                <textarea aria-label="Field options" class="form-control" id="fieldOptions" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
                             </div>
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="fieldRequired">
@@ -188,7 +188,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                         </div>
                         <div class="mb-3" id="assignToContainer" >
                             <label class="form-label fw-bold">Assign To</label>
-                            <select class="form-select" name="assign_to">
+                            <select aria-label="Assign to" class="form-select" name="assign_to">
                                 <option value="">-- Select --</option>
                                 <?php
                                 try {
@@ -203,7 +203,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Drip Campaign (optional)</label>
-                            <select class="form-select" name="drip_campaign">
+                            <select aria-label="Drip campaign" class="form-select" name="drip_campaign">
                                 <option value="">None</option>
                                 <?php
                                 try {

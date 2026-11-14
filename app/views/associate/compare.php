@@ -23,7 +23,7 @@ if (!empty($selected) && !empty($properties)) {
             <div class="row g-2 align-items-end">
                 <div class="col-md-10">
                     <label class="form-label fw-bold"><?= __('assoc_cmp_select_hint', [], 'Select properties to compare (max 4)') ?></label>
-                    <select name="ids[]" class="form-select" multiple size="4" max="4">
+                    <select aria-label="Ids" name="ids[]" class="form-select" multiple size="4" max="4">
                         <?php foreach ($properties as $p): ?>
                             <option value="<?= e($p['id'] ?? '') ?>" <?= in_array($p['id'], $selected) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['title'] ?? __('assoc_cmp_property', ['id' => $p['id']], 'Property #%id%')) ?>

@@ -72,7 +72,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-2">
                 <label class="form-label small">District</label>
-                <select name="district" class="form-select form-select-sm">
+                <select aria-label="District" name="district" class="form-select form-select-sm">
                     <option value="">All Districts</option>
                     <?php foreach ($districts as $d): ?>
                         <option value="<?= htmlspecialchars($d['district']) ?>" <?= ($filters['district'] ?? '') === $d['district'] ? 'selected' : '' ?>>
@@ -83,7 +83,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Deal Status</label>
-                <select name="status" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" class="form-select form-select-sm">
                     <option value="">All Statuses</option>
                     <option value="in_progress" <?= ($filters['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
                     <option value="registered" <?= ($filters['status'] ?? '') === 'registered' ? 'selected' : '' ?>>Registered</option>

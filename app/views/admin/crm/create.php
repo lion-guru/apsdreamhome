@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Source</label>
-                        <select name="source" class="form-select">
+                        <select aria-label="Source" name="source" class="form-select">
                             <option value="website">Website</option>
                             <option value="referral">Referral</option>
                             <option value="walk_in">Walk-in</option>
@@ -34,13 +34,13 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Interested Colony</label>
-                        <select name="colony_id" class="form-select">
+                        <select aria-label="Colony id" name="colony_id" class="form-select">
                             <option value="">Select Colony</option>
                         </select>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Notes</label>
-                        <textarea name="notes" class="form-control" rows="3"></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="3"></textarea>
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Lead</button>

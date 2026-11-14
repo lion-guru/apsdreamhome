@@ -53,7 +53,7 @@
                     <input type="text" class="form-control" name="search" placeholder="Search by name, contact, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="type">
+                    <select aria-label="Type" class="form-select" name="type">
                         <option value="">All Types</option>
                         <option value="contractor" <?= ($typeFilter ?? '') === 'contractor' ? 'selected' : '' ?>>Contractor</option>
                         <option value="supplier" <?= ($typeFilter ?? '') === 'supplier' ? 'selected' : '' ?>>Supplier</option>
@@ -64,7 +64,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-select" name="status">
+                    <select aria-label="Status" class="form-select" name="status">
                         <option value="">All Status</option>
                         <option value="active" <?= ($statusFilter ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="inactive" <?= ($statusFilter ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>

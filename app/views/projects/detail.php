@@ -365,7 +365,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         </div>
                         <div class="mb-3">
                             <label for="loanTenure" class="form-label">Tenure (Years)</label>
-                            <select class="form-select" id="loanTenure">
+                            <select aria-label="Loan tenure" class="form-select" id="loanTenure">
                                 <option value="5">5 Years</option>
                                 <option value="10">10 Years</option>
                                 <option value="15" selected>15 Years</option>
@@ -456,7 +456,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                     <div class="mb-3">
                         <label for="preferredTime" class="form-label">Preferred Time</label>
-                        <select class="form-select" id="preferredTime" name="preferred_time">
+                        <select aria-label="Preferred time" class="form-select" id="preferredTime" name="preferred_time">
                             <option value="">Any Time</option>
                             <option value="morning">Morning (9 AM - 12 PM)</option>
                             <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
@@ -466,7 +466,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
 
                     <div class="mb-3">
                         <label for="visitorMessage" class="form-label">Message</label>
-                        <textarea class="form-control" id="visitorMessage" name="message" rows="3"
+                        <textarea aria-label="Message" class="form-control" id="visitorMessage" name="message" rows="3"
                                   placeholder="Any specific requirements or questions..."></textarea>
                     </div>
                 </div>

@@ -174,7 +174,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <div class="input-group-custom">
                         <i class="fa-solid fa-city"></i>
                         <label class="form-label-custom">City</label>
-                        <select class="form-select" name="city">
+                        <select aria-label="City" class="form-select" name="city">
                             <option value="">Select your city</option>
                             <option value="Mumbai" <?php echo (($user['city'] ?? '') === 'Mumbai') ? 'selected' : ''; ?>>Mumbai</option>
                             <option value="Delhi" <?php echo (($user['city'] ?? '') === 'Delhi') ? 'selected' : ''; ?>>Delhi</option>
@@ -189,7 +189,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <div class="input-group-custom">
                         <i class="fa-solid fa-briefcase"></i>
                         <label class="form-label-custom">Occupation</label>
-                        <select class="form-select" name="occupation">
+                        <select aria-label="Occupation" class="form-select" name="occupation">
                             <option value="">Select occupation</option>
                             <option value="salaried">Salaried</option>
                             <option value="business">Business</option>
@@ -203,7 +203,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <div class="input-group-custom">
                         <i class="fa-solid fa-indian-rupee-sign"></i>
                         <label class="form-label-custom">Budget Range</label>
-                        <select class="form-select" name="budget_range">
+                        <select aria-label="Budget range" class="form-select" name="budget_range">
                             <option value="">Select budget</option>
                             <option value="10-25l">₹10-25 Lakhs</option>
                             <option value="25-50l">₹25-50 Lakhs</option>

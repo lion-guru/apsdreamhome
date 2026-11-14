@@ -38,7 +38,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Type</label>
-                    <select name="type" class="form-select form-select-sm">
+                    <select aria-label="Type" name="type" class="form-select form-select-sm">
                         <option value="">All Types</option>
                         <?php foreach ($invoiceTypes as $t): ?>
                             <option value="<?= $t ?>" <?= ($filters['type'] ?? '') == $t ? 'selected' : '' ?>><?= $t ?></option>
@@ -47,7 +47,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="draft" <?= ($filters['status'] ?? '') == 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="validated" <?= ($filters['status'] ?? '') == 'validated' ? 'selected' : '' ?>>Validated</option>
@@ -56,7 +56,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">IRN Status</label>
-                    <select name="irn_status" class="form-select form-select-sm">
+                    <select aria-label="Irn status" name="irn_status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach ($irnStatuses as $s): ?>
                             <option value="<?= $s ?>" <?= ($filters['irn_status'] ?? '') == $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

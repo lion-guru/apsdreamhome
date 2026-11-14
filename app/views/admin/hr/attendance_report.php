@@ -16,7 +16,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-bold text-uppercase">Month</label>
-                    <select name="month" class="form-select">
+                    <select aria-label="Month" name="month" class="form-select">
                         <?php for ($m = 1; $m <= 12; $m++): ?>
                             <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>" <?= ($month ?? date('m')) === str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' ?>>
                                 <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-bold text-uppercase">Year</label>
-                    <select name="year" class="form-select">
+                    <select aria-label="Year" name="year" class="form-select">
                         <?php for ($y = date('Y') - 2; $y <= date('Y') + 1; $y++): ?>
                             <option value="<?= $y ?>" <?= ($year ?? date('Y')) == $y ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endfor; ?>

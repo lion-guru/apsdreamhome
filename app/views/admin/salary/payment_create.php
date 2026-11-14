@@ -19,7 +19,7 @@
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Employee <span class="text-danger">*</span></label>
-                                <select name="employee_id" id="empSelect" class="form-select select2-init" required>
+                                <select aria-label="Employee id" name="employee_id" id="empSelect" class="form-select select2-init" required>
                                     <option value="">Search and select employee...</option>
                                     <?php foreach ($users ?? [] as $e): ?>
                                     <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>
@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Apply Salary Structure</label>
-                                <select name="structure_id" id="structSelect" class="form-select select2-init">
+                                <select aria-label="Structure id" name="structure_id" id="structSelect" class="form-select select2-init">
                                     <option value="">Select structure to auto-fill...</option>
                                     <?php foreach ($structures ?? [] as $s): ?>
                                     <option value="<?= $s['id'] ?>" 
@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Payment Method</label>
-                                <select name="payment_method" class="form-select">
+                                <select aria-label="Payment method" name="payment_method" class="form-select">
                                     <option value="bank_transfer">Bank Transfer</option>
                                     <option value="cheque">Cheque</option>
                                     <option value="cash">Cash</option>
@@ -99,7 +99,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Payment Status</label>
-                                <select name="payment_status" class="form-select">
+                                <select aria-label="Payment status" name="payment_status" class="form-select">
                                     <option value="pending">Pending</option>
                                     <option value="paid">Paid</option>
                                     <option value="cancelled">Cancelled</option>

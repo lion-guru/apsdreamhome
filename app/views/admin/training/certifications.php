@@ -51,7 +51,7 @@ $employee_id = $employee_id ?? 0;
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small fw-semibold">Filter by Employee</label>
-                    <select name="employee_id" class="form-select form-select-sm">
+                    <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $e): ?>
                             <option value="<?= $e['id'] ?>" <?= $employee_id == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name'] . ' (' . $e['department'] . ')') ?></option>
@@ -169,7 +169,7 @@ $employee_id = $employee_id ?? 0;
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required <?= $employee_id ? 'disabled' : '' ?>>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required <?= $employee_id ? 'disabled' : '' ?>>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $e): ?>
                                 <option value="<?= $e['id'] ?>" <?= $employee_id == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name'] . ' (' . $e['department'] . ')') ?></option>
@@ -209,7 +209,7 @@ $employee_id = $employee_id ?? 0;
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active">Active</option>
                             <option value="pending_verification">Pending Verification</option>
                         </select>
@@ -265,7 +265,7 @@ $employee_id = $employee_id ?? 0;
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Status</label>
-                            <select name="status" class="form-select" id="editCertStatus">
+                            <select aria-label="Status" name="status" class="form-select" id="editCertStatus">
                                 <option value="active">Active</option>
                                 <option value="expired">Expired</option>
                                 <option value="revoked">Revoked</option>

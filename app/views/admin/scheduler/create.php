@@ -20,11 +20,11 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2" placeholder="Brief description of the task"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Brief description of the task"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Task Type <span class="text-danger">*</span></label>
-                            <select name="type" class="form-select" required>
+                            <select aria-label="Type" name="type" class="form-select" required>
                                 <option value="">Select type...</option>
                                 <option value="email">Email Notification</option>
                                 <option value="report">Report Generation</option>

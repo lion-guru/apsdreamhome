@@ -121,7 +121,7 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-4">
                     <label class="form-label">Unit</label>
-                    <select name="price_unit" class="form-select">
+                    <select aria-label="Price unit" name="price_unit" class="form-select">
                         <option value="total">Total</option>
                         <option value="lakh">Lakh</option>
                         <option value="cr">Crore</option>
@@ -146,7 +146,7 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-6">
                     <label class="form-label">Area Unit</label>
-                    <select name="area_unit" class="form-select">
+                    <select aria-label="Area unit" name="area_unit" class="form-select">
                         <option value="sqft">Sq Ft</option>
                         <option value="sqm">Sq Meter</option>
                         <option value="acre">Acre</option>
@@ -162,7 +162,7 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3">
                 <div class="col-4" id="bedroomField">
                     <label class="form-label">Bedrooms</label>
-                    <select name="bedrooms" class="form-select">
+                    <select aria-label="Bedrooms" name="bedrooms" class="form-select">
                         <option value="">-</option>
                         <option value="1">1 BHK</option>
                         <option value="2">2 BHK</option>
@@ -173,7 +173,7 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-4" id="bathroomField">
                     <label class="form-label">Bathrooms</label>
-                    <select name="bathrooms" class="form-select">
+                    <select aria-label="Bathrooms" name="bathrooms" class="form-select">
                         <option value="">-</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -183,7 +183,7 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-4" id="furnishingField">
                     <label class="form-label">Furnishing</label>
-                    <select name="furnishing" class="form-select">
+                    <select aria-label="Furnishing" name="furnishing" class="form-select">
                         <option value="">-</option>
                         <option value="unfurnished">Unfurnished</option>
                         <option value="semi">Semi-Furnished</option>
@@ -194,7 +194,7 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3 mt-1">
                 <div class="col-6">
                     <label class="form-label">Facing</label>
-                    <select name="facing" class="form-select">
+                    <select aria-label="Facing" name="facing" class="form-select">
                         <option value="">Select</option>
                         <option value="north">North</option>
                         <option value="south">South</option>
@@ -214,7 +214,7 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3 mt-1">
                 <div class="col-6">
                     <label class="form-label">Ownership Type</label>
-                    <select name="ownership_type" class="form-select">
+                    <select aria-label="Ownership type" name="ownership_type" class="form-select">
                         <option value="freehold">Freehold</option>
                         <option value="leasehold">Leasehold</option>
                         <option value="coop">Cooperative</option>
@@ -222,7 +222,7 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-6">
                     <label class="form-label">Possession</label>
-                    <select name="possession" class="form-select">
+                    <select aria-label="Possession" name="possession" class="form-select">
                         <option value="ready">Ready to Move</option>
                         <option value="under">Under Construction</option>
                         <option value="soon">Coming Soon</option>
@@ -237,7 +237,7 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3">
                 <div class="col-6">
                     <label class="form-label">State *</label>
-                    <select id="state_id" name="state_id" class="form-select" required>
+                    <select aria-label="State id" id="state_id" name="state_id" class="form-select" required>
                         <option value="">Select</option>
                         <?php foreach ($states as $state): ?>
                             <option value="<?= $state['id'] ?>"><?= htmlspecialchars($state['name'] ?? '') ?></option>
@@ -246,14 +246,14 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-6">
                     <label class="form-label">District *</label>
-                    <select id="district_id" name="location" class="form-select" required disabled>
+                    <select aria-label="Location" id="district_id" name="location" class="form-select" required disabled>
                         <option value="">Select State</option>
                     </select>
                 </div>
             </div>
             <div class="mt-3">
                 <label class="form-label">Full Address / Landmark *</label>
-                <textarea name="description" class="form-control" rows="2" placeholder="Plot no, street, nearby landmark..." required></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Plot no, street, nearby landmark..." required></textarea>
             </div>
         </div>
 

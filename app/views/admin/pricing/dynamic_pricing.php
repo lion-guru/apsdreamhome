@@ -120,7 +120,7 @@ $statusBadge = [
                     </p>
                     <form method="post" action="<?= BASE_URL ?>/admin/dynamic-pricing/generate" class="d-flex gap-2 flex-wrap">
                         <?= \App\Core\Security\CSRF::generateTokenField() ?>
-                        <select name="colony_id" class="form-select form-select-sm" style="max-width:320px;">
+                        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" style="max-width:320px;">
                             <option value="0">All colonies with plots…</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?> (<?= (int)$c['available'] ?> available)</option>
@@ -143,7 +143,7 @@ $statusBadge = [
                     </p>
                     <form method="post" action="<?= BASE_URL ?>/admin/dynamic-pricing/train" class="d-flex gap-2 flex-wrap">
                         <?= \App\Core\Security\CSRF::generateTokenField() ?>
-                        <select name="colony_id" class="form-select form-select-sm" style="max-width:320px;" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" style="max-width:320px;" required>
                             <option value="">Select colony…</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>

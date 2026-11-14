@@ -26,7 +26,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <!-- Booking Selection -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Select Booking *</label>
-                            <select name="booking_id" class="form-select" required>
+                            <select aria-label="Booking id" name="booking_id" class="form-select" required>
                                 <option value="">Choose a booking...</option>
                                 <?php foreach ($bookings as $booking): ?>
                                     <option value="<?php echo e($booking['id']); ?>" data-amount="<?php echo $booking['total_amount']; ?>">

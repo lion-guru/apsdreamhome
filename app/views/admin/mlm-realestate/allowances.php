@@ -226,7 +226,7 @@ foreach ($claims as $c) {
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Reason for Rejection</label>
-                        <textarea name="reason" class="form-control form-control-sm" rows="3" required placeholder="State reason (e.g. invalid visit proof, target discrepancy)..."></textarea>
+                        <textarea aria-label="Reason" name="reason" class="form-control form-control-sm" rows="3" required placeholder="State reason (e.g. invalid visit proof, target discrepancy)..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

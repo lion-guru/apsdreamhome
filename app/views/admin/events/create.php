@@ -12,7 +12,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="5"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="5"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Event Date</label>
@@ -24,7 +24,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-control">
+                            <select aria-label="Status" name="status" class="form-control">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>

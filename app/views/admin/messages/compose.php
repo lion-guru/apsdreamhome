@@ -111,7 +111,7 @@ $role = $role ?? '';
 
                         <div class="mb-3">
                             <label class="form-label">Message:</label>
-                            <textarea name="message" class="form-control" rows="6"
+                            <textarea aria-label="Message" name="message" class="form-control" rows="6"
                                       placeholder="Type your message..." required
                                       ></textarea>
                         </div>

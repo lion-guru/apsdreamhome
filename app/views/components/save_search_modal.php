@@ -43,7 +43,7 @@ $currentFilters = $currentFilters ?? [];
 
                     <div class="mb-3">
                         <label for="saveSearchDescription" class="form-label fw-semibold"><?= __('component_description_optional', 'Description (optional)') ?></label>
-                        <textarea class="form-control" id="saveSearchDescription" name="description" rows="2" placeholder="<?= htmlspecialchars(__('component_add_notes_placeholder', 'Add notes about this search...')) ?>" maxlength="500"></textarea>
+                        <textarea aria-label="Description" class="form-control" id="saveSearchDescription" name="description" rows="2" placeholder="<?= htmlspecialchars(__('component_add_notes_placeholder', 'Add notes about this search...')) ?>" maxlength="500"></textarea>
                     </div>
 
                     <div class="alert alert-light border small">

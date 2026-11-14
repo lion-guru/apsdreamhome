@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Group</label>
-                    <select name="group" class="form-select">
+                    <select aria-label="Group" name="group" class="form-select">
                         <option value="">All groups</option>
                         <?php foreach (($groups ?? []) as $g): ?>
                             <option value="<?= htmlspecialchars($g) ?>" <?= ($current_group ?? '') === $g ? 'selected' : '' ?>><?= htmlspecialchars($g) ?></option>
@@ -32,7 +32,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All</option>
                         <option value="enabled" <?= ($current_status ?? '') === 'enabled' ? 'selected' : '' ?>>Enabled</option>
                         <option value="disabled" <?= ($current_status ?? '') === 'disabled' ? 'selected' : '' ?>>Disabled</option>

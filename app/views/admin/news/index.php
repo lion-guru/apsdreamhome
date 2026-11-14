@@ -90,7 +90,7 @@ foreach ($newsList as $a) {
             </div>
             <div class="col-md-3">
                 <label class="form-label small fw-semibold text-muted mb-1" for="newsStatus">Status</label>
-                <select id="newsStatus" name="status" class="form-select form-select-sm">
+                <select aria-label="Status" id="newsStatus" name="status" class="form-select form-select-sm">
                     <option value="">All Status</option>
                     <option value="published" <?= ($filters['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option>
                     <option value="draft"     <?= ($filters['status'] ?? '') === 'draft'     ? 'selected' : '' ?>>Draft</option>

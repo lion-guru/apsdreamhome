@@ -14,7 +14,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Entity Type</label>
-                            <select name="import_type" class="form-select" required>
+                            <select aria-label="Import type" name="import_type" class="form-select" required>
                                 <option value="">Select...</option>
                                 <option value="properties">Properties</option>
                                 <option value="leads">Leads</option>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Import Strategy</label>
-                            <select name="strategy" class="form-select">
+                            <select aria-label="Strategy" name="strategy" class="form-select">
                                 <option value="insert">Insert New Only</option>
                                 <option value="upsert">Insert or Update</option>
                                 <option value="replace">Replace All</option>

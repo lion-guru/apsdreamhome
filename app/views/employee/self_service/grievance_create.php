@@ -45,7 +45,7 @@ $priorities = $priorities ?? [];
                             <!-- Category -->
                             <div class="col-md-6">
                                 <label for="category" class="form-label fw-semibold small text-dark">Category <span class="text-danger">*</span></label>
-                                <select name="category" id="category" class="form-select rounded-2" required>
+                                <select aria-label="Category" name="category" id="category" class="form-select rounded-2" required>
                                     <option value="" disabled selected>-- Select Category --</option>
                                     <?php foreach ($categories as $catKey => $catLabel): ?>
                                         <option value="<?= htmlspecialchars($catKey) ?>"><?= htmlspecialchars($catLabel) ?></option>
@@ -56,7 +56,7 @@ $priorities = $priorities ?? [];
                             <!-- Priority -->
                             <div class="col-md-6">
                                 <label for="priority" class="form-label fw-semibold small text-dark">Priority <span class="text-danger">*</span></label>
-                                <select name="priority" id="priority" class="form-select rounded-2" required>
+                                <select aria-label="Priority" name="priority" id="priority" class="form-select rounded-2" required>
                                     <?php foreach ($priorities as $priKey => $priLabel): ?>
                                         <option value="<?= htmlspecialchars($priKey) ?>" <?= $priKey === 'normal' ? 'selected' : '' ?>>
                                             <?= htmlspecialchars($priLabel) ?>
@@ -80,7 +80,7 @@ $priorities = $priorities ?? [];
                             <!-- Description -->
                             <div class="col-12">
                                 <label for="description" class="form-label fw-semibold small text-dark">Detailed Description <span class="text-danger">*</span></label>
-                                <textarea name="description" id="description" rows="5" class="form-control rounded-2" required placeholder="Please describe the incident, timeline, individuals involved, and any steps already taken..."></textarea>
+                                <textarea aria-label="Description" name="description" id="description" rows="5" class="form-control rounded-2" required placeholder="Please describe the incident, timeline, individuals involved, and any steps already taken..."></textarea>
                                 <div class="form-text small text-muted">Provide factual details to assist in rapid and fair investigation.</div>
                             </div>
 

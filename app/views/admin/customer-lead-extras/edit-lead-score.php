@@ -47,7 +47,7 @@ $page_description = 'Manually adjust lead score';
                             
                             <div class="mb-3">
                                 <label class="form-label">Reason for Change</label>
-                                <textarea class="form-control" name="reason" rows="3" placeholder="Please provide a reason for manually adjusting this score..."></textarea>
+                                <textarea aria-label="Reason" class="form-control" name="reason" rows="3" placeholder="Please provide a reason for manually adjusting this score..."></textarea>
                                 <small class="text-muted">This reason will be recorded in the score criteria</small>
                             </div>
                         </div>

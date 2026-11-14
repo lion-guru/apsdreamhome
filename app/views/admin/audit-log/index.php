@@ -17,7 +17,7 @@
             <form method="GET" action="<?= BASE_URL ?>/admin/audit-log" class="row g-2 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Action</label>
-                    <select name="action" class="form-select form-select-sm">
+                    <select aria-label="Action" name="action" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach (($actions ?? []) as $a): ?>
                             <option value="<?= htmlspecialchars($a) ?>" <?= ($filters['action'] ?? '') === $a ? 'selected' : '' ?>><?= htmlspecialchars($a) ?></option>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Role</label>
-                    <select name="user_role" class="form-select form-select-sm">
+                    <select aria-label="User role" name="user_role" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach (($roles ?? []) as $r): ?>
                             <option value="<?= htmlspecialchars($r) ?>" <?= ($filters['user_role'] ?? '') === $r ? 'selected' : '' ?>><?= htmlspecialchars($r) ?></option>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Entity Type</label>
-                    <select name="entity_type" class="form-select form-select-sm">
+                    <select aria-label="Entity type" name="entity_type" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach (($entity_types ?? []) as $e): ?>
                             <option value="<?= htmlspecialchars($e) ?>" <?= ($filters['entity_type'] ?? '') === $e ? 'selected' : '' ?>><?= htmlspecialchars($e) ?></option>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach (['success','failed','pending'] as $s): ?>
                             <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= $s ?></option>

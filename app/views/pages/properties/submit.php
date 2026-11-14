@@ -46,12 +46,12 @@
 
                             <div class="col-md-12">
                                 <label class="form-label fw-bold"><?php echo __('property_description_label', 'Property Description'); ?></label>
-                                <textarea name="content" class="form-control" rows="5" placeholder="Describe your property in detail..." required><?= $is_edit ? h($property['pcontent']) : '' ?></textarea>
+                                <textarea aria-label="Content" name="content" class="form-control" rows="5" placeholder="Describe your property in detail..." required><?= $is_edit ? h($property['pcontent']) : '' ?></textarea>
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('property_type_label', 'Property Type'); ?></label>
-                                <select class="form-select" name="ptype" required>
+                                <select aria-label="Ptype" class="form-select" name="ptype" required>
                                     <option value=""><?php echo __('property_select_type', 'Select Type'); ?></option>
                                     <?php
                                     $types = ['apartment', 'flat', 'building', 'house', 'villa', 'office'];
@@ -63,7 +63,7 @@
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('property_selling_type', 'Selling Type'); ?></label>
-                                <select class="form-select" name="stype" required>
+                                <select aria-label="Stype" class="form-select" name="stype" required>
                                     <option value=""><?php echo __('property_select_status', 'Select Status'); ?></option>
                                     <option value="rent" <?= ($is_edit && $property['stype'] == 'rent') ? 'selected' : '' ?>><?php echo __('property_rent', 'Rent'); ?></option>
                                     <option value="sale" <?= ($is_edit && $property['stype'] == 'sale') ? 'selected' : '' ?>><?php echo __('property_sale', 'Sale'); ?></option>
@@ -72,7 +72,7 @@
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('property_bhk', 'BHK'); ?></label>
-                                <select class="form-select" name="bhk" required>
+                                <select aria-label="Bhk" class="form-select" name="bhk" required>
                                     <option value=""><?php echo __('property_select_bhk', 'Select BHK'); ?></option>
                                     <?php
                                     $bhks = ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5 BHK', '1,2 BHK', '2,3 BHK', '2,3,4 BHK'];
@@ -84,7 +84,7 @@
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('property_bedroom', 'Bedroom'); ?></label>
-                                <select class="form-select" name="bed" required>
+                                <select aria-label="Bed" class="form-select" name="bed" required>
                                     <option value=""><?php echo __('property_select_bedroom', 'Select Bedroom'); ?></option>
                                     <?php for($i=1; $i<=10; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($is_edit && $property['bedroom'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
@@ -94,7 +94,7 @@
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('property_bathroom', 'Bathroom'); ?></label>
-                                <select class="form-select" name="bath" required>
+                                <select aria-label="Bath" class="form-select" name="bath" required>
                                     <option value=""><?php echo __('property_select_bathroom', 'Select Bathroom'); ?></option>
                                     <?php for($i=1; $i<=10; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($is_edit && $property['bathroom'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
@@ -104,7 +104,7 @@
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?php echo __('property_kitchen', 'Kitchen'); ?></label>
-                                <select class="form-select" name="kitc" required>
+                                <select aria-label="Kitc" class="form-select" name="kitc" required>
                                     <option value=""><?php echo __('property_select_kitchen', 'Select Kitchen'); ?></option>
                                     <?php for($i=1; $i<=5; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($is_edit && $property['kitchen'] == $i) ? 'selected' : '' ?>><?= $i ?></option>
@@ -152,7 +152,7 @@
 
                             <div class="col-md-12">
                                 <label class="form-label fw-bold"><?php echo __('property_status', 'Status'); ?></label>
-                                <select class="form-select" name="status" required>
+                                <select aria-label="Status" class="form-select" name="status" required>
                                     <option value=""><?php echo __('property_select_status', 'Select Status'); ?></option>
                                     <option value="available" <?= ($is_edit && $property['status'] == 'available') ? 'selected' : '' ?>><?php echo __('property_available', 'Available'); ?></option>
                                     <option value="sold out" <?= ($is_edit && $property['status'] == 'sold out') ? 'selected' : '' ?>><?php echo __('property_sold_out', 'Sold Out'); ?></option>
@@ -161,7 +161,7 @@
 
                             <div class="col-md-12">
                                 <label class="form-label fw-bold"><?php echo __('property_features_amenities', 'Features / Amenities'); ?></label>
-                                <textarea class="form-control" name="feature" rows="3" placeholder="e.g. Swimming Pool, Gym, 24/7 Security, Car Parking" required><?= $is_edit ? h($property['feature']) : '' ?></textarea>
+                                <textarea aria-label="Feature" class="form-control" name="feature" rows="3" placeholder="e.g. Swimming Pool, Gym, 24/7 Security, Car Parking" required><?= $is_edit ? h($property['feature']) : '' ?></textarea>
                             </div>
 
                             <div class="col-md-12 mt-4">

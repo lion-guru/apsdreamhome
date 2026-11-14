@@ -70,7 +70,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="published" <?= ($filters['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option>
@@ -81,7 +81,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Department</label>
-                    <select name="department" class="form-select form-select-sm">
+                    <select aria-label="Department" name="department" class="form-select form-select-sm">
                         <option value="">All Departments</option>
                         <option value="sales" <?= ($filters['department'] ?? '') === 'sales' ? 'selected' : '' ?>>Sales</option>
                         <option value="engineering" <?= ($filters['department'] ?? '') === 'engineering' ? 'selected' : '' ?>>Engineering</option>

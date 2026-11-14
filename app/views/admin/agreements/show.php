@@ -237,7 +237,7 @@ $nextStatuses = [
                         <input type="hidden" name="action" id="statusAction" value="">
 
                         <label class="form-label fw-bold">Change Status</label>
-                        <select name="status" class="form-select mb-2" id="statusSelect">
+                        <select aria-label="Status" name="status" class="form-select mb-2" id="statusSelect">
                             <?php foreach ($nextStatuses[$a['status']] as $ns): ?>
                                 <option value="<?= $ns ?>"><?= $statusLabels[$ns] ?? ucfirst($ns) ?></option>
                             <?php endforeach; ?>
@@ -245,7 +245,7 @@ $nextStatuses = [
 
                         <div class="mb-3" id="reasonGroup" >
                             <label class="form-label">Rejection/Cancellation Reason <span class="text-danger">*</span></label>
-                            <textarea name="rejection_reason" class="form-control" rows="3" id="reasonField"></textarea>
+                            <textarea aria-label="Rejection reason" name="rejection_reason" class="form-control" rows="3" id="reasonField"></textarea>
                         </div>
 
                         <button type="button" class="btn btn-primary w-100 mb-2" onclick="submitStatus('update')">

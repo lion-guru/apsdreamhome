@@ -20,7 +20,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="customer_id" class="form-label">Customer *</label>
-                                    <select class="form-select" id="customer_id" name="customer_id" required>
+                                    <select aria-label="Customer id" class="form-select" id="customer_id" name="customer_id" required>
                                         <option value="">Select Customer</option>
                                         <?php if (!empty($customers)): ?>
                                             <?php foreach ($customers as $cust): ?>
@@ -33,7 +33,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="property_id" class="form-label">Property *</label>
-                                    <select class="form-select" id="property_id" name="property_id" required>
+                                    <select aria-label="Property id" class="form-select" id="property_id" name="property_id" required>
                                         <option value="">Select Property</option>
                                         <?php if (!empty($properties)): ?>
                                             <?php foreach ($properties as $prop): ?>
@@ -48,7 +48,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="payment_type" class="form-label">Payment Type *</label>
-                                    <select class="form-select" id="payment_type" name="payment_type" required>
+                                    <select aria-label="Payment type" class="form-select" id="payment_type" name="payment_type" required>
                                         <option value="">Select Type</option>
                                         <option value="booking">Booking Amount</option>
                                         <option value="down_payment">Down Payment</option>
@@ -66,7 +66,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="gateway" class="form-label">Payment Gateway *</label>
-                                    <select class="form-select" id="gateway" name="gateway" required>
+                                    <select aria-label="Gateway" class="form-select" id="gateway" name="gateway" required>
                                         <option value="">Select Gateway</option>
                                         <option value="razorpay">Razorpay</option>
                                         <option value="paytm">Paytm</option>
@@ -79,7 +79,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            <textarea aria-label="Description" class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
                         <div class="d-flex justify-content-between">
                             <a href="/payment" class="btn btn-secondary">

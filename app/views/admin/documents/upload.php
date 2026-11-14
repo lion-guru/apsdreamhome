@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Document Type</label>
-                        <select name="type" class="form-select">
+                        <select aria-label="Type" name="type" class="form-select">
                             <option value="property">Property Document</option>
                             <option value="customer">Customer Document</option>
                             <option value="legal">Legal Document</option>
@@ -36,7 +36,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Category</label>
-                        <select name="category_id" class="form-select">
+                        <select aria-label="Category id" name="category_id" class="form-select">
                             <option value="">-- None --</option>
                             <?php if (!empty($categories)): ?>
                                 <?php foreach ($categories as $cat): ?>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Document Sub-Type</label>
-                        <select name="doc_type_id" class="form-select">
+                        <select aria-label="Doc type id" name="doc_type_id" class="form-select">
                             <option value="">-- None --</option>
                             <?php if (!empty($doc_types)): ?>
                                 <?php foreach ($doc_types as $dt): ?>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="3"></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Select File <span class="text-danger">*</span></label>
@@ -68,7 +68,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Related To</label>
-                    <select name="related_type" class="form-select" id="relatedType">
+                    <select aria-label="Related type" name="related_type" class="form-select" id="relatedType">
                         <option value="">-- None --</option>
                         <option value="property">Property</option>
                         <option value="customer">Customer</option>

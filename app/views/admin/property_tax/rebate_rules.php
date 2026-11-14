@@ -39,7 +39,7 @@ $csrf = $this->getCsrfToken();
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Rebate Type</label>
-                        <select name="rebate_type" class="form-select" id="rebateType">
+                        <select aria-label="Rebate type" name="rebate_type" class="form-select" id="rebateType">
                             <option value="percent">Percentage</option>
                             <option value="flat_amount">Flat Amount</option>
                         </select>
@@ -62,7 +62,7 @@ $csrf = $this->getCsrfToken();
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Applicable Tax Types</label>
-                        <select name="applicable_tax_types[]" class="form-select" multiple id="taxTypesSelect">
+                        <select aria-label="Applicable tax types" name="applicable_tax_types[]" class="form-select" multiple id="taxTypesSelect">
                             <option value="property_tax">Property Tax</option>
                             <option value="water_tax">Water Tax</option>
                             <option value="sewerage_tax">Sewerage Tax</option>
@@ -79,7 +79,7 @@ $csrf = $this->getCsrfToken();
                     </div>
                     <div class="col-12">
                         <label class="form-label">Conditions (JSON)</label>
-                        <textarea name="conditions_json" class="form-control font-monospace" rows="3" placeholder='{"early_payment_days": 30, "senior_citizen": false, "age_above": 60}'>{}</textarea>
+                        <textarea aria-label="Conditions json" name="conditions_json" class="form-control font-monospace" rows="3" placeholder='{"early_payment_days": 30, "senior_citizen": false, "age_above": 60}'>{}</textarea>
                         <div class="form-text">Example: {"early_payment_days": 30} or {"senior_citizen": true, "age_above": 60}</div>
                     </div>
                     <div class="col-12">
@@ -174,7 +174,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Rebate Type</label>
-                                <select name="rebate_type" class="form-select" id="editRebateType">
+                                <select aria-label="Rebate type" name="rebate_type" class="form-select" id="editRebateType">
                                     <option value="percent">Percentage</option>
                                     <option value="flat_amount">Flat Amount</option>
                                 </select>
@@ -197,7 +197,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Applicable Tax Types</label>
-                                <select name="applicable_tax_types[]" class="form-select" multiple id="editTaxTypes">
+                                <select aria-label="Applicable tax types" name="applicable_tax_types[]" class="form-select" multiple id="editTaxTypes">
                                     <option value="property_tax">Property Tax</option>
                                     <option value="water_tax">Water Tax</option>
                                     <option value="sewerage_tax">Sewerage Tax</option>
@@ -214,7 +214,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Conditions (JSON)</label>
-                                <textarea name="conditions_json" class="form-control font-monospace" id="editConditions" rows="3"></textarea>
+                                <textarea aria-label="Conditions json" name="conditions_json" class="form-control font-monospace" id="editConditions" rows="3"></textarea>
                             </div>
                         </div>
                     </div>

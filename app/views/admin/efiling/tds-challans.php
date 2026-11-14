@@ -23,14 +23,14 @@ ob_start();
         <form method="GET" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-auto">
-                <select name="fy" class="form-select form-select-sm">
+                <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
                         <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-auto">
-                <select name="quarter" class="form-select form-select-sm">
+                <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                     <?php for ($q = 1; $q <= 4; $q++): ?>
                         <option value="Q<?= $q ?>" <?= "Q$q" === $quarter ? 'selected' : '' ?>>Q<?= $q ?></option>
                     <?php endfor; ?>

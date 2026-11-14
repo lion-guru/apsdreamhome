@@ -100,7 +100,7 @@
                     </div>
                     <div class="col-md-6">
                         <h5 class="mb-3"><i class="fas fa-tachometer-alt me-2 text-success"></i><?php echo __('notif_pref_frequency', [], 'Default Frequency'); ?></h5>
-                        <select name="frequency" class="form-select">
+                        <select aria-label="Frequency" name="frequency" class="form-select">
                             <?php
                             $freqs = ['immediate' => __('freq_immediate', [], 'Immediate'), 'hourly' => __('freq_hourly', [], 'Hourly Digest'), 'daily' => __('freq_daily', [], 'Daily Digest'), 'weekly' => __('freq_weekly', [], 'Weekly Digest'), 'never' => __('freq_never', [], 'Never')];
                             $currentFreq = $prefs['booking']['frequency'] ?? 'immediate';

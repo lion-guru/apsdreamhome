@@ -186,7 +186,7 @@ $requests = $requests ?? [];
                     <div class="row mb-3">
                         <label for="leave_type_id" class="col-sm-3 col-form-label fw-bold">Leave Type <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <select class="form-select" id="leave_type_id" name="leave_type_id" required>
+                            <select aria-label="Leave type id" class="form-select" id="leave_type_id" name="leave_type_id" required>
                                 <option value="">Select leave type</option>
                                 <?php foreach ($policy['leave_balances'] ?? [] as $lb): ?>
                                     <?php if (($lb['encashable'] ?? 0) > 0): ?>

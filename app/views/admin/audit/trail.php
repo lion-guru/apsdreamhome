@@ -9,7 +9,7 @@
         <div class="card-header bg-white border-bottom">
             <div class="row g-2 align-items-center">
                 <div class="col-auto">
-                    <select class="form-select form-select-sm" id="actionFilter" onchange="applyFilters()">
+                    <select aria-label="Action filter" class="form-select form-select-sm" id="actionFilter" onchange="applyFilters()">
                         <option value="">All Actions</option>
                         <option value="create">Create</option>
                         <option value="update">Update</option>

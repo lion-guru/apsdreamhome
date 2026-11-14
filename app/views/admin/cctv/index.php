@@ -58,7 +58,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-cctv" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- All Colonies --</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $current_colony == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -165,7 +165,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -200,7 +200,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">NVR HDD Storage Status</label>
-                        <select name="hdd_storage_status" class="form-select">
+                        <select aria-label="Hdd storage status" name="hdd_storage_status" class="form-select">
                             <option value="healthy">Healthy (Loop Overwriting Normal)</option>
                             <option value="warning_space_low">Warning: Low Disk Space</option>
                             <option value="hdd_fault">HDD Read/Write Fault Alert</option>
@@ -208,7 +208,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Night IR LED Health</label>
-                        <select name="night_vision_ir_status" class="form-select">
+                        <select aria-label="Night vision ir status" name="night_vision_ir_status" class="form-select">
                             <option value="all_functional">All Cameras IR Functional</option>
                             <option value="minor_led_failure">Minor LED Dimming (1-2 Cams)</option>
                             <option value="maintenance_needed">IR Maintenance Required</option>
@@ -230,7 +230,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Technician Remarks</label>
-                        <textarea name="remarks" class="form-control" rows="2" placeholder="CAT6 cabling verified, PoE switch ports operating normally."></textarea>
+                        <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="CAT6 cabling verified, PoE switch ports operating normally."></textarea>
                     </div>
                 </div>
             </div>

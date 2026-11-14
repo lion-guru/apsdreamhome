@@ -30,7 +30,7 @@ $page_title = 'Create Deal - APS Dream Home';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Select Lead</label>
-                                <select class="form-select" name="lead_id" required>
+                                <select aria-label="Lead id" class="form-select" name="lead_id" required>
                                     <option value="">Choose a lead...</option>
                                     <?php foreach (($leads ?? []) as $lead): ?>
                                         <option value="<?= $lead['id'] ?>" <?= ($selected_lead['id'] ?? '') == $lead['id'] ? 'selected' : '' ?>>
@@ -41,7 +41,7 @@ $page_title = 'Create Deal - APS Dream Home';
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Initial Stage</label>
-                                <select class="form-select" name="deal_stage_id" required>
+                                <select aria-label="Deal stage id" class="form-select" name="deal_stage_id" required>
                                     <?php foreach (($stages ?? []) as $stg): ?>
                                         <option value="<?= (int)$stg['id'] ?>" <?= (int)$stg['id'] === 3 ? 'selected' : '' ?>><?= htmlspecialchars($stg['stage_name'] ?? '') ?></option>
                                     <?php endforeach; ?>
@@ -63,7 +63,7 @@ $page_title = 'Create Deal - APS Dream Home';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Assign To</label>
-                                <select class="form-select" name="assigned_to">
+                                <select aria-label="Assigned to" class="form-select" name="assigned_to">
                                     <option value="">Select Agent</option>
                                     <?php foreach ($users as $agent): ?>
                                         <option value="<?= $agent['id'] ?>"><?= htmlspecialchars($agent['name'] ?? '') ?></option>
@@ -74,7 +74,7 @@ $page_title = 'Create Deal - APS Dream Home';
 
                         <div class="mb-3">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="description" rows="3" placeholder="Deal details, requirements, special conditions..."></textarea>
+                            <textarea aria-label="Description" class="form-control" name="description" rows="3" placeholder="Deal details, requirements, special conditions..."></textarea>
                         </div>
 
                         <div class="d-grid">

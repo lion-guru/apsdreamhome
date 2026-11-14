@@ -11,7 +11,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label small"><?= __('cf_forecast_period') ?></label>
-                    <select name="days" class="form-select form-select-sm">
+                    <select aria-label="Days" name="days" class="form-select form-select-sm">
                         <option value="7" <?= $days == 7 ? 'selected' : '' ?>><?= __('cf_next_7_days') ?></option>
                         <option value="14" <?= $days == 14 ? 'selected' : '' ?>><?= __('cf_next_14_days') ?></option>
                         <option value="30" <?= $days == 30 ? 'selected' : '' ?>><?= __('cf_next_30_days') ?></option>

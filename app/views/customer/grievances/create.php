@@ -23,7 +23,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                         <div class="mb-3">
                             <label for="plot_select" class="form-label fw-semibold">Your Township Property / Plot <span class="text-danger">*</span></label>
-                            <select name="plot_option" id="plot_select" class="form-select" required>
+                            <select aria-label="Plot option" name="plot_option" id="plot_select" class="form-select" required>
                                 <option value="">Select your township colony &amp; plot...</option>
                                 <?php foreach ($plots as $p): ?>
                                     <option value="<?= (int)$p['plot_id'] ?>" data-colony="<?= (int)$p['colony_id'] ?>">
@@ -38,7 +38,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label for="category" class="form-label fw-semibold">Infrastructure Category <span class="text-danger">*</span></label>
-                                <select name="category" id="category" class="form-select" required>
+                                <select aria-label="Category" name="category" id="category" class="form-select" required>
                                     <option value="water_supply">Water Supply, Borewell &amp; Pipeline</option>
                                     <option value="drainage_sanitation">Drainage Blockage &amp; STP</option>
                                     <option value="street_lighting">Street Lighting &amp; Electrification</option>
@@ -50,7 +50,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             </div>
                             <div class="col-md-6">
                                 <label for="priority" class="form-label fw-semibold">Urgency Priority <span class="text-danger">*</span></label>
-                                <select name="priority" id="priority" class="form-select" required>
+                                <select aria-label="Priority" name="priority" id="priority" class="form-select" required>
                                     <option value="medium">Medium (48-hour resolution SLA)</option>
                                     <option value="high">High (24-hour resolution SLA)</option>
                                     <option value="emergency">Emergency / Critical (4-hour resolution SLA)</option>
@@ -66,7 +66,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                         <div class="mb-4">
                             <label for="description" class="form-label fw-semibold">Detailed Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Please provide specific location landmarks and nature of the defect..." required></textarea>
+                            <textarea aria-label="Description" class="form-control" id="description" name="description" rows="4" placeholder="Please provide specific location landmarks and nature of the defect..." required></textarea>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">

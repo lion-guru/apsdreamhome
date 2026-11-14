@@ -20,7 +20,7 @@
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label text-muted small fw-bold text-uppercase">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Applications</option>
                         <option value="pending" <?= ($status_filter ?? '') === 'pending' ? 'selected' : '' ?>>Pending Approval</option>
                         <option value="approved" <?= ($status_filter ?? '') === 'approved' ? 'selected' : '' ?>>Approved</option>
@@ -161,7 +161,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select select2-modal" required >
+                            <select aria-label="Employee id" name="employee_id" class="form-select select2-modal" required >
                                 <option value="">Select Employee...</option>
                                 <?php if (isset($users)): ?>
                                     <?php foreach ($users as $emp): ?>
@@ -172,7 +172,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Leave Type</label>
-                            <select name="leave_type_id" class="form-select bg-white">
+                            <select aria-label="Leave type id" name="leave_type_id" class="form-select bg-white">
                                 <option value="0">General Leave</option>
                                 <?php if (isset($leave_types)): ?>
                                     <?php foreach ($leave_types as $lt): ?>
@@ -201,7 +201,7 @@
                     
                     <div class="mb-3">
                         <label class="form-label text-muted small fw-bold text-uppercase">Reason for Leave <span class="text-danger">*</span></label>
-                        <textarea name="reason" class="form-control" rows="3" placeholder="Please provide details..." required></textarea>
+                        <textarea aria-label="Reason" name="reason" class="form-control" rows="3" placeholder="Please provide details..." required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-3 bg-white">

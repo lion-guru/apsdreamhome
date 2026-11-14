@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Role *</label>
-                                        <select name="role" class="form-select" required>
+                                        <select aria-label="Role" name="role" class="form-select" required>
                                             <?php foreach ($roles as $role): ?>
                                                 <option value="<?php echo e($role); ?>" <?php echo ($user['role'] ?? '') === $role ? 'selected' : ''; ?>>
                                                     <?php echo ucfirst($role); ?>
@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="active" <?php echo ($user['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
                                         <option value="inactive" <?php echo ($user['status'] ?? '') === 'inactive' ? 'selected' : ''; ?>>Inactive</option>
                                     </select>

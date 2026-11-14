@@ -161,7 +161,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Category</label>
-                            <select name="category" id="templateCategory" class="form-select">
+                            <select aria-label="Category" name="category" id="templateCategory" class="form-select">
                                 <option value="MARKETING">Marketing</option>
                                 <option value="UTILITY">Utility</option>
                                 <option value="AUTHENTICATION">Authentication</option>
@@ -169,7 +169,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Language</label>
-                            <select name="language" id="templateLanguage" class="form-select">
+                            <select aria-label="Language" name="language" id="templateLanguage" class="form-select">
                                 <option value="en">English</option>
                                 <option value="hi">Hindi</option>
                                 <option value="en_IN">English (India)</option>
@@ -177,7 +177,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                         </div>
                         <div class="col-12">
                             <label class="form-label">Template Content <span class="text-danger">*</span></label>
-                            <textarea name="content" id="templateContent" class="form-control font-monospace" rows="8" required placeholder="Hi {{name}}, this is APS Dream Home. Your booking reference is {{booking_ref}}..."></textarea>
+                            <textarea aria-label="Content" name="content" id="templateContent" class="form-control font-monospace" rows="8" required placeholder="Hi {{name}}, this is APS Dream Home. Your booking reference is {{booking_ref}}..."></textarea>
                             <div class="form-text">Use {{field_name}} for merge fields. WhatsApp allows up to 1024 characters.</div>
                         </div>
                         <div class="col-12">

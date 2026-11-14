@@ -35,7 +35,7 @@ $categories = $categories ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                        <select name="category_id" class="form-select" required>
+                        <select aria-label="Category id" name="category_id" class="form-select" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
@@ -48,7 +48,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Business purpose, client meeting, etc."></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Business purpose, client meeting, etc."></textarea>
                     </div>
                 </div>
             </div>

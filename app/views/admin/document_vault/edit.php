@@ -41,7 +41,7 @@ $category = $category ?? [];
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Category description..."><?= htmlspecialchars($category['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Category description..."><?= htmlspecialchars($category['description'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Mandatory</label>

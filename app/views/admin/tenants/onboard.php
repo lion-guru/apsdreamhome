@@ -109,7 +109,7 @@ $steps = [
                     </div>
                     <div class="col-12 mb-3">
                         <label class="form-label fw-semibold">Address</label>
-                        <textarea name="address" class="form-control" rows="2" placeholder="Full address"><?= htmlspecialchars($wizardData['address'] ?? '') ?></textarea>
+                        <textarea aria-label="Address" name="address" class="form-control" rows="2" placeholder="Full address"><?= htmlspecialchars($wizardData['address'] ?? '') ?></textarea>
                     </div>
                 </div>
                 <div class="text-end mt-3">
@@ -189,7 +189,7 @@ $steps = [
                 <input type="hidden" name="step" value="4">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Email Addresses (one per line)</label>
-                    <textarea name="invite_emails" class="form-control" rows="6" placeholder="user1@company.com&#10;user2@company.com&#10;manager@company.com"><?= htmlspecialchars(implode("\n", $wizardData['invite_emails'] ?? [])) ?></textarea>
+                    <textarea aria-label="Invite emails" name="invite_emails" class="form-control" rows="6" placeholder="user1@company.com&#10;user2@company.com&#10;manager@company.com"><?= htmlspecialchars(implode("\n", $wizardData['invite_emails'] ?? [])) ?></textarea>
                     <small class="text-muted">These users will receive an invitation email once the tenant is active.</small>
                 </div>
                 <div class="alert alert-info mb-0">

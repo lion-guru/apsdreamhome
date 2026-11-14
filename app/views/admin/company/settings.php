@@ -44,7 +44,7 @@ $company = $company ?? [];
                     </div>
                     <div class="col-12">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($company['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="4"><?= htmlspecialchars($company['description'] ?? '') ?></textarea>
                     </div>
                 </div>
                 <div class="mt-4">

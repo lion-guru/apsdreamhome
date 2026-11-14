@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status">
+                            <select aria-label="Status" class="form-select" id="status" name="status">
                                 <option value="">All</option>
                                 <option value="1" <?= ($status ?? '') === '1' ? 'selected' : '' ?>>Active</option>
                                 <option value="0" <?= ($status ?? '') === '0' ? 'selected' : '' ?>>Inactive</option>
@@ -41,7 +41,7 @@
                         </div>
                         <div class="col-md-3">
                             <label for="state_id" class="form-label">State</label>
-                            <select class="form-select" id="state_id" name="state_id">
+                            <select aria-label="State id" class="form-select" id="state_id" name="state_id">
                                 <option value="">All States</option>
                                 <?php foreach ($states as $state): ?>
                                     <option value="<?= e($state['id']) ?>" <?= (isset($state_id) && $state_id == $state['id']) ? 'selected' : '' ?>>

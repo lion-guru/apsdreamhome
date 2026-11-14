@@ -33,7 +33,7 @@ $buckets = $data['buckets'] ?? [];
                         </div>
                         <div class="col-md-3">
                             <label>Vendor</label>
-                            <select name="vendor_id" class="form-control">
+                            <select aria-label="Vendor id" name="vendor_id" class="form-control">
                                 <option value="0">All Vendors</option>
                                 <?php foreach ($vendors as $v) : ?>
                                     <option value="<?php echo (int)$v['id']; ?>" <?php if ($vendorId === (int)$v['id']) echo 'selected'; ?>><?php echo htmlspecialchars($v['vendor_name']); ?></option>

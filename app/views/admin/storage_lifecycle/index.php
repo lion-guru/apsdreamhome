@@ -14,7 +14,7 @@ $rules = $rules ?? [];
         <form onsubmit="return addRule(event)" class="row g-2 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="col-md-3"><label class="form-label small">Prefix</label><input type="text" name="prefix" class="form-control" placeholder="backups/" required></div>
-            <div class="col-md-2"><label class="form-label small">Action</label><select name="action" class="form-select"><option value="delete">Delete</option><option value="archive">Archive</option><option value="warn">Warn</option></select></div>
+            <div class="col-md-2"><label class="form-label small">Action</label><select aria-label="Action" name="action" class="form-select"><option value="delete">Delete</option><option value="archive">Archive</option><option value="warn">Warn</option></select></div>
             <div class="col-md-2"><label class="form-label small">Days</label><input type="number" name="days" class="form-control" min="1" value="90"></div>
             <div class="col-md-2"><button class="btn btn-primary w-100">Add Rule</button></div>
         </form>

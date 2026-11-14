@@ -14,7 +14,7 @@
                 <div class="col-md-3"><label class="form-label small"><?php echo __('finance_to'); ?></label><input type="date" name="to" value="<?= htmlspecialchars($to ?? '') ?>" class="form-control form-control-sm"></div>
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('finance_bank_account'); ?></label>
-                    <select name="bank_account_id" class="form-select form-select-sm">
+                    <select aria-label="Bank account id" name="bank_account_id" class="form-select form-select-sm">
                         <option value=""><?php echo __('finance_all'); ?></option>
                         <?php foreach (($banks ?? []) as $b): ?>
                             <option value="<?= (int)$b['id'] ?>" <?= $bank_id == $b['id'] ? 'selected' : '' ?>><?= htmlspecialchars($b['account_name'] ?? '') ?></option>

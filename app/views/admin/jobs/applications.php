@@ -36,7 +36,7 @@ $error = $error ?? null;
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Filter by Job</label>
-                    <select name="job_id" class="form-select" onchange="this.form.submit()">
+                    <select aria-label="Job id" name="job_id" class="form-select" onchange="this.form.submit()">
                         <option value="">All Jobs</option>
                         <?php foreach ($jobs as $job): ?>
                             <option value="<?php echo e($job['id']); ?>" <?php echo $selected_job == $job['id'] ? 'selected' : ''; ?>>
@@ -47,7 +47,7 @@ $error = $error ?? null;
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Filter by Status</label>
-                    <select name="status" class="form-select" onchange="this.form.submit()">
+                    <select aria-label="Status" name="status" class="form-select" onchange="this.form.submit()">
                         <option value="">All Statuses</option>
                         <?php foreach ($statuses as $status): ?>
                             <option value="<?php echo e($status); ?>"><?php echo ucfirst($status); ?></option>

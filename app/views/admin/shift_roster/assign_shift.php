@@ -22,7 +22,7 @@ $today = $today ?? date('Y-m-d');
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Employee <span class="text-danger">*</span></label>
-                                <select name="employee_id" class="form-select" required>
+                                <select aria-label="Employee id" name="employee_id" class="form-select" required>
                                     <option value="">Select Employee</option>
                                     <?php foreach ($employees as $emp): ?>
                                     <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name']) ?> (<?= $emp['employee_code'] ?>) - <?= htmlspecialchars($emp['designation']) ?></option>
@@ -31,7 +31,7 @@ $today = $today ?? date('Y-m-d');
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Shift Type <span class="text-danger">*</span></label>
-                                <select name="shift_type_id" class="form-select" required>
+                                <select aria-label="Shift type id" name="shift_type_id" class="form-select" required>
                                     <option value="">Select Shift</option>
                                     <?php foreach ($shift_types as $st): ?>
                                     <option value="<?= $st['id'] ?>" data-start="<?= $st['start_time'] ?>" data-end="<?= $st['end_time'] ?>">
@@ -56,7 +56,7 @@ $today = $today ?? date('Y-m-d');
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Remarks</label>
-                                <textarea name="remarks" class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+                                <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Optional notes..."></textarea>
                             </div>
                         </div>
                         <hr>

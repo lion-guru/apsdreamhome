@@ -9,7 +9,7 @@
             <form method="GET" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
-                    <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
+                    <select aria-label="Status" name="status" class="form-control form-control-sm" onchange="this.form.submit()">
                         <option value="">All Status</option>
                         <option value="approved" <?= $filterStatus === 'approved' ? 'selected' : '' ?>>Approved</option>
                         <option value="pending" <?= $filterStatus === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -17,7 +17,7 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="category_id" class="form-control form-control-sm" onchange="this.form.submit()">
+                    <select aria-label="Category id" name="category_id" class="form-control form-control-sm" onchange="this.form.submit()">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $filterCat == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>

@@ -9,7 +9,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="url" value="/admin/finance/tds-certificates">
                 <div class="col-md-3"><label class="form-label small"><?php echo __('finance_fy'); ?></label>
-                    <select name="fy" class="form-select form-select-sm">
+                    <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                         <?php foreach (['2024-25','2025-26','2026-27'] as $y): ?>
                             <option value="<?= $y ?>" <?= $fy === $y ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endforeach; ?>

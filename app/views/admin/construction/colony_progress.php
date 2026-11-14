@@ -12,7 +12,7 @@
             <form method="get" action="<?= BASE_URL ?>/admin/construction/colony-progress" class="row g-3 align-items-end">
                 <div class="col-md-5">
                     <label class="form-label mb-1">Select Colony</label>
-                    <select name="colony_id" id="colonySelect" class="form-select">
+                    <select aria-label="Colony id" name="colony_id" id="colonySelect" class="form-select">
                         <option value="">-- Choose a colony --</option>
                         <?php foreach (($colonies ?? []) as $c): ?>
                             <option value="<?= $c['id'] ?? '' ?>" <?= ((int)($c['id'] ?? 0) === (int)($colony_id ?? 0)) ? 'selected' : '' ?>>
@@ -213,7 +213,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Category</label>
-                                    <select name="category" id="m_category" class="form-select">
+                                    <select aria-label="Category" name="category" id="m_category" class="form-select">
                                         <option value="roads">Roads</option>
                                         <option value="drainage">Drainage</option>
                                         <option value="electricity">Electricity</option>
@@ -225,7 +225,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Status</label>
-                                    <select name="status" id="m_status" class="form-select">
+                                    <select aria-label="Status" name="status" id="m_status" class="form-select">
                                         <option value="not_started">Not Started</option>
                                         <option value="in_progress">In Progress</option>
                                         <option value="on_hold">On Hold</option>
@@ -267,11 +267,11 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Remarks</label>
-                                    <textarea name="remarks" id="m_remarks" class="form-control" rows="2" maxlength="2000" placeholder="% complete remarks, site observations..."></textarea>
+                                    <textarea aria-label="Remarks" name="remarks" id="m_remarks" class="form-control" rows="2" maxlength="2000" placeholder="% complete remarks, site observations..."></textarea>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Notes</label>
-                                    <textarea name="notes" id="m_notes" class="form-control" rows="3" maxlength="2000"></textarea>
+                                    <textarea aria-label="Notes" name="notes" id="m_notes" class="form-control" rows="3" maxlength="2000"></textarea>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Site Photo <small class="text-muted">(jpg/png/webp, optional)</small></label>

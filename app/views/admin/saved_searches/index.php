@@ -204,7 +204,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">Entity Type *</label>
-                                    <select name="entity_type" class="form-select" required>
+                                    <select aria-label="Entity type" name="entity_type" class="form-select" required>
                                         <option value="">Select...</option>
                                         <?php foreach ($entity_types as $et): ?>
                                             <option value="<?php echo e($et); ?>"><?php echo ucfirst(str_replace('_', ' ', $et)); ?></option>
@@ -213,11 +213,11 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">Description</label>
-                                    <textarea name="description" class="form-control" rows="2" placeholder="Optional notes about this search"></textarea>
+                                    <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Optional notes about this search"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">Filters (JSON)</label>
-                                    <textarea name="filters" class="form-control font-monospace" rows="5" placeholder='{"status":"new","source":"facebook","date_from":"2026-01-01"}' required></textarea>
+                                    <textarea aria-label="Filters" name="filters" class="form-control font-monospace" rows="5" placeholder='{"status":"new","source":"facebook","date_from":"2026-01-01"}' required></textarea>
                                     <small class="text-muted">JSON object of filter key=value pairs</small>
                                 </div>
                                 <div class="form-check mb-2">

@@ -20,7 +20,7 @@ $statuses = $statuses ?? ['draft', 'submitted', 'approved', 'rejected'];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Fiscal Year</label>
-                    <select name="fiscal_year" class="form-select">
+                    <select aria-label="Fiscal year" name="fiscal_year" class="form-select">
                         <option value="">All Years</option>
                         <?php foreach ($fiscalYears as $fy): ?>
                         <option value="<?= htmlspecialchars($fy['fiscal_year'] ?? '') ?>" <?= $filters['fiscal_year'] === ($fy['fiscal_year'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($fy['fiscal_year'] ?? '') ?></option>
@@ -29,7 +29,7 @@ $statuses = $statuses ?? ['draft', 'submitted', 'approved', 'rejected'];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Statuses</option>
                         <?php foreach ($statuses as $s): ?>
                         <option value="<?= $s ?>" <?= $filters['status'] === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

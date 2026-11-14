@@ -62,7 +62,7 @@ $lastBackup = $lastBackup ?? null;
             <form onsubmit="return calcCost(event)" class="row g-2 align-items-end">
                 <div class="col-md-2"><label class="form-label small">Size (GB)</label><input type="number" id="cc_size" class="form-control" step="0.1" min="0" value="10"></div>
                 <div class="col-md-2"><label class="form-label small">Requests/month</label><input type="number" id="cc_req" class="form-control" min="0" value="10000"></div>
-                <div class="col-md-2"><label class="form-label small">Tier</label><select id="cc_tier" class="form-select"><option value="standard">Standard</option><option value="infrequent">Infrequent</option><option value="glacier">Glacier</option><option value="deep_archive">Deep Archive</option></select></div>
+                <div class="col-md-2"><label class="form-label small">Tier</label><select aria-label="Cc tier" id="cc_tier" class="form-select"><option value="standard">Standard</option><option value="infrequent">Infrequent</option><option value="glacier">Glacier</option><option value="deep_archive">Deep Archive</option></select></div>
                 <div class="col-md-2"><button class="btn btn-primary w-100">Calculate</button></div>
                 <div class="col-md-4"><div id="cc_result" class="alert alert-info py-2 mb-0">Enter values and click Calculate</div></div>
             </form>

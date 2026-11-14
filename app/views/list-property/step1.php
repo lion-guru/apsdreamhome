@@ -46,7 +46,7 @@ $t = $old['title'] ?? $state_data['title'] ?? '';
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label">Property Type *</label>
-                            <select name="property_type" class="form-select" required>
+                            <select aria-label="Property type" name="property_type" class="form-select" required>
                                 <option value="">-- Select --</option>
                                 <?php foreach (['plot','flat','house','shop','farmhouse','land','apartment','villa'] as $t1): ?>
                                     <option value="<?= e($t1 ?? '') ?>" <?= $pt === $t1 ? 'selected' : '' ?>><?= ucfirst($t1) ?></option>

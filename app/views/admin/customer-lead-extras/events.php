@@ -98,7 +98,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Event Type</label>
-                        <select class="form-select" name="event_type">
+                        <select aria-label="Event type" class="form-select" name="event_type">
                             <option value="">All Event Types</option>
                             <option value="view">View</option>
                             <option value="click">Click</option>

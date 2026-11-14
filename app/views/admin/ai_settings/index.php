@@ -110,7 +110,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Gemini Model</label>
-                                <select class="form-select" name="gemini_model">
+                                <select aria-label="Gemini model" class="form-select" name="gemini_model">
                                     <?php foreach (['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'] as $m): ?>
                                         <option value="<?= $m ?>" <?= ($cfg['gemini_model'] ?? '') === $m ? 'selected' : '' ?>><?= $m ?></option>
                                     <?php endforeach; ?>
@@ -133,7 +133,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Text-to-Speech (TTS)</label>
-                                <select class="form-select" name="tts_engine">
+                                <select aria-label="Tts engine" class="form-select" name="tts_engine">
                                     <option value="groq" <?= ($cfg['tts_engine'] ?? '') === 'groq' ? 'selected' : '' ?>>Groq orpheus (natural English)</option>
                                     <option value="google" <?= ($cfg['tts_engine'] ?? '') === 'google' ? 'selected' : '' ?>>Google TTS (Hindi + English)</option>
                                     <option value="espeak" <?= ($cfg['tts_engine'] ?? '') === 'espeak' ? 'selected' : '' ?>>eSpeak (offline fallback)</option>
@@ -143,7 +143,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Speech-to-Text (STT) preference</label>
-                                <select class="form-select" name="stt_engine">
+                                <select aria-label="Stt engine" class="form-select" name="stt_engine">
                                     <option value="groq" <?= ($cfg['stt_engine'] ?? '') === 'groq' ? 'selected' : '' ?>>Groq Whisper large-v3 (cloud-first)</option>
                                     <option value="whisper" <?= ($cfg['stt_engine'] ?? '') === 'whisper' ? 'selected' : '' ?>>Local Whisper docker first</option>
                                 </select>

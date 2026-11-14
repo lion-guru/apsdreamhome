@@ -51,7 +51,7 @@
                 <div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="fas fa-plus me-1"></i>New Contract</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Employee</label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($users ?? [] as $e): ?>
                             <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3"><label class="form-label">Contract Type</label>
-                            <select name="contract_type" class="form-select">
+                            <select aria-label="Contract type" name="contract_type" class="form-select">
                                 <option value="permanent">Permanent</option>
                                 <option value="probation">Probation</option>
                                 <option value="contract">Contract</option>
@@ -74,7 +74,7 @@
                         <div class="col-md-6 mb-3"><label class="form-label">Salary Amount (₹)</label><input type="number" step="0.01" name="salary_amount" class="form-control" value="0"></div>
                         <div class="col-md-6 mb-3"><label class="form-label">Signing Bonus (₹)</label><input type="number" step="0.01" name="signing_bonus" class="form-control" value="0"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Terms & Conditions</label><textarea name="terms" class="form-control" rows="4"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Terms & Conditions</label><textarea aria-label="Terms" name="terms" class="form-control" rows="4"></textarea></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

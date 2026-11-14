@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Level</label>
-                    <select name="level" class="form-select">
+                    <select aria-label="Level" name="level" class="form-select">
                         <option value="">All</option>
                         <option value="error" <?= ($level ?? '') === 'error' ? 'selected' : '' ?>>Error</option>
                         <option value="warning" <?= ($level ?? '') === 'warning' ? 'selected' : '' ?>>Warning</option>

@@ -25,7 +25,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Category</label>
-                            <select class="form-select" name="category">
+                            <select aria-label="Category" class="form-select" name="category">
                                 <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat ?>"><?= ucfirst($cat) ?></option>
                                 <?php endforeach; ?>
@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Status</label>
-                            <select class="form-select" name="status">
+                            <select aria-label="Status" class="form-select" name="status">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
@@ -47,7 +47,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" name="description" rows="3" placeholder="Detailed description"></textarea>
+                        <textarea aria-label="Description" class="form-control" name="description" rows="3" placeholder="Detailed description"></textarea>
                     </div>
 
                     <div class="mb-4">

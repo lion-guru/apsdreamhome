@@ -11,7 +11,7 @@
                 <input type="hidden" name="url" value="/admin/finance/cheques">
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('finance_status'); ?></label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value=""><?php echo __('finance_all'); ?></option>
                         <?php foreach (['issued','pending','cleared','bounced','cancelled'] as $s): ?>
                             <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('finance_bank'); ?></label>
-                    <select name="bank_account_id" class="form-select form-select-sm">
+                    <select aria-label="Bank account id" name="bank_account_id" class="form-select form-select-sm">
                         <option value=""><?php echo __('finance_all'); ?></option>
                         <?php foreach (($banks ?? []) as $b): ?>
                             <option value="<?= (int)$b['id'] ?>" <?= $bank_id == $b['id'] ? 'selected' : '' ?>><?= htmlspecialchars($b['account_name'] ?? '') ?></option>

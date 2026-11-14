@@ -184,7 +184,7 @@ $tickets = $tickets ?? [];
                     <div class="row mb-3">
                         <label for="category" class="col-sm-3 col-form-label fw-bold">Category <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <select class="form-select" id="category" name="category" required>
+                            <select aria-label="Category" class="form-select" id="category" name="category" required>
                                 <option value="">Select category</option>
                                 <option value="it">IT Support</option>
                                 <option value="hr">HR</option>
@@ -204,7 +204,7 @@ $tickets = $tickets ?? [];
                     <div class="row mb-3">
                         <label for="priority" class="col-sm-3 col-form-label fw-bold">Priority <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <select class="form-select" id="priority" name="priority" required>
+                            <select aria-label="Priority" class="form-select" id="priority" name="priority" required>
                                 <option value="low">Low - General inquiry</option>
                                 <option value="medium" selected>Medium - Standard issue</option>
                                 <option value="high">High - Affects work</option>
@@ -215,7 +215,7 @@ $tickets = $tickets ?? [];
                     <div class="row mb-3">
                         <label for="description" class="col-sm-3 col-form-label fw-bold">Description <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <textarea class="form-control" id="description" name="description" rows="5" required placeholder="Describe the issue in detail..."></textarea>
+                            <textarea aria-label="Description" class="form-control" id="description" name="description" rows="5" required placeholder="Describe the issue in detail..."></textarea>
                         </div>
                     </div>
                     <div class="row mb-3">

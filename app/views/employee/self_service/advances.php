@@ -259,7 +259,7 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
-                            <select name="type" class="form-select" id="advanceType" required onchange="toggleInstallments()">
+                            <select aria-label="Type" name="type" class="form-select" id="advanceType" required onchange="toggleInstallments()">
                                 <option value="">Select type</option>
                                 <option value="advance">Salary Advance (One-time, no interest)</option>
                                 <option value="loan">Loan (EMI with interest)</option>
@@ -271,7 +271,7 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                         </div>
                         <div class="col-md-6" id="installmentsGroup" style="display: none;">
                             <label class="form-label fw-semibold">Number of Installments <span class="text-danger">*</span></label>
-                            <select name="installments" class="form-select" id="installmentsSelect" required>
+                            <select aria-label="Installments" name="installments" class="form-select" id="installmentsSelect" required>
                                 <option value="">Select installments</option>
                                 <option value="2">2 Months</option>
                                 <option value="3">3 Months</option>
@@ -290,7 +290,7 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
-                            <textarea name="reason" class="form-control" rows="3" required placeholder="Briefly explain the purpose..."></textarea>
+                            <textarea aria-label="Reason" name="reason" class="form-control" rows="3" required placeholder="Briefly explain the purpose..."></textarea>
                         </div>
                     </div>
                 </div>

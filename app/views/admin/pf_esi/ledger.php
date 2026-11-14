@@ -9,7 +9,7 @@ $employee_id = (int)($employee_id ?? 0);
         <div>
             <form method="GET" class="d-inline">
                 <label class="me-2" style="margin-bottom:0;">Employee:</label>
-                <select name="employee_id" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
                     <option value="0">Select employee</option>
                     <?php foreach ($employees as $e): ?>
                         <option value="<?= (int)$e['id'] ?>" <?= $employee_id === (int)$e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name']) ?> (<?= htmlspecialchars($e['employee_code'] ?? $e['id']) ?>)</option>

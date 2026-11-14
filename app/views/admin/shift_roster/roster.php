@@ -39,7 +39,7 @@ $employee_id = $employee_id ?? 0;
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Employee</label>
-                    <select name="employee_id" class="form-select" onchange="this.form.submit()">
+                    <select aria-label="Employee id" name="employee_id" class="form-select" onchange="this.form.submit()">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= $employee_id == $emp['id'] ? 'selected' : '' ?>>

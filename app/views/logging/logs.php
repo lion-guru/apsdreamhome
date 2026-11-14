@@ -10,7 +10,7 @@
         <div class="card-header bg-white border-bottom">
             <div class="row g-2 align-items-center">
                 <div class="col-auto">
-                    <select class="form-select form-select-sm" id="levelFilter" onchange="applyFilter()">
+                    <select aria-label="Level filter" class="form-select form-select-sm" id="levelFilter" onchange="applyFilter()">
                         <option value="">All Levels</option>
                         <option value="error" <?= ($filter['level'] ?? '') === 'error' ? 'selected' : '' ?>>Error</option>
                         <option value="warning" <?= ($filter['level'] ?? '') === 'warning' ? 'selected' : '' ?>>Warning</option>

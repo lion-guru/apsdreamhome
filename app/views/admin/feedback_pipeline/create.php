@@ -32,7 +32,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Channel</label>
-            <select name="channel" class="form-select">
+            <select aria-label="Channel" name="channel" class="form-select">
                 <option value="email">Email</option>
                 <option value="sms">SMS</option>
                 <option value="whatsapp">WhatsApp</option>
@@ -48,7 +48,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Message</label>
-            <textarea name="description" class="form-control"></textarea>
+            <textarea aria-label="Description" name="description" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Dispatch</button>
         <a href="/admin/feedback-pipeline" class="btn btn-secondary">Cancel</a>

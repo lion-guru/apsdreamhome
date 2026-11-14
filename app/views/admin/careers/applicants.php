@@ -22,7 +22,7 @@
                     <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="new" <?php echo ($filters['status'] ?? '') === 'new' ? 'selected' : ''; ?>>New</option>
                         <option value="reviewed" <?php echo ($filters['status'] ?? '') === 'reviewed' ? 'selected' : ''; ?>>Reviewed</option>
@@ -32,7 +32,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <select name="career_id" class="form-select">
+                    <select aria-label="Career id" name="career_id" class="form-select">
                         <option value="">All Positions</option>
                         <?php if (!empty($careers)): ?>
                             <?php foreach ($careers as $c): ?>

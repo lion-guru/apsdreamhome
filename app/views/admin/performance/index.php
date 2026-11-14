@@ -68,7 +68,7 @@ $stats = $stats ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Employee</label>
-                    <select name="employee_id" class="form-select form-select-sm">
+                    <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $emp): ?>
                             <option value="<?= $emp['id'] ?>" <?= ($filters['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
@@ -77,7 +77,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="active" <?= ($filters['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="completed" <?= ($filters['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
@@ -87,7 +87,7 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Type</label>
-                    <select name="goal_type" class="form-select form-select-sm">
+                    <select aria-label="Goal type" name="goal_type" class="form-select form-select-sm">
                         <option value="">All Types</option>
                         <option value="okr" <?= ($filters['goal_type'] ?? '') === 'okr' ? 'selected' : '' ?>>OKR</option>
                         <option value="kpi" <?= ($filters['goal_type'] ?? '') === 'kpi' ? 'selected' : '' ?>>KPI</option>

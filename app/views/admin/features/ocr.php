@@ -12,7 +12,7 @@ ob_start();
     <h5>Generate Report</h5>
     <div class="row g-2">
       <div class="col-md-3">
-        <select name="report_type" class="form-select">
+        <select aria-label="Report type" name="report_type" class="form-select">
           <option value="leads">Leads</option>
           <option value="sales">Sales</option>
           <option value="plots">Plots</option>

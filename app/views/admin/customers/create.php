@@ -24,7 +24,7 @@
                     <div class="col-md-6">
                         <label class="form-label">Address</label>
                         <div class="input-group">
-                            <textarea name="address" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Address" name="address" class="form-control" rows="2"></textarea>
                             <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                         </div>
                     </div>
@@ -39,8 +39,8 @@
                             </button>
                         </div>
                     </div>
-                    <div class="col-md-3"><label class="form-label">Status</label><select name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
-                    <div class="col-12"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-3"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                    <div class="col-12"><label class="form-label">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea></div>
                     <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Customer</button> <a href="<?= BASE_URL ?>/admin/users" class="btn btn-secondary">Cancel</a></div>
                 </div>
             </form>

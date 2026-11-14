@@ -99,7 +99,7 @@ $current_year = date('Y');
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-industry me-1"></i><?= __('breg_label_company_type', [], 'Company Type') ?> *</label>
-                        <select class="form-control" name="company_type" required>
+                        <select aria-label="Company type" class="form-control" name="company_type" required>
                             <option value=""><?= __('breg_select_type', [], 'Select Type') ?></option>
                             <option value="private_limited"><?= __('breg_type_private', [], 'Private Limited') ?></option>
                             <option value="llp"><?= __('breg_type_llp', [], 'LLP') ?></option>
@@ -110,7 +110,7 @@ $current_year = date('Y');
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-calendar me-1"></i><?= __('breg_label_year', [], 'Established Year') ?> *</label>
-                        <select class="form-control" name="established_year" required>
+                        <select aria-label="Established year" class="form-control" name="established_year" required>
                             <option value=""><?= __('breg_select_year', [], 'Select Year') ?></option>
                             <?php for ($y = $current_year; $y >= 1950; $y--): ?>
                                 <option value="<?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($y, ENT_QUOTES, 'UTF-8') ?></option>
@@ -137,7 +137,7 @@ $current_year = date('Y');
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-map me-1"></i><?= __('breg_label_state', [], 'State') ?> *</label>
-                        <select class="form-control" name="state" required>
+                        <select aria-label="State" class="form-control" name="state" required>
                             <option value=""><?= __('breg_select_state', [], 'Select State') ?></option>
                             <?php foreach ($indian_states as $st): ?>
                                 <option value="<?= htmlspecialchars($st, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($st, ENT_QUOTES, 'UTF-8') ?></option>

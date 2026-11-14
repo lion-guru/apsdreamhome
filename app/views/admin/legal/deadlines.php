@@ -151,11 +151,11 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Legal Type</label>
-                            <select name="legal_type" class="form-select">
+                            <select aria-label="Legal type" name="legal_type" class="form-select">
                                 <option value="filing">Filing</option>
                                 <option value="hearing">Hearing</option>
                                 <option value="documentation">Documentation</option>
@@ -169,7 +169,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Assigned To</label>
-                            <select name="assigned_to" class="form-select">
+                            <select aria-label="Assigned to" name="assigned_to" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php $users = $users ?? []; foreach ($users as $u): ?>
                                     <option value="<?php echo e($u['id']); ?>"><?php echo $u['name']; ?></option>
@@ -178,7 +178,7 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="pending">Pending</option>
                                 <option value="in_progress">In Progress</option>
                                 <option value="completed">Completed</option>

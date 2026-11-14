@@ -64,7 +64,7 @@ $sl = $statusLabels[$inquiry['status']] ?? ['label' => $inquiry['status'], 'clas
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="mb-3">
                         <label class="form-label">New Status</label>
-                        <select class="form-select" name="status" required>
+                        <select aria-label="Status" class="form-select" name="status" required>
                             <?php foreach ($statusLabels as $key => $info): ?>
                                 <option value="<?= $key ?>" <?= ($inquiry['status'] ?? '') === $key ? 'selected' : '' ?>><?= $info['label'] ?></option>
                             <?php endforeach; ?>
@@ -72,7 +72,7 @@ $sl = $statusLabels[$inquiry['status']] ?? ['label' => $inquiry['status'], 'clas
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
-                        <textarea class="form-control" name="notes" rows="3" placeholder="Add notes about this update..."></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="Add notes about this update..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Update Status</button>
                 </form>

@@ -35,7 +35,7 @@ $colony = $colony ?? null;
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Project Type</label>
-            <select name="project_type" class="form-select bg-dark text-white border-secondary">
+            <select aria-label="Project type" name="project_type" class="form-select bg-dark text-white border-secondary">
               <option value="Residential Plotted">Residential Plotted</option>
               <option value="Residential Apartments">Residential Apartments</option>
               <option value="Commercial">Commercial</option>

@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="row">
                 <div class="col-md-6">
                     <label>Agent *</label>
-                    <select name="agent_id" required>
+                    <select aria-label="Agent id" name="agent_id" required>
                         <option value="">-- Select Agent --</option>
                         <?php foreach ($agents as $ag): ?>
                         <option value="<?= (int)$ag['id'] ?>"><?= htmlspecialchars($ag['name'] ?? '') ?> (<?= htmlspecialchars($ag['email'] ?? '') ?>)</option>
@@ -41,7 +41,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </div>
                 <div class="col-md-6">
                     <label>Property (Optional)</label>
-                    <select name="property_id">
+                    <select aria-label="Property id" name="property_id">
                         <option value="">-- General Agreement --</option>
                         <?php foreach ($properties as $p): ?>
                         <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>
@@ -73,10 +73,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             </div>
 
             <label>Agreement Content (leave empty for auto-generated)</label>
-            <textarea name="content" placeholder="Leave empty to auto-generate terms and conditions..."></textarea>
+            <textarea aria-label="Content" name="content" placeholder="Leave empty to auto-generate terms and conditions..."></textarea>
 
             <label>Notes (Internal)</label>
-            <textarea name="notes" placeholder="Optional internal notes..."></textarea>
+            <textarea aria-label="Notes" name="notes" placeholder="Optional internal notes..."></textarea>
 
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">

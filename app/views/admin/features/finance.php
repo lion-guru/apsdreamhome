@@ -21,7 +21,7 @@ ob_start();
       <div class="col-md-3"><label>Amount</label><input name="amount" type="number" step="0.01" class="form-control" required></div>
       <div class="col-md-3"><label>State</label><input name="state_code" class="form-control" placeholder="UP/MH"></div>
       <div class="col-md-3"><label>Interstate?</label>
-        <select name="interstate" class="form-select"><option value="0">No (Intra-state)</option><option value="1">Yes (Inter-state)</option></select>
+        <select aria-label="Interstate" name="interstate" class="form-select"><option value="0">No (Intra-state)</option><option value="1">Yes (Inter-state)</option></select>
       </div>
       <div class="col-md-3 align-self-end"><button class="btn btn-primary">Calculate</button></div>
     </div>

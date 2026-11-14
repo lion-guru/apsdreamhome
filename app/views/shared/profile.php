@@ -90,7 +90,7 @@ $roleDisplayName = ucwords(str_replace('_', ' ', $userRole));
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Address</label>
-                                <textarea name="address" class="form-control" rows="3"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
+                                <textarea aria-label="Address" name="address" class="form-control" rows="3"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">

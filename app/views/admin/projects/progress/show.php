@@ -83,7 +83,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Milestone Status</label>
-                            <select name="milestone_status" class="form-select">
+                            <select aria-label="Milestone status" name="milestone_status" class="form-select">
                                 <option value="pending">Pending</option>
                                 <option value="in_progress">In Progress</option>
                                 <option value="completed">Completed</option>

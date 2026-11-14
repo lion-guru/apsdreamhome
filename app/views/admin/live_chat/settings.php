@@ -25,7 +25,7 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Position</label>
-                        <select name="widget_position" class="form-select">
+                        <select aria-label="Widget position" name="widget_position" class="form-select">
                             <option value="bottom-right" <?= ($settings['widget_position'] ?? '') === 'bottom-right' ? 'selected' : '' ?>>Bottom Right</option>
                             <option value="bottom-left" <?= ($settings['widget_position'] ?? '') === 'bottom-left' ? 'selected' : '' ?>>Bottom Left</option>
                         </select>
@@ -36,22 +36,22 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
-                        <select name="widget_enabled" class="form-select">
+                        <select aria-label="Widget enabled" name="widget_enabled" class="form-select">
                             <option value="1" <?= ($settings['widget_enabled'] ?? '1') === '1' ? 'selected' : '' ?>>Enabled</option>
                             <option value="0" <?= ($settings['widget_enabled'] ?? '1') === '0' ? 'selected' : '' ?>>Disabled</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Welcome Message</label>
-                        <textarea name="welcome_message" class="form-control" rows="3"><?= htmlspecialchars($settings['welcome_message'] ?? '') ?></textarea>
+                        <textarea aria-label="Welcome message" name="welcome_message" class="form-control" rows="3"><?= htmlspecialchars($settings['welcome_message'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Offline Message</label>
-                        <textarea name="offline_message" class="form-control" rows="3"><?= htmlspecialchars($settings['offline_message'] ?? '') ?></textarea>
+                        <textarea aria-label="Offline message" name="offline_message" class="form-control" rows="3"><?= htmlspecialchars($settings['offline_message'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Business Hours Only</label>
-                        <select name="business_hours_only" class="form-select">
+                        <select aria-label="Business hours only" name="business_hours_only" class="form-select">
                             <option value="0" <?= ($settings['business_hours_only'] ?? '0') === '0' ? 'selected' : '' ?>>No (24/7)</option>
                             <option value="1" <?= ($settings['business_hours_only'] ?? '0') === '1' ? 'selected' : '' ?>>Yes</option>
                         </select>
@@ -66,7 +66,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Auto-Assign</label>
-                        <select name="auto_assign" class="form-select">
+                        <select aria-label="Auto assign" name="auto_assign" class="form-select">
                             <option value="1" <?= ($settings['auto_assign'] ?? '1') === '1' ? 'selected' : '' ?>>Yes (auto-assign to available agent)</option>
                             <option value="0" <?= ($settings['auto_assign'] ?? '1') === '0' ? 'selected' : '' ?>>No (manual)</option>
                         </select>

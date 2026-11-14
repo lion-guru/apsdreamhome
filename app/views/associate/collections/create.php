@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
-                            <select name="payment_method" class="form-select">
+                            <select aria-label="Payment method" name="payment_method" class="form-select">
                                 <option value="cash">Cash</option>
                                 <option value="cheque">Cheque</option>
                                 <option value="bank_transfer">Bank Transfer</option>
@@ -59,7 +59,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
                         <div class="mb-3">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="2" placeholder="Any notes about this collection"></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="Any notes about this collection"></textarea>
                         </div>
 
                         <div class="d-grid gap-2">

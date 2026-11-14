@@ -13,7 +13,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Rule Name</label><input type="text" name="rule_name" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission Type</label>
-                            <select name="commission_type" class="form-select">
+                            <select aria-label="Commission type" name="commission_type" class="form-select">
                                 <option value="per_call">Per Call</option>
                                 <option value="per_lead">Per Lead</option>
                                 <option value="per_conversion">Per Conversion</option>
@@ -24,7 +24,7 @@
                         <div class="mb-2"><label class="form-label">Percentage (if type=percentage)</label><input type="number" step="0.01" name="percentage" class="form-control"></div>
                         <div class="mb-2"><label class="form-label">Min Calls</label><input type="number" name="min_calls" class="form-control" value="0"></div>
                         <div class="mb-2"><label class="form-label">Target Type</label>
-                            <select name="target_type" class="form-select">
+                            <select aria-label="Target type" name="target_type" class="form-select">
                                 <option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option>
                             </select>
                         </div>

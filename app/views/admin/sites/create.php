@@ -33,7 +33,7 @@ $active_page = 'sites';
 
                     <div class="mb-3">
                         <label for="location" class="form-label">Location *</label>
-                        <textarea class="form-control" id="location" name="location" rows="2" required></textarea>
+                        <textarea aria-label="Location" class="form-control" id="location" name="location" rows="2" required></textarea>
                         <div class="form-text">Full address or location description</div>
                     </div>
 
@@ -61,7 +61,7 @@ $active_page = 'sites';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="site_type" class="form-label">Site Type</label>
-                                <select class="form-select" id="site_type" name="site_type">
+                                <select aria-label="Site type" class="form-select" id="site_type" name="site_type">
                                     <option value="residential">Residential</option>
                                     <option value="commercial">Commercial</option>
                                     <option value="mixed">Mixed Use</option>
@@ -72,7 +72,7 @@ $active_page = 'sites';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" name="status">
+                                <select aria-label="Status" class="form-select" id="status" name="status">
                                     <option value="planning">Planning</option>
                                     <option value="under_development">Under Development</option>
                                     <option value="active">Active</option>
@@ -121,7 +121,7 @@ $active_page = 'sites';
 
                     <div class="mb-3">
                         <label for="manager_id" class="form-label">Site Manager</label>
-                        <select class="form-select" id="manager_id" name="manager_id">
+                        <select aria-label="Manager id" class="form-select" id="manager_id" name="manager_id">
                             <option value="">Select Manager</option>
                             <?php if (isset($managers)): ?>
                                 <?php foreach ($managers as $manager): ?>
@@ -139,7 +139,7 @@ $active_page = 'sites';
                     <h5 class="mb-3"><i class="fas fa-file-alt"></i> Description</h5>
                     <div class="mb-3">
                         <label for="description" class="form-label">Site Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                        <textarea aria-label="Description" class="form-control" id="description" name="description" rows="4"></textarea>
                         <div class="form-text">Detailed description of the site, features, and highlights</div>
                     </div>
                 </div>
@@ -158,17 +158,17 @@ $active_page = 'sites';
                     <h5 class="mb-3"><i class="fas fa-star"></i> Site Details</h5>
                     <div class="mb-3">
                         <label for="amenities" class="form-label">Amenities (JSON array)</label>
-                        <textarea class="form-control" id="amenities" name="amenities" rows="3" placeholder='["Wide Roads", "24/7 Water Supply", "CCTV Security"]'></textarea>
+                        <textarea aria-label="Amenities" class="form-control" id="amenities" name="amenities" rows="3" placeholder='["Wide Roads", "24/7 Water Supply", "CCTV Security"]'></textarea>
                         <div class="form-text">JSON array of amenities, or one per line (auto-converted to JSON)</div>
                     </div>
                     <div class="mb-3">
                         <label for="key_highlights" class="form-label">Key Highlights (JSON array)</label>
-                        <textarea class="form-control" id="key_highlights" name="key_highlights" rows="3" placeholder='["Wide Roads (30-40 ft)", "Gated Community", "Underground Electricity"]'></textarea>
+                        <textarea aria-label="Key highlights" class="form-control" id="key_highlights" name="key_highlights" rows="3" placeholder='["Wide Roads (30-40 ft)", "Gated Community", "Underground Electricity"]'></textarea>
                         <div class="form-text">JSON array of key project highlights, or one per line</div>
                     </div>
                     <div class="mb-3">
                         <label for="nearby_places" class="form-label">Nearby Places (JSON array of objects)</label>
-                        <textarea class="form-control" id="nearby_places" name="nearby_places" rows="4" placeholder='[{"name":"Railway Station","distance":"3-5 km","type":"railway"},{"name":"School","distance":"0.5-2 km","type":"school"}]'></textarea>
+                        <textarea aria-label="Nearby places" class="form-control" id="nearby_places" name="nearby_places" rows="4" placeholder='[{"name":"Railway Station","distance":"3-5 km","type":"railway"},{"name":"School","distance":"0.5-2 km","type":"school"}]'></textarea>
                         <div class="form-text">JSON array with name, distance, type (railway/bus/school/hospital/market/temple/park/bank/airport/mall/college/gas)</div>
                     </div>
                 </div>

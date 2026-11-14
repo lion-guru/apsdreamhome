@@ -79,7 +79,7 @@ $properties = $properties ?? [];
                     <h6 class="m-0 font-weight-bold text-success">Quick Select Property</h6>
                 </div>
                 <div class="card-body aps-cp-card-body">
-                    <select id="quickProperty" class="form-select" onchange="fillPropertyDetails()">
+                    <select aria-label="Quick property" id="quickProperty" class="form-select" onchange="fillPropertyDetails()">
                         <option value="">-- Select a Property --</option>
                         <?php foreach ($properties as $property): ?>
                         <option value="<?= $property['price'] ?>"><?= htmlspecialchars($property['title'] ?? '') ?> - ?<?= number_format($property['price']) ?></option>

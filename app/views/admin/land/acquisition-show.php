@@ -178,7 +178,7 @@ $acquisition = $acquisition ?? [];
                         <input type="hidden" name="acquisition_id" value="<?php echo $acquisition['id'] ?? 0; ?>">
                         <div class="mb-3">
                             <label class="form-label">Mutation Status</label>
-                            <select name="mutation_status" class="form-select">
+                            <select aria-label="Mutation status" name="mutation_status" class="form-select">
                                 <option value="not_started" <?php echo ($acquisition['mutation_status'] ?? '') === 'not_started' ? 'selected' : ''; ?>>Not Started</option>
                                 <option value="applied" <?php echo ($acquisition['mutation_status'] ?? '') === 'applied' ? 'selected' : ''; ?>>Applied</option>
                                 <option value="in_progress" <?php echo ($acquisition['mutation_status'] ?? '') === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
@@ -188,7 +188,7 @@ $acquisition = $acquisition ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="in_progress" <?php echo ($acquisition['status'] ?? '') === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                                 <option value="registered" <?php echo ($acquisition['status'] ?? '') === 'registered' ? 'selected' : ''; ?>>Registered</option>
                                 <option value="mutated" <?php echo ($acquisition['status'] ?? '') === 'mutated' ? 'selected' : ''; ?>>Mutated</option>
@@ -198,7 +198,7 @@ $acquisition = $acquisition ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Remarks</label>
-                            <textarea name="remarks" class="form-control" rows="3"><?php echo $acquisition['remarks'] ?? ''; ?></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control" rows="3"><?php echo $acquisition['remarks'] ?? ''; ?></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Update</button>
                     </form>

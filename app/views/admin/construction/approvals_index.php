@@ -56,7 +56,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/construction-approvals" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <label for="filter_colony" class="visually-hidden">Township Colony</label>
-                    <select name="colony_id" id="filter_colony" class="form-select form-select-sm">
+                    <select aria-label="Colony id" name="colony_id" id="filter_colony" class="form-select form-select-sm">
                         <option value="">All Township Colonies</option>
                         <?php foreach ($colonies as $col): ?>
                             <option value="<?= (int)$col['id'] ?>" <?= ($current_colony == $col['id']) ? 'selected' : '' ?>>
@@ -67,7 +67,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <div class="col-md-3">
                     <label for="filter_status" class="visually-hidden">Status</label>
-                    <select name="status" id="filter_status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" id="filter_status" class="form-select form-select-sm">
                         <option value="all" <?= ($current_status === 'all') ? 'selected' : '' ?>>All Statuses</option>
                         <option value="submitted" <?= ($current_status === 'submitted') ? 'selected' : '' ?>>Submitted (New)</option>
                         <option value="site_inspected" <?= ($current_status === 'site_inspected') ? 'selected' : '' ?>>Site Inspected</option>

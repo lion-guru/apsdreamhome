@@ -58,7 +58,7 @@ $isEdit = !empty($template);
                             </div>
                             <div>
                                 <label class="ocr-label">Document Type</label>
-                                <select name="document_type" class="ocr-select" required>
+                                <select aria-label="Document type" name="document_type" class="ocr-select" required>
                                     <?php foreach ($doc_types as $dt): ?>
                                         <option value="<?= $dt ?>" <?= ($template['document_type'] ?? '') === $dt ? 'selected' : '' ?>>
                                             <?= $doc_type_labels[$dt] ?? $dt ?>
@@ -70,7 +70,7 @@ $isEdit = !empty($template);
 
                         <div class="mb-4">
                             <label class="ocr-label">Active</label>
-                            <select name="is_active" class="ocr-select">
+                            <select aria-label="Is active" name="is_active" class="ocr-select">
                                 <option value="1" <?= ($template['is_active'] ?? 1) ? 'selected' : '' ?>>Yes</option>
                                 <option value="0" <?= !($template['is_active'] ?? 1) ? 'selected' : '' ?>>No</option>
                             </select>
@@ -78,7 +78,7 @@ $isEdit = !empty($template);
 
                         <div class="mb-4">
                             <label class="ocr-label">Field Definitions (JSON)</label>
-                            <textarea name="field_definitions_json" class="ocr-textarea" placeholder='[{"name": "full_name", "label": "Full Name", "pattern": "/Name:\\s*(.+)/i"}]' id="fieldsJson"><?= htmlspecialchars($fields_json ?? '') ?></textarea>
+                            <textarea aria-label="Field definitions json" name="field_definitions_json" class="ocr-textarea" placeholder='[{"name": "full_name", "label": "Full Name", "pattern": "/Name:\\s*(.+)/i"}]' id="fieldsJson"><?= htmlspecialchars($fields_json ?? '') ?></textarea>
                             <div class="d-flex gap-2 mt-2">
                                 <button type="button" class="ocr-btn ocr-btn-outline" onclick="validateJson()"><i class="fas fa-check me-1"></i>Validate JSON</button>
                                 <button type="button" class="ocr-btn ocr-btn-outline" onclick="prettifyJson()"><i class="fas fa-indent me-1"></i>Prettify</button>

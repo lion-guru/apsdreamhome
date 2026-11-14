@@ -26,7 +26,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Rating</label>
-                                    <select name="rating" class="form-select" required>
+                                    <select aria-label="Rating" name="rating" class="form-select" required>
                                         <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
                                         <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
                                         <option value="3">⭐⭐⭐ (3 Stars)</option>
@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="pending">Pending</option>
                                         <option value="approved">Approved</option>
                                         <option value="rejected">Rejected</option>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Testimonial Content</label>
-                            <textarea name="content" class="form-control" rows="5" required placeholder="Customer's feedback..."></textarea>
+                            <textarea aria-label="Content" name="content" class="form-control" rows="5" required placeholder="Customer's feedback..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Save Testimonial</button>
                         <a href="<?php echo BASE_URL; ?>/admin/testimonials" class="btn btn-secondary">Cancel</a>

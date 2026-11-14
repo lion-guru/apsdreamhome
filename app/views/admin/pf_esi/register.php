@@ -12,7 +12,7 @@ $status = $status ?? '';
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row">
             <div class="col-md-3"><label>Month</label><input type="month" name="month_year" class="form-control" value="<?= $month_year ?>"></div>
-            <div class="col-md-2"><label>Status</label><select name="status" class="form-select"><option value="">All</option><option value="processed" <?= $status==='processed'?'selected':'' ?>>Processed</option><option value="paid" <?= $status==='paid'?'selected':'' ?>>Paid</option></select></div>
+            <div class="col-md-2"><label>Status</label><select aria-label="Status" name="status" class="form-select"><option value="">All</option><option value="processed" <?= $status==='processed'?'selected':'' ?>>Processed</option><option value="paid" <?= $status==='paid'?'selected':'' ?>>Paid</option></select></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/pf-esi/register" class="btn btn-outline-secondary w-100">Clear</a></div>
         </form>

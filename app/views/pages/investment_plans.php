@@ -139,7 +139,7 @@ $page_title = $page_title ?? 'Investment Plans';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Payment Method</label>
-                        <select name="payment_mode" class="form-select" required>
+                        <select aria-label="Payment mode" name="payment_mode" class="form-select" required>
                             <option value="wallet">Wallet Balance</option>
                             <option value="razorpay">Razorpay (UPI/Card/Net Banking)</option>
                             <option value="bank_transfer">Bank Transfer</option>

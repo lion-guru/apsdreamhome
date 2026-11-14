@@ -58,7 +58,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-water-supply" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- All Colonies --</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $current_colony == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -175,7 +175,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -188,7 +188,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Shift</label>
-                        <select name="shift" class="form-select">
+                        <select aria-label="Shift" name="shift" class="form-select">
                             <option value="morning">Morning</option>
                             <option value="afternoon">Afternoon</option>
                             <option value="evening">Evening</option>
@@ -253,7 +253,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Pump Mechanical Health</label>
-                        <select name="pump_health" class="form-select">
+                        <select aria-label="Pump health" name="pump_health" class="form-select">
                             <option value="optimal">Optimal (Smooth Operation)</option>
                             <option value="minor_vibration">Minor Motor Vibration</option>
                             <option value="low_yield">Low Borewell Yield</option>
@@ -264,7 +264,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Shift Remarks / Observations</label>
-                        <textarea name="remarks" class="form-control" rows="2" placeholder="Water distribution pressure normal, overhead tank filled to capacity."></textarea>
+                        <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Water distribution pressure normal, overhead tank filled to capacity."></textarea>
                     </div>
                 </div>
             </div>

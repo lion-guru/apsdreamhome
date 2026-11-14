@@ -6,7 +6,7 @@
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <label class="form-label">Action</label>
-                    <select id="bulkAction" class="form-select">
+                    <select aria-label="Bulk action" id="bulkAction" class="form-select">
                         <option value="">Select Action</option>
                         <option value="assign">Assign To</option>
                         <option value="status">Change Status</option>
@@ -15,13 +15,13 @@
                 </div>
                 <div class="col-md-3" id="assignTo" >
                     <label class="form-label">Assign To</label>
-                    <select name="assign_to" class="form-select">
+                    <select aria-label="Assign to" name="assign_to" class="form-select">
                         <option value="">Select User</option>
                     </select>
                 </div>
                 <div class="col-md-3" id="statusTo" >
                     <label class="form-label">New Status</label>
-                    <select name="new_status" class="form-select">
+                    <select aria-label="New status" name="new_status" class="form-select">
                         <option value="new">New</option>
                         <option value="contacted">Contacted</option>
                         <option value="qualified">Qualified</option>

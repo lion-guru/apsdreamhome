@@ -31,7 +31,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Client Type</label>
-                                <select name="client_type" class="form-select" id="clientType">
+                                <select aria-label="Client type" name="client_type" class="form-select" id="clientType">
                                     <option value="customer" <?= ($invoice['client_type'] ?? '') === 'customer' ? 'selected' : '' ?>>Customer</option>
                                     <option value="associate" <?= ($invoice['client_type'] ?? '') === 'associate' ? 'selected' : '' ?>>Associate</option>
                                     <option value="vendor" <?= ($invoice['client_type'] ?? '') === 'vendor' ? 'selected' : '' ?>>Vendor</option>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Select Client</label>
-                                <select name="client_id" class="form-select" id="clientSelect">
+                                <select aria-label="Client id" name="client_id" class="form-select" id="clientSelect">
                                     <option value="">-- Select from users (optional) --</option>
                                     <?php if (!empty($users)): ?>
                                         <?php foreach ($users as $u): ?>
@@ -66,7 +66,7 @@
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Client Address</label>
-                                <textarea name="client_address" class="form-control" rows="2" id="clientAddress"><?= htmlspecialchars($invoice['client_address'] ?? '') ?></textarea>
+                                <textarea aria-label="Client address" name="client_address" class="form-control" rows="2" id="clientAddress"><?= htmlspecialchars($invoice['client_address'] ?? '') ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                                             <td><input type="text" name="item_name[]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['item_name'] ?? '') ?>" required></td>
                                             <td><input type="text" name="item_description[]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['item_description'] ?? '') ?>"></td>
                                             <td>
-                                                <select name="item_type[]" class="form-select form-select-sm">
+                                                <select aria-label="Item type" name="item_type[]" class="form-select form-select-sm">
                                                     <option value="property" <?= ($item['item_type'] ?? '') === 'property' ? 'selected' : '' ?>>Property</option>
                                                     <option value="service" <?= ($item['item_type'] ?? '') === 'service' ? 'selected' : '' ?>>Service</option>
                                                     <option value="product" <?= ($item['item_type'] ?? '') === 'product' ? 'selected' : '' ?>>Product</option>
@@ -121,7 +121,7 @@
                                             <td><input type="text" name="item_name[]" class="form-control form-control-sm" required></td>
                                             <td><input type="text" name="item_description[]" class="form-control form-control-sm"></td>
                                             <td>
-                                                <select name="item_type[]" class="form-select form-select-sm">
+                                                <select aria-label="Item type" name="item_type[]" class="form-select form-select-sm">
                                                     <option value="property">Property</option>
                                                     <option value="service">Service</option>
                                                     <option value="product">Product</option>
@@ -180,7 +180,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="draft" <?= ($invoice['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                                 <option value="sent" <?= ($invoice['status'] ?? '') === 'sent' ? 'selected' : '' ?>>Sent</option>
                                 <option value="viewed" <?= ($invoice['status'] ?? '') === 'viewed' ? 'selected' : '' ?>>Viewed</option>
@@ -199,11 +199,11 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Payment Terms</label>
-                            <textarea name="payment_terms" class="form-control" rows="2"><?= htmlspecialchars($invoice['payment_terms'] ?? '') ?></textarea>
+                            <textarea aria-label="Payment terms" name="payment_terms" class="form-control" rows="2"><?= htmlspecialchars($invoice['payment_terms'] ?? '') ?></textarea>
                         </div>
                         <div class="mb-0">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="3"><?= htmlspecialchars($invoice['notes'] ?? '') ?></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="3"><?= htmlspecialchars($invoice['notes'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>${rowIndex}</td>
             <td><input type="text" name="item_name[]" class="form-control form-control-sm" required></td>
             <td><input type="text" name="item_description[]" class="form-control form-control-sm"></td>
-            <td><select name="item_type[]" class="form-select form-select-sm"><option value="property">Property</option><option value="service">Service</option><option value="product">Product</option></select></td>
+            <td><select aria-label="Item type" name="item_type[]" class="form-select form-select-sm"><option value="property">Property</option><option value="service">Service</option><option value="product">Product</option></select></td>
             <td><input type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="1" min="0.01" step="any"></td>
             <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
             <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>

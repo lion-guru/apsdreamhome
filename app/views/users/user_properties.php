@@ -87,7 +87,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="active" <?= $status === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>

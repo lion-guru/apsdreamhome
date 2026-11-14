@@ -199,7 +199,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                         </h6>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Select Registered Customer <span class="text-danger">*</span></label>
-                            <select name="customer_id" id="customer_id" class="form-select form-select-lg" required>
+                            <select aria-label="Customer id" name="customer_id" id="customer_id" class="form-select form-select-lg" required>
                                 <option value="">-- Choose Registered Customer --</option>
                                 <?php foreach ($customers as $c): ?>
                                     <option value="<?= (int)($c['id'] ?? 0) ?>">
@@ -247,7 +247,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Payment Plan <span class="text-danger">*</span></label>
-                                <select name="payment_plan" id="payment_plan" class="form-select" required onchange="recalculateFinancials()">
+                                <select aria-label="Payment plan" name="payment_plan" id="payment_plan" class="form-select" required onchange="recalculateFinancials()">
                                     <?php foreach ($paymentPlans as $pp): ?>
                                         <option value="<?= htmlspecialchars((string)$pp) ?>" <?= str_contains($pp, '36') ? 'selected' : '' ?>>
                                             <?= htmlspecialchars((string)$pp) ?>
@@ -298,7 +298,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Executive Remarks &amp; Special Conditions</label>
-                            <textarea name="notes" class="form-control" rows="2" placeholder="Record any special approvals, associate codes, or client requirements..."></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="Record any special approvals, associate codes, or client requirements..."></textarea>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center pt-3 border-top">

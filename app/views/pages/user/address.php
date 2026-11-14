@@ -78,7 +78,7 @@ ob_start();
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="address_type"><?= __('user_address_type', null, 'Type') ?></label>
-                    <select name="address_type" id="address_type" class="aps-cp-input">
+                    <select aria-label="Address type" name="address_type" id="address_type" class="aps-cp-input">
                         <option value="home"><?= __('user_address_type_home', null, 'Home') ?></option>
                         <option value="office"><?= __('user_address_type_office', null, 'Office') ?></option>
                         <option value="billing"><?= __('user_address_type_billing', null, 'Billing') ?></option>

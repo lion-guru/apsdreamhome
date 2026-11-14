@@ -22,7 +22,7 @@ $monthName    = date('F', mktime(0, 0, 0, $month, 1, $year));
             <div class="row g-2 align-items-end">
                 <div class="col-auto">
                     <label class="form-label small" for="sel_month">Month</label>
-                    <select id="sel_month" name="month" class="form-select form-select-sm">
+                    <select aria-label="Month" id="sel_month" name="month" class="form-select form-select-sm">
                         <?php for ($m = 1; $m <= 12; $m++): ?>
                             <option value="<?= $m ?>" <?= $m === $month ? 'selected' : '' ?>>
                                 <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
@@ -32,7 +32,7 @@ $monthName    = date('F', mktime(0, 0, 0, $month, 1, $year));
                 </div>
                 <div class="col-auto">
                     <label class="form-label small" for="sel_year">Year</label>
-                    <select id="sel_year" name="year" class="form-select form-select-sm">
+                    <select aria-label="Year" id="sel_year" name="year" class="form-select form-select-sm">
                         <?php for ($y = date('Y') - 2; $y <= date('Y') + 1; $y++): ?>
                             <option value="<?= $y ?>" <?= $y === $year ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endfor; ?>

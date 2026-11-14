@@ -18,7 +18,7 @@ $cats = ['energy' => 'Energy', 'water' => 'Water', 'waste' => 'Waste', 'material
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Category</label>
-                    <select name="category" class="form-select">
+                    <select aria-label="Category" name="category" class="form-select">
                         <?php foreach ($cats as $k => $l): ?>
                             <option value="<?= $k ?>" <?= $isEdit && ($feature['category'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option>
                         <?php endforeach; ?>
@@ -32,7 +32,7 @@ $cats = ['energy' => 'Energy', 'water' => 'Water', 'waste' => 'Waste', 'material
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($feature['description'] ?? '') : '' ?></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($feature['description'] ?? '') : '' ?></textarea>
             </div>
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" name="is_active" <?= (!$isEdit || ($feature['is_active'] ?? 1)) ? 'checked' : '' ?> id="active">

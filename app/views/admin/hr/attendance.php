@@ -87,7 +87,7 @@
                     <span class="input-group-text bg-light"><i class="fas fa-calendar"></i></span>
                     <input type="date" name="date" class="form-control" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>" onchange="this.form.submit()">
                 </div>
-                <select name="status" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                <select aria-label="Status" name="status" class="form-select form-select-sm me-2" onchange="this.form.submit()">
                     <option value="">All Status</option>
                     <option value="present" <?= ($status_filter ?? '') === 'present' ? 'selected' : '' ?>>Present</option>
                     <option value="absent" <?= ($status_filter ?? '') === 'absent' ? 'selected' : '' ?>>Absent</option>
@@ -197,7 +197,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select select2-modal" required >
+                            <select aria-label="Employee id" name="employee_id" class="form-select select2-modal" required >
                                 <option value="">Select Employee...</option>
                                 <?php foreach ($users ?? [] as $emp): ?>
                                     <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -246,7 +246,7 @@
                     
                     <div class="mb-2">
                         <label class="form-label text-muted small fw-bold text-uppercase">Remarks / Notes</label>
-                        <textarea name="notes" class="form-control" rows="2" placeholder="Reason for late/absent, or any special notes..."></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="Reason for late/absent, or any special notes..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-3 bg-white">

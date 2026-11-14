@@ -27,7 +27,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Department</label>
-                        <select name="department_id" class="form-select">
+                        <select aria-label="Department id" name="department_id" class="form-select">
                             <option value="">None (Global)</option>
                             <?php foreach ($departments as $d): ?>
                             <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name']) ?> (<?= htmlspecialchars($d['code']) ?>)</option>
@@ -39,7 +39,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                 <div class="row g-3 mb-3">
                     <div class="col-md-3">
                         <label class="form-label">Category</label>
-                        <select name="category" class="form-select">
+                        <select aria-label="Category" name="category" class="form-select">
                             <option value="">Select</option>
                             <?php foreach ($categories as $c): ?>
                             <option value="<?= $c ?>"><?= ucwords(str_replace('_', ' ', $c)) ?></option>
@@ -63,7 +63,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <?php foreach (['draft', 'submitted', 'approved', 'rejected'] as $s): ?>
                             <option value="<?= $s ?>" <?= $s === 'draft' ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
                             <?php endforeach; ?>

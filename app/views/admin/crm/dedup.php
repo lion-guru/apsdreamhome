@@ -7,14 +7,14 @@
                     <h5>Find Duplicate Leads</h5>
                     <form method="GET" action="<?= BASE_URL ?>/admin/crm/dedup" class="row g-2 mb-3">
                         <div class="col-md-4">
-                            <select name="field" class="form-select">
+                            <select aria-label="Field" name="field" class="form-select">
                                 <option value="phone">Phone</option>
                                 <option value="email">Email</option>
                                 <option value="name">Name</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <select name="threshold" class="form-select">
+                            <select aria-label="Threshold" name="threshold" class="form-select">
                                 <option value="exact">Exact Match</option>
                                 <option value="fuzzy">Fuzzy Match</option>
                             </select>

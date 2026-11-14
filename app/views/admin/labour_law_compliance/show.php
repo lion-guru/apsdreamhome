@@ -24,7 +24,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Status</label>
-            <select name="status" class="form-select">
+            <select aria-label="Status" name="status" class="form-select">
                 <option value="pending" <?= $item['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
                 <option value="filed" <?= $item['status'] === 'filed' ? 'selected' : '' ?>>Filed</option>
                 <option value="overdue" <?= $item['status'] === 'overdue' ? 'selected' : '' ?>>Overdue</option>
@@ -45,7 +45,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Remarks</label>
-            <textarea name="remarks" class="form-control"><?= htmlspecialchars($item['remarks'] ?? '') ?></textarea>
+            <textarea aria-label="Remarks" name="remarks" class="form-control"><?= htmlspecialchars($item['remarks'] ?? '') ?></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Update Status</button>
     </form>

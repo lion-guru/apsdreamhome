@@ -26,7 +26,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Bank Account <span class="text-muted">(optional)</span></label>
-                            <select name="bank_account_id" class="form-select">
+                            <select aria-label="Bank account id" name="bank_account_id" class="form-select">
                                 <option value="">— Select Bank Account —</option>
                                 <?php foreach (($banks ?? []) as $b): ?>
                                     <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name'] ?? '') ?></option>

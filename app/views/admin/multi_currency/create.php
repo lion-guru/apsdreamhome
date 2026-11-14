@@ -22,7 +22,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Base Currency <span class="text-danger">*</span></label>
-                                            <select name="base_currency" class="form-control" required>
+                                            <select aria-label="Base currency" name="base_currency" class="form-control" required>
                                             <?php foreach (($currencies ?? []) as $c): ?>
                                                 <option value="<?php echo htmlspecialchars($c); ?>" <?php if ($c === 'INR') echo 'selected'; ?>><?php echo htmlspecialchars($c); ?></option>
                                             <?php endforeach; ?>
@@ -32,7 +32,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Target Currency <span class="text-danger">*</span></label>
-                                            <select name="target_currency" class="form-control" required>
+                                            <select aria-label="Target currency" name="target_currency" class="form-control" required>
                                                 <option value="">-- Select --</option>
                                             <?php foreach (($currencies ?? []) as $c): ?>
                                                 <option value="<?php echo htmlspecialchars($c); ?>"><?php echo htmlspecialchars($c); ?></option>

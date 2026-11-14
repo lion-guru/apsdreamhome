@@ -10,7 +10,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Category *</label>
-                                <select name="category" class="form-select" required>
+                                <select aria-label="Category" name="category" class="form-select" required>
                                     <option value="">Select Category</option>
                                     <option value="travel">Travel</option>
                                     <option value="office">Office Supplies</option>
@@ -31,7 +31,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Payment Mode</label>
-                                <select name="payment_mode" class="form-select">
+                                <select aria-label="Payment mode" name="payment_mode" class="form-select">
                                     <option value="cash">Cash</option>
                                     <option value="upi">UPI</option>
                                     <option value="bank_transfer">Bank Transfer</option>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Enter expense details..."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Enter expense details..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Expense</button>
                         <a href="<?= BASE_URL ?>/admin/expenses" class="btn btn-secondary ms-2">Cancel</a>

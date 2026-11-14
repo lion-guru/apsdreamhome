@@ -159,7 +159,7 @@ $activityIcons = [
                 <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/status" class="d-flex gap-2 align-items-end">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="flex-grow-1">
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <?php foreach ($statuses as $s): ?>
                                 <option value="<?= e($s ?? '') ?>" <?= ($lead['status'] ?? 'new') === $s ? 'selected' : '' ?>>
                                     <?= ucfirst(str_replace('_', ' ', $s)) ?>
@@ -182,7 +182,7 @@ $activityIcons = [
             <div class="card-body">
                 <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/note">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                    <textarea name="note" class="form-control mb-2" rows="3" placeholder="Type your note here..." required></textarea>
+                    <textarea aria-label="Note" name="note" class="form-control mb-2" rows="3" placeholder="Type your note here..." required></textarea>
                     <button type="submit" class="btn btn-warning btn-sm">
                         <i class="fas fa-plus me-1"></i>Add Note
                     </button>

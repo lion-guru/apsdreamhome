@@ -28,7 +28,7 @@ $qs = $colonyId > 0 ? '&colony_id=' . $colonyId : '';
             <form method="GET" action="<?= BASE_URL ?>/admin/plots/aging-report" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label">Colony</label>
-                    <select name="colony_id" class="form-select">
+                    <select aria-label="Colony id" name="colony_id" class="form-select">
                         <option value="0">All colonies</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= (int)$c['id'] ?>" <?= ($colonyId === (int)$c['id']) ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -37,7 +37,7 @@ $qs = $colonyId > 0 ? '&colony_id=' . $colonyId : '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Bucket</label>
-                    <select name="bucket" class="form-select">
+                    <select aria-label="Bucket" name="bucket" class="form-select">
                         <option value="">All buckets</option>
                         <option value="fast" <?= $bucket === 'fast' ? 'selected' : '' ?>>Fast Moving (&lt; 30d)</option>
                         <option value="normal" <?= $bucket === 'normal' ? 'selected' : '' ?>>Normal (30–90d)</option>

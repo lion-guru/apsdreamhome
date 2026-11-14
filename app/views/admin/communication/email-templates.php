@@ -112,7 +112,7 @@ $templates = $templates ?? [];
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Category</label>
-                                <select name="category" class="form-select" id="inputCategory">
+                                <select aria-label="Category" name="category" class="form-select" id="inputCategory">
                                     <option value="general">General</option>
                                     <option value="welcome">Welcome</option>
                                     <option value="transactional">Transactional</option>
@@ -126,16 +126,16 @@ $templates = $templates ?? [];
                             </div>
                             <div class="col-12">
                                 <label class="form-label">HTML Body</label>
-                                <textarea name="body_html" class="form-control" id="inputBodyHtml" rows="10" placeholder="<h1>Welcome {{name}}!</h1><p>Thank you for joining us...</p>"></textarea>
+                                <textarea aria-label="Body html" name="body_html" class="form-control" id="inputBodyHtml" rows="10" placeholder="<h1>Welcome {{name}}!</h1><p>Thank you for joining us...</p>"></textarea>
                                 <div class="form-text">Use {{variable_name}} for placeholders. Available: {{name}}, {{phone}}, {{email}}, {{lead_id}}, {{property_title}}, {{property_price}}, {{date}}, {{time}}</div>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Text Body (fallback)</label>
-                                <textarea name="body_text" class="form-control" id="inputBodyText" rows="5" placeholder="Welcome {{name}}! Thank you for joining us..."></textarea>
+                                <textarea aria-label="Body text" name="body_text" class="form-control" id="inputBodyText" rows="5" placeholder="Welcome {{name}}! Thank you for joining us..."></textarea>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Variables (JSON)</label>
-                                <textarea name="variables" class="form-control" id="inputVariables" rows="3" placeholder='["name", "phone", "email"]'>["name", "phone", "email"]</textarea>
+                                <textarea aria-label="Variables" name="variables" class="form-control" id="inputVariables" rows="3" placeholder='["name", "phone", "email"]'>["name", "phone", "email"]</textarea>
                             </div>
                             <div class="col-12">
                                 <div class="form-check">

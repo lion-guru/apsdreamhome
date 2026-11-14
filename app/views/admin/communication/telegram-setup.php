@@ -65,7 +65,7 @@ $settings = $settings ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">Webhook Verified</label>
-                            <select name="telegram_webhook_verified" class="form-select">
+                            <select aria-label="Telegram webhook verified" name="telegram_webhook_verified" class="form-select">
                                 <option value="0" <?= ($settings['telegram_webhook_verified'] ?? '') === '0' ? 'selected' : '' ?>>Not Verified</option>
                                 <option value="1" <?= ($settings['telegram_webhook_verified'] ?? '') === '1' ? 'selected' : '' ?>>Verified</option>
                             </select>

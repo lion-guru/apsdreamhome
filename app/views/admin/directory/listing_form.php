@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Category *</label>
-                        <select name="category_id" class="form-control" required>
+                        <select aria-label="Category id" name="category_id" class="form-control" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $c): ?>
                                 <option value="<?= $c['id'] ?>" <?= ($listing['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Price Range</label>
-                        <select name="price_range" class="form-control">
+                        <select aria-label="Price range" name="price_range" class="form-control">
                             <option value="">Select</option>
                             <option value="budget" <?= ($listing['price_range'] ?? '') === 'budget' ? 'selected' : '' ?>>Budget</option>
                             <option value="mid-range" <?= ($listing['price_range'] ?? '') === 'mid-range' ? 'selected' : '' ?>>Mid-Range</option>
@@ -47,7 +47,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($listing['description'] ?? '') ?></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="4"><?= htmlspecialchars($listing['description'] ?? '') ?></textarea>
                 </div>
 
                 <div class="row">
@@ -89,13 +89,13 @@
 
                 <div class="mb-3">
                     <label class="form-label">Address</label>
-                    <textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($listing['address'] ?? '') ?></textarea>
+                    <textarea aria-label="Address" name="address" class="form-control" rows="2"><?= htmlspecialchars($listing['address'] ?? '') ?></textarea>
                 </div>
 
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-control">
+                        <select aria-label="Status" name="status" class="form-control">
                             <option value="pending" <?= ($listing['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                             <option value="approved" <?= ($listing['status'] ?? '') === 'approved' ? 'selected' : '' ?>>Approved</option>
                             <option value="rejected" <?= ($listing['status'] ?? '') === 'rejected' ? 'selected' : '' ?>>Rejected</option>

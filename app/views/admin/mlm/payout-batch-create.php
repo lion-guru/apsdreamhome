@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Month <span class="text-danger">*</span></label>
-                    <select name="period_month" class="form-select" required>
+                    <select aria-label="Period month" name="period_month" class="form-select" required>
                         <?php for ($m = 1; $m <= 12; $m++): ?>
                             <option value="<?= $m ?>" <?= (int)$default_month === $m ? 'selected' : '' ?>>
                                 <?= date('F', mktime(0, 0, 0, $m, 1)) ?>

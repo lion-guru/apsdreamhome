@@ -24,7 +24,7 @@ $types = ['innova' => 'Innova', 'bolero' => 'Bolero', 'scorpio' => 'Scorpio', 'e
                     <div class="col-6"><label class="form-label small">Vehicle No.</label>
                         <input type="text" name="vehicle_no" class="form-control form-control-sm" placeholder="UP53 AB 1234" required></div>
                     <div class="col-6"><label class="form-label small">Type</label>
-                        <select name="vehicle_type" class="form-select form-select-sm">
+                        <select aria-label="Vehicle type" name="vehicle_type" class="form-select form-select-sm">
                             <?php foreach ($types as $k => $l): ?><option value="<?= $k ?>"><?= $l ?></option><?php endforeach; ?>
                         </select></div>
                     <div class="col-4"><label class="form-label small">Capacity</label>

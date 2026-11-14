@@ -40,7 +40,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Lead Source</label>
-                    <select name="lead_source" class="form-select form-select-sm">
+                    <select aria-label="Lead source" name="lead_source" class="form-select form-select-sm">
                         <?php foreach ($sources as $s): ?>
                             <option value="<?= $s ?>" <?= ($lead['lead_source'] ?? '') === $s ? 'selected' : '' ?>>
                                 <?= ucfirst($s) ?>
@@ -50,7 +50,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Broker</label>
-                    <select name="broker_id" class="form-select form-select-sm">
+                    <select aria-label="Broker id" name="broker_id" class="form-select form-select-sm">
                         <option value="">— None —</option>
                         <?php foreach ($brokers as $b): ?>
                             <option value="<?= (int)$b['id'] ?>" <?= ($lead['broker_id'] ?? '') == $b['id'] ? 'selected' : '' ?>>
@@ -61,7 +61,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <?php foreach ($statuses as $s): ?>
                             <option value="<?= $s ?>" <?= ($lead['status'] ?? 'new') === $s ? 'selected' : '' ?>>
                                 <?= ucwords(str_replace('_',' ',$s)) ?>
@@ -142,7 +142,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
                 <div class="col-12">
                     <label class="form-label small">Notes</label>
-                    <textarea name="notes" class="form-control form-control-sm" rows="3"><?= htmlspecialchars($lead['notes'] ?? '') ?></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="3"><?= htmlspecialchars($lead['notes'] ?? '') ?></textarea>
                 </div>
             </div>
         </div>

@@ -29,7 +29,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="rule_type" class="form-label">Rule Type *</label>
-                                    <select class="form-select" id="rule_type" name="rule_type" required>
+                                    <select aria-label="Rule type" class="form-select" id="rule_type" name="rule_type" required>
                                         <option value="">Select Type</option>
                                         <option value="percentage">Percentage</option>
                                         <option value="fixed">Fixed Amount</option>
@@ -55,7 +55,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="property_type" class="form-label">Property Type</label>
-                                    <select class="form-select" id="property_type" name="property_type">
+                                    <select aria-label="Property type" class="form-select" id="property_type" name="property_type">
                                         <option value="">All Types</option>
                                         <option value="residential">Residential</option>
                                         <option value="commercial">Commercial</option>
@@ -96,11 +96,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="payment_terms" class="form-label">Payment Terms</label>
-                            <textarea class="form-control" id="payment_terms" name="payment_terms" rows="3"></textarea>
+                            <textarea aria-label="Payment terms" class="form-control" id="payment_terms" name="payment_terms" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="notes" class="form-label">Notes</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                            <textarea aria-label="Notes" class="form-control" id="notes" name="notes" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <div class="form-check">

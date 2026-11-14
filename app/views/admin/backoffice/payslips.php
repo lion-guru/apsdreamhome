@@ -42,7 +42,7 @@
     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
     <div class="modal-header"><h5 class="modal-title"><?= __('admin_generate_payslip') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
-      <div class="mb-3"><label class="form-label"><?= __('admin_employee_label') ?></label><select name="employee_id" class="form-select" required>
+      <div class="mb-3"><label class="form-label"><?= __('admin_employee_label') ?></label><select aria-label="Employee id" name="employee_id" class="form-select" required>
         <option value=""><?= __('admin_select_placeholder') ?></option>
         <?php foreach ($employees as $e): ?><option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option><?php endforeach; ?>
       </select></div>

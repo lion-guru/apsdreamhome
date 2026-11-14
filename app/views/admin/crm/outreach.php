@@ -56,7 +56,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Type</label>
-                            <select class="form-select" name="campaign_type">
+                            <select aria-label="Campaign type" class="form-select" name="campaign_type">
                                 <option value="whatsapp_broadcast">WhatsApp Broadcast</option>
                                 <option value="sms_blast">SMS Blast</option>
                                 <option value="email_blast">Email Blast</option>
@@ -65,7 +65,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Target Status</label>
-                            <select class="form-select" name="target_status">
+                            <select aria-label="Target status" class="form-select" name="target_status">
                                 <option value="all">All Leads</option>
                                 <option value="new">New Only</option>
                                 <option value="contacted">Contacted</option>
@@ -76,7 +76,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Target Source</label>
-                            <select class="form-select" name="target_source">
+                            <select aria-label="Target source" class="form-select" name="target_source">
                                 <option value="all">All Sources</option>
                                 <option value="website">Website</option>
                                 <option value="referral">Referral</option>
@@ -89,7 +89,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Message Template</label>
-                            <textarea class="form-control" name="message" rows="4" required placeholder="Hi {name}, we have exciting plots available..."></textarea>
+                            <textarea aria-label="Message" class="form-control" name="message" rows="4" required placeholder="Hi {name}, we have exciting plots available..."></textarea>
                             <small class="text-muted">Use {name} and {phone} as placeholders</small>
                         </div>
 

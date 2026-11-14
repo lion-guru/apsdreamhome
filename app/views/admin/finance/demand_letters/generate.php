@@ -25,7 +25,7 @@
 
                     <div class="mb-3">
                         <label for="booking_id" class="form-label">Booking <span class="text-danger">*</span></label>
-                        <select name="booking_id" id="booking_id" class="form-select" required>
+                        <select aria-label="Booking id" name="booking_id" id="booking_id" class="form-select" required>
                             <option value="">Select Booking</option>
                             <?php foreach (($bookings ?? []) as $b): ?>
                                 <option value="<?= (int)$b['id'] ?>">
@@ -37,7 +37,7 @@
 
                     <div class="mb-3" id="installment-wrapper" style="display:none;">
                         <label for="installment_id" class="form-label">Installment <span class="text-danger">*</span></label>
-                        <select name="installment_id" id="installment_id" class="form-select" required>
+                        <select aria-label="Installment id" name="installment_id" id="installment_id" class="form-select" required>
                             <option value="">Select Installment</option>
                             <?php foreach (($bookings ?? []) as $b): ?>
                                 <?php foreach (($b['installments'] ?? []) as $inst): ?>

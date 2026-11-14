@@ -81,7 +81,7 @@ $recording = $recording ?? [];
 
             <form method="POST" action="<?= BASE_URL ?>/associate/call-recordings/<?= $recording['id'] ?>/note" class="d-flex gap-2">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <textarea class="form-control flex-grow-1" name="note" rows="2" placeholder="Add a note..." required></textarea>
+                <textarea aria-label="Note" class="form-control flex-grow-1" name="note" rows="2" placeholder="Add a note..." required></textarea>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i> Add Note
                 </button>

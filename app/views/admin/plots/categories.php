@@ -99,12 +99,12 @@ $categories = $categories ?? [];
                     
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" id="category_description" rows="3" placeholder="Category description..."></textarea>
+                        <textarea aria-label="Description" class="form-control" name="description" id="category_description" rows="3" placeholder="Category description..."></textarea>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Status</label>
-                        <select class="form-select" name="status" id="category_status">
+                        <select aria-label="Status" class="form-select" name="status" id="category_status">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>

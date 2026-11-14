@@ -173,7 +173,7 @@ $section_limits = $section_limits ?? [];
                         <input type="hidden" name="financial_year" value="<?= $financial_year ?>">
                         <div class="col-md-4">
                             <label class="form-label">Section</label>
-                            <select name="section" class="form-select" required>
+                            <select aria-label="Section" name="section" class="form-select" required>
                                 <?php foreach (array_keys($section_limits) as $sec): ?>
                                 <option value="<?= htmlspecialchars($sec) ?>"><?= htmlspecialchars($sec) ?></option>
                                 <?php endforeach; ?>

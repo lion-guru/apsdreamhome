@@ -22,7 +22,7 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
             <p class="text-muted mb-0">Track chatbot action usage, completion rates, and drop-offs</p>
         </div>
         <div class="d-flex gap-2">
-            <select class="form-select form-select-sm" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
+            <select aria-label="Period select" class="form-select form-select-sm" id="periodSelect" onchange="window.location='<?= BASE_URL ?>/admin/chat-analytics?days='+this.value">
                 <option value="7" <?=$days==7?'selected':''?>>Last 7 days</option>
                 <option value="30" <?=$days==30?'selected':''?>>Last 30 days</option>
                 <option value="90" <?=$days==90?'selected':''?>>Last 90 days</option>

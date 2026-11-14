@@ -31,7 +31,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_purpose_label', [], 'Purpose') ?></label>
-                                <select class="form-select" name="purpose">
+                                <select aria-label="Purpose" class="form-select" name="purpose">
                                     <option value="property_visit"><?= __('schedule_purpose_visit', [], 'Property Visit') ?></option>
                                     <option value="consultation"><?= __('schedule_purpose_consultation', [], 'Consultation') ?></option>
                                     <option value="documentation"><?= __('schedule_purpose_docs', [], 'Documentation Help') ?></option>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label"><?= __('schedule_message_label', [], 'Message') ?></label>
-                                <textarea class="form-control" name="message" rows="3"></textarea>
+                                <textarea aria-label="Message" class="form-control" name="message" rows="3"></textarea>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary mt-4 px-4"><i class="fas fa-calendar-check me-2"></i><?= __('schedule_submit', [], 'Schedule Meeting') ?></button>

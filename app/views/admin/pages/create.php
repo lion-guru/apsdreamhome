@@ -30,7 +30,7 @@ $page_title = $page_title ?? "Create Page";
                         
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Meta Description</label>
-                            <textarea class="form-control" name="meta_description" rows="2" placeholder="Brief description for SEO"></textarea>
+                            <textarea aria-label="Meta description" class="form-control" name="meta_description" rows="2" placeholder="Brief description for SEO"></textarea>
                         </div>
                         
                         <div class="mb-4">
@@ -40,13 +40,13 @@ $page_title = $page_title ?? "Create Page";
                         
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Content <span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="content" rows="15" required placeholder="Enter page content (HTML allowed)"></textarea>
+                            <textarea aria-label="Content" class="form-control" name="content" rows="15" required placeholder="Enter page content (HTML allowed)"></textarea>
                         </div>
                         
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Status</label>
-                                <select class="form-select" name="status">
+                                <select aria-label="Status" class="form-select" name="status">
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
                                     <option value="archived">Archived</option>

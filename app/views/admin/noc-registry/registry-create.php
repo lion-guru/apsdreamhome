@@ -36,7 +36,7 @@ $stamp_duty = $stamp_duty ?? [];
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label fw-semibold"><?= __('admin_booking_label') ?> <span class="text-danger">*</span></label>
-                                <select name="booking_id" class="form-select" required id="bookingSelect">
+                                <select aria-label="Booking id" name="booking_id" class="form-select" required id="bookingSelect">
                                     <option value="">— Select Booking —</option>
                                     <?php foreach ($eligible_bookings as $b): ?>
                                         <option value="<?= $b['id'] ?>" data-price="<?= $b['total_price'] ?? 0 ?>">
@@ -50,7 +50,7 @@ $stamp_duty = $stamp_duty ?? [];
 
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold"><?= __('admin_sub_registrar_office') ?> <span class="text-danger">*</span></label>
-                                <select name="sub_registrar_office" class="form-select" required>
+                                <select aria-label="Sub registrar office" name="sub_registrar_office" class="form-select" required>
                                     <option value="SRO Gorakhpur">SRO Gorakhpur</option>
                                     <option value="SRO Lucknow">SRO Lucknow</option>
                                     <option value="SRO Varanasi">SRO Varanasi</option>
@@ -66,7 +66,7 @@ $stamp_duty = $stamp_duty ?? [];
 
                             <div class="col-12">
                                 <label class="form-label fw-semibold"><?= __('admin_notes_label') ?></label>
-                                <textarea name="notes" class="form-control" rows="2" placeholder="<?= __('admin_additional_instructions_placeholder') ?>"></textarea>
+                                <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="<?= __('admin_additional_instructions_placeholder') ?>"></textarea>
                             </div>
                         </div>
 
@@ -93,7 +93,7 @@ $stamp_duty = $stamp_duty ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold"><?= __('admin_state_label') ?></label>
-                    <select class="form-select" id="calcState">
+                    <select aria-label="Calc state" class="form-select" id="calcState">
                         <option value="Uttar Pradesh" selected>Uttar Pradesh (4%)</option>
                         <option value="Bihar">Bihar (6%)</option>
                         <option value="Rajasthan">Rajasthan (5%)</option>

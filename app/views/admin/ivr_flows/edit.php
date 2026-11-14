@@ -39,12 +39,12 @@ $steps = $steps ?? [];
 
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" rows="3"><?= htmlspecialchars($flow['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" class="form-control" name="description" rows="3"><?= htmlspecialchars($flow['description'] ?? '') ?></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Welcome Message</label>
-                        <textarea class="form-control" name="welcome_message" rows="3"><?= htmlspecialchars($flow['welcome_message'] ?? '') ?></textarea>
+                        <textarea aria-label="Welcome message" class="form-control" name="welcome_message" rows="3"><?= htmlspecialchars($flow['welcome_message'] ?? '') ?></textarea>
                     </div>
 
                     <div class="mb-3 form-check">

@@ -31,7 +31,7 @@ $employees = $employees ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] . ' (' . $emp['employee_code'] . ')') ?></option>
@@ -40,7 +40,7 @@ $employees = $employees ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                        <select name="category_id" class="form-select" required>
+                        <select aria-label="Category id" name="category_id" class="form-select" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat['id'] ?>" data-allowed="<?= htmlspecialchars($cat['allowed_types'] ?? '[]') ?>" data-max-size="<?= $cat['max_size_mb'] ?? 10 ?>" data-requires-expiry="<?= $cat['requires_expiry'] ? '1' : '0' ?>"><?= htmlspecialchars($cat['name']) ?></option>
@@ -86,7 +86,7 @@ $employees = $employees ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Access Level</label>
-                        <select name="access_level" class="form-select">
+                        <select aria-label="Access level" name="access_level" class="form-select">
                             <option value="self" selected>Self Only</option>
                             <option value="hr">HR & Management</option>
                             <option value="all">All Authorized</option>

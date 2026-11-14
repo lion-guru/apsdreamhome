@@ -75,7 +75,7 @@ $topCat = array_key_first($categories) ?? '';
         <div class="d-flex gap-2">
             <input type="text" id="faqSearch" class="form-control form-control-sm" placeholder="Search FAQs..." style="width:180px;">
             <?php if (!empty($categories)): ?>
-            <select id="faqCatFilter" class="form-select form-select-sm" style="width:140px;">
+            <select aria-label="Faq cat filter" id="faqCatFilter" class="form-select form-select-sm" style="width:140px;">
                 <option value="">All Categories</option>
                 <?php foreach ($categories as $cat => $count): ?>
                     <option value="<?= htmlspecialchars($cat) ?>"><?= htmlspecialchars(ucfirst($cat)) ?> (<?= $count ?>)</option>

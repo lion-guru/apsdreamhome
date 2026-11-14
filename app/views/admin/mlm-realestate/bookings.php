@@ -87,7 +87,7 @@
                                                     <p>Reject booking by <strong><?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?></strong>?</p>
                                                     <div class="mb-3">
                                                         <label class="form-label">Reason for rejection</label>
-                                                        <textarea name="reason" class="form-control" rows="2" placeholder="Optional reason..."></textarea>
+                                                        <textarea aria-label="Reason" name="reason" class="form-control" rows="2" placeholder="Optional reason..."></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">

@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Level</label>
-                        <select name="level" class="form-select">
+                        <select aria-label="Level" name="level" class="form-select">
                             <option value="bronze">Bronze</option>
                             <option value="silver">Silver</option>
                             <option value="gold">Gold</option>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                             <option value="suspended">Suspended</option>

@@ -191,7 +191,7 @@ $isSuccess   = $feasibility['success'] ?? false;
 
             <div class="mb-3">
               <label class="form-label">Notes (optional)</label>
-              <textarea name="notes" class="form-control" rows="2" placeholder="Reason for this recalculation..."></textarea>
+              <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="Reason for this recalculation..."></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">

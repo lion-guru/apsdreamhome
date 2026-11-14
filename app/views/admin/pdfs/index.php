@@ -62,7 +62,7 @@ $flash = $flash ?? [];
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Type</label>
-                    <select name="type" class="form-select" required>
+                    <select aria-label="Type" name="type" class="form-select" required>
                         <?php foreach ($types as $t): ?>
                             <option value="<?= htmlspecialchars($t ?? '') ?>"><?= htmlspecialchars($t ?? '') ?></option>
                         <?php endforeach; ?>

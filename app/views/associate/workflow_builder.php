@@ -58,7 +58,7 @@ $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotia
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small">Condition value (if Status is)</label>
-                            <select id="cond_status" class="form-select"><option value="">— any —</option><?php foreach ($statuses as $s): ?><option value="<?= $s ?>"><?= $s ?></option><?php endforeach; ?></select>
+                            <select aria-label="Cond status" id="cond_status" class="form-select"><option value="">— any —</option><?php foreach ($statuses as $s): ?><option value="<?= $s ?>"><?= $s ?></option><?php endforeach; ?></select>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small">Action param (note text / status / days)</label>

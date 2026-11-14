@@ -29,7 +29,7 @@ $brokers = $brokers ?? [];
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Broker Type</label>
-                            <select name="broker_type" class="form-select form-select-sm">
+                            <select aria-label="Broker type" name="broker_type" class="form-select form-select-sm">
                                 <option value="individual">Individual</option>
                                 <option value="firm">Firm / Agency</option>
                                 <option value="agent">Agent</option>
@@ -62,7 +62,7 @@ $brokers = $brokers ?? [];
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Address</label>
-                            <textarea name="address" class="form-control form-control-sm" rows="2" placeholder="Full residential / office address"></textarea>
+                            <textarea aria-label="Address" name="address" class="form-control form-control-sm" rows="2" placeholder="Full residential / office address"></textarea>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Specialization / Region</label>
@@ -71,7 +71,7 @@ $brokers = $brokers ?? [];
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label small">Brokerage Model</label>
-                                <select name="brokerage_type" id="brokerageTypeSelect" class="form-select form-select-sm" onchange="updateBrokerageUnit(this.value, 'brokerageRateLabel', 'brokerageRateInput', 'commissionRateHidden')">
+                                <select aria-label="Brokerage type" name="brokerage_type" id="brokerageTypeSelect" class="form-select form-select-sm" onchange="updateBrokerageUnit(this.value, 'brokerageRateLabel', 'brokerageRateInput', 'commissionRateHidden')">
                                     <option value="percentage" selected>Percentage (%)</option>
                                     <option value="per_bigha">Per Bigha (₹/Bigha)</option>
                                     <option value="per_kattha">Per Kattha (₹/Kattha)</option>
@@ -89,7 +89,7 @@ $brokers = $brokers ?? [];
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label small">KYC Status</label>
-                                <select name="kyc_verified" class="form-select form-select-sm">
+                                <select aria-label="Kyc verified" name="kyc_verified" class="form-select form-select-sm">
                                     <option value="0">Pending</option>
                                     <option value="1">Verified</option>
                                 </select>
@@ -103,7 +103,7 @@ $brokers = $brokers ?? [];
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Agreement / Confidential Notes</label>
-                            <textarea name="notes" class="form-control form-control-sm" rows="2" placeholder="Agreed terms or background details..."></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2" placeholder="Agreed terms or background details..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-save me-1"></i>Add Broker & Generate Terms
@@ -256,7 +256,7 @@ $brokers = $brokers ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Broker Type</label>
-                            <select name="broker_type" id="edit_broker_type" class="form-select form-select-sm">
+                            <select aria-label="Broker type" name="broker_type" id="edit_broker_type" class="form-select form-select-sm">
                                 <option value="individual">Individual</option>
                                 <option value="firm">Firm / Agency</option>
                                 <option value="agent">Agent</option>
@@ -288,7 +288,7 @@ $brokers = $brokers ?? [];
 
                         <div class="col-12">
                             <label class="form-label small">Residential / Official Address</label>
-                            <textarea name="address" id="edit_address" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Address" name="address" id="edit_address" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
 
                         <div class="col-md-6">
@@ -297,7 +297,7 @@ $brokers = $brokers ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">KYC Verification</label>
-                            <select name="kyc_verified" id="edit_kyc_verified" class="form-select form-select-sm">
+                            <select aria-label="Kyc verified" name="kyc_verified" id="edit_kyc_verified" class="form-select form-select-sm">
                                 <option value="0">Pending</option>
                                 <option value="1">Verified (Docs Verified)</option>
                             </select>
@@ -310,7 +310,7 @@ $brokers = $brokers ?? [];
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <label class="form-label small">Brokerage Model</label>
-                                        <select name="brokerage_type" id="edit_brokerage_type" class="form-select form-select-sm" onchange="updateBrokerageUnit(this.value, 'editBrokerageRateLabel', 'edit_brokerage_rate', 'editCommissionRateHidden')">
+                                        <select aria-label="Brokerage type" name="brokerage_type" id="edit_brokerage_type" class="form-select form-select-sm" onchange="updateBrokerageUnit(this.value, 'editBrokerageRateLabel', 'edit_brokerage_rate', 'editCommissionRateHidden')">
                                             <option value="percentage">Percentage (%)</option>
                                             <option value="per_bigha">Per Bigha (₹/Bigha)</option>
                                             <option value="per_kattha">Per Kattha (₹/Kattha)</option>
@@ -341,7 +341,7 @@ $brokers = $brokers ?? [];
 
                         <div class="col-12">
                             <label class="form-label small">Agreement Terms / Special Instructions</label>
-                            <textarea name="notes" id="edit_notes" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Notes" name="notes" id="edit_notes" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                     </div>
                 </div>

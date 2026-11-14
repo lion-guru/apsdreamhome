@@ -35,7 +35,7 @@
           <td>
             <form method="POST" action="<?= BASE_URL ?>/admin/payments/reconciliation/<?= (int)$p['id'] ?>/link" class="d-inline">
               <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-              <select name="booking_id" class="form-select form-select-sm d-inline-block w-auto" required>
+              <select aria-label="Booking id" name="booking_id" class="form-select form-select-sm d-inline-block w-auto" required>
                 <option value="">Booking…</option>
                 <?php foreach (($bookings ?? []) as $b): ?>
                   <option value="<?= (int)$b['id'] ?>">#<?= (int)$b['id'] ?> <?= htmlspecialchars($b['booking_number'] ?? '') ?> (₹<?= number_format((float)$b['total_amount']) ?>)</option>

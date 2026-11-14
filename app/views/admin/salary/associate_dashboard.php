@@ -162,7 +162,7 @@
                     </div>
                     <div class="form-group">
                         <label for="editSalaryEligible">Salary Eligible</label>
-                        <select class="form-control" id="editSalaryEligible" name="salary_eligible">
+                        <select aria-label="Salary eligible" class="form-control" id="editSalaryEligible" name="salary_eligible">
                             <option value="0">No</option>
                             <option value="1">Yes</option>
                         </select>
@@ -173,7 +173,7 @@
                     </div>
                     <div class="form-group">
                         <label for="editTargetEligible">Target Bonus Eligible</label>
-                        <select class="form-control" id="editTargetEligible" name="target_bonus_eligible">
+                        <select aria-label="Target bonus eligible" class="form-control" id="editTargetEligible" name="target_bonus_eligible">
                             <option value="0">No</option>
                             <option value="1">Yes</option>
                         </select>
@@ -204,7 +204,7 @@
                     <input type="hidden" id="processAssociateId" name="associate_id">
                     <div class="form-group">
                         <label for="paymentMonth">Payment Month</label>
-                        <select class="form-control" id="paymentMonth" name="payment_month">
+                        <select aria-label="Payment month" class="form-control" id="paymentMonth" name="payment_month">
                             <option value="1">January</option>
                             <option value="2">February</option>
                             <option value="3">March</option>

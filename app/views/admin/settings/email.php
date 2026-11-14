@@ -21,7 +21,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Encryption</label>
-                                <select class="form-select" name="smtp_encryption">
+                                <select aria-label="Smtp encryption" class="form-select" name="smtp_encryption">
                                     <option value="tls" <?= ($config['smtp_encryption'] ?? '') === 'tls' ? 'selected' : '' ?>>TLS</option>
                                     <option value="ssl" <?= ($config['smtp_encryption'] ?? '') === 'ssl' ? 'selected' : '' ?>>SSL</option>
                                     <option value="none" <?= ($config['smtp_encryption'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>

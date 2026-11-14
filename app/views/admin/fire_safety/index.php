@@ -51,7 +51,7 @@ $currentColony = $current_colony ?? null;
     <div class="mb-3">
         <form method="GET" class="d-flex align-items-center gap-2 flex-wrap">
             <label class="fw-semibold text-muted small text-uppercase">Filter by Colony:</label>
-            <select name="colony_id" class="form-select form-select-sm" style="max-width:280px;" onchange="this.form.submit()">
+            <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" style="max-width:280px;" onchange="this.form.submit()">
                 <option value="">— All Colonies —</option>
                 <?php foreach ($colonies as $col): ?>
                     <option value="<?= (int)$col['id'] ?>" <?= $currentColony == $col['id'] ? 'selected' : '' ?>>
@@ -233,7 +233,7 @@ $currentColony = $current_colony ?? null;
                         <?php if (!$currentColony): ?>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Township Colony <span class="text-danger">*</span></label>
-                            <select name="colony_id" class="form-select" required id="fireColonySelect">
+                            <select aria-label="Colony id" name="colony_id" class="form-select" required id="fireColonySelect">
                                 <option value="">— Select Colony —</option>
                                 <?php foreach ($colonies as $col): ?>
                                     <option value="<?= (int)$col['id'] ?>"><?= htmlspecialchars($col['name']) ?></option>
@@ -257,7 +257,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Jockey Pump Status</label>
-                            <select name="jockey_pump_status" class="form-select">
+                            <select aria-label="Jockey pump status" name="jockey_pump_status" class="form-select">
                                 <option value="auto_standby">Auto Standby ✅</option>
                                 <option value="running_pressurizing">Running (Pressurizing)</option>
                                 <option value="manual_mode">Manual Mode</option>
@@ -266,7 +266,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Main Electric Pump</label>
-                            <select name="main_electric_pump_status" class="form-select">
+                            <select aria-label="Main electric pump status" name="main_electric_pump_status" class="form-select">
                                 <option value="operational_ready">Operational Ready ✅</option>
                                 <option value="service_due">Service Due</option>
                                 <option value="phase_trip">Phase Trip ⚠️</option>
@@ -275,7 +275,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Diesel Engine Backup</label>
-                            <select name="diesel_engine_backup_status" class="form-select">
+                            <select aria-label="Diesel engine backup status" name="diesel_engine_backup_status" class="form-select">
                                 <option value="operational_ready">Operational Ready ✅</option>
                                 <option value="battery_weak">Battery Weak</option>
                                 <option value="fuel_low">Fuel Low</option>
@@ -308,7 +308,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Fire Drill Conducted?</label>
-                            <select name="fire_drill_conducted" class="form-select">
+                            <select aria-label="Fire drill conducted" name="fire_drill_conducted" class="form-select">
                                 <option value="">No</option>
                                 <option value="1">Yes ✅</option>
                             </select>
@@ -317,7 +317,7 @@ $currentColony = $current_colony ?? null;
                         <!-- UP Fire NOC -->
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">UP Fire NOC Status</label>
-                            <select name="up_fire_noc_status" class="form-select">
+                            <select aria-label="Up fire noc status" name="up_fire_noc_status" class="form-select">
                                 <option value="valid_compliant">Valid &amp; Compliant ✅</option>
                                 <option value="renewal_due_30d">Renewal Due in 30 Days</option>
                                 <option value="renewal_applied">Renewal Applied</option>
@@ -347,11 +347,11 @@ $currentColony = $current_colony ?? null;
                         <!-- Defects & Remarks -->
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Defects Observed</label>
-                            <textarea name="defects_observed" class="form-control" rows="2" placeholder="List any faulty valves, leaks, pump issues..."></textarea>
+                            <textarea aria-label="Defects observed" name="defects_observed" class="form-control" rows="2" placeholder="List any faulty valves, leaks, pump issues..."></textarea>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Inspector Remarks</label>
-                            <textarea name="remarks" class="form-control" rows="2" placeholder="General inspection notes..."></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="General inspection notes..."></textarea>
                         </div>
                     </div>
                 </div>

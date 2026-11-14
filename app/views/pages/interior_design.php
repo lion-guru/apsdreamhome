@@ -119,12 +119,12 @@
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
-                                <div class="col-6"><label class="small text-muted">Room Type</label><select class="form-select form-select-sm" id="costRoomType"><option>Bedroom</option><option>Living Room</option><option>Kitchen</option><option selected>Full Home</option><option>Bathroom</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Room Type</label><select aria-label="Cost room type" class="form-select form-select-sm" id="costRoomType"><option>Bedroom</option><option>Living Room</option><option>Kitchen</option><option selected>Full Home</option><option>Bathroom</option></select></div>
                                 <div class="col-6"><label class="small text-muted">Area (sq ft)</label><input type="number" class="form-control form-control-sm" id="costArea" value="1000" min="100"></div>
                             </div>
                             <div class="row g-2 mb-3">
-                                <div class="col-6"><label class="small text-muted">Quality</label><select class="form-select form-select-sm" id="costQuality"><option value="basic">Basic</option><option value="standard" selected>Standard</option><option value="premium">Premium</option><option value="luxury">Luxury</option></select></div>
-                                <div class="col-6"><label class="small text-muted">Material Grade</label><select class="form-select form-select-sm" id="costMaterial"><option value="local">Local</option><option value="mid" selected>Mid-Range</option><option value="imported">Imported</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Quality</label><select aria-label="Cost quality" class="form-select form-select-sm" id="costQuality"><option value="basic">Basic</option><option value="standard" selected>Standard</option><option value="premium">Premium</option><option value="luxury">Luxury</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Material Grade</label><select aria-label="Cost material" class="form-select form-select-sm" id="costMaterial"><option value="local">Local</option><option value="mid" selected>Mid-Range</option><option value="imported">Imported</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-primary" onclick="estimateCost()"><i class="fas fa-calculator me-1"></i>Estimate Cost</button>
                             <button class="btn btn-sm btn-outline-primary ms-2" onclick="estimateCostAI()"><i class="fas fa-robot me-1"></i>AI Estimate</button>
@@ -148,7 +148,7 @@
                             <div class="row g-2 mb-3">
                                 <div class="col-4"><label class="small text-muted">Width (ft)</label><input type="number" class="form-control form-control-sm" id="plannerW" value="12" min="4" max="50"></div>
                                 <div class="col-4"><label class="small text-muted">Length (ft)</label><input type="number" class="form-control form-control-sm" id="plannerL" value="14" min="4" max="50"></div>
-                                <div class="col-4"><label class="small text-muted">Convert to</label><select class="form-select form-select-sm" id="plannerUnit"><option value="sqft">Sq Ft</option><option value="sqm">Sq Meters</option><option value="sqyd">Sq Yards</option><option value="gaj">Gaj</option></select></div>
+                                <div class="col-4"><label class="small text-muted">Convert to</label><select aria-label="Planner unit" class="form-select form-select-sm" id="plannerUnit"><option value="sqft">Sq Ft</option><option value="sqm">Sq Meters</option><option value="sqyd">Sq Yards</option><option value="gaj">Gaj</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-success" onclick="planRoom()"><i class="fas fa-arrows-alt me-1"></i>Calculate</button>
                             <div id="plannerResult" class="d-none mt-3 p-3 bg-white rounded-2 border">
@@ -167,7 +167,7 @@
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
                                 <div class="col-6"><label class="small text-muted">Total Budget (₹)</label><input type="number" class="form-control form-control-sm" id="budgetTotal" value="500000" min="5000" step="10000"></div>
-                                <div class="col-6"><label class="small text-muted">Home Type</label><select class="form-select form-select-sm" id="budgetType"><option value="1bhk">1 BHK</option><option value="2bhk" selected>2 BHK</option><option value="3bhk">3 BHK</option><option value="villa">Villa</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Home Type</label><select aria-label="Budget type" class="form-select form-select-sm" id="budgetType"><option value="1bhk">1 BHK</option><option value="2bhk" selected>2 BHK</option><option value="3bhk">3 BHK</option><option value="villa">Villa</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-warning" onclick="planBudget()"><i class="fas fa-pie-chart me-1"></i>Plan Budget</button>
                             <div id="budgetResult" class="d-none mt-3 p-3 bg-white rounded-2 border">
@@ -190,8 +190,8 @@
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
-                                <div class="col-6"><label class="small text-muted">Room Type</label><select class="form-select form-select-sm" id="roomType"><option>Living Room</option><option>Bedroom</option><option>Kitchen</option><option>Bathroom</option><option>Home Office</option><option>Kids Room</option></select></div>
-                                <div class="col-6"><label class="small text-muted">Style</label><select class="form-select form-select-sm" id="styleType"><option>Modern</option><option>Traditional</option><option>Minimalist</option><option>Bohemian</option><option>Industrial</option><option>Scandinavian</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Room Type</label><select aria-label="Room type" class="form-select form-select-sm" id="roomType"><option>Living Room</option><option>Bedroom</option><option>Kitchen</option><option>Bathroom</option><option>Home Office</option><option>Kids Room</option></select></div>
+                                <div class="col-6"><label class="small text-muted">Style</label><select aria-label="Style type" class="form-select form-select-sm" id="styleType"><option>Modern</option><option>Traditional</option><option>Minimalist</option><option>Bohemian</option><option>Industrial</option><option>Scandinavian</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-primary mb-3" onclick="generatePalette()"><i class="fas fa-magic me-1"></i>Generate Palette</button>
                             <div id="paletteResult" class="d-none">
@@ -213,7 +213,7 @@
                             <div class="row g-2 mb-3">
                                 <div class="col-4"><label class="small text-muted">Room Width (ft)</label><input type="number" class="form-control form-control-sm" id="roomW" value="12" min="6" max="30"></div>
                                 <div class="col-4"><label class="small text-muted">Room Length (ft)</label><input type="number" class="form-control form-control-sm" id="roomL" value="14" min="6" max="40"></div>
-                                <div class="col-4"><label class="small text-muted">Room Type</label><select class="form-select form-select-sm" id="furnitureType"><option>Living Room</option><option>Bedroom</option><option selected>Dining Room</option><option>Home Office</option></select></div>
+                                <div class="col-4"><label class="small text-muted">Room Type</label><select aria-label="Furniture type" class="form-select form-select-sm" id="furnitureType"><option>Living Room</option><option>Bedroom</option><option selected>Dining Room</option><option>Home Office</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-success mb-3" onclick="planFurniture()"><i class="fas fa-arrows-alt me-1"></i>Plan Layout</button>
                             <div id="furnitureResult" class="d-none">
@@ -483,7 +483,7 @@ function planBudget() {
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_phone') ?> <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_email') ?></label><input type="email" name="email" class="form-control form-control-lg"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_property_type') ?></label>
-                                    <select name="property_type" class="form-select form-select-lg">
+                                    <select aria-label="Property type" name="property_type" class="form-select form-select-lg">
                                         <option value=""><?= __('id_form_select') ?></option>
                                         <option value="apartment"><?= __('id_form_apartment') ?></option>
                                         <option value="house"><?= __('id_form_house') ?></option>
@@ -493,7 +493,7 @@ function planBudget() {
                                 </div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_area') ?></label><input type="number" name="area" class="form-control form-control-lg" placeholder="<?= __('id_form_area_placeholder') ?>"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_budget') ?></label>
-                                    <select name="budget" class="form-select form-select-lg">
+                                    <select aria-label="Budget" name="budget" class="form-select form-select-lg">
                                         <option value=""><?= __('id_form_budget_select') ?></option>
                                         <option value="50000">Under ₹50,000</option>
                                         <option value="100000">₹50,000 - ₹1,00,000</option>
@@ -502,7 +502,7 @@ function planBudget() {
                                         <option value="1000000">₹5,00,000+</option>
                                     </select>
                                 </div>
-                                <div class="col-12"><label class="form-label fw-medium"><?= __('id_form_requirements') ?></label><textarea name="message" rows="3" class="form-control" placeholder="<?= __('id_form_requirements_placeholder') ?>"></textarea></div>
+                                <div class="col-12"><label class="form-label fw-medium"><?= __('id_form_requirements') ?></label><textarea aria-label="Message" name="message" rows="3" class="form-control" placeholder="<?= __('id_form_requirements_placeholder') ?>"></textarea></div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i><?= __('id_form_submit') ?></button>
                                 </div>

@@ -183,7 +183,7 @@ $summary = $summary ?? ['total' => 0, 'active' => 0, 'returned' => 0, 'issues' =
                     </div>
                     <div class="mb-3">
                         <label for="issue_type" class="form-label fw-bold">Issue Type <span class="text-danger">*</span></label>
-                        <select class="form-select" id="issue_type" name="issue_type" required>
+                        <select aria-label="Issue type" class="form-select" id="issue_type" name="issue_type" required>
                             <option value="">Select issue type</option>
                             <option value="lost">Lost</option>
                             <option value="stolen">Stolen</option>
@@ -194,7 +194,7 @@ $summary = $summary ?? ['total' => 0, 'active' => 0, 'returned' => 0, 'issues' =
                     </div>
                     <div class="mb-3">
                         <label for="notes" class="form-label fw-bold">Description <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="notes" name="notes" rows="4" required placeholder="Describe what happened, when, and any relevant details..."></textarea>
+                        <textarea aria-label="Notes" class="form-control" id="notes" name="notes" rows="4" required placeholder="Describe what happened, when, and any relevant details..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

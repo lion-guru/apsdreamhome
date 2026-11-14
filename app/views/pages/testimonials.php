@@ -120,7 +120,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('testi_lbl_property_type', null, 'Property Type') ?></label>
-                                    <select name="property_type" class="form-select">
+                                    <select aria-label="Property type" name="property_type" class="form-select">
                                         <option value=""><?= __('testi_select', null, 'Select...') ?></option>
                                         <option value="Residential Plot"><?= __('ptype_residential', null, 'Residential Plot') ?></option>
                                         <option value="Villa"><?= __('ptype_villa', null, 'Villa') ?></option>
@@ -144,7 +144,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_experience', null, 'Your Experience') ?> *</label>
-                                <textarea name="testimonial" class="form-control" rows="4" placeholder="<?= __('testi_ph_experience') ?>" required></textarea>
+                                <textarea aria-label="Testimonial" name="testimonial" class="form-control" rows="4" placeholder="<?= __('testi_ph_experience') ?>" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_photo', null, 'Photo (Optional)') ?></label>

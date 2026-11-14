@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label fw-semibold">Status</label>
-                                        <select name="status" class="form-select">
+                                        <select aria-label="Status" name="status" class="form-select">
                                             <option value="draft" <?= ($page['status'] ?? '') == 'draft' ? 'selected' : '' ?>>Draft</option>
                                             <option value="published" <?= ($page['status'] ?? '') == 'published' ? 'selected' : '' ?>>Published</option>
                                         </select>
@@ -69,18 +69,18 @@
 
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Page Content (HTML)</label>
-                                    <textarea name="content" id="pageContent" class="form-control" rows="20"><?= htmlspecialchars($page['content'] ?? '') ?></textarea>
+                                    <textarea aria-label="Content" name="content" id="pageContent" class="form-control" rows="20"><?= htmlspecialchars($page['content'] ?? '') ?></textarea>
                                     <div class="form-text">HTML supported. Use the toolbar for rich editing.</div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Meta Description</label>
-                                        <textarea name="meta_description" class="form-control" rows="3"><?= htmlspecialchars($page['meta_description'] ?? '') ?></textarea>
+                                        <textarea aria-label="Meta description" name="meta_description" class="form-control" rows="3"><?= htmlspecialchars($page['meta_description'] ?? '') ?></textarea>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Meta Keywords</label>
-                                        <textarea name="meta_keywords" class="form-control" rows="3"><?= htmlspecialchars($page['meta_keywords'] ?? '') ?></textarea>
+                                        <textarea aria-label="Meta keywords" name="meta_keywords" class="form-control" rows="3"><?= htmlspecialchars($page['meta_keywords'] ?? '') ?></textarea>
                                     </div>
                                 </div>
 

@@ -55,7 +55,7 @@ $d = $state['form_data'] ?? [];
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Facing</label>
-                                <select name="facing" class="form-select">
+                                <select aria-label="Facing" name="facing" class="form-select">
                                     <?php $f = $d['facing'] ?? ''; ?>
                                     <option value="">-- Select --</option>
                                     <?php foreach (['North','South','East','West','North-East','North-West','South-East','South-West'] as $dir): ?>

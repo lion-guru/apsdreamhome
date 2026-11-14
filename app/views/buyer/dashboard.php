@@ -52,7 +52,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <div class="row g-3">
                 <div class="col-6">
                     <label class="form-label fw-bold small">Property Type *</label>
-                    <select name="property_type" class="form-select form-select-sm" required>
+                    <select aria-label="Property type" name="property_type" class="form-select form-select-sm" required>
                         <option value="plot">Plot</option>
                         <option value="house">House</option>
                         <option value="flat">Flat</option>
@@ -61,7 +61,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 </div>
                 <div class="col-6">
                     <label class="form-label fw-bold small">Bedrooms</label>
-                    <select name="bedrooms_needed" class="form-select form-select-sm">
+                    <select aria-label="Bedrooms needed" name="bedrooms_needed" class="form-select form-select-sm">
                         <option value="0">Any</option>
                         <option value="1">1 BHK</option>
                         <option value="2">2 BHK</option>
@@ -87,7 +87,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-bold small">Requirements</label>
-                    <textarea name="requirements" class="form-control form-control-sm" rows="2" placeholder="Specific requirements..."></textarea>
+                    <textarea aria-label="Requirements" name="requirements" class="form-control form-control-sm" rows="2" placeholder="Specific requirements..."></textarea>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary btn-sm w-100 mt-3 py-2">

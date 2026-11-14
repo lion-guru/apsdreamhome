@@ -77,7 +77,7 @@ $criteria = $criteria ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Rank <span class="text-danger">*</span></label>
-                        <select name="rank" id="criteriaRank" class="form-select" required>
+                        <select aria-label="Rank" name="rank" id="criteriaRank" class="form-select" required>
                             <option value="">Select Rank</option>
                             <option value="bronze">Bronze</option>
                             <option value="silver">Silver</option>

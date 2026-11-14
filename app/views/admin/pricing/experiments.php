@@ -57,7 +57,7 @@ $statusBadge = [
                         <?= \App\Core\Security\CSRF::generateTokenField() ?>
                         <div class="mb-2">
                             <label class="form-label small fw-semibold">Colony</label>
-                            <select name="colony_id" class="form-select form-select-sm" required>
+                            <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" required>
                                 <option value="">— select —</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= (int)$c['id'] ?>">

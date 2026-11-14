@@ -35,7 +35,7 @@ $page_title = $page_title ?? 'Create API Developer';
 
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
-                            <select class="form-select" id="status" name="status">
+                            <select aria-label="Status" class="form-select" id="status" name="status">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>

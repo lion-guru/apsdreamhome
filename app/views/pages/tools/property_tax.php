@@ -18,7 +18,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
-                            <select class="form-select" id="propType" onchange="calcTax()">
+                            <select aria-label="Prop type" class="form-select" id="propType" onchange="calcTax()">
                                 <option value="residential"><?php echo __('residential', [], 'Residential'); ?></option>
                                 <option value="commercial"><?php echo __('commercial', [], 'Commercial'); ?></option>
                             </select>

@@ -21,7 +21,7 @@ $types = $types ?? ['asset', 'liability', 'equity', 'income', 'expense'];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Account Type</label>
-                    <select name="type" class="form-select">
+                    <select aria-label="Type" name="type" class="form-select">
                         <option value="">All Types</option>
                         <?php foreach ($types as $t): ?>
                         <option value="<?= $t ?>" <?= $filters['type'] === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
@@ -30,7 +30,7 @@ $types = $types ?? ['asset', 'liability', 'equity', 'income', 'expense'];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Status</label>
-                    <select name="active" class="form-select">
+                    <select aria-label="Active" name="active" class="form-select">
                         <option value="">All</option>
                         <option value="1" <?= $filters['active'] === '1' ? 'selected' : '' ?>>Active</option>
                         <option value="0" <?= $filters['active'] === '0' ? 'selected' : '' ?>>Inactive</option>

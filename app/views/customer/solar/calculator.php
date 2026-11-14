@@ -189,7 +189,7 @@ $is_logged_in = $is_logged_in ?? false;
                 <?php if ($is_logged_in && !empty($bookings)): ?>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Select Your Plot Booking</label>
-                        <select name="booking_id" class="form-select">
+                        <select aria-label="Booking id" name="booking_id" class="form-select">
                             <option value="">-- Associate with Plot Booking (Optional) --</option>
                             <?php foreach ($bookings as $b): ?>
                                 <option value="<?= $b['id'] ?>">

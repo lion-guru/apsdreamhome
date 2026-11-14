@@ -37,7 +37,7 @@ $filters = $filters ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Course</label>
-                    <select name="course_id" class="form-select form-select-sm">
+                    <select aria-label="Course id" name="course_id" class="form-select form-select-sm">
                         <option value="">All Courses</option>
                         <?php foreach ($courses as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= ($filters['course_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['code'] . ' - ' . $c['title']) ?></option>
@@ -46,7 +46,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Employee</label>
-                    <select name="employee_id" class="form-select form-select-sm">
+                    <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $e): ?>
                             <option value="<?= $e['id'] ?>" <?= ($filters['employee_id'] ?? '') == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name']) ?> (<?= htmlspecialchars($e['department']) ?>)</option>
@@ -55,7 +55,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="assigned" <?= ($filters['status'] ?? '') === 'assigned' ? 'selected' : '' ?>>Assigned</option>
                         <option value="in_progress" <?= ($filters['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
@@ -66,7 +66,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Assigned By</label>
-                    <select name="assigned_by" class="form-select form-select-sm">
+                    <select aria-label="Assigned by" name="assigned_by" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach ($managers as $m): ?>
                             <option value="<?= $m['id'] ?>" <?= ($filters['assigned_by'] ?? '') == $m['id'] ? 'selected' : '' ?>><?= htmlspecialchars($m['name']) ?></option>
@@ -192,7 +192,7 @@ $filters = $filters ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Course <span class="text-danger">*</span></label>
-                        <select name="course_id" class="form-select" required>
+                        <select aria-label="Course id" name="course_id" class="form-select" required>
                             <option value="">Select Course</option>
                             <?php foreach ($courses as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['code'] . ' - ' . $c['title']) ?></option>
@@ -201,7 +201,7 @@ $filters = $filters ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $e): ?>
                                 <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] . ' (' . $e['department'] . ')') ?></option>
@@ -214,7 +214,7 @@ $filters = $filters ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Assigned By</label>
-                        <select name="assigned_by" class="form-select">
+                        <select aria-label="Assigned by" name="assigned_by" class="form-select">
                             <?php foreach ($managers as $m): ?>
                                 <option value="<?= $m['id'] ?>" <?= $m['id'] == ($_SESSION['admin_id'] ?? 0) ? 'selected' : '' ?>><?= htmlspecialchars($m['name']) ?></option>
                             <?php endforeach; ?>

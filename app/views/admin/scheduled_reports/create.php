@@ -21,13 +21,13 @@ $daysOfWeek = $daysOfWeek ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Report Type <span class="text-danger">*</span></label>
-                    <select name="report_type" class="form-select" required>
+                    <select aria-label="Report type" name="report_type" class="form-select" required>
                         <?php foreach ($reportTypes as $k=>$v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Format</label>
-                    <select name="format" class="form-select">
+                    <select aria-label="Format" name="format" class="form-select">
                         <?php foreach ($formats as $k=>$v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
                     </select>
                 </div>
@@ -36,13 +36,13 @@ $daysOfWeek = $daysOfWeek ?? [];
             <div class="row g-3 mt-3">
                 <div class="col-md-3">
                     <label class="form-label">Frequency</label>
-                    <select name="frequency" class="form-select" id="frequency" onchange="toggleFrequencyFields()">
+                    <select aria-label="Frequency" name="frequency" class="form-select" id="frequency" onchange="toggleFrequencyFields()">
                         <?php foreach ($frequencies as $k=>$v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-3" id="dayOfWeekField" style="display:none">
                     <label class="form-label">Day of Week</label>
-                    <select name="day_of_week" class="form-select">
+                    <select aria-label="Day of week" name="day_of_week" class="form-select">
                         <?php foreach ($daysOfWeek as $k=>$v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
                     </select>
                 </div>

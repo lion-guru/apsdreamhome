@@ -15,7 +15,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Customer <span class="text-danger">*</span></label>
-                        <select name="customer_id" class="form-select" required>
+                        <select aria-label="Customer id" name="customer_id" class="form-select" required>
                             <option value="">Select Customer</option>
                             <?php foreach ($users as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?> (<?= htmlspecialchars($c['phone'] ?? '') ?>)</option>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Property <span class="text-danger">*</span></label>
-                        <select name="property_id" class="form-select" required>
+                        <select aria-label="Property id" name="property_id" class="form-select" required>
                             <option value="">Select Property</option>
                             <?php foreach ($properties as $p): ?>
                             <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title'] ?? '') ?> - Plot <?= htmlspecialchars($p['plot_number'] ?? '') ?> (<?= number_format($p['area_sqft'] ?? 0) ?> sqft)</option>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Installment Plan</label>
-                        <select name="installment_plan" class="form-select">
+                        <select aria-label="Installment plan" name="installment_plan" class="form-select">
                             <option value="full_payment">Full Payment</option>
                             <option value="half_yearly">Half Yearly</option>
                             <option value="quarterly">Quarterly</option>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Notes</label>
-                    <textarea name="notes" class="form-control" rows="3"></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Create Allocation</button>
             </form>

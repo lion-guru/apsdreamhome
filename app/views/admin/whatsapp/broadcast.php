@@ -14,7 +14,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Audience <span class="text-danger">*</span></label>
-                            <select name="audience" class="form-select" required>
+                            <select aria-label="Audience" name="audience" class="form-select" required>
                                 <option value="all_customers">All users</option>
                                 <option value="all_leads">All Leads</option>
                                 <option value="all_associates">All users</option>
@@ -24,11 +24,11 @@
                         </div>
                         <div class="mb-3" id="customPhones" >
                             <label class="form-label">Phone Numbers (one per line) <span class="text-danger">*</span></label>
-                            <textarea name="custom_phones" class="form-control" rows="4" placeholder="+919XXXXXXXXX&#10;+919XXXXXXXXX"></textarea>
+                            <textarea aria-label="Custom phones" name="custom_phones" class="form-control" rows="4" placeholder="+919XXXXXXXXX&#10;+919XXXXXXXXX"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message Template</label>
-                            <select name="template_name" class="form-select">
+                            <select aria-label="Template name" name="template_name" class="form-select">
                                 <option value="">-- Plain Message --</option>
                                 <?php if (!empty($templates)): foreach ($templates as $t): ?>
                                     <option value="<?= htmlspecialchars($t['template_name'] ?? '') ?>"><?= htmlspecialchars($t['template_name'] ?? '') ?> (<?= htmlspecialchars($t['language'] ?? 'en') ?>)</option>
@@ -37,7 +37,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea name="message" class="form-control" rows="5" required placeholder="Type your message here..."></textarea>
+                            <textarea aria-label="Message" name="message" class="form-control" rows="5" required placeholder="Type your message here..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-success"><i class="fab fa-whatsapp me-1"></i>Send Broadcast</button>
                     </form>

@@ -18,7 +18,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <select name="type" class="form-select">
+                                    <select aria-label="Type" name="type" class="form-select">
                                         <option value=""><?= __('buy_type_placeholder') ?></option>
                                         <option value="residential"><?= __('buy_type_residential') ?></option>
                                         <option value="house"><?= __('buy_type_house') ?></option>
@@ -27,7 +27,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <select name="location" class="form-select">
+                                    <select aria-label="Location" name="location" class="form-select">
                                         <option value=""><?= __('buy_location_placeholder') ?></option>
                                         <option value="Gorakhpur">Gorakhpur</option>
                                         <option value="Lucknow">Lucknow</option>
@@ -36,7 +36,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <select name="budget" class="form-select">
+                                    <select aria-label="Budget" name="budget" class="form-select">
                                         <option value=""><?= __('buy_budget_placeholder') ?></option>
                                         <option value="under_5l"><?= __('buy_budget_under_5l') ?></option>
                                         <option value="5_10l"><?= __('buy_budget_5_10l') ?></option>

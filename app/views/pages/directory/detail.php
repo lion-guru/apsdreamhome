@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <textarea name="review" class="form-control" rows="3" placeholder="Share your experience..."></textarea>
+                                <textarea aria-label="Review" name="review" class="form-control" rows="3" placeholder="Share your experience..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
                         </form>

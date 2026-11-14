@@ -43,7 +43,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Department</label>
-                        <select name="department" class="form-select">
+                        <select aria-label="Department" name="department" class="form-select">
                             <option value="">Select Department</option>
                             <option value="sales" <?= ($job['department'] ?? '') === 'sales' ? 'selected' : '' ?>>Sales</option>
                             <option value="engineering" <?= ($job['department'] ?? '') === 'engineering' ? 'selected' : '' ?>>Engineering</option>
@@ -60,7 +60,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Employment Type</label>
-                        <select name="employment_type" class="form-select">
+                        <select aria-label="Employment type" name="employment_type" class="form-select">
                             <option value="full_time" <?= ($job['employment_type'] ?? '') === 'full_time' ? 'selected' : '' ?>>Full Time</option>
                             <option value="part_time" <?= ($job['employment_type'] ?? '') === 'part_time' ? 'selected' : '' ?>>Part Time</option>
                             <option value="contract" <?= ($job['employment_type'] ?? '') === 'contract' ? 'selected' : '' ?>>Contract</option>
@@ -101,7 +101,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Currency</label>
-                        <select name="salary_currency" class="form-select">
+                        <select aria-label="Salary currency" name="salary_currency" class="form-select">
                             <option value="INR" <?= ($job['salary_currency'] ?? '') === 'INR' ? 'selected' : '' ?>>INR (₹)</option>
                             <option value="USD" <?= ($job['salary_currency'] ?? '') === 'USD' ? 'selected' : '' ?>>USD ($)</option>
                         </select>
@@ -138,7 +138,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Department</label>
-                        <select name="department" class="form-select">
+                        <select aria-label="Department" name="department" class="form-select">
                             <option value="">Select Department</option>
                             <option value="sales" <?= ($job['department'] ?? '') === 'sales' ? 'selected' : '' ?>>Sales</option>
                             <option value="engineering" <?= ($job['department'] ?? '') === 'engineering' ? 'selected' : '' ?>>Engineering</option>
@@ -155,7 +155,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Employment Type</label>
-                        <select name="employment_type" class="form-select">
+                        <select aria-label="Employment type" name="employment_type" class="form-select">
                             <option value="full_time" <?= ($job['employment_type'] ?? '') === 'full_time' ? 'selected' : '' ?>>Full Time</option>
                             <option value="part_time" <?= ($job['employment_type'] ?? '') === 'part_time' ? 'selected' : '' ?>>Part Time</option>
                             <option value="contract" <?= ($job['employment_type'] ?? '') === 'contract' ? 'selected' : '' ?>>Contract</option>
@@ -196,7 +196,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Currency</label>
-                        <select name="salary_currency" class="form-select">
+                        <select aria-label="Salary currency" name="salary_currency" class="form-select">
                             <option value="INR" <?= ($job['salary_currency'] ?? '') === 'INR' ? 'selected' : '' ?>>INR (₹)</option>
                             <option value="USD" <?= ($job['salary_currency'] ?? '') === 'USD' ? 'selected' : '' ?>>USD ($)</option>
                         </select>
@@ -236,23 +236,23 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
-                        <textarea name="description" class="form-control" rows="5" required placeholder="Role overview, company culture, impact..."><?= htmlspecialchars($job['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="5" required placeholder="Role overview, company culture, impact..."><?= htmlspecialchars($job['description'] ?? '') ?></textarea>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Requirements</label>
-                        <textarea name="requirements" class="form-control" rows="4" placeholder="Technical skills, experience, education..."><?= htmlspecialchars($job['requirements'] ?? '') ?></textarea>
+                        <textarea aria-label="Requirements" name="requirements" class="form-control" rows="4" placeholder="Technical skills, experience, education..."><?= htmlspecialchars($job['requirements'] ?? '') ?></textarea>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Responsibilities</label>
-                        <textarea name="responsibilities" class="form-control" rows="4" placeholder="Day-to-day responsibilities..."><?= htmlspecialchars($job['responsibilities'] ?? '') ?></textarea>
+                        <textarea aria-label="Responsibilities" name="responsibilities" class="form-control" rows="4" placeholder="Day-to-day responsibilities..."><?= htmlspecialchars($job['responsibilities'] ?? '') ?></textarea>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Benefits</label>
-                        <textarea name="benefits" class="form-control" rows="3" placeholder="Health insurance, PF, leave policy, learning budget..."><?= htmlspecialchars($job['benefits'] ?? '') ?></textarea>
+                        <textarea aria-label="Benefits" name="benefits" class="form-control" rows="3" placeholder="Health insurance, PF, leave policy, learning budget..."><?= htmlspecialchars($job['benefits'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Skills Required (one per line)</label>
-                        <textarea name="skills_required" class="form-control" rows="4" placeholder="PHP&#10;Laravel&#10;MySQL&#10;REST APIs"><?= is_array($job['skills_required'] ?? null) ? implode("\n", $job['skills_required']) : ($job['skills_required'] ?? '') ?></textarea>
+                        <textarea aria-label="Skills required" name="skills_required" class="form-control" rows="4" placeholder="PHP&#10;Laravel&#10;MySQL&#10;REST APIs"><?= is_array($job['skills_required'] ?? null) ? implode("\n", $job['skills_required']) : ($job['skills_required'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Education Requirement</label>
@@ -271,7 +271,7 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Hiring Manager</label>
-                        <select name="hiring_manager_id" class="form-select">
+                        <select aria-label="Hiring manager id" name="hiring_manager_id" class="form-select">
                             <option value="">Select Manager</option>
                             <?php foreach ($managers as $m): ?>
                                 <option value="<?= $m['id'] ?>" <?= ($job['hiring_manager_id'] ?? '') == $m['id'] ? 'selected' : '' ?>><?= htmlspecialchars($m['name']) ?></option>
@@ -280,7 +280,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Recruiter</label>
-                        <select name="recruiter_id" class="form-select">
+                        <select aria-label="Recruiter id" name="recruiter_id" class="form-select">
                             <option value="">Select Recruiter</option>
                             <?php foreach ($managers as $m): ?>
                                 <option value="<?= $m['id'] ?>" <?= ($job['recruiter_id'] ?? '') == $m['id'] ? 'selected' : '' ?>><?= htmlspecialchars($m['name']) ?></option>
@@ -289,7 +289,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Published On</label>
-                        <select name="published_on[]" class="form-select" multiple>
+                        <select aria-label="Published on" name="published_on[]" class="form-select" multiple>
                             <option value="careers_page" <?= in_array('careers_page', $job['published_on'] ?? []) ? 'selected' : '' ?>>Careers Page</option>
                             <option value="linkedin" <?= in_array('linkedin', $job['published_on'] ?? []) ? 'selected' : '' ?>>LinkedIn</option>
                             <option value="naukri" <?= in_array('naukri', $job['published_on'] ?? []) ? 'selected' : '' ?>>Naukri</option>

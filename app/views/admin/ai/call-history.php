@@ -61,7 +61,7 @@ $base = BASE_URL . '/admin/ai-calling/history';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Status</label>
-                        <select name="status" class="form-select form-select-sm">
+                        <select aria-label="Status" name="status" class="form-select form-select-sm">
                             <option value="">All Status</option>
                             <?php foreach (['completed','failed','in_progress','no_answer','scheduled'] as $s): ?>
                                 <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>

@@ -114,7 +114,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
         <div class="ms-auto d-flex gap-2 align-items-center">
           <!-- Filter: Assigned To -->
-          <select id="filterAssignee" class="form-select form-select-sm">
+          <select aria-label="Filter assignee" id="filterAssignee" class="form-select form-select-sm">
             <option value="">All Assignees</option>
             <?php foreach ($users as $u): ?>
               <option value="<?= (int)$u['id'] ?>" <?= ($currentFilters['assigned_to'] ?? '') == $u['id'] ? 'selected' : '' ?>><?= htmlspecialchars($u['name'] ?? '') ?></option>
@@ -122,7 +122,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
           </select>
 
           <!-- Filter: Source -->
-          <select id="filterSource" class="form-select form-select-sm">
+          <select aria-label="Filter source" id="filterSource" class="form-select form-select-sm">
             <option value="">All Sources</option>
             <?php foreach ($sources as $src): ?>
               <option value="<?= htmlspecialchars($src ?? '') ?>" <?= ($currentFilters['source'] ?? '') === $src ? 'selected' : '' ?>><?= ucfirst(htmlspecialchars($src ?? '')) ?></option>

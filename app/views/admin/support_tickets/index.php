@@ -31,7 +31,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <input type="text" name="search" class="form-control" placeholder="Search tickets..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
                     </div>
                     <div class="col-md-2">
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="">All Status</option>
                             <option value="open" <?php echo ($filters['status'] ?? '') === 'open' ? 'selected' : ''; ?>>Open</option>
                             <option value="in_progress" <?php echo ($filters['status'] ?? '') === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
@@ -40,7 +40,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select name="priority" class="form-select">
+                        <select aria-label="Priority" name="priority" class="form-select">
                             <option value="">All Priority</option>
                             <option value="low" <?php echo ($filters['priority'] ?? '') === 'low' ? 'selected' : ''; ?>>Low</option>
                             <option value="medium" <?php echo ($filters['priority'] ?? '') === 'medium' ? 'selected' : ''; ?>>Medium</option>

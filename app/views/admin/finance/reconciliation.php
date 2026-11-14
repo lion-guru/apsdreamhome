@@ -39,7 +39,7 @@
     <div class="modal-body">
         <div class="mb-3">
             <label class="form-label"><?php echo __('finance_bank_account'); ?> <span class="text-danger">*</span></label>
-            <select name="bank_account_id" required class="form-select">
+            <select aria-label="Bank account id" name="bank_account_id" required class="form-select">
                 <option value="">— <?php echo __('finance_select'); ?> —</option>
                 <?php foreach (($banks ?? []) as $b): ?>
                     <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name'] ?? '') ?></option>
@@ -48,7 +48,7 @@
         </div>
         <div class="mb-3"><label class="form-label"><?php echo __('finance_statement_date'); ?> <span class="text-danger">*</span></label><input type="date" name="statement_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
         <div class="mb-3"><label class="form-label"><?php echo __('finance_statement_balance'); ?> (₹) <span class="text-danger">*</span></label><input type="number" name="statement_balance" step="0.01" required class="form-control"></div>
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_notes'); ?></label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_notes'); ?></label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea></div>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('finance_cancel'); ?></button><button type="submit" class="btn btn-primary"><?php echo __('finance_start'); ?></button></div>
 </form></div></div>

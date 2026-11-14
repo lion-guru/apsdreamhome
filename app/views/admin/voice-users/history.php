@@ -16,7 +16,7 @@
             </div>
             <div class="col-md-2">
                 <label class="form-label">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All</option>
                     <option value="completed" <?= ($_GET['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
                     <option value="failed" <?= ($_GET['status'] ?? '') === 'failed' ? 'selected' : '' ?>>Failed</option>
@@ -26,7 +26,7 @@
             </div>
             <div class="col-md-2">
                 <label class="form-label">Agent</label>
-                <select name="agent_id" class="form-select">
+                <select aria-label="Agent id" name="agent_id" class="form-select">
                     <option value="">All Agents</option>
                     <?php foreach ($agents as $a): ?>
                         <option value="<?= $a['id'] ?>" <?= (($_GET['agent_id'] ?? '') == $a['id']) ? 'selected' : '' ?>><?= htmlspecialchars($a['name'] ?? '') ?></option>

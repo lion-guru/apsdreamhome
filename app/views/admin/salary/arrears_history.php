@@ -58,7 +58,7 @@ $arrears = $arrears ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Employee</label>
-                    <select name="employee_id" class="form-select">
+                    <select aria-label="Employee id" name="employee_id" class="form-select">
                         <option value="">All Employees</option>
                         <?php 
                         $empIds = array_unique(array_column($arrears, 'employee_id'));
@@ -75,7 +75,7 @@ $arrears = $arrears ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Month</label>
-                    <select name="month" class="form-select">
+                    <select aria-label="Month" name="month" class="form-select">
                         <option value="">All</option>
                         <?php for($m=1;$m<=12;$m++): ?>
                         <option value="<?= $m ?>"<?=($_GET['month']??'')==$m?' selected':''?>><?= date('M', mktime(0,0,0,$m,1)) ?></option>
@@ -84,7 +84,7 @@ $arrears = $arrears ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Year</label>
-                    <select name="year" class="form-select">
+                    <select aria-label="Year" name="year" class="form-select">
                         <option value="">All</option>
                         <?php for($y=date('Y');$y>=date('Y')-3;$y--): ?>
                         <option value="<?= $y ?>"<?=($_GET['year']??'')==$y?' selected':''?>><?= $y ?></option>
@@ -93,7 +93,7 @@ $arrears = $arrears ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All</option>
                         <option value="paid"<?=($_GET['status']??'')=='paid'?' selected':''?>>Paid</option>
                         <option value="pending"<?=($_GET['status']??'')=='pending'?' selected':''?>>Pending</option>

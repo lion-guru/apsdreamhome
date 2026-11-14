@@ -22,7 +22,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="property_type" class="form-label">Property Type *</label>
-                        <select class="form-select" id="property_type" name="property_type" required>
+                        <select aria-label="Property type" class="form-select" id="property_type" name="property_type" required>
                             <option value="">Select Type</option>
                             <option value="residential">Residential</option>
                             <option value="commercial">Commercial</option>
@@ -75,7 +75,7 @@
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                <textarea aria-label="Description" class="form-control" id="description" name="description" rows="4"></textarea>
             </div>
             <div class="row">
                 <div class="col-md-4">
@@ -101,7 +101,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="commission_type" class="form-label">Commission Type *</label>
-                        <select class="form-select" id="commission_type" name="commission_type" required>
+                        <select aria-label="Commission type" class="form-select" id="commission_type" name="commission_type" required>
                             <option value="">Select Type</option>
                             <option value="percentage">Percentage</option>
                             <option value="fixed">Fixed Amount</option>

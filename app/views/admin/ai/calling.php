@@ -94,7 +94,7 @@ $ai_agents = $ai_agents ?? [];
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <select id="quickCallScript" class="form-control">
+                                    <select aria-label="Quick call script" id="quickCallScript" class="form-control">
                                         <option value="default">Default IVR</option>
                                         <option value="property_inquiry">Property Inquiry</option>
                                         <option value="lead_followup">Lead Follow-up</option>
@@ -103,7 +103,7 @@ $ai_agents = $ai_agents ?? [];
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <select id="quickCallAgent" class="form-control">
+                                    <select aria-label="Quick call agent" id="quickCallAgent" class="form-control">
                                         <option value="">Auto Agent</option>
                                         <?php foreach ($ai_agents as $agent): ?>
                                         <option value="<?= $agent['agent_id'] ?>"><?= $agent['agent_name'] ?></option>

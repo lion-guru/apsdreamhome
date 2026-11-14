@@ -52,7 +52,7 @@ if ($selectedPlotId) {
                 <?php if ($mode !== 'edit'): ?>
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_colony') ?></label>
-                    <select id="booking_colony_id" class="form-select">
+                    <select aria-label="Booking colony id" id="booking_colony_id" class="form-select">
                         <option value=""><?= __('sale_select_colony') ?></option>
                         <?php foreach ($coloniesMap as $cId => $cName): ?>
                             <option value="<?= $cId ?>" <?= $cId === $selectedColonyId ? 'selected' : '' ?>>
@@ -67,7 +67,7 @@ if ($selectedPlotId) {
                 <?php endif; ?>
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_plot_label') ?></label>
-                    <select name="plot_id" id="booking_plot_id" class="form-select" required <?= $mode === 'edit' ? 'disabled' : '' ?>>
+                    <select aria-label="Plot id" name="plot_id" id="booking_plot_id" class="form-select" required <?= $mode === 'edit' ? 'disabled' : '' ?>>
                         <option value=""><?= $mode === 'edit' ? __('sale_select_plot') : __('sale_select_colony_first') ?></option>
                         <?php if ($mode === 'edit'): ?>
                             <?php foreach ($plots as $p): ?>
@@ -94,7 +94,7 @@ if ($selectedPlotId) {
                 <?php endif; ?>
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_customer_label') ?></label>
-                    <select name="customer_id" class="form-select" required <?= $mode === 'edit' ? 'disabled' : '' ?>>
+                    <select aria-label="Customer id" name="customer_id" class="form-select" required <?= $mode === 'edit' ? 'disabled' : '' ?>>
                         <option value=""><?= __('sale_select_customer') ?></option>
                         <?php if (empty($customers)): ?>
                             <option value="" disabled>No customers registered yet</option>
@@ -204,7 +204,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><?= __('sale_channel_label') ?></label>
-                    <select name="channel" class="form-select" required>
+                    <select aria-label="Channel" name="channel" class="form-select" required>
                         <?php foreach (['direct' => __('sale_direct'), 'associate' => __('sale_associate_label'), 'agent' => __('sale_agent'), 'self' => __('sale_self')] as $ch => $label): ?>
                             <option value="<?= $ch ?>" <?= (($booking['channel'] ?? 'direct') === $ch) ? 'selected' : '' ?>><?= $label ?></option>
                         <?php endforeach; ?>
@@ -212,7 +212,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><?= __('sale_associate_label') ?></label>
-                    <select name="associate_id" id="booking_associate_id" class="form-select">
+                    <select aria-label="Associate id" name="associate_id" id="booking_associate_id" class="form-select">
                         <option value=""><?= __('sale_none_select') ?></option>
                         <?php if (empty($associates)): ?>
                             <option value="" disabled>No active associates</option>
@@ -229,7 +229,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><?= __('sale_sales_manager') ?></label>
-                    <select name="sales_manager_id" class="form-select">
+                    <select aria-label="Sales manager id" name="sales_manager_id" class="form-select">
                         <option value=""><?= __('sale_none_select') ?></option>
                         <?php foreach ($sales_managers as $sm): ?>
                             <option value="<?= (int)($sm['id'] ?? 0) ?>" <?= ((int)($booking['sales_manager_id'] ?? 0) === (int)($sm['id'] ?? 0)) ? 'selected' : '' ?>>
@@ -244,7 +244,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('sale_notes') ?></label>
-                    <textarea name="notes" class="form-control" rows="3"><?= htmlspecialchars((string)($booking['notes'] ?? '')) ?></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="3"><?= htmlspecialchars((string)($booking['notes'] ?? '')) ?></textarea>
                 </div>
             </div>
             
@@ -255,7 +255,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Booking Agreement Template</label>
-                    <select name="legal_template_id" class="form-select" id="legal_template_id">
+                    <select aria-label="Legal template id" name="legal_template_id" class="form-select" id="legal_template_id">
                         <option value="">Select agreement template...</option>
                         <?php
                         try {
@@ -276,7 +276,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Additional Legal Documents</label>
-                    <select name="additional_docs[]" class="form-select" multiple id="additional_docs">
+                    <select aria-label="Additional docs" name="additional_docs[]" class="form-select" multiple id="additional_docs">
                         <?php
                         try {
                             $svc = new \App\Services\Legal\LegalDocumentService();
@@ -309,7 +309,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-12">
                     <label class="form-label">Special Terms & Conditions</label>
-                    <textarea name="special_terms" class="form-control" rows="3" placeholder="Any special terms specific to this booking..."></textarea>
+                    <textarea aria-label="Special terms" name="special_terms" class="form-control" rows="3" placeholder="Any special terms specific to this booking..."></textarea>
                 </div>
             </div>
             
@@ -328,7 +328,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">EMI Type</label>
-                    <select name="emi_type" class="form-select">
+                    <select aria-label="Emi type" name="emi_type" class="form-select">
                         <option value="reducing" <?= (($booking['emi_type'] ?? 'reducing') === 'reducing') ? 'selected' : '' ?>>Reducing Balance</option>
                         <option value="fixed" <?= (($booking['emi_type'] ?? '') === 'fixed') ? 'selected' : '' ?>>Fixed / Flat Rate</option>
                     </select>

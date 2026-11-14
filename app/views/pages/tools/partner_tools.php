@@ -20,7 +20,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="text-white-50" for="areaFrom">From</label>
-                                <select id="areaFrom" class="form-select" onchange="convertArea()" >
+                                <select aria-label="Area from" id="areaFrom" class="form-select" onchange="convertArea()" >
                                     <option value="sqft">Square Feet (sqft)</option>
                                     <option value="sqm">Square Meter (sqm)</option>
                                     <option value="acre">Acre</option>
@@ -111,7 +111,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="commRank">Your Rank</label>
-                            <select id="commRank" class="form-select" onchange="calcCommission()" >
+                            <select aria-label="Comm rank" id="commRank" class="form-select" onchange="calcCommission()" >
                                 <option value="5">Associate (5%)</option>
                                 <option value="7">Sr. Associate (7%)</option>
                                 <option value="10">BDM (10%)</option>
@@ -160,7 +160,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="stampState">State</label>
-                            <select id="stampState" class="form-select" onchange="calcStamp()" >
+                            <select aria-label="Stamp state" id="stampState" class="form-select" onchange="calcStamp()" >
                                 <option value="5">Uttar Pradesh (5%)</option>
                                 <option value="6">Delhi (6%)</option>
                                 <option value="7">Rajasthan (7%)</option>

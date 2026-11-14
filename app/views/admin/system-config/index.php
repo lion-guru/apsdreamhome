@@ -123,7 +123,7 @@ $base = BASE_URL;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Group Filter</label>
-                            <select name="group" class="form-select">
+                            <select aria-label="Group" name="group" class="form-select">
                                 <option value="">All Groups</option>
                                 <?php foreach ($groups as $g): ?>
                                     <option value="<?= htmlspecialchars($g) ?>" <?= $current_group === $g ? 'selected' : '' ?>>

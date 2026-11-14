@@ -29,12 +29,12 @@ $course = $course ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea name="course_description" class="form-control" rows="4"><?php echo htmlspecialchars($course['course_description'] ?? ''); ?></textarea>
+                        <textarea aria-label="Course description" name="course_description" class="form-control" rows="4"><?php echo htmlspecialchars($course['course_description'] ?? ''); ?></textarea>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Category</label>
-                            <select name="course_category" class="form-select">
+                            <select aria-label="Course category" name="course_category" class="form-select">
                                 <?php $cat = $course['course_category'] ?? 'sales'; ?>
                                 <option value="sales" <?php echo $cat == 'sales' ? 'selected' : ''; ?>>Sales</option>
                                 <option value="product" <?php echo $cat == 'product' ? 'selected' : ''; ?>>Product</option>
@@ -46,7 +46,7 @@ $course = $course ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Difficulty Level</label>
-                            <select name="difficulty_level" class="form-select">
+                            <select aria-label="Difficulty level" name="difficulty_level" class="form-select">
                                 <?php $diff = $course['difficulty_level'] ?? 'beginner'; ?>
                                 <option value="beginner" <?php echo $diff == 'beginner' ? 'selected' : ''; ?>>Beginner</option>
                                 <option value="intermediate" <?php echo $diff == 'intermediate' ? 'selected' : ''; ?>>Intermediate</option>
@@ -67,15 +67,15 @@ $course = $course ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Course Objectives</label>
-                        <textarea name="course_objectives" class="form-control" rows="3"><?php echo htmlspecialchars($course['course_objectives'] ?? ''); ?></textarea>
+                        <textarea aria-label="Course objectives" name="course_objectives" class="form-control" rows="3"><?php echo htmlspecialchars($course['course_objectives'] ?? ''); ?></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Prerequisites</label>
-                        <textarea name="prerequisites" class="form-control" rows="2"><?php echo htmlspecialchars($course['prerequisites'] ?? ''); ?></textarea>
+                        <textarea aria-label="Prerequisites" name="prerequisites" class="form-control" rows="2"><?php echo htmlspecialchars($course['prerequisites'] ?? ''); ?></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Target Audience</label>
-                        <textarea name="target_audience" class="form-control" rows="2"><?php echo htmlspecialchars($course['target_audience'] ?? ''); ?></textarea>
+                        <textarea aria-label="Target audience" name="target_audience" class="form-control" rows="2"><?php echo htmlspecialchars($course['target_audience'] ?? ''); ?></textarea>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">

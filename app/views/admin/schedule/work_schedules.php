@@ -62,7 +62,7 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
                     <input type="hidden" name="ws_id" value="0">
                     <div class="mb-3">
                         <label class="form-label" for="wsEmployee">Employee *</label>
-                        <select class="form-select" id="wsEmployee" name="employee_id" required>
+                        <select aria-label="Employee id" class="form-select" id="wsEmployee" name="employee_id" required>
                             <option value="">Select employee</option>
                             <?php foreach ($users as $u): ?>
                                 <option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['name'] ?? ('ID ' . $u['id'])) ?></option>

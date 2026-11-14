@@ -33,13 +33,13 @@
                 <div class="card-body">
                     <form method="GET" action="<?= BASE_URL ?>/admin/salary/batch/preview" class="form-inline">
                         <label class="mr-2">Month:</label>
-                        <select name="month" class="form-control form-control-sm mr-2">
+                        <select aria-label="Month" name="month" class="form-control form-control-sm mr-2">
                             <?php for ($m = 1; $m <= 12; $m++): ?>
                                 <option value="<?= $m ?>" <?= $m == $month ? 'selected' : '' ?>><?= date('F', mktime(0,0,0,$m,1)) ?></option>
                             <?php endfor; ?>
                         </select>
                         <label class="mr-2">Year:</label>
-                        <select name="year" class="form-control form-control-sm mr-2">
+                        <select aria-label="Year" name="year" class="form-control form-control-sm mr-2">
                             <?php for ($y = date('Y'); $y >= date('Y')-2; $y--): ?>
                                 <option value="<?= $y ?>" <?= $y == $year ? 'selected' : '' ?>><?= $y ?></option>
                             <?php endfor; ?>

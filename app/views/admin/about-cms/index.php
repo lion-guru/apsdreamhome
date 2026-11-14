@@ -75,11 +75,11 @@
         <div class="card-body">
             <div class="mb-3">
                 <label class="form-label small fw-semibold">Vision</label>
-                <textarea class="form-control" name="vision_text" rows="3"><?= htmlspecialchars($sc['vision_mission']['vision_text'] ?? '') ?></textarea>
+                <textarea aria-label="Vision text" class="form-control" name="vision_text" rows="3"><?= htmlspecialchars($sc['vision_mission']['vision_text'] ?? '') ?></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label small fw-semibold">Mission</label>
-                <textarea class="form-control" name="mission_text" rows="3"><?= htmlspecialchars($sc['vision_mission']['mission_text'] ?? '') ?></textarea>
+                <textarea aria-label="Mission text" class="form-control" name="mission_text" rows="3"><?= htmlspecialchars($sc['vision_mission']['mission_text'] ?? '') ?></textarea>
             </div>
         </div>
     </div>

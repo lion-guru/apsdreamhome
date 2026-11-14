@@ -73,7 +73,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-grievances" class="row g-2 align-items-center">
                 <div class="col-md-3">
                     <label for="filter_colony" class="visually-hidden">Township Colony</label>
-                    <select name="colony_id" id="filter_colony" class="form-select form-select-sm">
+                    <select aria-label="Colony id" name="colony_id" id="filter_colony" class="form-select form-select-sm">
                         <option value="">All Township Colonies</option>
                         <?php foreach ($colonies as $col): ?>
                             <option value="<?= (int)$col['id'] ?>" <?= ($current_colony == $col['id']) ? 'selected' : '' ?>>
@@ -84,7 +84,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <div class="col-md-3">
                     <label for="filter_cat" class="visually-hidden">Category</label>
-                    <select name="category" id="filter_cat" class="form-select form-select-sm">
+                    <select aria-label="Category" name="category" id="filter_cat" class="form-select form-select-sm">
                         <option value="all" <?= ($current_category === 'all') ? 'selected' : '' ?>>All Categories</option>
                         <option value="water_supply" <?= ($current_category === 'water_supply') ? 'selected' : '' ?>>Water Supply &amp; Borewell</option>
                         <option value="drainage_sanitation" <?= ($current_category === 'drainage_sanitation') ? 'selected' : '' ?>>Drainage &amp; STP</option>
@@ -96,7 +96,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <div class="col-md-3">
                     <label for="filter_status" class="visually-hidden">Status</label>
-                    <select name="status" id="filter_status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" id="filter_status" class="form-select form-select-sm">
                         <option value="all" <?= ($current_status === 'all') ? 'selected' : '' ?>>All Statuses</option>
                         <option value="open" <?= ($current_status === 'open') ? 'selected' : '' ?>>Open</option>
                         <option value="in_progress" <?= ($current_status === 'in_progress') ? 'selected' : '' ?>>In Progress</option>

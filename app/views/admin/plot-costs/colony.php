@@ -77,7 +77,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                 
                 <div class="col-md-3">
                     <label class="form-label">Cost Type</label>
-                    <select name="cost_type" class="form-select" required>
+                    <select aria-label="Cost type" name="cost_type" class="form-select" required>
                         <option value="">Select Type</option>
                         <option value="land">Land</option>
                         <option value="development">Development</option>

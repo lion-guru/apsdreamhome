@@ -33,7 +33,7 @@ $offers = $offers ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Select Offer (prefill)</label>
-                            <select class="form-select" id="calcOfferSelect">
+                            <select aria-label="Calc offer select" class="form-select" id="calcOfferSelect">
                                 <option value="">Custom</option>
                                 <?php foreach ($offers as $o): ?>
                                     <option value="<?= $o['interest_free_months'] ?>" data-months="<?= $o['interest_free_months'] ?>">

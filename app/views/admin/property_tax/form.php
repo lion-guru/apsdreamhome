@@ -48,7 +48,7 @@ $data = $data ?? [];
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tax Type <span class="text-danger">*</span></label>
-                                <select name="tax_type" class="form-select" required>
+                                <select aria-label="Tax type" name="tax_type" class="form-select" required>
                                     <?php foreach ($taxTypes as $t): ?>
                                         <option value="<?= $t ?>" <?= ($data['tax_type'] ?? '') == $t ? 'selected' : '' ?>><?= ucwords(str_replace('_', ' ', $t)) ?></option>
                                     <?php endforeach; ?>
@@ -56,7 +56,7 @@ $data = $data ?? [];
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Assessment Year <span class="text-danger">*</span></label>
-                                <select name="assessment_year" class="form-select" required>
+                                <select aria-label="Assessment year" name="assessment_year" class="form-select" required>
                                     <?php foreach ($years as $y): ?>
                                         <option value="<?= $y ?>" <?= ($data['assessment_year'] ?? date('Y')) == $y ? 'selected' : '' ?>><?= $y ?></option>
                                     <?php endforeach; ?>
@@ -64,7 +64,7 @@ $data = $data ?? [];
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Property Category</label>
-                                <select name="property_category" class="form-select">
+                                <select aria-label="Property category" name="property_category" class="form-select">
                                     <?php foreach ($categories as $c): ?>
                                         <option value="<?= $c ?>" <?= ($data['property_category'] ?? '') == $c ? 'selected' : '' ?>><?= ucfirst($c) ?></option>
                                     <?php endforeach; ?>
@@ -72,7 +72,7 @@ $data = $data ?? [];
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Colony</label>
-                                <select name="colony_id" class="form-select" id="colonySelect">
+                                <select aria-label="Colony id" name="colony_id" class="form-select" id="colonySelect">
                                     <option value="">Select Colony (Optional)</option>
                                     <?php foreach ($colonies as $c): ?>
                                         <option value="<?= $c['id'] ?>" <?= ($data['colony_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -81,7 +81,7 @@ $data = $data ?? [];
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Plot</label>
-                                <select name="plot_id" class="form-select" id="plotSelect">
+                                <select aria-label="Plot id" name="plot_id" class="form-select" id="plotSelect">
                                     <option value="">Select Plot (Optional)</option>
                                 </select>
                             </div>
@@ -95,7 +95,7 @@ $data = $data ?? [];
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">Rate Unit</label>
-                                <select name="rate_unit" class="form-select" id="rateUnit">
+                                <select aria-label="Rate unit" name="rate_unit" class="form-select" id="rateUnit">
                                     <?php foreach ($rateUnits as $r): ?>
                                         <option value="<?= $r ?>" <?= ($data['rate_unit'] ?? '') == $r ? 'selected' : '' ?>><?= ucwords(str_replace('_', ' ', $r)) ?></option>
                                     <?php endforeach; ?>
@@ -159,7 +159,7 @@ $data = $data ?? [];
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Status</label>
-                                <select name="status" class="form-select">
+                                <select aria-label="Status" name="status" class="form-select">
                                     <option value="draft" <?= ($data['status'] ?? '') == 'draft' ? 'selected' : '' ?>>Draft</option>
                                     <option value="published" <?= ($data['status'] ?? '') == 'published' ? 'selected' : '' ?>>Published</option>
                                     <option value="demand_generated" <?= ($data['status'] ?? '') == 'demand_generated' ? 'selected' : '' ?>>Demand Generated</option>
@@ -169,7 +169,7 @@ $data = $data ?? [];
                         </div>
                         <div class="mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="3"><?= htmlspecialchars($data['notes'] ?? '') ?></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="3"><?= htmlspecialchars($data['notes'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>

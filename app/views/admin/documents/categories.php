@@ -29,7 +29,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Parent Category</label>
-                            <select name="parent_id" class="form-select">
+                            <select aria-label="Parent id" name="parent_id" class="form-select">
                                 <option value="">-- None (Top Level) --</option>
                                 <?php if (!empty($parents)): ?>
                                     <?php foreach ($parents as $p): ?>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Create Category</button>
                     </form>
@@ -79,7 +79,7 @@
                                                     <div class="col-md-3"><input type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($cat['name'] ?? '') ?>" required></div>
                                                     <div class="col-md-2"><input type="text" name="slug" class="form-control form-control-sm" value="<?= htmlspecialchars($cat['slug'] ?? '') ?>"></div>
                                                     <div class="col-md-3">
-                                                        <select name="parent_id" class="form-select form-select-sm">
+                                                        <select aria-label="Parent id" name="parent_id" class="form-select form-select-sm">
                                                             <option value="">None</option>
                                                             <?php foreach ($parents as $p): ?>
                                                                 <option value="<?= (int)$p['id'] ?>" <?= ((int)$cat['parent_id'] === (int)$p['id']) ? 'selected' : '' ?>><?= htmlspecialchars($p['name'] ?? '') ?></option>

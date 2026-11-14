@@ -11,7 +11,7 @@
         <form method="get" action="<?= BASE_URL ?>/admin/construction/material-inventory" class="row g-3 align-items-end">
             <div class="col-md-4">
                 <label class="form-label mb-1">Category</label>
-                <select name="category" class="form-select">
+                <select aria-label="Category" name="category" class="form-select">
                     <option value="">-- All Categories --</option>
                     <?php
                     $categories = ['cement', 'steel', 'sand', 'bricks', 'tiles', 'paint', 'plumbing', 'electrical', 'wood', 'glass', 'morang', 'gitti', 'damar', 'soling_stone', 'electric_pole', 'transformer', 'jcb_diesel', 'other'];
@@ -24,7 +24,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label mb-1">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">-- All Statuses --</option>
                     <?php
                     $statuses = ['in_stock' => 'In Stock', 'low_stock' => 'Low Stock', 'out_of_stock' => 'Out of Stock', 'discontinued' => 'Discontinued'];
@@ -232,7 +232,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Material <span class="text-danger">*</span></label>
-                                <select name="material_id" class="form-select" required>
+                                <select aria-label="Material id" name="material_id" class="form-select" required>
                                     <option value="">-- Select material --</option>
                                     <?php foreach ($materials ?? [] as $m): ?>
                                         <?php $mName = $m['material_name'] ?? $m['name'] ?? ''; ?>
@@ -245,7 +245,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Colony</label>
-                                <select name="colony_id" class="form-select">
+                                <select aria-label="Colony id" name="colony_id" class="form-select">
                                     <option value="">-- Optional --</option>
                                     <?php foreach ($colonies ?? [] as $c): ?>
                                         <option value="<?= (int)($c['id'] ?? 0) ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -278,7 +278,7 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Notes</label>
-                                <textarea name="notes" class="form-control" rows="3" maxlength="2000"></textarea>
+                                <textarea aria-label="Notes" name="notes" class="form-control" rows="3" maxlength="2000"></textarea>
                             </div>
                         </div>
                     </div>

@@ -45,7 +45,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="is_active" class="form-select">
+                        <select aria-label="Is active" name="is_active" class="form-select">
                             <option value="1" selected>Active</option>
                             <option value="0">Inactive</option>
                         </select>
@@ -67,7 +67,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Trigger Event</label>
-                        <select name="trigger_event" class="form-select">
+                        <select aria-label="Trigger event" name="trigger_event" class="form-select">
                             <option value="manual">Manual Send Only</option>
                             <option value="property_viewed">After Property Viewed</option>
                             <option value="inquiry_made">After Inquiry Made</option>

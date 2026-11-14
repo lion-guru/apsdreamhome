@@ -137,7 +137,7 @@
                             </div>
                             <div class="form-group">
                                 <label>From</label>
-                                <select class="form-control" id="convFrom">
+                                <select aria-label="Conv from" class="form-control" id="convFrom">
                                 <?php foreach (($currencies ?? []) as $c): ?>
                                     <option value="<?php echo htmlspecialchars($c); ?>" <?php if ($c === 'INR') echo 'selected'; ?>><?php echo htmlspecialchars($c); ?></option>
                                 <?php endforeach; ?>
@@ -145,7 +145,7 @@
                             </div>
                             <div class="form-group">
                                 <label>To</label>
-                                <select class="form-control" id="convTo">
+                                <select aria-label="Conv to" class="form-control" id="convTo">
                                 <?php foreach (($currencies ?? []) as $c): ?>
                                     <option value="<?php echo htmlspecialchars($c); ?>" <?php if ($c === 'USD') echo 'selected'; ?>><?php echo htmlspecialchars($c); ?></option>
                                 <?php endforeach; ?>

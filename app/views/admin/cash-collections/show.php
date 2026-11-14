@@ -101,7 +101,7 @@ ob_start();
                                 <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? $_SESSION['csrf_token'] ?? '' ?>">
                                 <input type="hidden" name="id" value="<?= $collection['id'] ?? 0 ?>">
                                 <div class="mb-2">
-                                    <textarea class="form-control" name="reason" rows="3" placeholder="Rejection reason..." required></textarea>
+                                    <textarea aria-label="Reason" class="form-control" name="reason" rows="3" placeholder="Rejection reason..." required></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-danger w-100">Confirm Reject</button>
                             </form>

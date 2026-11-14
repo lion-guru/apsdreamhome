@@ -11,7 +11,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Report Type <span class="text-danger">*</span></label>
-                            <select class="form-select" name="type" required>
+                            <select aria-label="Type" class="form-select" name="type" required>
                                 <option value="">Select type...</option>
                                 <?php foreach ($reportTypes as $k => $v): ?><option value="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></option><?php endforeach; ?>
                             </select>
@@ -23,7 +23,7 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label">Frequency <span class="text-danger">*</span></label>
-                                <select class="form-select" name="frequency" required>
+                                <select aria-label="Frequency" class="form-select" name="frequency" required>
                                     <option value="daily">Daily</option>
                                     <option value="weekly" selected>Weekly</option>
                                     <option value="monthly">Monthly</option>
@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Format</label>
-                                <select class="form-select" name="format">
+                                <select aria-label="Format" class="form-select" name="format">
                                     <option value="pdf">PDF</option>
                                     <option value="excel">Excel</option>
                                     <option value="csv">CSV</option>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Day of Week/Month</label>
-                                <select class="form-select" name="day">
+                                <select aria-label="Day" class="form-select" name="day">
                                     <option value="monday">Monday</option>
                                     <option value="tuesday">Tuesday</option>
                                     <option value="wednesday" selected>Wednesday</option>
@@ -57,7 +57,7 @@
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Additional Notes</label>
-                            <textarea class="form-control" name="notes" rows="2" placeholder="Any special instructions"></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="2" placeholder="Any special instructions"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-calendar-check me-2"></i>Create Schedule</button>
                     </form>

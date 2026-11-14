@@ -43,7 +43,7 @@ $categories = $categories ?? [];
                                 <div class="modal-body">
                                     <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= htmlspecialchars($cat['name'] ?? '') ?>" required></div>
                                     <div class="mb-3"><label class="form-label">Slug</label><input type="text" name="slug" class="form-control" value="<?= htmlspecialchars($cat['slug'] ?? '') ?>"></div>
-                                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($cat['description'] ?? '') ?></textarea></div>
+                                    <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($cat['description'] ?? '') ?></textarea></div>
                                     <div class="mb-3"><label class="form-label">Icon (FontAwesome)</label><input type="text" name="icon" class="form-control" value="<?= htmlspecialchars($cat['icon'] ?? 'fas fa-file-contract') ?>"></div>
                                     <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" name="sort_order" class="form-control" value="<?= (int)($cat['sort_order'] ?? 0) ?>"></div>
                                 </div>
@@ -70,7 +70,7 @@ $categories = $categories ?? [];
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
                     <div class="mb-3"><label class="form-label">Slug (auto-generated from name)</label><input type="text" name="slug" class="form-control" placeholder="leave blank to auto-generate"></div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea></div>
                     <div class="mb-3"><label class="form-label">Icon (FontAwesome class)</label><input type="text" name="icon" class="form-control" value="fas fa-file-contract"></div>
                     <div class="mb-3"><label class="form-label">Sort Order</label><input type="number" name="sort_order" class="form-control" value="0"></div>
                 </div>

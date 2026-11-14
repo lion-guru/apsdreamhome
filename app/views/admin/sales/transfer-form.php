@@ -24,7 +24,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_new_customer') ?></label>
-                    <select name="new_customer_id" class="form-select" required>
+                    <select aria-label="New customer id" name="new_customer_id" class="form-select" required>
                         <option value=""><?= __('sale_select_dash') ?></option>
                         <?php foreach ($customers as $c): ?>
                             <option value="<?= (int)($c['id'] ?? 0) ?>"><?= htmlspecialchars((string)($c['name'] ?? '')) ?> — <?= htmlspecialchars((string)($c['phone'] ?? '')) ?></option>
@@ -41,7 +41,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('sale_internal_notes') ?></label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Optional context for the audit log..."></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Optional context for the audit log..."></textarea>
                 </div>
             </div>
             <div class="mt-3 d-flex gap-2">

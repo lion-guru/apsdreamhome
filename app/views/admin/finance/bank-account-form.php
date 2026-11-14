@@ -35,7 +35,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label"><?php echo __('finance_account_type'); ?></label>
-                        <select name="account_type" class="form-select">
+                        <select aria-label="Account type" name="account_type" class="form-select">
                             <option value="current" <?= ($bank['account_type'] ?? '') === 'current' ? 'selected' : '' ?>><?php echo __('finance_current'); ?></option>
                             <option value="savings" <?= ($bank['account_type'] ?? '') === 'savings' ? 'selected' : '' ?>><?php echo __('finance_savings'); ?></option>
                             <option value="escrow" <?= ($bank['account_type'] ?? '') === 'escrow' ? 'selected' : '' ?>><?php echo __('finance_escrow'); ?></option>

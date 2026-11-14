@@ -133,7 +133,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Staff Reply</label>
-                            <textarea name="message" class="form-control" rows="4" required minlength="2"
+                            <textarea aria-label="Message" name="message" class="form-control" rows="4" required minlength="2"
                                       placeholder="Type your reply to the customer..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">
@@ -174,7 +174,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                     <form method="post" action="<?= $base ?>/admin/support-tickets/<?= (int)$ticket['id'] ?>/status">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <?php foreach (['open', 'in_progress', 'waiting_customer', 'resolved', 'closed'] as $s): ?>
                                     <option value="<?= $s ?>" <?= ($ticket['status'] ?? '') === $s ? 'selected' : '' ?>>
                                         <?= str_replace('_', ' ', ucfirst($s)) ?>
@@ -198,7 +198,7 @@ $priorityBadge = match($ticket['priority'] ?? 'medium') {
                     <form method="post" action="<?= $base ?>/admin/support-tickets/<?= (int)$ticket['id'] ?>/assign">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
-                            <select name="assigned_to" class="form-select">
+                            <select aria-label="Assigned to" name="assigned_to" class="form-select">
                                 <option value="">-- Unassigned --</option>
                                 <?php foreach ($staffMembers as $staff): ?>
                                     <option value="<?= (int)$staff['id'] ?>" <?= (int)($ticket['assigned_to'] ?? 0) === (int)$staff['id'] ? 'selected' : '' ?>>

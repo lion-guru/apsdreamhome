@@ -316,12 +316,12 @@ $today = date('Y-m-d');
 
                         <div class="col-12">
                             <label class="form-label fw-bold small">Description &amp; Terms</label>
-                            <textarea name="description" class="form-control" rows="2" placeholder="Eligibility terms, duration rules, and reward details..."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Eligibility terms, duration rules, and reward details..."></textarea>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Target Metric Type</label>
-                            <select name="criteria_type" class="form-select">
+                            <select aria-label="Criteria type" name="criteria_type" class="form-select">
                                 <option value="sale_volume">Sales Volume (₹)</option>
                                 <option value="booking_count">Plot Bookings Count</option>
                             </select>
@@ -337,7 +337,7 @@ $today = date('Y-m-d');
 
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Reward Type</label>
-                            <select name="reward_type" class="form-select">
+                            <select aria-label="Reward type" name="reward_type" class="form-select">
                                 <option value="bonus_amount">Cash Bonus</option>
                                 <option value="gift">Physical Consumer Gift</option>
                                 <option value="commission_boost_pct">Commission Boost %</option>
@@ -354,7 +354,7 @@ $today = date('Y-m-d');
 
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Colony Scope</label>
-                            <select name="colony_id" class="form-select">
+                            <select aria-label="Colony id" name="colony_id" class="form-select">
                                 <option value="0">All Colonies / Townships</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>

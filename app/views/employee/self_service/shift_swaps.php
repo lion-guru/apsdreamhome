@@ -207,7 +207,7 @@ $completed_count = $completed_count ?? 0;
                     <div class="row mb-3">
                         <label for="target_employee_id" class="col-sm-3 col-form-label fw-bold">Colleague <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <select class="form-select" id="target_employee_id" name="target_employee_id" required>
+                            <select aria-label="Target employee id" class="form-select" id="target_employee_id" name="target_employee_id" required>
                                 <option value="">Select colleague</option>
                                 <?php foreach ($colleagues ?? [] as $c): ?>
                                 <option value="<?= $c['id'] ?>">
@@ -223,7 +223,7 @@ $completed_count = $completed_count ?? 0;
                         <div class="col-sm-9">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <select class="form-select" name="my_shift_type" required>
+                                    <select aria-label="My shift type" class="form-select" name="my_shift_type" required>
                                         <option value="day">Day Shift</option>
                                         <option value="night">Night Shift</option>
                                         <option value="evening">Evening Shift</option>
@@ -243,7 +243,7 @@ $completed_count = $completed_count ?? 0;
                         <div class="col-sm-9">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <select class="form-select" name="colleague_shift_type" required>
+                                    <select aria-label="Colleague shift type" class="form-select" name="colleague_shift_type" required>
                                         <option value="day">Day Shift</option>
                                         <option value="night">Night Shift</option>
                                         <option value="evening">Evening Shift</option>
@@ -261,7 +261,7 @@ $completed_count = $completed_count ?? 0;
                     <div class="row mb-3">
                         <label for="reason" class="col-sm-3 col-form-label fw-bold">Reason <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <textarea class="form-control" id="reason" name="reason" rows="3" required placeholder="Explain why you need this shift swap..."></textarea>
+                            <textarea aria-label="Reason" class="form-control" id="reason" name="reason" rows="3" required placeholder="Explain why you need this shift swap..."></textarea>
                         </div>
                     </div>
                 </div>

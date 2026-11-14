@@ -61,12 +61,12 @@ $incentives = $incentives ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="2"></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Incentive Type</label>
-                        <select name="incentive_type" class="form-select">
+                        <select aria-label="Incentive type" name="incentive_type" class="form-select">
                             <option value="interest_discount">Interest Discount</option>
                             <option value="cashback">Cashback</option>
                             <option value="penalty_waiver">Penalty Waiver</option>
@@ -75,7 +75,7 @@ $incentives = $incentives ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Calculation Method</label>
-                        <select name="calculation_method" class="form-select">
+                        <select aria-label="Calculation method" name="calculation_method" class="form-select">
                             <option value="percentage">Percentage</option>
                             <option value="fixed">Fixed Amount</option>
                         </select>

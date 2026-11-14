@@ -43,7 +43,7 @@ $difficultyOptions = ['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Difficulty *</label>
-                    <select class="form-select" name="difficulty" required>
+                    <select aria-label="Difficulty" class="form-select" name="difficulty" required>
                         <?php foreach ($difficultyOptions as $key => $label): ?>
                             <option value="<?= $key ?>" <?= ($challenge['difficulty'] ?? 'medium') === $key ? 'selected' : '' ?>><?= $label ?></option>
                         <?php endforeach; ?>
@@ -51,7 +51,7 @@ $difficultyOptions = ['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Category *</label>
-                    <select class="form-select" name="category" required>
+                    <select aria-label="Category" class="form-select" name="category" required>
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?= $cat ?>" <?= ($challenge['category'] ?? '') === $cat ? 'selected' : '' ?>><?= ucfirst($cat) ?></option>
                         <?php endforeach; ?>
@@ -86,47 +86,47 @@ $difficultyOptions = ['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'];
         <div class="card-body aps-cp-card-body">
             <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea class="form-control" name="description" rows="3"><?= htmlspecialchars($challenge['description'] ?? '') ?></textarea>
+                <textarea aria-label="Description" class="form-control" name="description" rows="3"><?= htmlspecialchars($challenge['description'] ?? '') ?></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Problem Statement *</label>
-                <textarea class="form-control" name="problem_statement" rows="5" required><?= htmlspecialchars($challenge['problem_statement'] ?? '') ?></textarea>
+                <textarea aria-label="Problem statement" class="form-control" name="problem_statement" rows="5" required><?= htmlspecialchars($challenge['problem_statement'] ?? '') ?></textarea>
             </div>
             <div class="row g-3">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Input Format</label>
-                        <textarea class="form-control" name="input_format" rows="4"><?= htmlspecialchars($challenge['input_format'] ?? '') ?></textarea>
+                        <textarea aria-label="Input format" class="form-control" name="input_format" rows="4"><?= htmlspecialchars($challenge['input_format'] ?? '') ?></textarea>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Output Format</label>
-                        <textarea class="form-control" name="output_format" rows="4"><?= htmlspecialchars($challenge['output_format'] ?? '') ?></textarea>
+                        <textarea aria-label="Output format" class="form-control" name="output_format" rows="4"><?= htmlspecialchars($challenge['output_format'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Constraints</label>
-                <textarea class="form-control" name="constraints" rows="4"><?= htmlspecialchars($challenge['constraints'] ?? '') ?></textarea>
+                <textarea aria-label="Constraints" class="form-control" name="constraints" rows="4"><?= htmlspecialchars($challenge['constraints'] ?? '') ?></textarea>
             </div>
             <div class="row g-3">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Sample Input</label>
-                        <textarea class="form-control font-monospace" name="sample_input" rows="4"><?= htmlspecialchars($challenge['sample_input'] ?? '') ?></textarea>
+                        <textarea aria-label="Sample input" class="form-control font-monospace" name="sample_input" rows="4"><?= htmlspecialchars($challenge['sample_input'] ?? '') ?></textarea>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Sample Output</label>
-                        <textarea class="form-control font-monospace" name="sample_output" rows="4"><?= htmlspecialchars($challenge['sample_output'] ?? '') ?></textarea>
+                        <textarea aria-label="Sample output" class="form-control font-monospace" name="sample_output" rows="4"><?= htmlspecialchars($challenge['sample_output'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Explanation</label>
-                <textarea class="form-control" name="explanation" rows="4"><?= htmlspecialchars($challenge['explanation'] ?? '') ?></textarea>
+                <textarea aria-label="Explanation" class="form-control" name="explanation" rows="4"><?= htmlspecialchars($challenge['explanation'] ?? '') ?></textarea>
             </div>
         </div>
     </div>
@@ -138,12 +138,12 @@ $difficultyOptions = ['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'];
         <div class="card-body aps-cp-card-body">
             <div class="mb-3">
                 <label class="form-label">Starter Code (visible to users)</label>
-                <textarea class="form-control font-monospace" name="starter_code" rows="8"><?= htmlspecialchars($challenge['starter_code'] ?? '') ?></textarea>
+                <textarea aria-label="Starter code" class="form-control font-monospace" name="starter_code" rows="8"><?= htmlspecialchars($challenge['starter_code'] ?? '') ?></textarea>
                 <div class="form-text">Include function signature only. Users will complete the implementation.</div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Solution Code (hidden, for validation)</label>
-                <textarea class="form-control font-monospace" name="solution_code" rows="10"><?= htmlspecialchars($challenge['solution_code'] ?? '') ?></textarea>
+                <textarea aria-label="Solution code" class="form-control font-monospace" name="solution_code" rows="10"><?= htmlspecialchars($challenge['solution_code'] ?? '') ?></textarea>
                 <div class="form-text">Complete working solution for automated testing.</div>
             </div>
         </div>

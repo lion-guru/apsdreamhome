@@ -16,7 +16,7 @@
                         <div class="mb-2"><label class="form-label">Commission Per Sqft (&#8377;)</label><input type="number" step="0.01" name="commission_per_sqft" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission %</label><input type="number" step="0.01" name="commission_percentage" class="form-control" value="0"></div>
                         <div class="mb-2"><label class="form-label">Status</label>
-                            <select name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+                            <select aria-label="Status" name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
                     </form>

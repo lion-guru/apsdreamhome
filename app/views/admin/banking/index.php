@@ -104,7 +104,7 @@ $page_title = 'Banking & Reconciliation';
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Financial Year</label>
-                    <select class="form-select" name="financial_year">
+                    <select aria-label="Financial year" class="form-select" name="financial_year">
                         <option value="">All Years</option>
                         <?php foreach ($financialYears as $fy): ?>
                             <option value="<?php echo htmlspecialchars($fy['year'] ?? $fy); ?>" <?php echo (isset($_GET['financial_year']) && $_GET['financial_year'] === ($fy['year'] ?? $fy)) ? 'selected' : ''; ?>>
@@ -115,7 +115,7 @@ $page_title = 'Banking & Reconciliation';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Period</label>
-                    <select class="form-select" name="financial_period">
+                    <select aria-label="Financial period" class="form-select" name="financial_period">
                         <option value="">All</option>
                         <option value="Q1" <?php echo (isset($_GET['financial_period']) && $_GET['financial_period'] === 'Q1') ? 'selected' : ''; ?>>Q1</option>
                         <option value="Q2" <?php echo (isset($_GET['financial_period']) && $_GET['financial_period'] === 'Q2') ? 'selected' : ''; ?>>Q2</option>
@@ -125,7 +125,7 @@ $page_title = 'Banking & Reconciliation';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Recon Status</label>
-                    <select class="form-select" name="reconciliation_status">
+                    <select aria-label="Reconciliation status" class="form-select" name="reconciliation_status">
                         <option value="">All</option>
                         <option value="pending" <?php echo (isset($_GET['reconciliation_status']) && $_GET['reconciliation_status'] === 'pending') ? 'selected' : ''; ?>>Pending</option>
                         <option value="cleared" <?php echo (isset($_GET['reconciliation_status']) && $_GET['reconciliation_status'] === 'cleared') ? 'selected' : ''; ?>>Cleared</option>
@@ -135,7 +135,7 @@ $page_title = 'Banking & Reconciliation';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Bank</label>
-                    <select class="form-select" name="bank_name">
+                    <select aria-label="Bank name" class="form-select" name="bank_name">
                         <option value="">All Banks</option>
                         <?php foreach ($banks as $b): ?>
                             <option value="<?php echo htmlspecialchars($b['bank_name'] ?? $b); ?>" <?php echo (isset($_GET['bank_name']) && $_GET['bank_name'] === ($b['bank_name'] ?? $b)) ? 'selected' : ''; ?>>

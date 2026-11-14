@@ -34,7 +34,7 @@ $page_title = $page_title ?? 'Add Legal Service';
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="4" placeholder="Describe this legal service"></textarea>
+                                <textarea aria-label="Description" name="description" class="form-control" rows="4" placeholder="Describe this legal service"></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Price Range</label>
@@ -46,11 +46,11 @@ $page_title = $page_title ?? 'Add Legal Service';
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Features (one per line)</label>
-                                <textarea name="features" class="form-control" rows="4" placeholder="Feature 1&#10;Feature 2&#10;Feature 3"></textarea>
+                                <textarea aria-label="Features" name="features" class="form-control" rows="4" placeholder="Feature 1&#10;Feature 2&#10;Feature 3"></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Status</label>
-                                <select name="status" class="form-select">
+                                <select aria-label="Status" name="status" class="form-select">
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>

@@ -20,7 +20,7 @@ $filters = $filters ?? [];
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Collector</label>
-                    <select name="collector_id" class="aps-cp-form-select" required>
+                    <select aria-label="Collector id" name="collector_id" class="aps-cp-form-select" required>
                         <option value="">-- Select --</option>
                         <?php foreach ($collectors as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -44,7 +44,7 @@ $filters = $filters ?? [];
             <form method="GET" action="<?= BASE_URL ?>/admin/finance/reconciliation-collections" >
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Status</label>
-                    <select name="status" class="aps-cp-form-select">
+                    <select aria-label="Status" name="status" class="aps-cp-form-select">
                         <option value="">All</option>
                         <option value="open" <?= ($filters['status'] ?? '') === 'open' ? 'selected' : '' ?>>Open</option>
                         <option value="closed" <?= ($filters['status'] ?? '') === 'closed' ? 'selected' : '' ?>>Closed</option>
@@ -53,7 +53,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Collector</label>
-                    <select name="collector_id" class="aps-cp-form-select">
+                    <select aria-label="Collector id" name="collector_id" class="aps-cp-form-select">
                         <option value="">All</option>
                         <?php foreach ($collectors as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= (int)($filters['collector_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>

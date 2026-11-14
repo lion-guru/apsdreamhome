@@ -93,7 +93,7 @@ $agreement = $agreement ?? [];
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="draft" <?php echo ($agreement['status'] ?? '') === 'draft' ? 'selected' : ''; ?>>Draft</option>
                         <option value="active" <?php echo ($agreement['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
                         <option value="completed" <?php echo ($agreement['status'] ?? '') === 'completed' ? 'selected' : ''; ?>>Completed</option>
@@ -103,14 +103,14 @@ $agreement = $agreement ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Signed by Farmer</label>
-                    <select name="signed_by_farmer" class="form-select">
+                    <select aria-label="Signed by farmer" name="signed_by_farmer" class="form-select">
                         <option value="0">No</option>
                         <option value="1" <?php echo ($agreement['signed_by_farmer'] ?? 0) ? 'selected' : ''; ?>>Yes</option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Signed by Company</label>
-                    <select name="signed_by_company" class="form-select">
+                    <select aria-label="Signed by company" name="signed_by_company" class="form-select">
                         <option value="0">No</option>
                         <option value="1" <?php echo ($agreement['signed_by_company'] ?? 0) ? 'selected' : ''; ?>>Yes</option>
                     </select>
@@ -120,7 +120,7 @@ $agreement = $agreement ?? [];
                 </div>
                 <div class="col-12">
                     <label class="form-label">Remarks</label>
-                    <textarea name="remarks" class="form-control" rows="2"><?php echo htmlspecialchars($agreement['remarks'] ?? ''); ?></textarea>
+                    <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"><?php echo htmlspecialchars($agreement['remarks'] ?? ''); ?></textarea>
                 </div>
             </form>
         </div>

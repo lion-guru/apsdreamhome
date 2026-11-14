@@ -195,7 +195,7 @@ function lvDays($d) { return (int)$d; }
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Leave Type <span class="text-danger">*</span></label>
-                            <select name="leave_type_id" class="form-select" required>
+                            <select aria-label="Leave type id" name="leave_type_id" class="form-select" required>
                                 <option value="">Select leave type...</option>
                                 <?php foreach ($leaveTypes as $lt): ?>
                                     <option value="<?= (int)$lt['id'] ?>"><?= htmlspecialchars($lt['name'] ?? '') ?> (<?= (int)$lt['days_per_year'] ?> days/year<?= $lt['is_paid'] ? ' · Paid' : ' · Unpaid' ?>)</option>
@@ -216,7 +216,7 @@ function lvDays($d) { return (int)$d; }
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
-                            <textarea name="reason" class="form-control" rows="3" required placeholder="Please provide a reason for your leave..."></textarea>
+                            <textarea aria-label="Reason" name="reason" class="form-control" rows="3" required placeholder="Please provide a reason for your leave..."></textarea>
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Work Coverage Plan</label>

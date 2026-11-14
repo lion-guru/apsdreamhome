@@ -34,7 +34,7 @@ ob_start();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Channel Type *</label>
-                                <select class="form-select" name="type" id="typeSelect" required onchange="updateFields()">
+                                <select aria-label="Type" class="form-select" name="type" id="typeSelect" required onchange="updateFields()">
                                     <option value="email">📧 Email</option>
                                     <option value="sms">📱 SMS</option>
                                     <option value="whatsapp">💬 WhatsApp</option>
@@ -44,18 +44,18 @@ ob_start();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Status *</label>
-                                <select class="form-select" name="status" required>
+                                <select aria-label="Status" class="form-select" name="status" required>
                                     <option value="draft">📝 Draft (don't send)</option>
                                     <option value="scheduled">⏰ Scheduled</option>
                                 </select>
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Description (internal)</label>
-                                <textarea class="form-control" name="description" rows="2" placeholder="Internal notes about this campaign"></textarea>
+                                <textarea aria-label="Description" class="form-control" name="description" rows="2" placeholder="Internal notes about this campaign"></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Template (optional)</label>
-                                <select class="form-select" name="template_id" id="templateSelect" onchange="loadTemplate()">
+                                <select aria-label="Template id" class="form-select" name="template_id" id="templateSelect" onchange="loadTemplate()">
                                     <option value="">Custom content</option>
                                     <?php foreach ($templates as $t): ?>
                                                         <option value="<?= $t['id'] ?>" data-type="<?= $t['type'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '', ENT_QUOTES) ?>" data-body="<?= htmlspecialchars($t['body'], ENT_QUOTES) ?>"><?= htmlspecialchars($t['name'] ?? '') ?> (<?= ucfirst($t['type']) ?>)</option>
@@ -82,7 +82,7 @@ ob_start();
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message Body *</label>
-                            <textarea class="form-control" name="content" id="contentField" rows="10" required placeholder="Your campaign message..."></textarea>
+                            <textarea aria-label="Content" class="form-control" name="content" id="contentField" rows="10" required placeholder="Your campaign message..."></textarea>
                             <small class="text-muted">Use <code>{{name}}</code>, <code>{{city}}</code>, <code>{{price}}</code>, etc. for personalization</small>
                         </div>
                         <div class="alert alert-info small mb-0">
@@ -104,7 +104,7 @@ ob_start();
                         </div>
                         <div class="mb-3">
                             <label class="form-label">User Role Filter</label>
-                            <select class="form-select" name="audience_role">
+                            <select aria-label="Audience role" class="form-select" name="audience_role">
                                 <option value="">All users</option>
                                 <option value="customer">Customers only</option>
                                 <option value="associate">Associates</option>

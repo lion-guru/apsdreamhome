@@ -57,7 +57,7 @@ ob_start();
           <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Key name (e.g. Mobile App)" required></div>
           <div class="col-md-2"><input type="text" name="service_name" class="form-control" placeholder="Service (e.g. Gemini)"></div>
           <div class="col-md-2">
-            <select name="key_type" class="form-select">
+            <select aria-label="Key type" name="key_type" class="form-select">
               <option value="api_key">API Key</option>
               <option value="token">Token</option>
               <option value="password">Password</option>

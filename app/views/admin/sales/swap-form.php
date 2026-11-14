@@ -35,7 +35,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <div class="row g-3">
                 <div class="col-md-8">
                     <label class="form-label">New Plot *</label>
-                    <select name="new_plot_id" id="swapPlotSelect" class="form-select" required>
+                    <select aria-label="New plot id" name="new_plot_id" id="swapPlotSelect" class="form-select" required>
                         <option value="">Select new plot</option>
                         <?php foreach ($plots as $p): ?>
                             <option value="<?= (int)($p['id'] ?? 0) ?>" data-price="<?= (float)($p['total_price'] ?? 0) ?>">

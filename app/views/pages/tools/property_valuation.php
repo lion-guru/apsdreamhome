@@ -11,7 +11,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
-                                <select class="form-select" id="propType" onchange="calcVal()">
+                                <select aria-label="Prop type" class="form-select" id="propType" onchange="calcVal()">
                                     <option value="plot"><?php echo __('plot', [], 'Plot'); ?></option>
                                     <option value="house" selected><?php echo __('house', [], 'House'); ?></option>
                                     <option value="flat"><?php echo __('flat', [], 'Flat'); ?></option>
@@ -26,7 +26,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="locSel"><?php echo __('location', [], 'Location'); ?></label>
-                                <select class="form-select" id="locSel" onchange="calcVal()">
+                                <select aria-label="Loc sel" class="form-select" id="locSel" onchange="calcVal()">
                                     <option value="gorakhpur"><?php echo __('gorakhpur', [], 'Gorakhpur'); ?></option>
                                     <option value="lucknow"><?php echo __('lucknow', [], 'Lucknow'); ?></option>
                                     <option value="kushinagar"><?php echo __('kushinagar', [], 'Kushinagar'); ?></option>
@@ -43,7 +43,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="beds"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
-                                <select class="form-select" id="beds" onchange="calcVal()">
+                                <select aria-label="Beds" class="form-select" id="beds" onchange="calcVal()">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3" selected>3</option>
@@ -53,7 +53,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="baths"><?php echo __('bathrooms', [], 'Bathrooms'); ?></label>
-                                <select class="form-select" id="baths" onchange="calcVal()">
+                                <select aria-label="Baths" class="form-select" id="baths" onchange="calcVal()">
                                     <option value="1">1</option>
                                     <option value="2" selected>2</option>
                                     <option value="3">3</option>
@@ -62,7 +62,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="furn"><?php echo __('furnished_status', [], 'Furnished?'); ?></label>
-                                <select class="form-select" id="furn" onchange="calcVal()">
+                                <select aria-label="Furn" class="form-select" id="furn" onchange="calcVal()">
                                     <option value="unfurnished"><?php echo __('unfurnished', [], 'Unfurnished'); ?></option>
                                     <option value="semi"><?php echo __('semi_furnished', [], 'Semi-Furnished'); ?></option>
                                     <option value="furnished"><?php echo __('fully_furnished', [], 'Fully Furnished'); ?></option>

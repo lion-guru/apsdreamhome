@@ -148,7 +148,7 @@ $base = BASE_URL ?? '';
                     <div class="col-md-4"><label class="form-label small">Rebate Applied</label>
                         <input type="text" class="form-control form-control-sm" value="<?= floatval($foreclosure['rebate_percent']) ?>% (₹<?= number_format(floatval($foreclosure['rebate_amount']), 2) ?>)" readonly style="background:#f8f9fa"></div>
                     <div class="col-md-4"><label class="form-label small">Payment Method</label>
-                        <select name="payment_method" class="form-select form-select-sm" id="payMethodSelect">
+                        <select aria-label="Payment method" name="payment_method" class="form-select form-select-sm" id="payMethodSelect">
                             <option value="upi" selected>UPI (GPay/PhonePe/Paytm)</option>
                             <option value="bank_transfer">Bank Transfer</option>
                             <option value="cheque">Cheque</option>

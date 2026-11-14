@@ -15,7 +15,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Customer <span class="text-danger">*</span></label>
-                        <select name="customer_id" class="form-select" required>
+                        <select aria-label="Customer id" name="customer_id" class="form-select" required>
                             <option value="">Select Customer</option>
                             <?php foreach ($users as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?> (<?= htmlspecialchars($c['phone'] ?? '') ?>)</option>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Property</label>
-                        <select name="property_id" class="form-select">
+                        <select aria-label="Property id" name="property_id" class="form-select">
                             <option value="">Select Property</option>
                             <?php foreach ($properties as $p): ?>
                             <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title'] ?? '') ?> - ₹<?= number_format($p['price']) ?></option>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Assigned To</label>
-                        <select name="assigned_to" class="form-select">
+                        <select aria-label="Assigned to" name="assigned_to" class="form-select">
                             <option value="">Select User</option>
                             <?php foreach ($users as $u): ?>
                             <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?></option>
@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Priority</label>
-                        <select name="priority" class="form-select">
+                        <select aria-label="Priority" name="priority" class="form-select">
                             <option value="low">Low</option>
                             <option value="medium" selected>Medium</option>
                             <option value="high">High</option>
@@ -69,7 +69,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Stage</label>
-                        <select name="stage" class="form-select">
+                        <select aria-label="Stage" name="stage" class="form-select">
                             <option value="lead">Lead</option>
                             <option value="qualified">Qualified</option>
                             <option value="site_visit">Site Visit</option>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Source</label>
-                        <select name="source" class="form-select">
+                        <select aria-label="Source" name="source" class="form-select">
                             <option value="manual">Manual</option>
                             <option value="website">Website</option>
                             <option value="referral">Referral</option>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Notes</label>
-                    <textarea name="notes" class="form-control" rows="3"></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Create Deal</button>
             </form>

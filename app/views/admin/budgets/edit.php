@@ -23,7 +23,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Fiscal Year <span class="text-danger">*</span></label>
-                        <select name="fiscal_year" class="form-select" required>
+                        <select aria-label="Fiscal year" name="fiscal_year" class="form-select" required>
                             <?php foreach ($fiscalYears as $fy): ?>
                             <option value="<?= htmlspecialchars($fy['fiscal_year'] ?? '') ?>" <?= ($budget['fiscal_year'] ?? '') === ($fy['fiscal_year'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($fy['fiscal_year'] ?? '') ?></option>
                             <?php endforeach; ?>
@@ -31,7 +31,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Department</label>
-                        <select name="department_id" class="form-select">
+                        <select aria-label="Department id" name="department_id" class="form-select">
                             <option value="">None (Global)</option>
                             <?php foreach ($departments as $d): ?>
                             <option value="<?= $d['id'] ?>" <?= ($budget['department_id'] ?? '') == $d['id'] ? 'selected' : '' ?>><?= htmlspecialchars($d['name']) ?> (<?= htmlspecialchars($d['code']) ?>)</option>
@@ -43,7 +43,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                 <div class="row g-3 mb-3">
                     <div class="col-md-3">
                         <label class="form-label">Category</label>
-                        <select name="category" class="form-select">
+                        <select aria-label="Category" name="category" class="form-select">
                             <?php foreach ($categories as $c): ?>
                             <option value="<?= $c ?>" <?= ($budget['category'] ?? '') === $c ? 'selected' : '' ?>><?= ucwords(str_replace('_', ' ', $c)) ?></option>
                             <?php endforeach; ?>
@@ -66,7 +66,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <?php foreach ($statuses as $s): ?>
                             <option value="<?= $s ?>" <?= ($budget['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
                             <?php endforeach; ?>

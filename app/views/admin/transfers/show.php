@@ -171,7 +171,7 @@ $st = $transfer['status'] ?? 'requested';
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label small fw-semibold">Approval Remarks</label>
-                                    <textarea name="remarks" class="form-control form-control-sm" rows="2" placeholder="e.g. Verified clean ledger. NOC granted."></textarea>
+                                    <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2" placeholder="e.g. Verified clean ledger. NOC granted."></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">
                                     <i class="fas fa-check-circle me-1"></i>Approve & Issue Transfer NOC
@@ -216,7 +216,7 @@ $st = $transfer['status'] ?? 'requested';
                                 <form method="POST" action="/admin/plot-transfers/<?= (int)$transfer['id'] ?>/reject">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                     <div class="mb-2">
-                                        <textarea name="rejection_reason" class="form-control form-control-sm" rows="2" placeholder="Specify reason for rejection..." required></textarea>
+                                        <textarea aria-label="Rejection reason" name="rejection_reason" class="form-control form-control-sm" rows="2" placeholder="Specify reason for rejection..." required></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-danger btn-sm w-100">Confirm Rejection</button>
                                 </form>

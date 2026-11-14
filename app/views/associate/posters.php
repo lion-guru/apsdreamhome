@@ -21,7 +21,7 @@ $firstColony = $colonies[0]['id'] ?? 0;
             <div class="aps-cp-card-header"><span><i class="fas fa-sliders me-2"></i>Design</span></div>
             <div class="aps-cp-card-body row g-3">
                 <div class="col-12"><label class="form-label small">Colony</label>
-                    <select id="posterColony" class="form-select">
+                    <select aria-label="Poster colony" id="posterColony" class="form-select">
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= (int)$c['id'] ?>">
                                 <?= htmlspecialchars($c['name']) ?>
@@ -30,7 +30,7 @@ $firstColony = $colonies[0]['id'] ?? 0;
                         <?php endforeach; ?>
                     </select></div>
                 <div class="col-12"><label class="form-label small">Theme</label>
-                    <select id="posterTheme" class="form-select">
+                    <select aria-label="Poster theme" id="posterTheme" class="form-select">
                         <?php foreach ($themes as $k => $l): ?>
                             <option value="<?= $k ?>"><?= htmlspecialchars($l) ?></option>
                         <?php endforeach; ?>

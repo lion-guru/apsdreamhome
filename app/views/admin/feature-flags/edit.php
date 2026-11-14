@@ -18,11 +18,11 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($flag['description'] ?? '') ?></textarea>
+                                <textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($flag['description'] ?? '') ?></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Group</label>
-                                <select name="group" class="form-select">
+                                <select aria-label="Group" name="group" class="form-select">
                                     <?php foreach (($groups ?? ['general']) as $g): ?>
                                         <option value="<?= htmlspecialchars($g) ?>" <?= ($flag['group'] ?? 'general') === $g ? 'selected' : '' ?>><?= htmlspecialchars($g) ?></option>
                                     <?php endforeach; ?>

@@ -64,7 +64,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-security" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- All Colonies --</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $current_colony == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -241,7 +241,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -254,7 +254,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Shift</label>
-                        <select name="shift" class="form-select">
+                        <select aria-label="Shift" name="shift" class="form-select">
                             <option value="morning_06_14">Morning (06:00 - 14:00)</option>
                             <option value="evening_14_22">Evening (14:00 - 22:00)</option>
                             <option value="night_22_06">Night (22:00 - 06:00)</option>
@@ -289,7 +289,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Boom Barrier Status</label>
-                        <select name="boom_barrier_status" class="form-select">
+                        <select aria-label="Boom barrier status" name="boom_barrier_status" class="form-select">
                             <option value="functional">Functional (Auto RFID / Sensor)</option>
                             <option value="manual_override">Manual Override</option>
                             <option value="under_maintenance">Under AMC Maintenance</option>
@@ -322,7 +322,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -340,7 +340,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Category *</label>
-                        <select name="category" class="form-select" required>
+                        <select aria-label="Category" name="category" class="form-select" required>
                             <option value="unauthorized_trespass">Unauthorized Trespass</option>
                             <option value="vehicle_parking_dispute">Vehicle Parking Dispute</option>
                             <option value="street_light_blackout">Street Light Blackout</option>
@@ -352,7 +352,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Severity Level</label>
-                        <select name="severity" class="form-select">
+                        <select aria-label="Severity" name="severity" class="form-select">
                             <option value="low">Low (Routine Notice)</option>
                             <option value="medium" selected>Medium (Action Required)</option>
                             <option value="high">High (Immediate Response)</option>
@@ -366,7 +366,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Incident Description *</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Describe the incident, people involved, time, vehicle numbers..." required></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Describe the incident, people involved, time, vehicle numbers..." required></textarea>
                     </div>
                     <div class="col-md-8">
                         <label class="form-label small fw-semibold">Immediate Action Taken</label>
@@ -402,7 +402,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="modal-body p-4">
                 <label class="form-label small fw-semibold">Resolution Notes &amp; Engineering/Security Remarks *</label>
-                <textarea name="resolution_notes" class="form-control" rows="3" placeholder="Detail action completed, repairs made, warning given, or case closed..." required></textarea>
+                <textarea aria-label="Resolution notes" name="resolution_notes" class="form-control" rows="3" placeholder="Detail action completed, repairs made, warning given, or case closed..." required></textarea>
             </div>
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

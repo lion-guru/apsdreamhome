@@ -27,7 +27,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Meeting Type</label>
-                            <select name="meeting_type" class="form-select">
+                            <select aria-label="Meeting type" name="meeting_type" class="form-select">
                                 <option value="site_visit">Site Visit</option>
                                 <option value="office_call">Office Call</option>
                                 <option value="phone">Phone Call</option>
@@ -64,7 +64,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="mb-3">
                         <label class="form-label">Description / Agenda</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Notes, agenda, or preparation needed"></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Notes, agenda, or preparation needed"></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> Schedule Meeting</button>

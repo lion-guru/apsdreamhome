@@ -22,7 +22,7 @@ $active_page = 'sites';
                 <input type="text" name="search" class="form-control" placeholder="Search sites..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>
             <div class="col-md-2">
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All Status</option>
                     <option value="planning" <?= ($filters['status'] ?? '') === 'planning' ? 'selected' : '' ?>>Planning</option>
                     <option value="under_development" <?= ($filters['status'] ?? '') === 'under_development' ? 'selected' : '' ?>>Under Development</option>
@@ -32,7 +32,7 @@ $active_page = 'sites';
                 </select>
             </div>
             <div class="col-md-2">
-                <select name="type" class="form-select">
+                <select aria-label="Type" name="type" class="form-select">
                     <option value="">All Types</option>
                     <option value="residential" <?= ($filters['type'] ?? '') === 'residential' ? 'selected' : '' ?>>Residential</option>
                     <option value="commercial" <?= ($filters['type'] ?? '') === 'commercial' ? 'selected' : '' ?>>Commercial</option>

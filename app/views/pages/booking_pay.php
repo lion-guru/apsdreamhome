@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label"><?= __('booking_payment_mode') ?></label>
-                                    <select name="mode" class="form-select" required>
+                                    <select aria-label="Mode" name="mode" class="form-select" required>
                                         <option value="online"><?= __('payment_mode_online') ?></option>
                                         <option value="bank_transfer"><?= __('payment_mode_bank') ?></option>
                                         <option value="cash"><?= __('payment_mode_cash') ?></option>

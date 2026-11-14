@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Customer *</label>
-                            <select name="customer_id" class="form-select" required>
+                            <select aria-label="Customer id" name="customer_id" class="form-select" required>
                                 <option value="">Select Customer</option>
                                 <?php foreach ($users as $customer): ?>
                                     <option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name'] . ' (' . $customer['email'] . ')'); ?></option>
@@ -30,7 +30,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Assign To</label>
-                            <select name="assigned_agent_id" class="form-select">
+                            <select aria-label="Assigned agent id" name="assigned_agent_id" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php foreach ($users as $agent): ?>
                                     <option value="<?php echo $agent['id']; ?>"><?php echo htmlspecialchars($agent['name'] ?? ''); ?></option>
@@ -46,7 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category" class="form-select">
+                            <select aria-label="Category" name="category" class="form-select">
                                 <option value="general">General</option>
                                 <option value="technical">Technical</option>
                                 <option value="billing">Billing</option>
@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     
                     <div class="mb-3">
                         <label class="form-label">Description *</label>
-                        <textarea name="description" class="form-control" rows="5" placeholder="Detailed description of the issue" required></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="5" placeholder="Detailed description of the issue" required></textarea>
                     </div>
                     
                     <div class="mb-3">

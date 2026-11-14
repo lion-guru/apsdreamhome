@@ -17,7 +17,7 @@ $today = $today ?? date('Y-m-d');
         <input type="hidden" name="attendance_date" value="<?= $today ?>">
         <div class="col-md-4">
           <label class="form-label"><?= __('admin_employee_label') ?></label>
-          <select name="employee_id" class="form-select" required>
+          <select aria-label="Employee id" name="employee_id" class="form-select" required>
             <option value=""><?= __('admin_select_placeholder') ?></option>
             <?php foreach ($employees as $e): ?>
               <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>
@@ -26,7 +26,7 @@ $today = $today ?? date('Y-m-d');
         </div>
         <div class="col-md-2">
           <label class="form-label"><?= __('admin_status_label') ?></label>
-          <select name="status" class="form-select">
+          <select aria-label="Status" name="status" class="form-select">
             <option value="present"><?= __('admin_present') ?></option>
             <option value="absent"><?= __('admin_absent') ?></option>
             <option value="half_day"><?= __('admin_half_day') ?></option>

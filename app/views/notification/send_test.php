@@ -6,7 +6,7 @@
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="mb-3">
                     <label class="form-label">Recipient</label>
-                    <select name="user_id" class="form-select" required>
+                    <select aria-label="User id" name="user_id" class="form-select" required>
                         <option value="">Select User</option>
                     </select>
                 </div>
@@ -16,11 +16,11 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Message</label>
-                    <textarea name="message" class="form-control" rows="3" required>This is a test notification from the ERP system.</textarea>
+                    <textarea aria-label="Message" name="message" class="form-control" rows="3" required>This is a test notification from the ERP system.</textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Channel</label>
-                    <select name="channel" class="form-select">
+                    <select aria-label="Channel" name="channel" class="form-select">
                         <option value="in_app">In-App</option>
                         <option value="email">Email</option>
                         <option value="sms">SMS</option>

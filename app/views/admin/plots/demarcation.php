@@ -88,7 +88,7 @@ $current_status = $current_status ?? 'all';
         <div class="card-body p-3">
             <form method="GET" action="/admin/plots/demarcation" class="row g-2 align-items-center">
                 <div class="col-md-4">
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All Townships / Colonies</option>
                         <?php foreach ($colonies as $col): ?>
                             <option value="<?= $col['id'] ?>" <?= $current_colony == $col['id'] ? 'selected' : '' ?>>
@@ -98,7 +98,7 @@ $current_status = $current_status ?? 'all';
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="all" <?= $current_status === 'all' ? 'selected' : '' ?>>All Pillar Statuses</option>
                         <option value="pegs_driven" <?= $current_status === 'pegs_driven' ? 'selected' : '' ?>>Pegs Driven</option>
                         <option value="pillars_erected" <?= $current_status === 'pillars_erected' ? 'selected' : '' ?>>Pillars Erected</option>
@@ -216,7 +216,7 @@ $current_status = $current_status ?? 'all';
                                                             <p>Verify boundary pillars for Plot <strong><?= htmlspecialchars($dem['plot_number']) ?></strong> (<?= htmlspecialchars($dem['certificate_token']) ?>)?</p>
                                                             <div class="mb-3">
                                                                 <label class="form-label">Update Status</label>
-                                                                <select name="pillar_status" class="form-select">
+                                                                <select aria-label="Pillar status" name="pillar_status" class="form-select">
                                                                     <option value="verified" selected>Verified by Civil Engineer</option>
                                                                     <option value="pillars_erected">Pillars Erected (Awaiting Final Check)</option>
                                                                     <option value="disputed">Boundary Disputed / Re-measure Needed</option>
@@ -256,7 +256,7 @@ $current_status = $current_status ?? 'all';
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Select Plot <span class="text-danger">*</span></label>
-                            <select name="plot_id" class="form-select" required>
+                            <select aria-label="Plot id" name="plot_id" class="form-select" required>
                                 <option value="">-- Choose Plot --</option>
                                 <?php foreach ($plots as $p): ?>
                                     <option value="<?= $p['id'] ?>">
@@ -281,7 +281,7 @@ $current_status = $current_status ?? 'all';
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Initial Pillar Status</label>
-                            <select name="pillar_status" class="form-select">
+                            <select aria-label="Pillar status" name="pillar_status" class="form-select">
                                 <option value="pegs_driven" selected>Pegs Driven (Temporary Wooden Pegs)</option>
                                 <option value="pillars_erected">Pillars Erected (Concrete Boundary Pillars)</option>
                                 <option value="verified">Verified (Approved by Civil Dept)</option>
@@ -338,7 +338,7 @@ $current_status = $current_status ?? 'all';
 
                         <div class="col-12">
                             <label class="form-label fw-semibold">Survey & Boundary Notes</label>
-                            <textarea name="boundary_notes" class="form-control" rows="2" placeholder="e.g. Pegged adjacent to 30ft master sector road, concrete markers driven with red paint."></textarea>
+                            <textarea aria-label="Boundary notes" name="boundary_notes" class="form-control" rows="2" placeholder="e.g. Pegged adjacent to 30ft master sector road, concrete markers driven with red paint."></textarea>
                         </div>
                     </div>
                 </div>

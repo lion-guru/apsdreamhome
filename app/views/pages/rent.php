@@ -115,7 +115,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
             </div>
             <div class="col-md-2">
                 <label class="form-label">Type</label>
-                <select class="form-select" name="type">
+                <select aria-label="Type" class="form-select" name="type">
                     <option value="">All Types</option>
                     <?php foreach (['flat','house','villa','apartment','shop','farmhouse','plot','land'] as $t): ?>
                         <option value="<?= $t ?>" <?= ($filters['type'] ?? '') === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
@@ -124,7 +124,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
             </div>
             <div class="col-md-2">
                 <label class="form-label">Bedrooms</label>
-                <select class="form-select" name="bedrooms">
+                <select aria-label="Bedrooms" class="form-select" name="bedrooms">
                     <option value="0">Any</option>
                     <?php for ($b = 1; $b <= 5; $b++): ?>
                         <option value="<?= e($b ?? '') ?>" <?= (int)($filters['bedrooms'] ?? 0) === $b ? 'selected' : '' ?>><?= $b ?> BHK+</option>

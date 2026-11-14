@@ -124,7 +124,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 
                 <div class="mb-3">
                     <label class="fw-semibold mb-2">Assignment Method</label>
-                    <select name="crm_lead_assignment_strategy" class="form-select">
+                    <select aria-label="Crm lead assignment strategy" name="crm_lead_assignment_strategy" class="form-select">
                         <option value="round_robin" <?= $val('crm_lead_assignment_strategy', 'round_robin') === 'round_robin' ? 'selected' : '' ?>>Round Robin (Equal Distribution)</option>
                         <option value="least_burdened" <?= $val('crm_lead_assignment_strategy') === 'least_burdened' ? 'selected' : '' ?>>Least Loaded (Fewest Active Leads)</option>
                     </select>

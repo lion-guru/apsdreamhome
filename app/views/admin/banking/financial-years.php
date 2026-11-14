@@ -107,14 +107,14 @@ $page_title = 'Financial Years Management';
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Status</label>
-                        <select class="form-select" name="is_active">
+                        <select aria-label="Is active" class="form-select" name="is_active">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-semibold">Notes</label>
-                        <textarea class="form-control" name="notes" rows="2" placeholder="Optional notes about this financial year"></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" rows="2" placeholder="Optional notes about this financial year"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

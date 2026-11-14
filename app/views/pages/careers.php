@@ -319,7 +319,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold"><?= __('careers_cover_letter', null, 'Cover Letter') ?></label>
-                        <textarea class="form-control" name="cover_letter" rows="3" placeholder="<?= __('careers_cover_letter_ph', null, 'Tell us why you are interested in this position...') ?>"></textarea>
+                        <textarea aria-label="Cover letter" class="form-control" name="cover_letter" rows="3" placeholder="<?= __('careers_cover_letter_ph', null, 'Tell us why you are interested in this position...') ?>"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold"><?= __('careers_resume_cv', null, 'Resume/CV') ?> <span class="text-danger">*</span></label>
@@ -496,7 +496,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('student_course', null, 'Course/Stream') ?></label>
-                            <select class="form-select" name="course">
+                            <select aria-label="Course" class="form-select" name="course">
                                 <option value=""><?= __('student_select_course', null, 'Select Course') ?></option>
                                 <option value="bba">BBA/BBM</option>
                                 <option value="mba">MBA</option>
@@ -508,7 +508,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('student_year', null, 'Current Year') ?></label>
-                            <select class="form-select" name="year">
+                            <select aria-label="Year" class="form-select" name="year">
                                 <option value=""><?= __('student_select_year', null, 'Select Year') ?></option>
                                 <option value="1">1st Year</option>
                                 <option value="2">2nd Year</option>
@@ -520,7 +520,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold"><?= __('student_motivation', null, 'Why do you want to join?') ?></label>
-                        <textarea class="form-control" name="motivation" rows="3" placeholder="Tell us about your interest in real estate..."></textarea>
+                        <textarea aria-label="Motivation" class="form-control" name="motivation" rows="3" placeholder="Tell us about your interest in real estate..."></textarea>
                     </div>
                 </form>
             </div>

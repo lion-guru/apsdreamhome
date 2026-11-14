@@ -47,7 +47,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="is_active" class="form-select">
+                        <select aria-label="Is active" name="is_active" class="form-select">
                             <option value="1" <?= !empty($survey['is_active']) ? 'selected' : '' ?>>Active</option>
                             <option value="0" <?= empty($survey['is_active']) ? 'selected' : '' ?>>Inactive</option>
                         </select>
@@ -69,7 +69,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Trigger Event</label>
-                        <select name="trigger_event" class="form-select">
+                        <select aria-label="Trigger event" name="trigger_event" class="form-select">
                             <?php
                             $triggers = [
                                 'manual' => 'Manual Send Only',

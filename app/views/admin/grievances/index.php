@@ -80,7 +80,7 @@ $filters = $filters ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="open" <?= ($filters['status'] ?? '') === 'open' ? 'selected' : '' ?>>Open</option>
                         <option value="under_review" <?= ($filters['status'] ?? '') === 'under_review' ? 'selected' : '' ?>>Under Review</option>
@@ -93,7 +93,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Category</label>
-                    <select name="category" class="form-select form-select-sm">
+                    <select aria-label="Category" name="category" class="form-select form-select-sm">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $key => $label): ?>
                             <option value="<?= $key ?>" <?= ($filters['category'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
@@ -102,7 +102,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Priority</label>
-                    <select name="priority" class="form-select form-select-sm">
+                    <select aria-label="Priority" name="priority" class="form-select form-select-sm">
                         <option value="">All Priorities</option>
                         <?php foreach ($priorities as $key => $label): ?>
                             <option value="<?= $key ?>" <?= ($filters['priority'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
@@ -111,7 +111,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Assignee</label>
-                    <select name="assignee" class="form-select form-select-sm">
+                    <select aria-label="Assignee" name="assignee" class="form-select form-select-sm">
                         <option value="">All Assignees</option>
                         <?php foreach ($assignees as $a): ?>
                             <option value="<?= $a['id'] ?>" <?= ($filters['assignee'] ?? '') == $a['id'] ? 'selected' : '' ?>><?= htmlspecialchars($a['name']) ?></option>
@@ -256,7 +256,7 @@ $filters = $filters ?? [];
                     <div class="row g-3">
                         <div class="col-12">
                             <label for="create_employee_id" class="form-label fw-semibold">Employee / Complainant <span class="text-danger">*</span></label>
-                            <select name="employee_id" id="create_employee_id" class="form-select" required>
+                            <select aria-label="Employee id" name="employee_id" id="create_employee_id" class="form-select" required>
                                 <option value="">-- Select Employee --</option>
                                 <?php foreach ($employees as $emp): ?>
                                     <option value="<?= $emp['employee_id'] ?? $emp['id'] ?>">
@@ -267,7 +267,7 @@ $filters = $filters ?? [];
                         </div>
                         <div class="col-md-6">
                             <label for="create_category" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                            <select name="category" id="create_category" class="form-select" required>
+                            <select aria-label="Category" name="category" id="create_category" class="form-select" required>
                                 <option value="">Select category</option>
                                 <?php foreach ($categories as $key => $label): ?>
                                     <option value="<?= $key ?>"><?= $label ?></option>
@@ -276,7 +276,7 @@ $filters = $filters ?? [];
                         </div>
                         <div class="col-md-6">
                             <label for="create_priority" class="form-label fw-semibold">Priority <span class="text-danger">*</span></label>
-                            <select name="priority" id="create_priority" class="form-select" required>
+                            <select aria-label="Priority" name="priority" id="create_priority" class="form-select" required>
                                 <option value="normal" selected>Normal</option>
                                 <option value="low">Low</option>
                                 <option value="high">High</option>
@@ -290,7 +290,7 @@ $filters = $filters ?? [];
                         </div>
                         <div class="col-12">
                             <label for="create_description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
-                            <textarea name="description" id="create_description" class="form-control" rows="4" required placeholder="Detailed description of the grievance..."></textarea>
+                            <textarea aria-label="Description" name="description" id="create_description" class="form-control" rows="4" required placeholder="Detailed description of the grievance..."></textarea>
                         </div>
                         <div class="col-md-6">
                             <label for="create_sub_category" class="form-label fw-semibold">Sub-category</label>
@@ -328,7 +328,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="modal-body">
                     <label for="modalAssigneeSelect" class="form-label fw-semibold">Select Staff / Investigator</label>
-                    <select name="assignee_id" id="modalAssigneeSelect" class="form-select" required>
+                    <select aria-label="Assignee id" name="assignee_id" id="modalAssigneeSelect" class="form-select" required>
                         <option value="">-- Choose Staff Member --</option>
                         <?php foreach ($assignees as $staff): ?>
                             <option value="<?= $staff['id'] ?>">

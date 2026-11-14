@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Level</label>
-                        <select name="level" class="form-select">
+                        <select aria-label="Level" name="level" class="form-select">
                             <option value="bronze" <?= ($user['level'] ?? '') === 'bronze' ? 'selected' : '' ?>>Bronze</option>
                             <option value="silver" <?= ($user['level'] ?? '') === 'silver' ? 'selected' : '' ?>>Silver</option>
                             <option value="gold" <?= ($user['level'] ?? '') === 'gold' ? 'selected' : '' ?>>Gold</option>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active" <?= ($user['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>Active</option>
                             <option value="inactive" <?= ($user['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                             <option value="suspended" <?= ($user['status'] ?? '') === 'suspended' ? 'selected' : '' ?>>Suspended</option>

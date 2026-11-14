@@ -31,7 +31,7 @@ $id = (int)($lead['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Overall Status</label>
-                            <select name="status" class="form-select form-select-sm">
+                            <select aria-label="Status" name="status" class="form-select form-select-sm">
                                 <option value="clear">Clear Title</option>
                                 <option value="conditional">Conditional</option>
                                 <option value="not_clear">Not Clear</option>
@@ -47,7 +47,7 @@ $id = (int)($lead['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Encroachment Risk</label>
-                            <select name="encroachment_risk" class="form-select form-select-sm">
+                            <select aria-label="Encroachment risk" name="encroachment_risk" class="form-select form-select-sm">
                                 <option value="">— N/A —</option>
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -56,11 +56,11 @@ $id = (int)($lead['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">RERA Implications</label>
-                            <textarea name="rera_implications" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Rera implications" name="rera_implications" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Remarks</label>
-                            <textarea name="remarks" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-save me-1"></i>Record Opinion

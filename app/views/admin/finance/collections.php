@@ -63,7 +63,7 @@ $filters = $filters ?? [];
             <form method="GET" action="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-form-row">
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Status</label>
-                    <select name="status" class="aps-cp-form-select">
+                    <select aria-label="Status" name="status" class="aps-cp-form-select">
                         <option value="">All</option>
                         <option value="submitted" <?= ($filters['status'] ?? '') === 'submitted' ? 'selected' : '' ?>>Submitted</option>
                         <option value="verified" <?= ($filters['status'] ?? '') === 'verified' ? 'selected' : '' ?>>Verified</option>
@@ -73,7 +73,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Collector</label>
-                    <select name="collector_id" class="aps-cp-form-select">
+                    <select aria-label="Collector id" name="collector_id" class="aps-cp-form-select">
                         <option value="">All Collectors</option>
                         <?php foreach ($collectors as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= (int)($filters['collector_id'] ?? 0) === (int)$c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>

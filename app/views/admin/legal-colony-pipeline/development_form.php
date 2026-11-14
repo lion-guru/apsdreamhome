@@ -28,7 +28,7 @@ $costs  = $costs ?? [];
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label text-white">Cost Type *</label>
-                <select name="cost_type" class="form-select bg-dark text-white border-secondary" required>
+                <select aria-label="Cost type" name="cost_type" class="form-select bg-dark text-white border-secondary" required>
                   <option value="">Select type...</option>
                   <option value="road">Road Construction</option>
                   <option value="drainage">Drainage</option>
@@ -82,7 +82,7 @@ $costs  = $costs ?? [];
               </div>
               <div class="col-md-12">
                 <label class="form-label text-white">Work Description</label>
-                <textarea name="work_description" class="form-control bg-dark text-white border-secondary" rows="2"></textarea>
+                <textarea aria-label="Work description" name="work_description" class="form-control bg-dark text-white border-secondary" rows="2"></textarea>
               </div>
             </div>
 

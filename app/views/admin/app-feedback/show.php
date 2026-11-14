@@ -177,7 +177,7 @@ $typeColors = ['bug' => 'danger', 'feature' => 'primary', 'improvement' => 'info
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <label class="fw-semibold small text-muted d-block mb-2">Update Status</label>
                         <div class="input-group">
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <?php foreach (['new', 'acknowledged', 'in_progress', 'resolved', 'closed'] as $s): ?>
                                     <option value="<?= $s ?>" <?= ($item['status'] ?? 'new') === $s ? 'selected' : '' ?>>
                                         <?= ucfirst(str_replace('_', ' ', $s)) ?>
@@ -193,7 +193,7 @@ $typeColors = ['bug' => 'danger', 'feature' => 'primary', 'improvement' => 'info
                     <form method="POST" action="<?= e($base) ?>/admin/app-feedback/<?= (int)$item['id'] ?>/respond">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <label class="fw-semibold small text-muted d-block mb-2">Admin Response</label>
-                        <textarea name="admin_response" class="form-control mb-2" rows="5" placeholder="Type your response to the user..."><?= htmlspecialchars($item['admin_response'] ?? '') ?></textarea>
+                        <textarea aria-label="Admin response" name="admin_response" class="form-control mb-2" rows="5" placeholder="Type your response to the user..."><?= htmlspecialchars($item['admin_response'] ?? '') ?></textarea>
                         <button type="submit" class="btn btn-success w-100">
                             <i class="fas fa-paper-plane me-1"></i> Send Response
                         </button>

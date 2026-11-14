@@ -42,7 +42,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Placement (optional)</label>
-                                <select name="placement" class="form-select">
+                                <select aria-label="Placement" name="placement" class="form-select">
                                     <option value="">Auto</option>
                                     <option value="left">Left</option>
                                     <option value="right">Right</option>
@@ -50,7 +50,7 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Address</label>
-                                <textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea>
+                                <textarea aria-label="Address" name="address" class="form-control" rows="2"><?= htmlspecialchars($_POST['address'] ?? '') ?></textarea>
                             </div>
                         </div>
                         <div class="mt-4">

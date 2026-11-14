@@ -62,7 +62,7 @@ $page_title = $page_title ?? 'Sales Management';
                     <input type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="completed" <?= $filters['status'] === 'completed' ? 'selected' : '' ?>>Completed</option>
                         <option value="pending" <?= $filters['status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -70,7 +70,7 @@ $page_title = $page_title ?? 'Sales Management';
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <select name="associate_id" class="form-select">
+                    <select aria-label="Associate id" name="associate_id" class="form-select">
                         <option value="">All users</option>
                         <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>" <?= $filters['associate_id'] == $associate['id'] ? 'selected' : '' ?>>

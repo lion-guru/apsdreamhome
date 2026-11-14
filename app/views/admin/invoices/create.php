@@ -31,7 +31,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Client Type <span class="text-danger">*</span></label>
-                                <select name="client_type" class="form-select" id="clientType" required>
+                                <select aria-label="Client type" name="client_type" class="form-select" id="clientType" required>
                                     <option value="customer">Customer</option>
                                     <option value="associate">Associate</option>
                                     <option value="vendor">Vendor</option>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Select Client</label>
-                                <select name="client_id" class="form-select" id="clientSelect">
+                                <select aria-label="Client id" name="client_id" class="form-select" id="clientSelect">
                                     <option value="">-- Select from users (optional) --</option>
                                     <?php if (!empty($users)): ?>
                                         <?php foreach ($users as $u): ?>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Client Address</label>
-                                <textarea name="client_address" class="form-control" rows="2" id="clientAddress"></textarea>
+                                <textarea aria-label="Client address" name="client_address" class="form-control" rows="2" id="clientAddress"></textarea>
                             </div>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                                         <td><input type="text" name="item_name[]" class="form-control form-control-sm" required></td>
                                         <td><input type="text" name="item_description[]" class="form-control form-control-sm"></td>
                                         <td>
-                                            <select name="item_type[]" class="form-select form-select-sm">
+                                            <select aria-label="Item type" name="item_type[]" class="form-select form-select-sm">
                                                 <option value="property">Property</option>
                                                 <option value="service">Service</option>
                                                 <option value="product">Product</option>
@@ -153,14 +153,14 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="draft">Draft</option>
                                 <option value="sent">Sent</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Link to Booking (Optional)</label>
-                            <select name="booking_id" class="form-select">
+                            <select aria-label="Booking id" name="booking_id" class="form-select">
                                 <option value="">-- No booking --</option>
                                 <?php if (!empty($bookings)): ?>
                                     <?php foreach ($bookings as $b): ?>
@@ -181,11 +181,11 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Payment Terms</label>
-                            <textarea name="payment_terms" class="form-control" rows="2" placeholder="e.g., Payment due within 30 days..."><?= htmlspecialchars($company['payment_terms'] ?? 'Payment due within 30 days from invoice date.') ?></textarea>
+                            <textarea aria-label="Payment terms" name="payment_terms" class="form-control" rows="2" placeholder="e.g., Payment due within 30 days..."><?= htmlspecialchars($company['payment_terms'] ?? 'Payment due within 30 days from invoice date.') ?></textarea>
                         </div>
                         <div class="mb-0">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes (optional)"></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Additional notes (optional)"></textarea>
                         </div>
                     </div>
                 </div>
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><input type="text" name="item_name[]" class="form-control form-control-sm" required></td>
             <td><input type="text" name="item_description[]" class="form-control form-control-sm"></td>
             <td>
-                <select name="item_type[]" class="form-select form-select-sm">
+                <select aria-label="Item type" name="item_type[]" class="form-select form-select-sm">
                     <option value="property">Property</option>
                     <option value="service">Service</option>
                     <option value="product">Product</option>

@@ -190,7 +190,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="mcpKeyType" class="form-label">Key Type</label>
-                            <select class="form-select" id="mcpKeyType" required>
+                            <select aria-label="Mcp key type" class="form-select" id="mcpKeyType" required>
                                 <option value="api_key">API Key</option>
                                 <option value="token">Token</option>
                                 <option value="password">Password</option>
@@ -203,7 +203,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="mcpDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="mcpDescription" rows="3"></textarea>
+                            <textarea aria-label="Mcp description" class="form-control" id="mcpDescription" rows="3"></textarea>
                         </div>
                     </form>
                 </div>

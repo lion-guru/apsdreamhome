@@ -116,7 +116,7 @@ $currentColony = $current_colony ?? null;
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-light"><i class="fas fa-city text-muted"></i></span>
-                        <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                             <option value="">-- All Township Colonies --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>" <?= ($currentColony == $c['id']) ? 'selected' : '' ?>>
@@ -242,7 +242,7 @@ $currentColony = $current_colony ?? null;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Township Colony <span class="text-danger">*</span></label>
-                            <select name="colony_id" class="form-select form-select-sm" required>
+                            <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" required>
                                 <option value="">-- Select Colony --</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>" <?= ($currentColony == $c['id']) ? 'selected' : '' ?>>
@@ -261,7 +261,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Timer Switching Mode</label>
-                            <select name="timer_mode" class="form-select form-select-sm">
+                            <select aria-label="Timer mode" name="timer_mode" class="form-select form-select-sm">
                                 <option value="astronomical_timer">Astronomical Timer (Auto Dawn/Dusk)</option>
                                 <option value="photocell_sensor">Photocell Lux Sensor</option>
                                 <option value="manual_mcb_switch">Manual MCB Switch</option>
@@ -290,7 +290,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Phase Balance Status (R-Y-B)</label>
-                            <select name="phase_balance_status" class="form-select form-select-sm">
+                            <select aria-label="Phase balance status" name="phase_balance_status" class="form-select form-select-sm">
                                 <option value="balanced_ryb">Optimal Balanced (R-Y-B normal)</option>
                                 <option value="phase_r_trip">Phase R Trip (Red Phase MCB Tripped)</option>
                                 <option value="phase_y_trip">Phase Y Trip (Yellow Phase MCB Tripped)</option>
@@ -300,7 +300,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Armoured Cable Health</label>
-                            <select name="cable_health" class="form-select form-select-sm">
+                            <select aria-label="Cable health" name="cable_health" class="form-select form-select-sm">
                                 <option value="healthy_underground">Healthy Underground Cable</option>
                                 <option value="minor_joint_fault">Minor Joint Insulation Needed</option>
                                 <option value="cut_repair_needed">Underground Cable Cut - Urgent Repair</option>
@@ -320,7 +320,7 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Engineering Remarks</label>
-                            <textarea name="remarks" class="form-control form-control-sm" rows="2" placeholder="Lux meter reading, tree branches trimming near fixtures, etc."></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2" placeholder="Lux meter reading, tree branches trimming near fixtures, etc."></textarea>
                         </div>
                     </div>
                 </div>

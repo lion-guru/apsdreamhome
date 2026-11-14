@@ -91,12 +91,12 @@ $preview_year = $preview_year ?? date('Y');
                             <div class="col-md-6">
                                 <label class="form-label">Revision Month/Year</label>
                                 <div class="input-group">
-                                    <select name="month" class="form-select" required>
+                                    <select aria-label="Month" name="month" class="form-select" required>
                                         <?php for ($m=1;$m<=12;$m++): ?>
                                         <option value="<?= $m ?>" <?= $m==date('n')?'selected':'' ?>><?= date('F', mktime(0,0,0,$m,1)) ?></option>
                                         <?php endfor; ?>
                                     </select>
-                                    <select name="year" class="form-select" style="max-width:100px" required>
+                                    <select aria-label="Year" name="year" class="form-select" style="max-width:100px" required>
                                         <?php for ($y=date('Y');$y<=date('Y')+2;$y++): ?>
                                         <option value="<?= $y ?>" <?= $y==date('Y')?'selected':'' ?>><?= $y ?></option>
                                         <?php endfor; ?>

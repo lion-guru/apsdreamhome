@@ -16,7 +16,7 @@ $page_title = $page_title ?? 'users';
             </div>
             <div class="col-md-3">
                 <label class="form-label small">Department</label>
-                <select name="department" class="form-select">
+                <select aria-label="Department" name="department" class="form-select">
                     <option value="">All Departments</option>
                     <?php foreach ($departments ?? [] as $d): ?>
                         <option value="<?= htmlspecialchars($d['department'] ?? '') ?>" <?= ($department ?? '') === ($d['department'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($d['department'] ?? '') ?></option>
@@ -25,7 +25,7 @@ $page_title = $page_title ?? 'users';
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All</option>
                     <option value="active" <?= ($status ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                     <option value="inactive" <?= ($status ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>

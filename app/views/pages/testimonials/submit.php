@@ -56,7 +56,7 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-12">
                                 <label class="form-label"><?= __('testi_your_testimonial', [], 'Your Testimonial') ?> *</label>
-                                <textarea class="form-control" name="content" rows="6" required
+                                <textarea aria-label="Content" class="form-control" name="content" rows="6" required
                                           placeholder="<?= __('testi_placeholder', [], 'Share your experience with us...') ?>"><?= htmlspecialchars($_POST['content'] ?? '') ?></textarea>
                             </div>
                             <div class="col-12">

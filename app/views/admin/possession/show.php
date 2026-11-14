@@ -132,7 +132,7 @@ $isDelayed = $currentStatus === 'delayed';
                         <input type="date" class="form-control" name="possession_date" value="<?= date('Y-m-d', strtotime('+7 days')) ?>" required>
                     </div>
                     <div class="mb-2">
-                        <textarea class="form-control" name="handover_notes" rows="2" placeholder="Notes about this handover..."></textarea>
+                        <textarea aria-label="Handover notes" class="form-control" name="handover_notes" rows="2" placeholder="Notes about this handover..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-calendar-check"></i> Schedule Handover</button>
                 </form>
@@ -156,7 +156,7 @@ $isDelayed = $currentStatus === 'delayed';
                         </div>
                     </div>
                     <div class="mb-2">
-                        <textarea class="form-control" name="handover_notes" rows="2" placeholder="Handover notes..."></textarea>
+                        <textarea aria-label="Handover notes" class="form-control" name="handover_notes" rows="2" placeholder="Handover notes..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-success" <?= $currentStatus === 'handed_over' ? 'disabled' : '' ?>><i class="fas fa-home"></i> <?= $currentStatus === 'handed_over' ? 'Already Handed Over' : 'Mark as Handed Over' ?></button>
                 </form>
@@ -227,7 +227,7 @@ $isDelayed = $currentStatus === 'delayed';
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2">
                             <label class="form-label">Defect Type</label>
-                            <select class="form-select" name="defect_type">
+                            <select aria-label="Defect type" class="form-select" name="defect_type">
                                 <option value="structural">Structural</option>
                                 <option value="plumbing">Plumbing</option>
                                 <option value="electrical">Electrical</option>
@@ -241,11 +241,11 @@ $isDelayed = $currentStatus === 'delayed';
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="description" rows="2" required></textarea>
+                            <textarea aria-label="Description" class="form-control" name="description" rows="2" required></textarea>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Priority</label>
-                            <select class="form-select" name="priority">
+                            <select aria-label="Priority" class="form-select" name="priority">
                                 <option value="low">Low</option>
                                 <option value="medium" selected>Medium</option>
                                 <option value="high">High</option>

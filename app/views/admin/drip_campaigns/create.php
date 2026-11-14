@@ -30,7 +30,7 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="draft">Draft</option>
                             <option value="active">Active</option>
                             <option value="paused">Paused</option>
@@ -38,7 +38,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Trigger Event</label>
-                        <select name="trigger_event" class="form-select">
+                        <select aria-label="Trigger event" name="trigger_event" class="form-select">
                             <option value="new_lead">New Lead Created</option>
                             <option value="property_inquiry">Property Inquiry</option>
                             <option value="site_visit_booked">Site Visit Booked</option>
@@ -103,7 +103,7 @@ function addEmailRow() {
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Channel</label>
-                <select name="emails[${n}][channel]" class="form-select form-select-sm">
+                <select aria-label="Emails" name="emails[${n}][channel]" class="form-select form-select-sm">
                     <option value="email">Email</option>
                     <option value="sms">SMS</option>
                     <option value="whatsapp">WhatsApp</option>
@@ -111,7 +111,7 @@ function addEmailRow() {
             </div>
             <div class="col-12">
                 <label class="form-label small">Body</label>
-                <textarea name="emails[${n}][body]" class="form-control form-control-sm" rows="5" required placeholder="Hi {{name}},&#10;&#10;Thanks for your interest..."></textarea>
+                <textarea aria-label="Emails" name="emails[${n}][body]" class="form-control form-control-sm" rows="5" required placeholder="Hi {{name}},&#10;&#10;Thanks for your interest..."></textarea>
             </div>
         </div>
     </div>`;

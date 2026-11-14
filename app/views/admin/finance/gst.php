@@ -13,7 +13,7 @@
             <form method="get" class="row g-2 align-items-end">
                 <input type="hidden" name="url" value="/admin/finance/gst">
                 <div class="col-md-3"><label class="form-label small"><?= __('gst_fy') ?></label>
-                    <select name="fy" class="form-select form-select-sm">
+                    <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                         <?php foreach (['2024-25','2025-26','2026-27'] as $y): ?>
                             <option value="<?= $y ?>" <?= $fy === $y ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endforeach; ?>
@@ -61,19 +61,19 @@
         <div class="row g-3">
             <div class="col-md-3"><label class="form-label"><?= __('gst_date') ?> <span class="text-danger">*</span></label><input type="date" name="transaction_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
             <div class="col-md-3"><label class="form-label"><?= __('gst_type') ?> <span class="text-danger">*</span></label>
-                <select name="transaction_type" required class="form-select">
+                <select aria-label="Transaction type" name="transaction_type" required class="form-select">
                     <option value="output"><?= __('gst_type_output') ?></option>
                     <option value="input"><?= __('gst_type_input') ?></option>
                 </select>
             </div>
             <div class="col-md-3"><label class="form-label"><?= __('gst_supply_type') ?></label>
-                <select name="supply_type" class="form-select">
+                <select aria-label="Supply type" name="supply_type" class="form-select">
                     <option value="intra"><?= __('gst_intra') ?></option>
                     <option value="inter"><?= __('gst_inter') ?></option>
                 </select>
             </div>
             <div class="col-md-3"><label class="form-label"><?= __('gst_rate') ?></label>
-                <select name="gst_rate" class="form-select">
+                <select aria-label="Gst rate" name="gst_rate" class="form-select">
                     <option value="0">0%</option><option value="5">5%</option><option value="12">12%</option>
                     <option value="18" selected>18%</option><option value="28">28%</option>
                 </select>

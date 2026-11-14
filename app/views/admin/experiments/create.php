@@ -30,7 +30,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Description</label>
-                            <textarea class="form-control" name="description" rows="2" maxlength="500"
+                            <textarea aria-label="Description" class="form-control" name="description" rows="2" maxlength="500"
                                       placeholder="What hypothesis are you testing?"></textarea>
                         </div>
                         <div class="mb-0">

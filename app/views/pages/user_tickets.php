@@ -120,7 +120,7 @@ $extraHead = '<style>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?php echo __('tickets_priority', [], 'Priority'); ?></label>
-                                <select name="priority" class="form-select">
+                                <select aria-label="Priority" name="priority" class="form-select">
                                     <option value="low"><?php echo __('tickets_priority_low', [], 'Low'); ?></option>
                                     <option value="medium" selected><?php echo __('tickets_priority_medium', [], 'Medium'); ?></option>
                                     <option value="high"><?php echo __('tickets_priority_high', [], 'High'); ?></option>
@@ -128,7 +128,7 @@ $extraHead = '<style>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?php echo __('tickets_related_booking', [], 'Related Booking (optional)'); ?></label>
-                                <select name="booking_id" class="form-select">
+                                <select aria-label="Booking id" name="booking_id" class="form-select">
                                     <option value=""><?php echo __('tickets_none', [], '-- None --'); ?></option>
                                     <?php foreach ($bookings as $b): ?>
                                         <option value="<?= $b['id'] ?>">#<?= htmlspecialchars($b['plot_number'] ?? $b['id']) ?> - <?= htmlspecialchars($b['colony_name'] ?? '') ?> (<?= ucfirst($b['status'] ?? '') ?>)</option>
@@ -138,7 +138,7 @@ $extraHead = '<style>
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?php echo __('tickets_message', [], 'Message'); ?> <span class="text-danger">*</span></label>
-                            <textarea name="message" class="form-control" rows="5" required placeholder="<?php echo __('tickets_message_placeholder', [], 'Describe your issue in detail...'); ?>"></textarea>
+                            <textarea aria-label="Message" name="message" class="form-control" rows="5" required placeholder="<?php echo __('tickets_message_placeholder', [], 'Describe your issue in detail...'); ?>"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">

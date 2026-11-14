@@ -70,7 +70,7 @@ function taskStatusBadge($status) {
 
     <div class="row g-3 mb-3">
         <div class="col-md-4">
-            <select id="statusFilter" class="form-select form-select-sm" onchange="filterTasks()">
+            <select aria-label="Status filter" id="statusFilter" class="form-select form-select-sm" onchange="filterTasks()">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
                 <option value="in progress">In Progress</option>
@@ -78,7 +78,7 @@ function taskStatusBadge($status) {
             </select>
         </div>
         <div class="col-md-4">
-            <select id="priorityFilter" class="form-select form-select-sm" onchange="filterTasks()">
+            <select aria-label="Priority filter" id="priorityFilter" class="form-select form-select-sm" onchange="filterTasks()">
                 <option value="">All Priorities</option>
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>

@@ -22,14 +22,14 @@
             <form method="GET" class="row g-2">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
-                    <select name="seeking" class="form-control" onchange="this.form.submit()">
+                    <select aria-label="Seeking" name="seeking" class="form-control" onchange="this.form.submit()">
                         <option value="-1">All Types</option>
                         <option value="1" <?= $seek === 1 ? 'selected' : '' ?>>Seeking Work</option>
                         <option value="0" <?= $seek === 0 ? 'selected' : '' ?>>Hiring</option>
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="category" class="form-control" onchange="this.form.submit()">
+                    <select aria-label="Category" name="category" class="form-control" onchange="this.form.submit()">
                         <option value="">All Categories</option>
                         <?php foreach ($jobCategories as $jc): ?>
                             <option value="<?= $jc ?>" <?= $category === $jc ? 'selected' : '' ?>><?= $jc ?></option>
@@ -37,7 +37,7 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="type" class="form-control" onchange="this.form.submit()">
+                    <select aria-label="Type" name="type" class="form-control" onchange="this.form.submit()">
                         <option value="">All Types</option>
                         <option value="full_time" <?= $type === 'full_time' ? 'selected' : '' ?>>Full Time</option>
                         <option value="part_time" <?= $type === 'part_time' ? 'selected' : '' ?>>Part Time</option>

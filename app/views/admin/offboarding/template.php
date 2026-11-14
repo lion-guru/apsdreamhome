@@ -48,7 +48,7 @@ $categories = ['asset_return', 'access_revocation', 'knowledge_transfer', 'clear
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Category</label>
-                        <select name="category" class="form-select">
+                        <select aria-label="Category" name="category" class="form-select">
                             <option value="general" <?= ($template['category'] ?? '') === 'general' ? 'selected' : '' ?>>General</option>
                             <option value="technical" <?= ($template['category'] ?? '') === 'technical' ? 'selected' : '' ?>>Technical</option>
                             <option value="sales" <?= ($template['category'] ?? '') === 'sales' ? 'selected' : '' ?>>Sales</option>
@@ -58,7 +58,7 @@ $categories = ['asset_return', 'access_revocation', 'knowledge_transfer', 'clear
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Describe this template..."><?= htmlspecialchars($template['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Describe this template..."><?= htmlspecialchars($template['description'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
@@ -161,7 +161,7 @@ function addItem() {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Category</label>
-                    <select name="items[${index}][category]" class="form-select form-select-sm">
+                    <select aria-label="Items" name="items[${index}][category]" class="form-select form-select-sm">
                         <option value="asset_return">Asset Return</option>
                         <option value="access_revocation">Access Revocation</option>
                         <option value="knowledge_transfer">Knowledge Transfer</option>
@@ -187,7 +187,7 @@ function addItem() {
                 </div>
                 <div class="col-12">
                     <label class="form-label small">Description</label>
-                    <textarea name="items[${index}][description]" class="form-control form-control-sm" rows="2" placeholder="Optional details..."></textarea>
+                    <textarea aria-label="Items" name="items[${index}][description]" class="form-control form-control-sm" rows="2" placeholder="Optional details..."></textarea>
                 </div>
                 <div class="col-12 d-flex justify-content-end">
                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItem(this)">

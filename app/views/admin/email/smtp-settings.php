@@ -59,7 +59,7 @@ $smtp = $smtp ?? [
                             </div>
                             <div class="col-md-5">
                                 <label class="form-label">Encryption</label>
-                                <select class="form-select" name="smtp_encryption">
+                                <select aria-label="Smtp encryption" class="form-select" name="smtp_encryption">
                                     <option value="tls" <?= ($smtp['encryption'] ?? '') === 'tls' ? 'selected' : '' ?>>TLS (Recommended)</option>
                                     <option value="ssl" <?= ($smtp['encryption'] ?? '') === 'ssl' ? 'selected' : '' ?>>SSL</option>
                                     <option value="none" <?= ($smtp['encryption'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>

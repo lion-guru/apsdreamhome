@@ -22,7 +22,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Status</label>
-            <select name="status" class="form-select">
+            <select aria-label="Status" name="status" class="form-select">
                 <option value="sent">Sent</option>
                 <option value="responded">Responded</option>
                 <option value="closed">Closed</option>
@@ -30,7 +30,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Admin Response</label>
-            <textarea name="admin_response" class="form-control"></textarea>
+            <textarea aria-label="Admin response" name="admin_response" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>

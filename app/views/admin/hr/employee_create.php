@@ -50,7 +50,7 @@ $page_title = $page_title ?? 'Add Employee';
                 
                 <div class="col-md-4">
                     <label class="form-label">Incentive Model</label>
-                    <select name="incentive_model" class="form-select">
+                    <select aria-label="Incentive model" name="incentive_model" class="form-select">
                         <option value="salary_only" selected>Salary Only</option>
                         <option value="commission_only">Commission Only (Freelance)</option>
                         <option value="salary_plus_commission">Salary + Commission</option>
@@ -62,7 +62,7 @@ $page_title = $page_title ?? 'Add Employee';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Commission Type</label>
-                    <select name="commission_type" class="form-select">
+                    <select aria-label="Commission type" name="commission_type" class="form-select">
                         <option value="percentage" selected>Percentage (%)</option>
                         <option value="flat">Flat Rate (₹ per SqFt)</option>
                     </select>

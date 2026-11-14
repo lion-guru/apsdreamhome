@@ -19,7 +19,7 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Department *</label>
-                    <select class="form-select" name="department_id" required>
+                    <select aria-label="Department id" class="form-select" name="department_id" required>
                         <option value="">Select Department</option>
                         <?php foreach ($departments as $dept): ?>
                         <option value="<?= $dept['id'] ?>"><?= $dept['name'] ?> (<?= $dept['code'] ?>)</option>
@@ -29,7 +29,7 @@
                 
                 <div class="col-md-6">
                     <label class="form-label">Request Type *</label>
-                    <select class="form-select" name="request_type" required>
+                    <select aria-label="Request type" class="form-select" name="request_type" required>
                         <option value="inquiry">Inquiry</option>
                         <option value="verification">Verification</option>
                         <option value="approval">Approval</option>
@@ -49,14 +49,14 @@
             <div class="row g-3 mt-2">
                 <div class="col-12">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" name="description" rows="4" placeholder="Detailed description of the request..."></textarea>
+                    <textarea aria-label="Description" class="form-control" name="description" rows="4" placeholder="Detailed description of the request..."></textarea>
                 </div>
             </div>
             
             <div class="row g-3 mt-2">
                 <div class="col-md-4">
                     <label class="form-label">Priority</label>
-                    <select class="form-select" name="priority">
+                    <select aria-label="Priority" class="form-select" name="priority">
                         <option value="medium" selected>Medium</option>
                         <option value="low">Low</option>
                         <option value="high">High</option>
@@ -66,7 +66,7 @@
                 
                 <div class="col-md-4">
                     <label class="form-label">Related Entity Type (Optional)</label>
-                    <select class="form-select" name="related_entity_type">
+                    <select aria-label="Related entity type" class="form-select" name="related_entity_type">
                         <option value="">None</option>
                         <option value="booking">Booking</option>
                         <option value="lead">Lead</option>

@@ -113,7 +113,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Update Status</label>
-                            <select name="status" class="form-select" id="statusSelect">
+                            <select aria-label="Status" name="status" class="form-select" id="statusSelect">
                                 <?php foreach ($statuses as $status): ?>
                                     <option value="<?php echo e($status); ?>" <?php echo ($t['status'] ?? '') === $status ? 'selected' : ''; ?>>
                                         <?php echo ucfirst($status); ?>
@@ -133,7 +133,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
                         <div class="mb-3">
                             <label class="form-label">Review Notes (Internal)</label>
-                            <textarea name="notes" class="form-control" rows="3" placeholder="Add your notes here..."><?php echo htmlspecialchars($t['notes'] ?? ''); ?></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Add your notes here..."><?php echo htmlspecialchars($t['notes'] ?? ''); ?></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 mb-2">

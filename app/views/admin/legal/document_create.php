@@ -23,11 +23,11 @@ $merge_fields = $merge_fields ?? [];
                     <div class="aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-12"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required placeholder="e.g. Booking Terms & Conditions - Plot 42"></div>
-                            <div class="col-md-6"><label class="form-label">Template (optional)</label><select name="template_id" class="form-select" id="templateSelect"><option value="">No template (enter content manually)</option><?php foreach ($templates as $t): ?><option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['name'] ?? '') ?> (v<?= (int)($t['version'] ?? 1) ?>)</option><?php endforeach; ?></select></div>
+                            <div class="col-md-6"><label class="form-label">Template (optional)</label><select aria-label="Template id" name="template_id" class="form-select" id="templateSelect"><option value="">No template (enter content manually)</option><?php foreach ($templates as $t): ?><option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['name'] ?? '') ?> (v<?= (int)($t['version'] ?? 1) ?>)</option><?php endforeach; ?></select></div>
                             <div class="col-md-6"><label class="form-label">Document Number (leave blank for auto)</label><input type="text" name="document_number" class="form-control" placeholder="LEG-2026-XXXX"></div>
                             <div class="col-md-4"><label class="form-label">Effective Date</label><input type="date" name="effective_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
                             <div class="col-md-4"><label class="form-label">Expiry Date</label><input type="date" name="expiry_date" class="form-control"></div>
-                            <div class="col-md-4"><label class="form-label">Status</label><select name="status" class="form-select"><option value="draft">Draft</option><option value="final">Final</option></select></div>
+                            <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="draft">Draft</option><option value="final">Final</option></select></div>
                         </div>
                     </div>
                 </div>
@@ -36,12 +36,12 @@ $merge_fields = $merge_fields ?? [];
                     <div class="aps-cp-card-header"><i class="fas fa-link me-2"></i>Linked Entity</div>
                     <div class="aps-cp-card-body">
                         <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Entity Type</label><select name="entity_type" class="form-select" id="entityType" onchange="toggleEntityFields()"><option value="general">General</option><option value="booking">Booking</option><option value="customer">Customer</option><option value="associate">Associate</option><option value="colony">Colony</option><option value="plot">Plot</option><option value="loan">Loan</option></select></div>
-                            <div class="col-md-4"><label class="form-label">Customer</label><select name="customer_id" class="form-select"><option value="">None</option><?php foreach ($customers as $cu): ?><option value="<?= $cu['id'] ?>"><?= htmlspecialchars($cu['name'] ?? '') ?> (<?= htmlspecialchars($cu['phone'] ?? '') ?>)</option><?php endforeach; ?></select></div>
-                            <div class="col-md-4 entity-field" data-type="booking" ><label class="form-label">Booking</label><select name="entity_id" class="form-select"><?php foreach ($bookings as $b): ?><option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['booking_number'] ?? '#'.$b['id']) ?> - <?= htmlspecialchars($b['customer_name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                            <div class="col-md-4 entity-field" data-type="plot" ><label class="form-label">Plot</label><select name="entity_id" class="form-select"><?php foreach ($plots as $p): ?><option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['plot_no'] ?? '') ?> - <?= htmlspecialchars($p['colony_name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                            <div class="col-md-4 entity-field" data-type="associate" ><label class="form-label">Associate</label><select name="entity_id" class="form-select"><?php foreach ($associates as $a): ?><option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?> (<?= htmlspecialchars($a['associate_code'] ?? '') ?>)</option><?php endforeach; ?></select></div>
-                            <div class="col-md-4 entity-field" data-type="colony" ><label class="form-label">Colony</label><select name="entity_id" class="form-select"><?php foreach ($colonies as $co): ?><option value="<?= $co['id'] ?>"><?= htmlspecialchars($co['name'] ?? '') ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-4"><label class="form-label">Entity Type</label><select aria-label="Entity type" name="entity_type" class="form-select" id="entityType" onchange="toggleEntityFields()"><option value="general">General</option><option value="booking">Booking</option><option value="customer">Customer</option><option value="associate">Associate</option><option value="colony">Colony</option><option value="plot">Plot</option><option value="loan">Loan</option></select></div>
+                            <div class="col-md-4"><label class="form-label">Customer</label><select aria-label="Customer id" name="customer_id" class="form-select"><option value="">None</option><?php foreach ($customers as $cu): ?><option value="<?= $cu['id'] ?>"><?= htmlspecialchars($cu['name'] ?? '') ?> (<?= htmlspecialchars($cu['phone'] ?? '') ?>)</option><?php endforeach; ?></select></div>
+                            <div class="col-md-4 entity-field" data-type="booking" ><label class="form-label">Booking</label><select aria-label="Entity id" name="entity_id" class="form-select"><?php foreach ($bookings as $b): ?><option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['booking_number'] ?? '#'.$b['id']) ?> - <?= htmlspecialchars($b['customer_name'] ?? '') ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-4 entity-field" data-type="plot" ><label class="form-label">Plot</label><select aria-label="Entity id" name="entity_id" class="form-select"><?php foreach ($plots as $p): ?><option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['plot_no'] ?? '') ?> - <?= htmlspecialchars($p['colony_name'] ?? '') ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-4 entity-field" data-type="associate" ><label class="form-label">Associate</label><select aria-label="Entity id" name="entity_id" class="form-select"><?php foreach ($associates as $a): ?><option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?> (<?= htmlspecialchars($a['associate_code'] ?? '') ?>)</option><?php endforeach; ?></select></div>
+                            <div class="col-md-4 entity-field" data-type="colony" ><label class="form-label">Colony</label><select aria-label="Entity id" name="entity_id" class="form-select"><?php foreach ($colonies as $co): ?><option value="<?= $co['id'] ?>"><?= htmlspecialchars($co['name'] ?? '') ?></option><?php endforeach; ?></select></div>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ $merge_fields = $merge_fields ?? [];
                                 </div>
                             </div>
                         </div>
-                        <textarea name="content" id="content" class="form-control font-monospace" rows="15" placeholder="Enter document content in HTML format..."><?= htmlspecialchars($_POST['content'] ?? '') ?></textarea>
+                        <textarea aria-label="Content" name="content" id="content" class="form-control font-monospace" rows="15" placeholder="Enter document content in HTML format..."><?= htmlspecialchars($_POST['content'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@ $merge_fields = $merge_fields ?? [];
                 <div class="aps-cp-card">
                     <div class="aps-cp-card-header"><i class="fas fa-sticky-note me-2"></i>Notes</div>
                     <div class="aps-cp-card-body">
-                        <textarea name="notes" class="form-control" rows="4" placeholder="Internal notes..."></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="4" placeholder="Internal notes..."></textarea>
                     </div>
                 </div>
                 <div class="aps-cp-card mt-3">

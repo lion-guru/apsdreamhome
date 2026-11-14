@@ -17,7 +17,7 @@ $old = $_POST ?? [];
                         <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_plot_area', [], 'Plot Area (sqft)') ?></label><input type="number" name="plot_area" class="form-control" min="0" step="any" value="<?= htmlspecialchars($old['plot_area'] ?? '') ?>"></div>
                         <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_plot_price', [], 'Plot Price (Rs.)') ?></label><input type="number" name="plot_price" class="form-control" min="0" step="any" value="<?= htmlspecialchars($old['plot_price'] ?? '') ?>"></div>
                         <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_rank', [], 'My Rank') ?></label>
-                            <select name="my_rank" class="form-select">
+                            <select aria-label="My rank" name="my_rank" class="form-select">
                                 <?php foreach ($ranks as $r): ?>
                                     <option value="<?= htmlspecialchars($r['rank_slug']) ?>" <?= (($old['my_rank'] ?? 'associate') === $r['rank_slug']) ? 'selected' : '' ?>><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $r['rank_slug']))) ?> (<?= (float)($r['rate'] ?? 0) ?>%)</option>
                                 <?php endforeach; ?>

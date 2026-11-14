@@ -24,7 +24,7 @@ $today = $today ?? date('Y-m-d');
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Entry Type</label>
-                    <select name="reference_type" class="form-select" id="entryType">
+                    <select aria-label="Reference type" name="reference_type" class="form-select" id="entryType">
                         <?php foreach ($entryTypes as $t): ?>
                         <option value="<?= $t ?>"><?= ucfirst($t) ?></option>
                         <?php endforeach; ?>
@@ -32,7 +32,7 @@ $today = $today ?? date('Y-m-d');
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Source Document</label>
-                    <select name="source_document" class="form-select" id="sourceDoc">
+                    <select aria-label="Source document" name="source_document" class="form-select" id="sourceDoc">
                         <?php foreach ($sourceDocuments as $s): ?>
                         <option value="<?= $s ?>"><?= ucfirst($s) ?></option>
                         <?php endforeach; ?>
@@ -58,7 +58,7 @@ $today = $today ?? date('Y-m-d');
 
                 <div class="mb-3">
                     <label class="form-label">Narration / Description <span class="text-danger">*</span></label>
-                    <textarea name="narration" class="form-control" rows="2" required placeholder="Describe the purpose of this journal entry..."></textarea>
+                    <textarea aria-label="Narration" name="narration" class="form-control" rows="2" required placeholder="Describe the purpose of this journal entry..."></textarea>
                 </div>
 
                 <h5 class="mb-3">Journal Lines (Minimum 2 lines - one Debit, one Credit)</h5>
@@ -80,7 +80,7 @@ $today = $today ?? date('Y-m-d');
                             <tr data-line="1">
                                 <td class="align-middle text-center">1</td>
                                 <td>
-                                    <select name="lines[1][account_id]" class="form-select form-select-sm line-account" required>
+                                    <select aria-label="Lines" name="lines[1][account_id]" class="form-select form-select-sm line-account" required>
                                         <option value="">Select Account</option>
                                         <?php foreach ($accounts as $acc): ?>
                                         <option value="<?= $acc['id'] ?>" data-type="<?= $acc['account_type'] ?>" data-code="<?= htmlspecialchars($acc['account_code']) ?>" data-name="<?= htmlspecialchars($acc['account_name']) ?>">
@@ -106,7 +106,7 @@ $today = $today ?? date('Y-m-d');
                             <tr data-line="2">
                                 <td class="align-middle text-center">2</td>
                                 <td>
-                                    <select name="lines[2][account_id]" class="form-select form-select-sm line-account" required>
+                                    <select aria-label="Lines" name="lines[2][account_id]" class="form-select form-select-sm line-account" required>
                                         <option value="">Select Account</option>
                                         <?php foreach ($accounts as $acc): ?>
                                         <option value="<?= $acc['id'] ?>" data-type="<?= $acc['account_type'] ?>" data-code="<?= htmlspecialchars($acc['account_code']) ?>" data-name="<?= htmlspecialchars($acc['account_name']) ?>">
@@ -273,7 +273,7 @@ document.getElementById('addLineBtn')?.addEventListener('click', function() {
     newRow.innerHTML = `
         <td class="align-middle text-center">${lineCounter}</td>
         <td>
-            <select name="lines[${lineCounter}][account_id]" class="form-select form-select-sm line-account" required>
+            <select aria-label="Lines" name="lines[${lineCounter}][account_id]" class="form-select form-select-sm line-account" required>
                 <option value="">Select Account</option>
                 ${Array.from(document.querySelector('.line-account').options).slice(1).map(opt => 
                     `<option value="${opt.value}" data-type="${opt.dataset.type}" data-code="${opt.dataset.code}" data-name="${opt.dataset.name}">${opt.text}</option>`

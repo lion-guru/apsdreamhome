@@ -53,7 +53,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Assign to Department</label>
-                                <select name="target_department_id" class="form-select">
+                                <select aria-label="Target department id" name="target_department_id" class="form-select">
                                     <option value="">— None —</option>
                                     <?php foreach ($departments as $dept): ?>
                                         <option value="<?= $dept['id'] ?>" <?= ($rule['target_department_id'] ?? '') == $dept['id'] ? 'selected' : '' ?>>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Assign to User (Override)</label>
-                                <select name="target_user_id" class="form-select">
+                                <select aria-label="Target user id" name="target_user_id" class="form-select">
                                     <option value="">— None —</option>
                                     <?php foreach ($users as $u): ?>
                                         <option value="<?= $u['id'] ?>" <?= ($rule['target_user_id'] ?? '') == $u['id'] ? 'selected' : '' ?>>
@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Status</label>
-                                <select name="is_active" class="form-select">
+                                <select aria-label="Is active" name="is_active" class="form-select">
                                     <option value="1" <?= ($rule['is_active'] ?? 1) ? 'selected' : '' ?>>Active</option>
                                     <option value="0" <?= !($rule['is_active'] ?? 1) ? 'selected' : '' ?>>Inactive</option>
                                 </select>

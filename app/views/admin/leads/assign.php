@@ -39,7 +39,7 @@ $recent_assignments = $recent_assignments ?? [];
                             <!-- Assignee Select -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Assign to:</label>
-                                <select class="form-select" name="assigned_to" required id="assigneeSelect">
+                                <select aria-label="Assigned to" class="form-select" name="assigned_to" required id="assigneeSelect">
                                     <option value="">— Select Agent —</option>
                                     <?php foreach ($assignees as $a): ?>
                                         <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?> (<?= ucfirst($a['role']) ?>)</option>

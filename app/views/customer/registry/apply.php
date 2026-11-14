@@ -54,7 +54,7 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
                     </div>
                     <div class="col-12">
                         <label class="form-label small fw-bold">Sub-Registrar Office Jurisdiction <span class="text-danger">*</span></label>
-                        <select name="sro_office" class="form-select" required>
+                        <select aria-label="Sro office" name="sro_office" class="form-select" required>
                             <option value="Tehsil Sadar Gorakhpur">Tehsil Sadar Gorakhpur (Near Civil Court)</option>
                             <option value="Tehsil Chauri Chaura">Tehsil Chauri Chaura (Gorakhpur)</option>
                             <option value="Tehsil Sahjanwa">Tehsil Sahjanwa (Gorakhpur)</option>
@@ -118,7 +118,7 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
 
                 <div class="mb-4">
                     <label class="form-label small fw-bold">Special Requests / Notes</label>
-                    <textarea name="notes" rows="2" class="form-control" placeholder="Any specific requirements regarding timing, advocate assistance, etc..."></textarea>
+                    <textarea aria-label="Notes" name="notes" rows="2" class="form-control" placeholder="Any specific requirements regarding timing, advocate assistance, etc..."></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-danger btn-lg w-100">

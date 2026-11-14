@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <input type="text" class="form-control form-control-sm" name="q" placeholder="<?= __('assoc_browse_search', [], 'Search properties...') ?>" value="<?= htmlspecialchars($current_filters['q'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
-                    <select class="form-select form-select-sm" name="type">
+                    <select aria-label="Type" class="form-select form-select-sm" name="type">
                         <option value=""><?= __('assoc_browse_all_types', [], 'All Types') ?></option>
                         <?php foreach (['plot','house','flat','shop','farmhouse','villa','land'] as $t): ?>
                             <option value="<?= e($t ?? '') ?>" <?= ($current_filters['type'] ?? '') === $t ? 'selected' : '' ?>><?= __("assoc_browse_type_$t", [], ucfirst($t)) ?></option>
@@ -31,14 +31,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-select form-select-sm" name="listing">
+                    <select aria-label="Listing" class="form-select form-select-sm" name="listing">
                         <option value=""><?= __('assoc_browse_all_listings', [], 'Buy & Rent') ?></option>
                         <option value="sell" <?= ($current_filters['listing'] ?? '') === 'sell' ? 'selected' : '' ?>><?= __('assoc_browse_for_sale', [], 'For Sale') ?></option>
                         <option value="rent" <?= ($current_filters['listing'] ?? '') === 'rent' ? 'selected' : '' ?>><?= __('assoc_browse_for_rent', [], 'For Rent') ?></option>
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-select form-select-sm" name="sort">
+                    <select aria-label="Sort" class="form-select form-select-sm" name="sort">
                         <option value="newest" <?= ($current_filters['sort'] ?? 'newest') === 'newest' ? 'selected' : '' ?>><?= __('assoc_browse_newest', [], 'Newest First') ?></option>
                         <option value="price_low" <?= ($current_filters['sort'] ?? '') === 'price_low' ? 'selected' : '' ?>><?= __('assoc_browse_price_low', [], 'Price: Low to High') ?></option>
                         <option value="price_high" <?= ($current_filters['sort'] ?? '') === 'price_high' ? 'selected' : '' ?>><?= __('assoc_browse_price_high', [], 'Price: High to Low') ?></option>

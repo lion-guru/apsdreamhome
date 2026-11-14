@@ -56,7 +56,7 @@ $registryLabels = [
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Registry Status</label>
-                    <select class="form-select" name="status">
+                    <select aria-label="Status" class="form-select" name="status">
                         <option value="">All Statuses</option>
                         <?php foreach ($registryLabels as $key => $info): ?>
                             <option value="<?= $key ?>" <?= ($filters['status'] ?? '') == $key ? 'selected' : '' ?>><?= $info['label'] ?></option>

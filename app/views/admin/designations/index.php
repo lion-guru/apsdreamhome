@@ -69,7 +69,7 @@
                     <form method="GET" action="<?= BASE_URL ?>/admin/designations" class="form-inline justify-content-end">
     <?php echo CSRFProtection::csrfField(); ?>
                         <label class="mr-2">Filter by Dept:</label>
-                        <select name="department_id" class="form-control form-control-sm" onchange="this.form.submit()">
+                        <select aria-label="Department id" name="department_id" class="form-control form-control-sm" onchange="this.form.submit()">
                             <option value="">All Departments</option>
                             <?php foreach ($departments as $d): ?>
                                 <option value="<?= $d['id'] ?>" <?= ($filter_dept ?? '') == $d['id'] ? 'selected' : '' ?>>

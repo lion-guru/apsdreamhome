@@ -55,7 +55,7 @@ $base = BASE_URL ?? '';
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Status</label>
-                                        <select name="status" class="form-select">
+                                        <select aria-label="Status" name="status" class="form-select">
                                             <option value="trial" selected>Trial (14 days)</option>
                                             <option value="active">Active</option>
                                             <option value="suspended">Suspended</option>
@@ -104,7 +104,7 @@ $base = BASE_URL ?? '';
                         <div class="card shadow-sm mb-4">
                             <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-tags me-2"></i>Subscription Plan</h2></div>
                             <div class="card-body">
-                                <select name="plan_id" class="form-select mb-3" id="planSelect">
+                                <select aria-label="Plan id" name="plan_id" class="form-select mb-3" id="planSelect">
                                     <?php foreach ($plans as $plan): ?>
                                         <option value="<?= $plan['id'] ?>" data-max-users="<?= $plan['max_users'] ?>" data-max-leads="<?= $plan['max_leads'] ?>" data-max-props="<?= $plan['max_properties'] ?>" data-storage="<?= $plan['storage_limit_mb'] ?>">
                                             <?= htmlspecialchars($plan['name'] ?? '') ?> — ₹<?= number_format($plan['price_monthly']) ?>/mo

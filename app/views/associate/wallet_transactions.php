@@ -57,7 +57,7 @@ $pagination = $pagination ?? ['current_page' => 1, 'per_page' => 20, 'total' => 
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-2">
                     <label class="form-label small">Type</label>
-                    <select name="type" class="form-select form-select-sm">
+                    <select aria-label="Type" name="type" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="credit" <?= ($_GET['type'] ?? '') === 'credit' ? 'selected' : '' ?>>Credit</option>
                         <option value="debit" <?= ($_GET['type'] ?? '') === 'debit' ? 'selected' : '' ?>>Debit</option>
@@ -65,7 +65,7 @@ $pagination = $pagination ?? ['current_page' => 1, 'per_page' => 20, 'total' => 
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Category</label>
-                    <select name="category" class="form-select form-select-sm">
+                    <select aria-label="Category" name="category" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="referral" <?= ($_GET['category'] ?? '') === 'referral' ? 'selected' : '' ?>>Referral</option>
                         <option value="commission" <?= ($_GET['category'] ?? '') === 'commission' ? 'selected' : '' ?>>Commission</option>

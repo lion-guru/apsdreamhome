@@ -95,7 +95,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <!-- Type -->
                     <div class="col-md-6">
                         <label for="type" class="form-label"><i class="fas fa-list me-1"></i> Template Type *</label>
-                        <select class="form-select" id="type" name="type" required>
+                        <select aria-label="Type" class="form-select" id="type" name="type" required>
                             <?php
                             $types = ['email' => 'Email', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp', 'push' => 'Push Notification'];
                             $currentType = $template['type'] ?? $_POST['type'] ?? 'email';
@@ -118,7 +118,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <!-- Body -->
                     <div class="col-md-12">
                         <label for="body" class="form-label"><i class="fas fa-align-left me-1"></i> Template Body *</label>
-                        <textarea class="form-control" id="body" name="body" required
+                        <textarea aria-label="Body" class="form-control" id="body" name="body" required
                                   placeholder="Write your template content here. Use {{name}}, {{phone}}, etc. for merge fields."><?= htmlspecialchars($template['body'] ?? $_POST['body'] ?? '') ?></textarea>
 
                         <!-- Variables Hint -->

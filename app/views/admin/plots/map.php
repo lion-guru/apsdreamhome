@@ -39,13 +39,13 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
         </div>
         <div class="d-flex gap-2 align-items-center flex-wrap">
             <input type="text" id="plotSearch" class="form-control form-control-sm" style="width:200px" placeholder="Search plot no...">
-            <select id="colonyFilter" class="form-select form-select-sm w-auto" onchange="filterByColony(this.value)">
+            <select aria-label="Colony filter" id="colonyFilter" class="form-select form-select-sm w-auto" onchange="filterByColony(this.value)">
                 <option value="0">All Colonies</option>
                 <?php foreach ($colonies as $c): ?>
                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="statusFilter" class="form-select form-select-sm w-auto" onchange="filterByStatus(this.value)">
+            <select aria-label="Status filter" id="statusFilter" class="form-select form-select-sm w-auto" onchange="filterByStatus(this.value)">
                 <option value="all">All Statuses</option>
                 <?php foreach ($statusMeta as $k => $m): ?>
                     <option value="<?= $k ?>"><?= $m['label'] ?></option>

@@ -180,7 +180,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                 </div>
                                                 <div class="col-12">
                                                     <label class="form-label small fw-semibold">Admin Remarks</label>
-                                                    <textarea name="admin_remarks" class="form-control" rows="2" placeholder="e.g. Approved against upcoming booking pipeline."></textarea>
+                                                    <textarea aria-label="Admin remarks" name="admin_remarks" class="form-control" rows="2" placeholder="e.g. Approved against upcoming booking pipeline."></textarea>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -228,7 +228,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                             </div>
                                             <div class="modal-body">
                                                 <label class="form-label small fw-semibold">Reason for Rejection</label>
-                                                <textarea name="admin_remarks" class="form-control" rows="2" placeholder="e.g. Insufficient active sales pipeline." required></textarea>
+                                                <textarea aria-label="Admin remarks" name="admin_remarks" class="form-control" rows="2" placeholder="e.g. Insufficient active sales pipeline." required></textarea>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-danger btn-sm">Confirm Rejection</button>

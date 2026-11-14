@@ -149,7 +149,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                 <div class="aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/legal/documents/<?= $doc['id'] ?>/update">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                        <textarea name="notes" class="form-control" rows="3"><?= htmlspecialchars($doc['notes'] ?? '') ?></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="3"><?= htmlspecialchars($doc['notes'] ?? '') ?></textarea>
                         <button class="btn btn-sm btn-outline-primary mt-2 w-100"><i class="fas fa-save me-1"></i>Save Notes</button>
                     </form>
                 </div>

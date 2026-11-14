@@ -49,7 +49,7 @@ $e = $employee ?? [];
                 
                 <div class="col-md-4">
                     <label class="form-label">Incentive Model</label>
-                    <select name="incentive_model" class="form-select">
+                    <select aria-label="Incentive model" name="incentive_model" class="form-select">
                         <option value="salary_only" <?= ($e['incentive_model'] ?? '') === 'salary_only' ? 'selected' : '' ?>>Salary Only</option>
                         <option value="commission_only" <?= ($e['incentive_model'] ?? '') === 'commission_only' ? 'selected' : '' ?>>Commission Only (Freelance)</option>
                         <option value="salary_plus_commission" <?= ($e['incentive_model'] ?? '') === 'salary_plus_commission' ? 'selected' : '' ?>>Salary + Commission</option>
@@ -61,7 +61,7 @@ $e = $employee ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Commission Type</label>
-                    <select name="commission_type" class="form-select">
+                    <select aria-label="Commission type" name="commission_type" class="form-select">
                         <option value="percentage" <?= ($e['commission_type'] ?? '') === 'percentage' ? 'selected' : '' ?>>Percentage (%)</option>
                         <option value="flat" <?= ($e['commission_type'] ?? '') === 'flat' ? 'selected' : '' ?>>Flat Rate (₹ per SqFt)</option>
                     </select>
@@ -70,7 +70,7 @@ $e = $employee ?? [];
                 <hr class="my-4">
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="active" <?= ($e['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="inactive" <?= ($e['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                         <option value="deleted" <?= ($e['status'] ?? '') === 'deleted' ? 'selected' : '' ?>>Deleted</option>

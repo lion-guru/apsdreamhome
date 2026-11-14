@@ -7,7 +7,7 @@
         <div class="d-flex gap-2 flex-wrap">
             <form method="POST" action="<?= BASE_URL ?>/admin/cron-health/run" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                <select name="mode" class="form-select form-select-sm d-inline-block w-auto me-2">
+                <select aria-label="Mode" name="mode" class="form-select form-select-sm d-inline-block w-auto me-2">
                     <option value="daily">Daily</option>
                     <option value="monthly">Monthly</option>
                     <option value="all">All</option>

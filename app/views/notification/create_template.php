@@ -20,7 +20,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Channel</label>
-                                <select name="channel" class="form-select" required>
+                                <select aria-label="Channel" name="channel" class="form-select" required>
                                     <option value="email">Email</option>
                                     <option value="sms">SMS</option>
                                     <option value="push">Push Notification</option>
@@ -36,7 +36,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Language</label>
-                                <select name="language" class="form-select">
+                                <select aria-label="Language" name="language" class="form-select">
                                     <option value="en">English</option>
                                     <option value="hi">Hindi</option>
                                 </select>
@@ -50,7 +50,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Body</label>
-                            <textarea name="body" class="form-control" rows="8" required placeholder="Template body. Use {{variable}} for dynamic content."></textarea>
+                            <textarea aria-label="Body" name="body" class="form-control" rows="8" required placeholder="Template body. Use {{variable}} for dynamic content."></textarea>
                             <small class="text-muted">Available variables: {{name}}, {{email}}, {{phone}}, {{city}}, {{budget}}, {{date}}, {{otp}}</small>
                         </div>
 

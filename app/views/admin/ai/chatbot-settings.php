@@ -24,15 +24,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Welcome Message</label>
-                                <textarea name="welcome_message" class="form-control" rows="3"><?php echo htmlspecialchars($config['welcome_message'] ?? 'Welcome to APS Dream Home! How can I help you today?'); ?></textarea>
+                                <textarea aria-label="Welcome message" name="welcome_message" class="form-control" rows="3"><?php echo htmlspecialchars($config['welcome_message'] ?? 'Welcome to APS Dream Home! How can I help you today?'); ?></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Fallback Message</label>
-                                <textarea name="fallback_message" class="form-control" rows="2"><?php echo htmlspecialchars($config['fallback_message'] ?? "Sorry, I didn't understand that. Please contact our team."); ?></textarea>
+                                <textarea aria-label="Fallback message" name="fallback_message" class="form-control" rows="2"><?php echo htmlspecialchars($config['fallback_message'] ?? "Sorry, I didn't understand that. Please contact our team."); ?></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Default Language</label>
-                                <select name="language" class="form-select">
+                                <select aria-label="Language" name="language" class="form-select">
                                     <option value="en" <?php echo ($config['language'] ?? 'en') === 'en' ? 'selected' : ''; ?>>English</option>
                                     <option value="hi" <?php echo ($config['language'] ?? '') === 'hi' ? 'selected' : ''; ?>>Hindi</option>
                                 </select>

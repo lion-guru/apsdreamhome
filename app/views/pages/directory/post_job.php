@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Job Type</label>
-                                <select name="job_type" class="form-control">
+                                <select aria-label="Job type" name="job_type" class="form-control">
                                     <option value="gig">Gig / Daily Wage</option>
                                     <option value="full_time">Full Time</option>
                                     <option value="part_time">Part Time</option>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Category</label>
-                                <select name="category" class="form-control">
+                                <select aria-label="Category" name="category" class="form-control">
                                     <option value="">Select</option>
                                     <?php foreach ($jobCategories as $jc): ?>
                                         <option value="<?= $jc ?>"><?= $jc ?></option>
@@ -46,14 +46,14 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">I am...</label>
-                                <select name="is_seeking" class="form-control">
+                                <select aria-label="Is seeking" name="is_seeking" class="form-control">
                                     <option value="1">Seeking Work</option>
                                     <option value="0">Hiring Workers</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Linked to Business (Optional)</label>
-                                <select name="listing_id" class="form-control">
+                                <select aria-label="Listing id" name="listing_id" class="form-control">
                                     <option value="">None</option>
                                     <?php foreach ($listings as $l): ?>
                                         <option value="<?= $l['id'] ?>"><?= htmlspecialchars($l['business_name'] ?? '') ?></option>
@@ -64,7 +64,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="4" placeholder="Describe the work, requirements, pay, timing..."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="4" placeholder="Describe the work, requirements, pay, timing..."></textarea>
                         </div>
 
                         <div class="row">

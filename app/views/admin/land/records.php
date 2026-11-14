@@ -107,7 +107,7 @@ $land_records = $land_records ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Acquisition Status</label>
-                        <select name="acquisition_status" class="form-select">
+                        <select aria-label="Acquisition status" name="acquisition_status" class="form-select">
                             <option value="identified">Identified</option>
                             <option value="negotiation">Under Negotiation</option>
                             <option value="acquired">Acquired</option>

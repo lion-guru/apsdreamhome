@@ -11,7 +11,7 @@
                 <div class="row g-3">
                     <div class="col-md-3"><label class="form-label">TDS Date <span class="text-danger">*</span></label><input type="date" name="tds_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
                     <div class="col-md-3"><label class="form-label">Section <span class="text-danger">*</span></label>
-                        <select name="section_code" required class="form-select">
+                        <select aria-label="Section code" name="section_code" required class="form-select">
                             <option value="">— Select —</option>
                             <option value="194IA">194IA (Property Transfer 1%)</option>
                             <option value="194IB">194IB (Rent 5%)</option>
@@ -24,7 +24,7 @@
                         </select>
                     </div>
                     <div class="col-md-3"><label class="form-label">Deductee Type</label>
-                        <select name="deductee_type" class="form-select">
+                        <select aria-label="Deductee type" name="deductee_type" class="form-select">
                             <option value="individual">Individual</option>
                             <option value="company">Company</option>
                             <option value="huf">HUF</option>
@@ -38,7 +38,7 @@
                     <div class="col-md-3"><label class="form-label">TDS Rate (%)</label><input type="number" name="tds_rate" step="0.01" class="form-control" id="rate" oninput="calcTds()"></div>
                     <div class="col-md-3"><label class="form-label">TDS Amount (₹) <span class="text-danger">*</span></label><input type="number" name="tds_amount" step="0.01" required class="form-control" id="tds"></div>
                     <div class="col-md-3"><label class="form-label">Financial Year</label>
-                        <select name="financial_year" class="form-select">
+                        <select aria-label="Financial year" name="financial_year" class="form-select">
                             <?php $cur = (int)date('n') < 4 ? (int)date('Y') - 1 : (int)date('Y'); ?>
                             <?php for ($i = 0; $i < 3; $i++): $y = $cur - $i; ?>
                                 <option value="<?= $y ?>-<?= substr((string)($y+1), -2) ?>"><?= $y ?>-<?= substr((string)($y+1), -2) ?></option>
@@ -46,12 +46,12 @@
                         </select>
                     </div>
                     <div class="col-md-3"><label class="form-label">Quarter</label>
-                        <select name="quarter" class="form-select">
+                        <select aria-label="Quarter" name="quarter" class="form-select">
                             <option>Q1</option><option>Q2</option><option>Q3</option><option selected>Q4</option>
                         </select>
                     </div>
                     <div class="col-md-6"><label class="form-label">Deposit Bank</label>
-                        <select name="deposited_in_bank" class="form-select">
+                        <select aria-label="Deposited in bank" name="deposited_in_bank" class="form-select">
                             <option value="">— Pending —</option>
                             <?php foreach (($banks ?? []) as $b): ?>
                                 <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] ?? '') ?></option>
@@ -59,7 +59,7 @@
                         </select>
                     </div>
                     <div class="col-md-6"><label class="form-label">Challan / BSR</label><input type="text" name="challan_number" class="form-control"></div>
-                    <div class="col-12"><label class="form-label">Remarks</label><textarea name="remarks" class="form-control" rows="2"></textarea></div>
+                    <div class="col-12"><label class="form-label">Remarks</label><textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="mt-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Record TDS</button>

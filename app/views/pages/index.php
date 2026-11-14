@@ -81,7 +81,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                             <div class="col-md-3">
                                 <label class="form-label">Property Type</label>
-                                <select class="form-select" name="property_type">
+                                <select aria-label="Property type" class="form-select" name="property_type">
                                     <option value="">All Types</option>
                                     <option value="residential">Residential</option>
                                     <option value="commercial">Commercial</option>
@@ -92,7 +92,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Location</label>
-                                <select class="form-select" name="location">
+                                <select aria-label="Location" class="form-select" name="location">
                                     <option value="">All Locations</option>
                                     <option value="gorakhpur">Gorakhpur</option>
                                     <option value="lucknow">Lucknow</option>
@@ -103,7 +103,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Price Range</label>
-                                <select class="form-select" name="price_range">
+                                <select aria-label="Price range" class="form-select" name="price_range">
                                     <option value="">Any Price</option>
                                     <option value="0-1000000">Under &#8377;10L</option>
                                     <option value="1000000-5000000">&#8377;10L - &#8377;50L</option>
@@ -114,7 +114,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Bedrooms</label>
-                                <select class="form-select" name="bedrooms">
+                                <select aria-label="Bedrooms" class="form-select" name="bedrooms">
                                     <option value="">Any</option>
                                     <option value="1">1 BHK</option>
                                     <option value="2">2 BHK</option>
@@ -511,7 +511,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Service Type *</label>
-                                    <select class="form-select" name="service" required>
+                                    <select aria-label="Service" class="form-select" name="service" required>
                                         <option value="">Select Service</option>
                                         <option value="buy">Buy Property</option>
                                         <option value="sell">Sell Property</option>
@@ -522,7 +522,7 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Your Message *</label>
-                                    <textarea class="form-control" name="message" rows="4" required></textarea>
+                                    <textarea aria-label="Message" class="form-control" name="message" rows="4" required></textarea>
                                 </div>
                                 <div class="col-12 text-center">
                                     <button type="submit" class="btn btn-primary btn-lg px-5">

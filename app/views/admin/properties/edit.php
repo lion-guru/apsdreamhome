@@ -37,7 +37,7 @@ $property = $property ?? [
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
                     <div class="col-md-8"><label class="form-label">Title <span class="text-danger">*</span></label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($property['title'] ?? '') ?>" required></div>
-                    <div class="col-md-4"><label class="form-label">Type <span class="text-danger">*</span></label><select name="type" class="form-select">
+                    <div class="col-md-4"><label class="form-label">Type <span class="text-danger">*</span></label><select aria-label="Type" name="type" class="form-select">
                             <option value="house" <?= ($property['type'] ?? '') === 'house' ? 'selected' : '' ?>>House</option>
                             <option value="flat" <?= ($property['type'] ?? '') === 'flat' ? 'selected' : '' ?>>Flat</option>
                             <option value="plot" <?= ($property['type'] ?? '') === 'plot' ? 'selected' : '' ?>>Plot</option>
@@ -46,18 +46,18 @@ $property = $property ?? [
                         </select></div>
                     <div class="col-md-4"><label class="form-label">Price <span class="text-danger">*</span></label><input type="number" name="price" class="form-control" value="<?= htmlspecialchars($property['price'] ?? '') ?>" required></div>
                     <div class="col-md-4"><label class="form-label">Area (sqft)</label><input type="number" name="area_sqft" class="form-control" value="<?= htmlspecialchars($property['area_sqft'] ?? '') ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Status</label><select name="status" class="form-select">
+                    <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select">
                             <option value="available" <?= ($property['status'] ?? '') === 'available' ? 'selected' : '' ?>>Available</option>
                             <option value="sold" <?= ($property['status'] ?? '') === 'sold' ? 'selected' : '' ?>>Sold</option>
                             <option value="pending" <?= ($property['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                         </select></div>
-                    <div class="col-md-6"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2"><?= htmlspecialchars($property['address'] ?? '') ?></textarea></div>
+                    <div class="col-md-6"><label class="form-label">Address</label><textarea aria-label="Address" name="address" class="form-control" rows="2"><?= htmlspecialchars($property['address'] ?? '') ?></textarea></div>
                     <div class="col-md-3"><label class="form-label">City</label><input type="text" name="city" class="form-control" value="<?= htmlspecialchars($property['city'] ?? '') ?>"></div>
                     <div class="col-md-3"><label class="form-label">State</label><input type="text" name="state" class="form-control" value="<?= htmlspecialchars($property['state'] ?? '') ?>"></div>
                     <div class="col-md-6"><label class="form-label">Owner Name</label><input type="text" name="owner_name" class="form-control" value="<?= htmlspecialchars($property['owner_name'] ?? '') ?>"></div>
                     <div class="col-md-3"><label class="form-label">Owner Phone</label><input type="text" name="owner_phone" class="form-control" value="<?= htmlspecialchars($property['owner_phone'] ?? '') ?>"></div>
                     <div class="col-md-3"><label class="form-label">Owner Email</label><input type="email" name="owner_email" class="form-control" value="<?= htmlspecialchars($property['owner_email'] ?? '') ?>"></div>
-                    <div class="col-12"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($property['description'] ?? '') ?></textarea></div>
+                    <div class="col-12"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="3"><?= htmlspecialchars($property['description'] ?? '') ?></textarea></div>
                     <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Property</button> <a href="<?= BASE_URL ?>/admin/properties" class="btn btn-secondary">Cancel</a></div>
                 </div>
             </form>

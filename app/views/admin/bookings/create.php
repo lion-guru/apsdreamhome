@@ -53,7 +53,7 @@ $active_page = 'bookings';
                 <!-- Plot Selection -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select" id="property_id" name="plot_id" required>
+                        <select aria-label="Plot id" class="form-select" id="property_id" name="plot_id" required>
                             <option value="" selected disabled>Select a plot...</option>
                             <?php foreach ($plots ?? $properties ?? [] as $plot): ?>
                                 <option value="<?= $plot['id'] ?>" data-price="<?= $plot['total_price'] ?? $plot['price'] ?? 0 ?>">
@@ -70,7 +70,7 @@ $active_page = 'bookings';
                 <!-- Associate / Agent Assignment -->
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select class="form-select" id="associate_id" name="associate_id">
+                        <select aria-label="Associate id" class="form-select" id="associate_id" name="associate_id">
                             <option value="">No Associate (Direct Booking)</option>
                             <?php 
                             // Try to get associates, fallback to users if needed
@@ -123,7 +123,7 @@ $active_page = 'bookings';
                 <!-- Existing Customer Section -->
                 <div id="existing_customer_section" class="col-md-12">
                     <div class="form-floating">
-                        <select class="form-select" id="customer_id" name="customer_id" required>
+                        <select aria-label="Customer id" class="form-select" id="customer_id" name="customer_id" required>
                             <option value="" selected disabled>Select an existing customer...</option>
                             <?php foreach ($customers ?? $users ?? [] as $customer): ?>
                                 <?php if (isset($customer['role']) && !in_array(strtolower($customer['role']), ['customer', 'user'])) continue; ?>
@@ -209,7 +209,7 @@ $active_page = 'bookings';
                 <!-- Notes -->
                 <div class="col-md-12">
                     <div class="form-floating">
-                        <textarea class="form-control" id="notes" name="notes" placeholder="Any special remarks or terms..."></textarea>
+                        <textarea aria-label="Notes" class="form-control" id="notes" name="notes" placeholder="Any special remarks or terms..."></textarea>
                         <label for="notes">Booking Notes / Remarks (Optional)</label>
                     </div>
                 </div>

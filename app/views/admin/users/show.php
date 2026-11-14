@@ -153,7 +153,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
                         <div class="col-md-6"><label class="form-label">City</label><input type="text" class="form-control" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></div>
                         <div class="col-md-6">
                             <label class="form-label">Role</label>
-                            <select class="form-select" name="role">
+                            <select aria-label="Role" class="form-select" name="role">
                                 <?php foreach (['admin','super_admin','manager','employee','telecaller','associate','agent','customer','user'] as $r): ?>
                                 <option value="<?= $r ?>" <?= ($user['role'] ?? '') === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
                                 <?php endforeach; ?>
@@ -161,14 +161,14 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
+                            <select aria-label="Status" class="form-select" name="status">
                                 <?php foreach (['active','inactive','suspended'] as $s): ?>
                                 <option value="<?= $s ?>" <?= ($user['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6"><label class="form-label">New Password (leave blank to keep)</label><input type="text" class="form-control" name="password" placeholder="Min 6 chars"></div>
-                        <div class="col-12"><label class="form-label">Address</label><textarea class="form-control" name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea></div>
+                        <div class="col-12"><label class="form-label">Address</label><textarea aria-label="Address" class="form-control" name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea></div>
                     </div>
                     <div class="mt-3"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Changes</button></div>
                 </form>

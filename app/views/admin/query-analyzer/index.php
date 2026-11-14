@@ -187,7 +187,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">SQL Query</label>
-                    <textarea class="form-control font-monospace" id="explainQuery" rows="6" placeholder="SELECT * FROM users WHERE email = 'test@example.com'"></textarea>
+                    <textarea aria-label="Explain query" class="form-control font-monospace" id="explainQuery" rows="6" placeholder="SELECT * FROM users WHERE email = 'test@example.com'"></textarea>
                 </div>
                 <button class="btn btn-primary" onclick="runExplain()">
                     <i class="fas fa-search me-1"></i> Explain

@@ -62,7 +62,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <div class="col-md-3">
                 <label class="form-label">Employee</label>
-                <select name="employee_id" class="form-select" required>
+                <select aria-label="Employee id" name="employee_id" class="form-select" required>
                     <?php foreach ($employees as $e): ?>
                         <option value="<?= (int)$e['id'] ?>">Aira <?= htmlspecialchars($e['role'] ?? '') ?></option>
                     <?php endforeach; ?>
@@ -70,7 +70,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-md-3">
                 <label class="form-label">Task</label>
-                <select name="type" class="form-select">
+                <select aria-label="Type" name="type" class="form-select">
                     <option value="qualify_lead">Qualify lead (AI note)</option>
                     <option value="followup_draft">Draft follow-up (AI msg)</option>
                     <option value="notify_stale">Notify stale lead owner</option>

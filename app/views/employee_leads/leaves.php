@@ -160,7 +160,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="leave_type_id" class="form-label">Leave Type *</label>
-                                <select class="form-select" id="leave_type_id" name="leave_type_id" required>
+                                <select aria-label="Leave type id" class="form-select" id="leave_type_id" name="leave_type_id" required>
                                     <option value="">Select Leave Type</option>
                                     <?php foreach ($leave_types ?? [] as $type): ?>
                                         <option value="<?= e($type['leave_type_id'] ?? '') ?>">
@@ -216,7 +216,7 @@
 
                     <div class="mb-3">
                         <label for="reason" class="form-label">Reason *</label>
-                        <textarea class="form-control" id="reason" name="reason" rows="3"
+                        <textarea aria-label="Reason" class="form-control" id="reason" name="reason" rows="3"
                                   placeholder="Please provide a reason for your leave request..." required></textarea>
                     </div>
                 </div>

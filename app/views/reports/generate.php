@@ -11,7 +11,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Report Type <span class="text-danger">*</span></label>
-                            <select class="form-select" name="type" required>
+                            <select aria-label="Type" class="form-select" name="type" required>
                                 <option value="">Select report type...</option>
                                 <?php foreach ($reportTypes as $k => $v): ?>
                                 <option value="<?= htmlspecialchars($k, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($v, ENT_QUOTES, 'UTF-8') ?></option>
@@ -24,7 +24,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea class="form-control" name="description" rows="3" placeholder="Brief description of this report"></textarea>
+                            <textarea aria-label="Description" class="form-control" name="description" rows="3" placeholder="Brief description of this report"></textarea>
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">

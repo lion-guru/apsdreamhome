@@ -126,7 +126,7 @@ $typeLabels = [
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('assoc_comm_status', [], 'Status'); ?></label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value=""><?php echo __('assoc_comm_all_status', [], 'All Status'); ?></option>
                         <option value="pending" <?php echo $status_filter === 'pending' ? 'selected' : ''; ?>><?php echo __('assoc_comm_pending', [], 'Pending'); ?></option>
                         <option value="paid" <?php echo $status_filter === 'paid' ? 'selected' : ''; ?>><?php echo __('assoc_comm_paid', [], 'Paid'); ?></option>
@@ -135,7 +135,7 @@ $typeLabels = [
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('assoc_comm_type', [], 'Type'); ?></label>
-                    <select name="type" class="form-select form-select-sm">
+                    <select aria-label="Type" name="type" class="form-select form-select-sm">
                         <option value=""><?php echo __('assoc_comm_all_types', [], 'All Types'); ?></option>
                         <option value="direct" <?php echo $type_filter === 'direct' ? 'selected' : ''; ?>><?php echo __('assoc_comm_direct', [], 'Direct'); ?></option>
                         <option value="team" <?php echo $type_filter === 'team' ? 'selected' : ''; ?>><?php echo __('assoc_comm_team', [], 'Team'); ?></option>

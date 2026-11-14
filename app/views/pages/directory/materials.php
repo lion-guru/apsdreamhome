@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <select name="category" class="form-control" onchange="this.form.submit()">
+                    <select aria-label="Category" name="category" class="form-control" onchange="this.form.submit()">
                         <option value="">All Categories</option>
                         <?php foreach ($materialCategories as $mc): ?>
                             <option value="<?= $mc ?>" <?= $selectedCategory === $mc ? 'selected' : '' ?>><?= $mc ?></option>

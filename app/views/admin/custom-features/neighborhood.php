@@ -23,7 +23,7 @@ $base = BASE_URL;
                 <form method="GET" class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Property</label>
-                        <select name="property_id" class="form-select" required>
+                        <select aria-label="Property id" name="property_id" class="form-select" required>
                             <option value="">Choose a property...</option>
                             <?php foreach ($properties ?? [] as $p): ?>
                                 <option value="<?= $p['id'] ?>" <?= ($selectedId ?? '') == $p['id'] ? 'selected' : '' ?>>

@@ -47,7 +47,7 @@ unset($_SESSION['import_errors']);
 
                         <div class="mb-3">
                             <label for="colony_id" class="form-label">Colony (Optional)</label>
-                            <select name="colony_id" id="colony_id" class="form-select">
+                            <select aria-label="Colony id" name="colony_id" id="colony_id" class="form-select">
                                 <option value="">-- All Colonies (specify colony_id in CSV) --</option>
                                 <?php foreach ($colonies as $colony): ?>
                                     <option value="<?= $colony['id'] ?>"><?= htmlspecialchars($colony['name']) ?></option>
@@ -112,7 +112,7 @@ unset($_SESSION['import_errors']);
                     <form method="GET" action="/admin/plots/export">
                         <div class="mb-3">
                             <label for="export_colony_id" class="form-label">Filter by Colony (Optional)</label>
-                            <select name="colony_id" id="export_colony_id" class="form-select">
+                            <select aria-label="Colony id" name="colony_id" id="export_colony_id" class="form-select">
                                 <option value="">-- All Colonies --</option>
                                 <?php foreach ($colonies as $colony): ?>
                                     <option value="<?= $colony['id'] ?>"><?= htmlspecialchars($colony['name']) ?></option>

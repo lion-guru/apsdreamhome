@@ -23,7 +23,7 @@ $statuses = $statuses ?? [];
 
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row g-2">
-            <div class="col-md-3"><label>Status</label><select name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+            <div class="col-md-3"><label>Status</label><select aria-label="Status" name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/recurring-journal-entries" class="btn btn-outline-secondary w-100">Clear</a></div>
         </form>

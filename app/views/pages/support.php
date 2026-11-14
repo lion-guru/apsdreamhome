@@ -34,7 +34,7 @@ $messageVal = $_POST['message'] ?? '';
 
                         <div class="mb-3">
                             <label for="priority" class="form-label"><?php echo __('priority'); ?></label>
-                            <select class="form-select form-select-lg" id="priority" name="priority">
+                            <select aria-label="Priority" class="form-select form-select-lg" id="priority" name="priority">
                                 <option value="low" <?php echo ($priority === 'low') ? 'selected' : ''; ?>><?php echo __('priority_low'); ?></option>
                                 <option value="medium" <?php echo ($priority === 'medium') ? 'selected' : ''; ?>><?php echo __('priority_medium'); ?></option>
                                 <option value="high" <?php echo ($priority === 'high') ? 'selected' : ''; ?>><?php echo __('priority_high'); ?></option>
@@ -44,7 +44,7 @@ $messageVal = $_POST['message'] ?? '';
 
                         <div class="mb-4">
                             <label for="message" class="form-label"><?php echo __('message_label'); ?> <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="message" name="message" rows="6" required><?php echo isset($messageVal) ? htmlspecialchars($messageVal ?? '') : ''; ?></textarea>
+                            <textarea aria-label="Message" class="form-control" id="message" name="message" rows="6" required><?php echo isset($messageVal) ? htmlspecialchars($messageVal ?? '') : ''; ?></textarea>
                         </div>
 
                         <div class="d-grid gap-2">

@@ -886,7 +886,7 @@ function timeAgo($dt) {
             <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>/note">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="modal-body">
-                    <textarea class="form-control" name="note" rows="5" placeholder="Type your note here..." required ></textarea>
+                    <textarea aria-label="Note" class="form-control" name="note" rows="5" placeholder="Type your note here..." required ></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -909,7 +909,7 @@ function timeAgo($dt) {
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="modal-body">
                     <label class="form-label fw-bold">New Status</label>
-                    <select class="form-select" name="status" required>
+                    <select aria-label="Status" class="form-select" name="status" required>
                         <?php foreach ($pipelineStages as $s): ?>
                             <option value="<?= $s ?>" <?= ($lead['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
                         <?php endforeach; ?>
@@ -918,7 +918,7 @@ function timeAgo($dt) {
                         <option value="dead" <?= ($lead['status'] ?? '') === 'dead' ? 'selected' : '' ?>>Dead</option>
                     </select>
                     <label class="form-label fw-bold mt-3">Note (optional)</label>
-                    <textarea class="form-control" name="note" rows="3" placeholder="Why is this status changing?"></textarea>
+                    <textarea aria-label="Note" class="form-control" name="note" rows="3" placeholder="Why is this status changing?"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -941,14 +941,14 @@ function timeAgo($dt) {
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="modal-body">
                     <label class="form-label fw-bold">Assign To</label>
-                    <select class="form-select" name="assigned_to" required>
+                    <select aria-label="Assigned to" class="form-select" name="assigned_to" required>
                         <option value="">-- Select Agent --</option>
                         <?php foreach ($agents as $agent): ?>
                             <option value="<?= $agent['id'] ?>" <?= ($lead['assigned_to'] ?? '') == $agent['id'] ? 'selected' : '' ?>><?= htmlspecialchars($agent['name'] ?? '') ?></option>
                         <?php endforeach; ?>
                     </select>
                     <label class="form-label fw-bold mt-3">Note (optional)</label>
-                    <textarea class="form-control" name="notes" rows="3" placeholder="Why reassigning?"></textarea>
+                    <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="Why reassigning?"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -973,7 +973,7 @@ function timeAgo($dt) {
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Type *</label>
-                            <select class="form-select" name="type" required>
+                            <select aria-label="Type" class="form-select" name="type" required>
                                 <option value="call">ðŸ“ž Phone Call</option>
                                 <option value="email">ðŸ“§ Email</option>
                                 <option value="whatsapp">ðŸ’¬ WhatsApp</option>
@@ -983,7 +983,7 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Direction</label>
-                            <select class="form-select" name="direction">
+                            <select aria-label="Direction" class="form-select" name="direction">
                                 <option value="outbound">Outbound (We contacted)</option>
                                 <option value="inbound">Inbound (They contacted)</option>
                             </select>
@@ -994,11 +994,11 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Details</label>
-                            <textarea class="form-control" name="body" rows="3" placeholder="What was discussed? Key points..."></textarea>
+                            <textarea aria-label="Body" class="form-control" name="body" rows="3" placeholder="What was discussed? Key points..."></textarea>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Outcome</label>
-                            <select class="form-select" name="outcome">
+                            <select aria-label="Outcome" class="form-select" name="outcome">
                                 <option value="">-- Select --</option>
                                 <option value="interested">Interested</option>
                                 <option value="not_interested">Not Interested</option>
@@ -1052,7 +1052,7 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Type</label>
-                            <select class="form-select" name="task_type">
+                            <select aria-label="Task type" class="form-select" name="task_type">
                                 <option value="follow_up">Follow-up</option>
                                 <option value="call">Call</option>
                                 <option value="email">Email</option>
@@ -1064,7 +1064,7 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Priority</label>
-                            <select class="form-select" name="priority">
+                            <select aria-label="Priority" class="form-select" name="priority">
                                 <option value="low">ðŸŸ¢ Low</option>
                                 <option value="medium" selected>ðŸŸ¡ Medium</option>
                                 <option value="high">ðŸ”´ High</option>
@@ -1080,7 +1080,7 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Description</label>
-                            <textarea class="form-control" name="description" rows="3" placeholder="Task details..."></textarea>
+                            <textarea aria-label="Description" class="form-control" name="description" rows="3" placeholder="Task details..."></textarea>
                         </div>
                     </div>
                 </div>

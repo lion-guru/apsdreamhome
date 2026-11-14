@@ -14,7 +14,7 @@ $stColors = ['paid' => 'success', 'processing' => 'warning', 'pending' => 'secon
     </div>
     <div class="d-flex gap-2 align-items-center">
         <form method="GET" class="d-flex gap-2">
-            <select name="fy" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+            <select aria-label="Fy" name="fy" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
                 <?php foreach ($fy_options as $o): ?>
                     <option value="<?= $o ?>" <?= $o === $fy ? 'selected' : '' ?>>FY <?= $o ?></option>
                 <?php endforeach; ?>

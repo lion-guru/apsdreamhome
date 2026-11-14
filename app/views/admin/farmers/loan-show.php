@@ -96,7 +96,7 @@ $loan = $loan ?? [];
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="applied" <?php echo ($loan['status'] ?? '') === 'applied' ? 'selected' : ''; ?>>Applied</option>
                         <option value="sanctioned" <?php echo ($loan['status'] ?? '') === 'sanctioned' ? 'selected' : ''; ?>>Sanctioned</option>
                         <option value="disbursed" <?php echo ($loan['status'] ?? '') === 'disbursed' ? 'selected' : ''; ?>>Disbursed</option>

@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message</label>
-                            <textarea name="message" class="form-control" rows="3" placeholder="Hi! I'm interested in this property. Please share details."></textarea>
+                            <textarea aria-label="Message" name="message" class="form-control" rows="3" placeholder="Hi! I'm interested in this property. Please share details."></textarea>
                         </div>
                         <?php if (!empty($ref)): ?>
                             <input type="hidden" name="referral_code" value="<?= htmlspecialchars($ref) ?>">

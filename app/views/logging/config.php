@@ -11,7 +11,7 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Minimum Log Level</label>
-                            <select name="config[min_level]" class="form-select">
+                            <select aria-label="Config" name="config[min_level]" class="form-select">
                                 <option value="debug" <?= ($config['min_level'] ?? '') === 'debug' ? 'selected' : '' ?>>Debug</option>
                                 <option value="info" <?= ($config['min_level'] ?? '') === 'info' ? 'selected' : '' ?>>Info</option>
                                 <option value="warning" <?= ($config['min_level'] ?? '') === 'warning' ? 'selected' : '' ?>>Warning</option>

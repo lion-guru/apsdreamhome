@@ -37,7 +37,7 @@ $accounts = $accounts ?? [];
 
                     <div class="col-md-6">
                         <label class="form-label">Account Type <span class="text-danger">*</span></label>
-                        <select name="account_type" class="form-select" required id="accountType">
+                        <select aria-label="Account type" name="account_type" class="form-select" required id="accountType">
                             <option value="">Select Type</option>
                             <?php foreach ($types as $t): ?>
                             <option value="<?= $t ?>" <?= ($account['account_type'] ?? '') === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
@@ -46,7 +46,7 @@ $accounts = $accounts ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Account Category <span class="text-danger">*</span></label>
-                        <select name="account_category" class="form-select" required id="accountCategory">
+                        <select aria-label="Account category" name="account_category" class="form-select" required id="accountCategory">
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $k => $v): ?>
                             <option value="<?= $k ?>" data-type="<?= match($k) { 'current_asset','fixed_asset' => 'asset', 'current_liability','long_term_liability' => 'liability', 'owner_equity' => 'equity', 'revenue' => 'income', 'operating_expense','non_operating_expense' => 'expense' } ?>" <?= ($account['account_category'] ?? '') === $k ? 'selected' : '' ?>><?= $v ?></option>
@@ -56,7 +56,7 @@ $accounts = $accounts ?? [];
 
                     <div class="col-md-6">
                         <label class="form-label">Parent Account</label>
-                        <select name="parent_account_id" class="form-select" id="parentAccount">
+                        <select aria-label="Parent account id" name="parent_account_id" class="form-select" id="parentAccount">
                             <option value="">No Parent (Top Level)</option>
                             <?php foreach ($accounts as $acc): ?>
                             <option value="<?= $acc['id'] ?>" <?= ($account['parent_account_id'] ?? '') == $acc['id'] ? 'selected' : '' ?>><?= htmlspecialchars($acc['account_code'] . ' - ' . $acc['account_name']) ?></option>
@@ -70,7 +70,7 @@ $accounts = $accounts ?? [];
 
                     <div class="col-12">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($account['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= htmlspecialchars($account['description'] ?? '') ?></textarea>
                     </div>
 
                     <div class="col-12">

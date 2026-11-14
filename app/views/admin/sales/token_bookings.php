@@ -14,7 +14,7 @@ $badge = ['active' => 'success', 'converted' => 'primary', 'expired' => 'seconda
         <p class="text-muted mb-0"><?= count($rows) ?> records<?= $released > 0 ? " · $released expired lock(s) auto-released" : '' ?></p>
     </div>
     <form method="GET" class="d-flex gap-2">
-        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="">All statuses</option>
             <?php foreach (['active', 'converted', 'expired', 'refunded'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status_filter === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

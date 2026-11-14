@@ -27,7 +27,7 @@ $active_page = 'properties';
 
                     <div class="mb-3">
                         <label for="site_id" class="form-label">Site *</label>
-                        <select class="form-select" id="site_id" name="site_id" required>
+                        <select aria-label="Site id" class="form-select" id="site_id" name="site_id" required>
                             <option value="">Select Site</option>
                             <?php foreach ($sites as $site): ?>
                                 <option value="<?= $site['id'] ?>" <?= ($selected_site_id ?? '') == $site['id'] ? 'selected' : '' ?>>
@@ -46,7 +46,7 @@ $active_page = 'properties';
 
                     <div class="mb-3">
                         <label for="type" class="form-label">Property Type *</label>
-                        <select class="form-select" id="type" name="type" required>
+                        <select aria-label="Type" class="form-select" id="type" name="type" required>
                             <?php foreach ($property_types as $type): ?>
                                 <option value="<?= $type['name'] ?>"><?= htmlspecialchars($type['name'] ?? '') ?></option>
                             <?php endforeach; ?>
@@ -70,7 +70,7 @@ $active_page = 'properties';
 
                     <div class="mb-3">
                         <label for="status" class="form-label">Property Status</label>
-                        <select class="form-select" id="status" name="status">
+                        <select aria-label="Status" class="form-select" id="status" name="status">
                             <option value="active" selected>Active</option>
                             <option value="sold">Sold</option>
                             <option value="rented">Rented</option>
@@ -93,7 +93,7 @@ $active_page = 'properties';
 <div class="mb-3">
                         <label for="location" class="form-label">Address *</label>
                         <div class="input-group">
-                            <textarea class="form-control" id="location" name="location" rows="2" required data-autofill="address"></textarea>
+                            <textarea aria-label="Location" class="form-control" id="location" name="location" rows="2" required data-autofill="address"></textarea>
                             <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="location" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                         </div>
                         <div class="form-text">Full address or location description</div>
@@ -157,7 +157,7 @@ $active_page = 'properties';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="area_unit" class="form-label">Area Unit</label>
-                                <select class="form-select" id="area_unit" name="area_unit">
+                                <select aria-label="Area unit" class="form-select" id="area_unit" name="area_unit">
                                     <option value="sqft" selected>Square Feet</option>
                                     <option value="sqm">Square Meters</option>
                                     <option value="acre">Acres</option>
@@ -185,7 +185,7 @@ $active_page = 'properties';
                     <h5 class="mb-3"><i class="fas fa-file-alt"></i> Description</h5>
                     <div class="mb-3">
                         <label for="description" class="form-label">Property Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                        <textarea aria-label="Description" class="form-control" id="description" name="description" rows="4"></textarea>
                         <div class="form-text">Detailed description of property, features, and highlights</div>
                     </div>
                 </div>
@@ -193,12 +193,12 @@ $active_page = 'properties';
                     <h5 class="mb-3"><i class="fas fa-star"></i> Features & Amenities</h5>
                     <div class="mb-3">
                         <label for="features" class="form-label">Property Features</label>
-                        <textarea class="form-control" id="features" name="features" rows="2"></textarea>
+                        <textarea aria-label="Features" class="form-control" id="features" name="features" rows="2"></textarea>
                         <div class="form-text">List of property features (one per line)</div>
                     </div>
                     <div class="mb-3">
                         <label for="amenities" class="form-label">Amenities</label>
-                        <textarea class="form-control" id="amenities" name="amenities" rows="2"></textarea>
+                        <textarea aria-label="Amenities" class="form-control" id="amenities" name="amenities" rows="2"></textarea>
                         <div class="form-text">List of amenities available at property</div>
                     </div>
                 </div>

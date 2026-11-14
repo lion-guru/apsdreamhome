@@ -72,7 +72,7 @@
                 <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
             </div>
             <div class="col-md-3">
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All Status</option>
                     <option value="new" <?php echo $status === 'new' ? 'selected' : ''; ?>>New</option>
                     <option value="pending" <?php echo $status === 'pending' ? 'selected' : ''; ?>>Pending</option>

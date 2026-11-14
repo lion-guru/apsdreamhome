@@ -66,7 +66,7 @@ $properties = $properties ?? [];
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_property_type', [], 'Property Type') ?></label>
-                    <select class="form-select" name="property_interest">
+                    <select aria-label="Property interest" class="form-select" name="property_interest">
                         <option value="">— <?= __('assoc_al_select', [], 'Select') ?> —</option>
                         <option value="Residential Plot"><?= __('assoc_al_type_residential', [], 'Residential Plot') ?></option>
                         <option value="Commercial Plot"><?= __('assoc_al_type_commercial', [], 'Commercial Plot') ?></option>
@@ -78,7 +78,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_budget', [], 'Budget Range') ?></label>
-                    <select class="form-select" name="budget_range">
+                    <select aria-label="Budget range" class="form-select" name="budget_range">
                         <option value="">— <?= __('assoc_al_select_budget', [], 'Select Budget') ?> —</option>
                         <option value="Under ₹5 Lakh"><?= __('assoc_al_budget_1', [], 'Under ₹5 Lakh') ?></option>
                         <option value="₹5-10 Lakh">₹5 - 10 <?= __('assoc_al_lakh', [], 'Lakh') ?></option>
@@ -102,7 +102,7 @@ $properties = $properties ?? [];
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_source', [], 'Lead Source') ?></label>
-                    <select class="form-select" name="source">
+                    <select aria-label="Source" class="form-select" name="source">
                         <option value="associate"><?= __('assoc_al_source_self', [], 'Self Generated') ?></option>
                         <option value="referral"><?= __('assoc_al_source_referral', [], 'Referral') ?></option>
                         <option value="walk_in"><?= __('assoc_al_source_walkin', [], 'Walk-in') ?></option>
@@ -115,7 +115,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_priority', [], 'Priority') ?></label>
-                    <select class="form-select" name="priority">
+                    <select aria-label="Priority" class="form-select" name="priority">
                         <option value="medium" selected><?= __('assoc_al_priority_medium', [], 'Medium') ?></option>
                         <option value="high"><?= __('assoc_al_priority_high', [], 'High — Hot Lead') ?></option>
                         <option value="low"><?= __('assoc_al_priority_low', [], 'Low — Can Wait') ?></option>
@@ -123,7 +123,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('assoc_al_notes', [], 'Notes & Requirements') ?></label>
-                    <textarea class="form-control" name="notes" rows="3" placeholder="<?= __('assoc_al_notes_placeholder', [], 'Client requirements, preferences, special notes...') ?>"></textarea>
+                    <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="<?= __('assoc_al_notes_placeholder', [], 'Client requirements, preferences, special notes...') ?>"></textarea>
                 </div>
             </div>
         </div>

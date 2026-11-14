@@ -334,7 +334,7 @@ $claims = $claims ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Office Address / Notes (Optional)</label>
-                        <textarea name="notes" class="form-control form-control-sm" rows="3" placeholder="Enter branch office address, electricity bill info or any notes..."></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="3" placeholder="Enter branch office address, electricity bill info or any notes..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -367,7 +367,7 @@ $claims = $claims ?? [];
                     </p>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Visit Trip Type</label>
-                        <select name="visit_type" class="form-select form-select-sm" required>
+                        <select aria-label="Visit type" name="visit_type" class="form-select form-select-sm" required>
                             <option value="local">Gorakhpur Local Township Visit (₹800 Flat)</option>
                             <option value="outstation">Purvanchal Regional / Outstation Trip (₹1,800 Flat)</option>
                         </select>

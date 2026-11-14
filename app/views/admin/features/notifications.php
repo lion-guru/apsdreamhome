@@ -61,10 +61,10 @@ ob_start();
             <div class="row g-2">
               <div class="col-md-3"><label>User ID</label><input name="user_id" type="number" class="form-control" required></div>
               <div class="col-md-3"><label>Channel</label>
-                <select name="channel" class="form-select"><option>email</option><option>sms</option><option>push</option><option>whatsapp</option></select>
+                <select aria-label="Channel" name="channel" class="form-select"><option>email</option><option>sms</option><option>push</option><option>whatsapp</option></select>
               </div>
               <div class="col-md-6"><label>Subject</label><input name="subject" class="form-control"></div>
-              <div class="col-12"><label>Message</label><textarea name="message" class="form-control" rows="3" required></textarea></div>
+              <div class="col-12"><label>Message</label><textarea aria-label="Message" name="message" class="form-control" rows="3" required></textarea></div>
               <div class="col-12"><button class="btn btn-primary">Send</button></div>
             </div>
           </form>

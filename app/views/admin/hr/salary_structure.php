@@ -91,7 +91,7 @@ $es = $edit_structure ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select</option>
                             <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>

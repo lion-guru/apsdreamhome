@@ -212,7 +212,7 @@ $conf = (float)($doc['confidence_score'] ?? 0);
                                 <form method="POST" action="<?= BASE_URL ?>/admin/ocr/reject/<?= $doc['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
                                     <label >Rejection Reason</label>
-                                    <textarea name="rejection_reason" class="ocr-textarea" placeholder="Enter reason for rejection..." required></textarea>
+                                    <textarea aria-label="Rejection reason" name="rejection_reason" class="ocr-textarea" placeholder="Enter reason for rejection..." required></textarea>
                                     <button type="submit" class="ocr-btn ocr-btn-danger mt-2"><i class="fas fa-times me-1"></i>Confirm Rejection</button>
                                 </form>
                             </div>

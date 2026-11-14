@@ -56,7 +56,7 @@ $page_title = $page_title ?? 'Shift Types';
                         <div class="col-6"><label class="form-label">Start Time <span class="text-danger">*</span></label><input type="time" name="start_time" class="form-control" required></div>
                         <div class="col-6"><label class="form-label">End Time <span class="text-danger">*</span></label><input type="time" name="end_time" class="form-control" required></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea></div>
                     <div class="mb-3"><label class="form-label">Color</label><input type="color" name="color" class="form-control form-control-color" value="#007bff"></div>
                 </div>
                 <div class="modal-footer">

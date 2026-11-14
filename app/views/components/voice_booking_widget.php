@@ -41,7 +41,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
 
         <div id="vbwFallback" class="vbw-fallback" hidden>
             <p>आपका ब्राउज़र voice input support नहीं करता। नीचे लिखकर भी बुक कर सकते हैं:</p>
-            <textarea id="vbwText" rows="2" placeholder="अपना संदेश लिखें... (जैसे: मुझे प्लॉट बुक करना है, मेरा नंबर 98xxxxxxxx है)"></textarea>
+            <textarea aria-label="Vbw text" id="vbwText" rows="2" placeholder="अपना संदेश लिखें... (जैसे: मुझे प्लॉट बुक करना है, मेरा नंबर 98xxxxxxxx है)"></textarea>
             <button id="vbwSend" class="vbw-send" type="button">भेजें</button>
         </div>
     </div>

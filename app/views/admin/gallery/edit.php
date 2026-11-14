@@ -34,7 +34,7 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Category</label>
-                            <select class="form-select" name="category">
+                            <select aria-label="Category" class="form-select" name="category">
                                 <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat ?>" <?= ($image['category'] ?? '') === $cat ? 'selected' : '' ?>><?= ucfirst($cat) ?></option>
                                 <?php endforeach; ?>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Status</label>
-                            <select class="form-select" name="status">
+                            <select aria-label="Status" class="form-select" name="status">
                                 <option value="active" <?= ($image['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>Active</option>
                                 <option value="inactive" <?= ($image['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                             </select>
@@ -60,7 +60,7 @@
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" name="description" rows="3"><?= htmlspecialchars($image['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" class="form-control" name="description" rows="3"><?= htmlspecialchars($image['description'] ?? '') ?></textarea>
                     </div>
 
                     <div class="d-flex gap-3">

@@ -26,7 +26,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Type</label>
-                                <select name="type" class="form-select">
+                                <select aria-label="Type" name="type" class="form-select">
                                     <option value="document">Document</option>
                                     <option value="agreement">Agreement</option>
                                     <option value="letter">Letter</option>
@@ -36,7 +36,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Category</label>
-                                <select name="category_id" class="form-select">
+                                <select aria-label="Category id" name="category_id" class="form-select">
                                     <option value="">-- None --</option>
                                     <?php if (!empty($categories)): ?>
                                         <?php foreach ($categories as $cat): ?>
@@ -48,11 +48,11 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Content <span class="text-danger">*</span></label>
-                            <textarea name="content" class="form-control" rows="8" required placeholder="Use {{placeholders}} for dynamic values"></textarea>
+                            <textarea aria-label="Content" name="content" class="form-control" rows="8" required placeholder="Use {{placeholders}} for dynamic values"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Create Template</button>
                     </form>

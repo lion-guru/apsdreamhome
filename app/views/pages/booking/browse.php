@@ -34,7 +34,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold"><?= __('browse_colony') ?></label>
-                        <select name="colony" class="form-select form-select-sm">
+                        <select aria-label="Colony" name="colony" class="form-select form-select-sm">
                             <option value=""><?= __('browse_all_colonies') ?></option>
                             <?php foreach ($colonies as $col): ?>
                             <option value="<?= (int)$col['id'] ?>" <?= ($current_colony == $col['id']) ? 'selected' : '' ?>>
@@ -61,7 +61,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold"><?= __('browse_sort_by') ?></label>
-                        <select name="sort" class="form-select form-select-sm">
+                        <select aria-label="Sort" name="sort" class="form-select form-select-sm">
                             <option value="plot_number" <?= $current_sort === 'plot_number' ? 'selected' : '' ?>><?= __('browse_sort_plot_number') ?></option>
                             <option value="price_asc" <?= $current_sort === 'price_asc' ? 'selected' : '' ?>><?= __('browse_sort_price_low') ?></option>
                             <option value="price_desc" <?= $current_sort === 'price_desc' ? 'selected' : '' ?>><?= __('browse_sort_price_high') ?></option>

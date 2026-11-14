@@ -77,7 +77,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Body HTML</label>
-                        <textarea name="body_html" id="tpl_body" class="form-control" rows="12"></textarea>
+                        <textarea aria-label="Body html" name="body_html" id="tpl_body" class="form-control" rows="12"></textarea>
                         <small class="text-muted">HTML email body. Use {{variable}} placeholders as needed.</small>
                     </div>
                 </div>

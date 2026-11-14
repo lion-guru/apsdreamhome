@@ -11,7 +11,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Provider</label>
-                        <select name="provider" class="form-select">
+                        <select aria-label="Provider" name="provider" class="form-select">
                             <option value="twilio" <?= ($settings['provider'] ?? 'twilio') === 'twilio' ? 'selected' : '' ?>>Twilio</option>
                             <option value="vapi" <?= ($settings['provider'] ?? '') === 'vapi' ? 'selected' : '' ?>>Vapi</option>
                             <option value="plivo" <?= ($settings['provider'] ?? '') === 'plivo' ? 'selected' : '' ?>>Plivo</option>
@@ -62,7 +62,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label class="form-label">TTS Engine</label>
-                            <select name="tts_engine" class="form-select">
+                            <select aria-label="Tts engine" name="tts_engine" class="form-select">
                                 <option value="google" <?= ($settings['tts_engine'] ?? 'google') === 'google' ? 'selected' : '' ?>>Google TTS</option>
                                 <option value="azure" <?= ($settings['tts_engine'] ?? '') === 'azure' ? 'selected' : '' ?>>Azure TTS</option>
                                 <option value="amazon" <?= ($settings['tts_engine'] ?? '') === 'amazon' ? 'selected' : '' ?>>Amazon Polly</option>
@@ -70,7 +70,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">STT Engine</label>
-                            <select name="stt_engine" class="form-select">
+                            <select aria-label="Stt engine" name="stt_engine" class="form-select">
                                 <option value="google" <?= ($settings['stt_engine'] ?? 'google') === 'google' ? 'selected' : '' ?>>Google STT</option>
                                 <option value="azure" <?= ($settings['stt_engine'] ?? '') === 'azure' ? 'selected' : '' ?>>Azure STT</option>
                                 <option value="deepgram" <?= ($settings['stt_engine'] ?? '') === 'deepgram' ? 'selected' : '' ?>>Deepgram</option>
@@ -78,7 +78,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Voice</label>
-                            <select name="voice" class="form-select">
+                            <select aria-label="Voice" name="voice" class="form-select">
                                 <option value="female">Female</option>
                                 <option value="male">Male</option>
                             </select>

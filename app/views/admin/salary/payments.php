@@ -20,7 +20,7 @@
             <form method="get" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label text-muted small fw-bold text-uppercase">Payment Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="paid" <?= ($filter_status ?? '') === 'paid' ? 'selected' : '' ?>>Paid</option>
                         <option value="pending" <?= ($filter_status ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label text-muted small fw-bold text-uppercase">Employee</label>
-                    <select name="employee_id" class="form-select select2-filter">
+                    <select aria-label="Employee id" name="employee_id" class="form-select select2-filter">
                         <option value="">All Employees</option>
                         <?php foreach ($users ?? [] as $e): ?>
                         <option value="<?= $e['id'] ?>" <?= ($filter_employee ?? 0) == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name'] ?? '') ?></option>
@@ -156,7 +156,7 @@
                     <div class="row mt-4">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small text-uppercase fw-bold">Salary Month</label>
-                            <select name="month" class="form-select form-select-lg" required>
+                            <select aria-label="Month" name="month" class="form-select form-select-lg" required>
                                 <?php for ($m=1;$m<=12;$m++): ?>
                                 <option value="<?= $m ?>" <?= $m==date('n')?'selected':'' ?>><?= date('F', mktime(0,0,0,$m,1)) ?></option>
                                 <?php endfor; ?>
@@ -164,7 +164,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small text-uppercase fw-bold">Salary Year</label>
-                            <select name="year" class="form-select form-select-lg" required>
+                            <select aria-label="Year" name="year" class="form-select form-select-lg" required>
                                 <?php for ($y=date('Y')-1;$y<=date('Y')+1;$y++): ?>
                                 <option value="<?= $y ?>" <?= $y==date('Y')?'selected':'' ?>><?= $y ?></option>
                                 <?php endfor; ?>

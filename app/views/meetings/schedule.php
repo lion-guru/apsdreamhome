@@ -49,7 +49,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Preferred Time *</label>
-                                    <select name="time" class="form-select" required>
+                                    <select aria-label="Time" name="time" class="form-select" required>
                                         <option value="">Select Time</option>
                                         <option value="09:00">9:00 AM</option>
                                         <option value="10:00">10:00 AM</option>
@@ -65,7 +65,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             
                             <div class="mb-3">
                                 <label class="form-label">Meeting Type *</label>
-                                <select name="type" class="form-select" required>
+                                <select aria-label="Type" name="type" class="form-select" required>
                                     <option value="">Select Type</option>
                                     <option value="property_visit">Property Site Visit</option>
                                     <option value="consultation">Property Consultation</option>
@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             
                             <div class="mb-3">
                                 <label class="form-label">Message / Notes</label>
-                                <textarea name="message" class="form-control" rows="3" placeholder="Any specific requirements or questions..."></textarea>
+                                <textarea aria-label="Message" name="message" class="form-control" rows="3" placeholder="Any specific requirements or questions..."></textarea>
                             </div>
                             
                             <div class="d-grid">

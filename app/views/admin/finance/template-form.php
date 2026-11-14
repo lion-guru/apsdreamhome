@@ -12,7 +12,7 @@
                 <div class="row g-3">
                     <div class="col-md-6"><label class="form-label"><?php echo __('finance_template_name'); ?> <span class="text-danger">*</span></label><input type="text" name="template_name" required class="form-control" value="<?= htmlspecialchars($template['template_name'] ?? '') ?>"></div>
                     <div class="col-md-4"><label class="form-label"><?php echo __('finance_type'); ?> <span class="text-danger">*</span></label>
-                        <select name="template_type" required class="form-select">
+                        <select aria-label="Template type" name="template_type" required class="form-select">
                             <option value="overdue_installment" <?= ($template['template_type'] ?? '') === 'overdue_installment' ? 'selected' : '' ?>><?php echo __('finance_overdue_installment'); ?></option>
                             <option value="final_notice" <?= ($template['template_type'] ?? '') === 'final_notice' ? 'selected' : '' ?>><?php echo __('finance_final_notice'); ?></option>
                             <option value="booking_confirmation" <?= ($template['template_type'] ?? '') === 'booking_confirmation' ? 'selected' : '' ?>><?php echo __('finance_booking_confirmation'); ?></option>
@@ -27,7 +27,7 @@
                     <div class="col-12"><label class="form-label"><?php echo __('finance_subject'); ?></label><input type="text" name="subject" class="form-control" value="<?= htmlspecialchars($template['subject'] ?? '') ?>"></div>
                     <div class="col-12">
                         <label class="form-label"><?php echo __('finance_body_html'); ?> <span class="text-danger">*</span></label>
-                        <textarea name="body_html" required class="form-control" rows="14" placeholder="<?php echo __('finance_available_placeholders'); ?> {{customer_name}}, {{amount}}, {{due_date}}, {{booking_number}}"><?= htmlspecialchars($template['body_html'] ?? '') ?></textarea>
+                        <textarea aria-label="Body html" name="body_html" required class="form-control" rows="14" placeholder="<?php echo __('finance_available_placeholders'); ?> {{customer_name}}, {{amount}}, {{due_date}}, {{booking_number}}"><?= htmlspecialchars($template['body_html'] ?? '') ?></textarea>
                         <small class="text-muted"><?php echo __('finance_available_placeholders'); ?> <code>{{customer_name}}</code> <code>{{amount}}</code> <code>{{due_date}}</code> <code>{{booking_number}}</code> <code>{{plot_number}}</code> <code>{{project_name}}</code></small>
                     </div>
                 </div>

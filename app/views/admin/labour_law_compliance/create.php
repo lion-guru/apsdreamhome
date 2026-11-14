@@ -28,7 +28,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Frequency</label>
-            <select name="frequency" class="form-select">
+            <select aria-label="Frequency" name="frequency" class="form-select">
                 <option value="monthly">Monthly</option>
                 <option value="quarterly">Quarterly</option>
                 <option value="half_yearly">Half Yearly</option>
@@ -42,7 +42,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Status</label>
-            <select name="status" class="form-select">
+            <select aria-label="Status" name="status" class="form-select">
                 <option value="pending">Pending</option>
                 <option value="filed">Filed</option>
                 <option value="overdue">Overdue</option>
@@ -51,7 +51,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Remarks</label>
-            <textarea name="remarks" class="form-control"></textarea>
+            <textarea aria-label="Remarks" name="remarks" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
         <a href="/admin/labour-law-compliance" class="btn btn-secondary">Cancel</a>

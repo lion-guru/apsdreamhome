@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Category</label>
-                                <select name="category" class="form-select">
+                                <select aria-label="Category" name="category" class="form-select">
                                     <option value="general">General</option>
                                     <option value="properties">Properties</option>
                                     <option value="booking">Booking</option>
@@ -36,11 +36,11 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Question Pattern</label>
-                                <textarea name="question" class="form-control" rows="2" placeholder="e.g., What properties are available?" required></textarea>
+                                <textarea aria-label="Question" name="question" class="form-control" rows="2" placeholder="e.g., What properties are available?" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Answer</label>
-                                <textarea name="answer" class="form-control" rows="4" placeholder="e.g., We have plots, houses, and shops available..." required></textarea>
+                                <textarea aria-label="Answer" name="answer" class="form-control" rows="4" placeholder="e.g., We have plots, houses, and shops available..." required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-2"></i>Save</button>
                         </form>

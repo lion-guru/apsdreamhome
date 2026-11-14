@@ -10,7 +10,7 @@
         <div class="card-header bg-white border-bottom">
             <div class="row g-2 align-items-center">
                 <div class="col-auto">
-                    <select id="levelFilter" class="form-select form-select-sm" onchange="applyFilters()">
+                    <select aria-label="Level filter" id="levelFilter" class="form-select form-select-sm" onchange="applyFilters()">
                         <option value="">All Levels</option>
                         <option value="error">Error</option>
                         <option value="warning">Warning</option>
@@ -22,7 +22,7 @@
                     <input type="text" id="searchFilter" class="form-control form-control-sm" placeholder="Search logs..." onkeyup="applyFilters()">
                 </div>
                 <div class="col-auto">
-                    <select id="dateFilter" class="form-select form-select-sm" onchange="applyFilters()">
+                    <select aria-label="Date filter" id="dateFilter" class="form-select form-select-sm" onchange="applyFilters()">
                         <option value="">All Time</option>
                         <option value="today">Today</option>
                         <option value="week">This Week</option>

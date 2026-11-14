@@ -47,7 +47,7 @@ $message = $message ?? '';
                             <?php endforeach; ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold"><?= __('assoc_bw_message_template', [], 'Message Template') ?></label>
-                                <textarea class="form-control" name="message" rows="5" required placeholder="Hi {name}, ..."><?= htmlspecialchars($message ?: __('assoc_bw_default_msg', [], "Hi {name}, thank you for your interest in APS Dream Home! We'd love to show you our properties. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team")) ?></textarea>
+                                <textarea aria-label="Message" class="form-control" name="message" rows="5" required placeholder="Hi {name}, ..."><?= htmlspecialchars($message ?: __('assoc_bw_default_msg', [], "Hi {name}, thank you for your interest in APS Dream Home! We'd love to show you our properties. Would you like to schedule a site visit?\n\nBest regards,\nAPS Dream Home Team")) ?></textarea>
                                 <small class="text-muted"><?= __('assoc_bw_personalize_hint', [], 'Use {name} to personalize with lead\'s name, {phone} for their number.') ?></small>
                             </div>
 

@@ -33,7 +33,7 @@ $filterTo = $_GET['to'] ?? '';
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-2">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach (['scheduled','in_progress','completed','failed','no_answer'] as $st): ?>
                             <option value="<?= $st ?>" <?= $filterStatus === $st ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$st)) ?></option>
@@ -42,7 +42,7 @@ $filterTo = $_GET['to'] ?? '';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Agent</label>
-                    <select name="agent" class="form-select form-select-sm">
+                    <select aria-label="Agent" name="agent" class="form-select form-select-sm">
                         <option value="">All</option>
                         <?php foreach ($agents as $ag): ?>
                             <option value="<?= htmlspecialchars($ag ?? '') ?>" <?= $filterAgent === $ag ? 'selected' : '' ?>><?= htmlspecialchars($ag ?? '') ?></option>

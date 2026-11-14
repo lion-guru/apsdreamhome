@@ -26,7 +26,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Channel</label>
-                                    <select name="channel" class="form-select" required>
+                                    <select aria-label="Channel" name="channel" class="form-select" required>
                                         <option value="email" <?= ($template['channel'] ?? '') === 'email' ? 'selected' : '' ?>>Email</option>
                                         <option value="sms" <?= ($template['channel'] ?? '') === 'sms' ? 'selected' : '' ?>>SMS</option>
                                         <option value="push" <?= ($template['channel'] ?? '') === 'push' ? 'selected' : '' ?>>Push Notification</option>
@@ -41,7 +41,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Body</label>
-                                <textarea name="body" class="form-control" rows="8" required><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
+                                <textarea aria-label="Body" name="body" class="form-control" rows="8" required><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
                                 <small class="text-muted">Use {{variable}} for dynamic content</small>
                             </div>
 

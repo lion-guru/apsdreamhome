@@ -35,13 +35,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
                         <div class="mb-3">
                             <label for="description" class="form-label fw-bold">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Brief description"></textarea>
+                            <textarea aria-label="Description" class="form-control" id="description" name="description" rows="3" placeholder="Brief description"></textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="category" class="form-label fw-bold">Category</label>
-                                <select class="form-select" id="category" name="category">
+                                <select aria-label="Category" class="form-select" id="category" name="category">
                                     <option value="general">General</option>
                                     <option value="properties">Properties</option>
                                     <option value="colonies">Colonies</option>

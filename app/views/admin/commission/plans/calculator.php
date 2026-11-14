@@ -14,7 +14,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="row mb-4">
             <div class="col-md-4">
                 <label class="form-label">Select Plan</label>
-                <select id="calcPlan" class="form-select" onchange="loadLevels()">
+                <select aria-label="Calc plan" id="calcPlan" class="form-select" onchange="loadLevels()">
                     <?php if (empty($plans)): ?>
                         <option value="">No plans available</option>
                     <?php else: ?>
@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-4">
                 <label class="form-label">Agent Level</label>
-                <select id="agentLevel" class="form-select" onchange="calculateCommissions()">
+                <select aria-label="Agent level" id="agentLevel" class="form-select" onchange="calculateCommissions()">
                     <option value="0">Associate (Entry)</option>
                     <option value="1">Sr. Associate</option>
                     <option value="2">BDM</option>

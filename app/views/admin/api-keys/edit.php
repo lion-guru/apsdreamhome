@@ -12,7 +12,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Service Name *</label>
-                                <select name="service_name" class="form-select" required>
+                                <select aria-label="Service name" name="service_name" class="form-select" required>
                                     <?php foreach ($providers as $p): ?>
                                         <option value="<?= $p ?>" <?= ($api_key['service_name'] == $p) ? 'selected' : '' ?>><?= $p ?></option>
                                     <?php endforeach; ?>
@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Key Type</label>
-                                <select name="key_type" class="form-select">
+                                <select aria-label="Key type" name="key_type" class="form-select">
                                     <option value="api_key" <?= ($api_key['key_type'] == 'api_key') ? 'selected' : '' ?>>API Key</option>
                                     <option value="token" <?= ($api_key['key_type'] == 'token') ? 'selected' : '' ?>>Token</option>
                                     <option value="password" <?= ($api_key['key_type'] == 'password') ? 'selected' : '' ?>>Password</option>
@@ -51,7 +51,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($api_key['description'] ?? '') ?></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= htmlspecialchars($api_key['description'] ?? '') ?></textarea>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">

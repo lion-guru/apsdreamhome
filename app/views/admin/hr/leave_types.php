@@ -53,7 +53,7 @@ $page_title = $page_title ?? 'Leave Types';
                     <div class="mb-3"><label class="form-label">Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" required></div>
                     <div class="mb-3"><label class="form-label">Code <span class="text-danger">*</span></label><input type="text" name="code" class="form-control" required></div>
                     <div class="mb-3"><label class="form-label">Days Per Year</label><input type="number" name="days_per_year" class="form-control" value="12"></div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea></div>
                     <div class="mb-3"><label class="form-label">Color</label><input type="color" name="color" class="form-control form-control-color" value="#007bff"></div>
                 </div>
                 <div class="modal-footer">

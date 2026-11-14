@@ -41,7 +41,7 @@
 
               <div class="col-md-6">
                 <label class="form-label">Type *</label>
-                <select name="type" class="form-select" required>
+                <select aria-label="Type" name="type" class="form-select" required>
                   <?php foreach (['amc','rental','service','maintenance','warranty','other'] as $t): ?>
                     <option value="<?= $t ?>" <?= ($contract['type'] ?? '') === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
                   <?php endforeach; ?>
@@ -55,7 +55,7 @@
 
               <div class="col-md-6">
                 <label class="form-label">Party Type</label>
-                <select name="party_type" class="form-select">
+                <select aria-label="Party type" name="party_type" class="form-select">
                   <?php foreach (['customer','vendor','supplier','partner'] as $pt): ?>
                     <option value="<?= $pt ?>" <?= ($contract['party_type'] ?? 'customer') === $pt ? 'selected' : '' ?>><?= ucfirst($pt) ?></option>
                   <?php endforeach; ?>
@@ -64,7 +64,7 @@
 
               <div class="col-md-6">
                 <label class="form-label">Link to User/Lead (optional)</label>
-                <select name="party_id" class="form-select">
+                <select aria-label="Party id" name="party_id" class="form-select">
                   <option value="">-- None --</option>
                   <?php foreach ($users as $u): ?>
                     <option value="<?= (int)$u['id'] ?>" <?= ($contract['party_id'] ?? 0) === (int)$u['id'] ? 'selected' : '' ?>>
@@ -94,7 +94,7 @@
 
               <div class="col-md-4">
                 <label class="form-label">Currency</label>
-                <select name="currency" class="form-select">
+                <select aria-label="Currency" name="currency" class="form-select">
                   <option value="INR" <?= ($contract['currency'] ?? 'INR') === 'INR' ? 'selected' : '' ?>>INR</option>
                   <option value="USD" <?= ($contract['currency'] ?? '') === 'USD' ? 'selected' : '' ?>>USD</option>
                 </select>
@@ -102,7 +102,7 @@
 
               <div class="col-md-4">
                 <label class="form-label">Billing Cycle</label>
-                <select name="billing_cycle" class="form-select">
+                <select aria-label="Billing cycle" name="billing_cycle" class="form-select">
                   <?php foreach (['monthly','quarterly','half_yearly','yearly','one_time'] as $bc): ?>
                     <option value="<?= $bc ?>" <?= ($contract['billing_cycle'] ?? 'yearly') === $bc ? 'selected' : '' ?><?= ucfirst(str_replace('_', ' ', $bc)) ?></option>
                   <?php endforeach; ?>
@@ -116,7 +116,7 @@
 
               <div class="col-md-4">
                 <label class="form-label">Status</label>
-                <select name="status" class="form-select" <?= !$isEdit ? 'disabled' : '' ?>>
+                <select aria-label="Status" name="status" class="form-select" <?= !$isEdit ? 'disabled' : '' ?>>
                   <?php foreach (['draft','active','expiring_soon','expired','renewed','cancelled'] as $s): ?>
                     <option value="<?= $s ?>" <?= ($contract['status'] ?? 'active') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_', ' ', $s)) ?></option>
                   <?php endforeach; ?>
@@ -132,12 +132,12 @@
 
               <div class="col-12">
                 <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($contract['description'] ?? '') ?></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= htmlspecialchars($contract['description'] ?? '') ?></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">Notes</label>
-                <textarea name="notes" class="form-control" rows="2"><?= htmlspecialchars($contract['notes'] ?? '') ?></textarea>
+                <textarea aria-label="Notes" name="notes" class="form-control" rows="2"><?= htmlspecialchars($contract['notes'] ?? '') ?></textarea>
               </div>
             </div>
 

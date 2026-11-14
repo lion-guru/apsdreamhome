@@ -28,7 +28,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Category *</label>
-                            <select name="category_id" class="form-control" required>
+                            <select aria-label="Category id" name="category_id" class="form-control" required>
                                 <option value="">Select Category</option>
                                 <?php foreach ($categories as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -38,7 +38,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="4" placeholder="Tell people about your services, experience, area of work..."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="4" placeholder="Tell people about your services, experience, area of work..."></textarea>
                         </div>
 
                         <div class="row">
@@ -69,7 +69,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Address</label>
-                            <textarea name="address" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Address" name="address" class="form-control" rows="2"></textarea>
                         </div>
 
                         <p class="text-muted small mb-3"><i class="fas fa-info-circle me-1"></i>Your listing will be reviewed by our team before being published.</p>

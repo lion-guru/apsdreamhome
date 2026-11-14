@@ -206,7 +206,7 @@ $statusMap = [
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('assoc_sv_feedback', [], 'Feedback') ?></label>
-                                <textarea class="form-control" name="feedback" rows="3" placeholder="<?= __('assoc_sv_feedback_placeholder', [], 'How did the visit go? Customer feedback...') ?>"></textarea>
+                                <textarea aria-label="Feedback" class="form-control" name="feedback" rows="3" placeholder="<?= __('assoc_sv_feedback_placeholder', [], 'How did the visit go? Customer feedback...') ?>"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">

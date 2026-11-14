@@ -14,8 +14,8 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
 <div class="row mb-3">
     <div class="col-12">
         <form method="GET" class="row g-2 align-items-end">
-            <div class="col-auto"><select name="status" class="form-select"><option value="">All Status</option><?php foreach ($statuses as $k=>$l): ?><option value="<?= $k ?>" <?= ($filters['status']??'')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select></div>
-            <div class="col-auto"><select name="category" class="form-select"><option value="">All Categories</option><?php foreach ($cats as $k=>$l): ?><option value="<?= $k ?>" <?= ($filters['category']??'')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select></div>
+            <div class="col-auto"><select aria-label="Status" name="status" class="form-select"><option value="">All Status</option><?php foreach ($statuses as $k=>$l): ?><option value="<?= $k ?>" <?= ($filters['status']??'')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select></div>
+            <div class="col-auto"><select aria-label="Category" name="category" class="form-select"><option value="">All Categories</option><?php foreach ($cats as $k=>$l): ?><option value="<?= $k ?>" <?= ($filters['category']??'')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select></div>
             <div class="col-auto"><button class="btn btn-outline-secondary"><i class="fas fa-filter"></i> Filter</button></div>
         </form>
     </div>

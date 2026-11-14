@@ -216,7 +216,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="notes" class="form-label">Notes (Optional)</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3"
+                        <textarea aria-label="Notes" class="form-control" id="notes" name="notes" rows="3"
                                   placeholder="Any additional notes..."></textarea>
                     </div>
                 </div>

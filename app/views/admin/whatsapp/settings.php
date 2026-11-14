@@ -73,7 +73,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message</label>
-                            <textarea name="test_message" class="form-control" rows="2" placeholder="Leave blank to use default test message"></textarea>
+                            <textarea aria-label="Test message" name="test_message" class="form-control" rows="2" placeholder="Leave blank to use default test message"></textarea>
                         </div>
                         <button type="submit" class="btn btn-success">
                             <i class="fab fa-whatsapp me-1"></i> Send Test Message

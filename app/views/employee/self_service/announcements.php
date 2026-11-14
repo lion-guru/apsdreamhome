@@ -110,7 +110,7 @@ $announcements = $announcements ?? [];
                     <form method="GET" class="row g-3">
                         <div class="col-md-3">
                             <label for="filter_category" class="form-label">Category</label>
-                            <select class="form-select" id="filter_category" name="category">
+                            <select aria-label="Category" class="form-select" id="filter_category" name="category">
                                 <option value="">All Categories</option>
                                 <option value="general">General</option>
                                 <option value="policy">Policy Update</option>
@@ -124,7 +124,7 @@ $announcements = $announcements ?? [];
                         </div>
                         <div class="col-md-3">
                             <label for="filter_priority" class="form-label">Priority</label>
-                            <select class="form-select" id="filter_priority" name="priority">
+                            <select aria-label="Priority" class="form-select" id="filter_priority" name="priority">
                                 <option value="">All Priorities</option>
                                 <option value="high">High</option>
                                 <option value="medium">Medium</option>

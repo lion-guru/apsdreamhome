@@ -27,14 +27,14 @@ $isEdit = !empty($template['id']);
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Type</label>
-                                <select class="form-select" name="type" id="templateType">
+                                <select aria-label="Type" class="form-select" name="type" id="templateType">
                                     <option value="email" <?= ($template['type'] ?? 'email') === 'email' ? 'selected' : '' ?>>Email</option>
                                     <option value="sms" <?= ($template['type'] ?? '') === 'sms' ? 'selected' : '' ?>>SMS</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Category</label>
-                                <select class="form-select" name="category">
+                                <select aria-label="Category" class="form-select" name="category">
                                     <option value="general" <?= ($template['category'] ?? '') === 'general' ? 'selected' : '' ?>>General</option>
                                     <option value="follow_up" <?= ($template['category'] ?? '') === 'follow_up' ? 'selected' : '' ?>>Follow-up</option>
                                     <option value="proposal" <?= ($template['category'] ?? '') === 'proposal' ? 'selected' : '' ?>>Proposal</option>
@@ -55,7 +55,7 @@ $isEdit = !empty($template['id']);
 
                         <div class="mt-3">
                             <label class="form-label fw-bold">Body *</label>
-                            <textarea class="form-control" name="body" rows="12" required placeholder="Dear {{name}}, ..."><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
+                            <textarea aria-label="Body" class="form-control" name="body" rows="12" required placeholder="Dear {{name}}, ..."><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
                         </div>
 
                         <div class="mt-3 p-3 bg-light rounded">

@@ -14,14 +14,14 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="url" value="/admin/finance/tds">
                 <div class="col-md-3"><label class="form-label small"><?= __('tds_financial_year') ?></label>
-                    <select name="fy" class="form-select form-select-sm">
+                    <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                         <?php foreach (['2024-25','2025-26','2026-27','2027-28'] as $y): ?>
                             <option value="<?= $y ?>" <?= $fy === $y ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-3"><label class="form-label small"><?= __('tds_quarter') ?></label>
-                    <select name="quarter" class="form-select form-select-sm">
+                    <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                         <option value=""><?= __('tds_all') ?></option>
                         <?php foreach (['Q1','Q2','Q3','Q4'] as $q): ?>
                             <option value="<?= $q ?>" <?= $quarter === $q ? 'selected' : '' ?>><?= $q ?></option>

@@ -39,7 +39,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label">State <span class="text-danger">*</span></label>
-                                <select class="form-select" name="state_id" required>
+                                <select aria-label="State id" class="form-select" name="state_id" required>
                                     <option value="">Select State</option>
                                     <?php foreach ($states as $s): ?>
                                     <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">District <span class="text-danger">*</span></label>
-                                <select class="form-select" name="district_id" required>
+                                <select aria-label="District id" class="form-select" name="district_id" required>
                                     <option value="">Select District</option>
                                     <?php foreach ($districts as $d): ?>
                                     <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name'] ?? '') ?></option>

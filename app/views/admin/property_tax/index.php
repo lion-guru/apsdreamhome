@@ -121,7 +121,7 @@ $csrf = $this->getCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="col-md-3">
                     <label class="form-label small">Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm">
                         <option value="">All Colonies</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= ($filters['colony_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -130,7 +130,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Assessment Year</label>
-                    <select name="assessment_year" class="form-select form-select-sm">
+                    <select aria-label="Assessment year" name="assessment_year" class="form-select form-select-sm">
                         <option value="">All Years</option>
                         <?php foreach ($years as $y): ?>
                             <option value="<?= $y ?>" <?= ($filters['assessment_year'] ?? '') == $y ? 'selected' : '' ?>><?= $y ?></option>
@@ -139,7 +139,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Tax Type</label>
-                    <select name="tax_type" class="form-select form-select-sm">
+                    <select aria-label="Tax type" name="tax_type" class="form-select form-select-sm">
                         <option value="">All Types</option>
                         <?php foreach ($taxTypes as $t): ?>
                             <option value="<?= $t ?>" <?= ($filters['tax_type'] ?? '') == $t ? 'selected' : '' ?>><?= ucwords(str_replace('_', ' ', $t)) ?></option>
@@ -148,7 +148,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="draft" <?= ($filters['status'] ?? '') == 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="published" <?= ($filters['status'] ?? '') == 'published' ? 'selected' : '' ?>>Published</option>

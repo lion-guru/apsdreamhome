@@ -42,7 +42,7 @@ $actionIcon = fn($a) => match($a) {
             <div class="row">
                 <div class="col-md-4">
                     <label >Filter by Plan</label>
-                    <select name="plan_id" class="cp-input" onchange="this.form.submit()">
+                    <select aria-label="Plan id" name="plan_id" class="cp-input" onchange="this.form.submit()">
                         <option value="0">All Plans</option>
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= $planId == $p['id'] ? 'selected' : '' ?>>

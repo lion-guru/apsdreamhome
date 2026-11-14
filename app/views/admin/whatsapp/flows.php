@@ -137,7 +137,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Match Logic</label>
-                        <select name="match_type" class="form-select form-select-sm">
+                        <select aria-label="Match type" name="match_type" class="form-select form-select-sm">
                             <option value="contains">Contains Any Keyword</option>
                             <option value="exact">Exact Match Only</option>
                             <option value="regex">Regex Expression</option>
@@ -145,7 +145,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Dynamic Action Hook</label>
-                        <select name="action_hook" class="form-select form-select-sm">
+                        <select aria-label="Action hook" name="action_hook" class="form-select form-select-sm">
                             <option value="">None (Static Reply Only)</option>
                             <option value="fetch_plots">Inject Available Townships List</option>
                             <option value="fetch_passbook">Lookup Customer Active Booking</option>
@@ -155,7 +155,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-12">
                         <label class="form-label small fw-semibold">WhatsApp Reply Body (*bold*, _italic_, {{base_url}})</label>
-                        <textarea name="reply_message" class="form-control" rows="4" placeholder="Namaste! Our current township offers are..." required></textarea>
+                        <textarea aria-label="Reply message" name="reply_message" class="form-control" rows="4" placeholder="Namaste! Our current township offers are..." required></textarea>
                         <small class="text-muted">Use <code>{{base_url}}</code> to automatically insert your website URL.</small>
                     </div>
                 </div>

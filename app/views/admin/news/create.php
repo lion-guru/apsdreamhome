@@ -20,12 +20,12 @@
 
                     <div class="mb-3">
                         <label for="summary" class="form-label">Summary *</label>
-                        <textarea class="form-control" id="summary" name="summary" rows="2" required></textarea>
+                        <textarea aria-label="Summary" class="form-control" id="summary" name="summary" rows="2" required></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label for="content" class="form-label">Content *</label>
-                        <textarea class="form-control summernote" id="content" name="content" rows="10" required></textarea>
+                        <textarea aria-label="Content" class="form-control summernote" id="content" name="content" rows="10" required></textarea>
                     </div>
                 </div>
 
@@ -36,7 +36,7 @@
 
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" name="status">
+                                <select aria-label="Status" class="form-select" id="status" name="status">
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
                                     <option value="archived">Archived</option>

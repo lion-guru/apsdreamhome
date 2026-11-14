@@ -34,7 +34,7 @@ $csrf_token = $csrf_token ?? '';
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold">Seller Rank</label>
-                <select id="rankSlug" name="rank_slug" class="form-select form-select-lg">
+                <select aria-label="Rank slug" id="rankSlug" name="rank_slug" class="form-select form-select-lg">
                     <?php foreach ($rank_slabs as $slug => $slab): ?>
                         <option value="<?= htmlspecialchars($slug ?? '') ?>">
                             <?= htmlspecialchars($slab['rank_name'] ?? ucfirst($slug)) ?>

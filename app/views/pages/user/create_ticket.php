@@ -43,7 +43,7 @@ $page_title = $page_title ?? __('user_create_ticket_page_title', 'Create Support
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('user_create_ticket_label_category', 'Category') ?></label>
-                            <select name="category" class="form-select">
+                            <select aria-label="Category" name="category" class="form-select">
                                 <option value="general"><?= __('user_create_ticket_category_general', 'General') ?></option>
                                 <option value="payment"><?= __('user_create_ticket_category_payment', 'Payment') ?></option>
                                 <option value="booking"><?= __('user_create_ticket_category_booking', 'Booking') ?></option>
@@ -55,7 +55,7 @@ $page_title = $page_title ?? __('user_create_ticket_page_title', 'Create Support
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('user_create_ticket_label_priority', 'Priority') ?></label>
-                            <select name="priority" class="form-select">
+                            <select aria-label="Priority" name="priority" class="form-select">
                                 <option value="low"><?= __('user_create_ticket_priority_low', 'Low') ?></option>
                                 <option value="medium" selected><?= __('user_create_ticket_priority_medium', 'Medium') ?></option>
                                 <option value="high"><?= __('user_create_ticket_priority_high', 'High') ?></option>
@@ -66,7 +66,7 @@ $page_title = $page_title ?? __('user_create_ticket_page_title', 'Create Support
 
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('user_create_ticket_label_message', 'Message') ?> <span class="text-danger">*</span></label>
-                        <textarea name="message" class="form-control" rows="6" required minlength="10"
+                        <textarea aria-label="Message" name="message" class="form-control" rows="6" required minlength="10"
                                   placeholder="<?= __('user_create_ticket_placeholder_message', 'Please describe your issue in detail...') ?>"><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
                         <small class="text-muted"><?= __('user_create_ticket_hint_min_10', 'Minimum 10 characters') ?></small>
                     </div>

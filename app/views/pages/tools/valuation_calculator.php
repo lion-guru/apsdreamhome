@@ -11,7 +11,7 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="valCity"><?php echo __('location_district', [], 'Location / District'); ?></label>
-                                <select class="form-select" id="valCity">
+                                <select aria-label="Val city" class="form-select" id="valCity">
                                     <option value="">-- <?php echo __('select_district', [], 'Select District'); ?> --</option>
                                     <?php foreach (($districts ?? []) as $d): ?>
                                         <option value="<?= htmlspecialchars($d['name'] ?? '') ?>"><?= htmlspecialchars($d['name'] ?? '') ?></option>
@@ -27,7 +27,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="valType"><?php echo __('property_type', [], 'Property Type'); ?></label>
-                                <select class="form-select" id="valType">
+                                <select aria-label="Val type" class="form-select" id="valType">
                                     <option value="plot"><?php echo __('residential_plot', [], 'Residential Plot'); ?></option>
                                     <option value="house"><?php echo __('house_villa', [], 'House / Villa'); ?></option>
                                     <option value="flat"><?php echo __('flat_apartment', [], 'Flat / Apartment'); ?></option>
@@ -43,7 +43,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="valBedrooms"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
-                                <select class="form-select" id="valBedrooms">
+                                <select aria-label="Val bedrooms" class="form-select" id="valBedrooms">
                                     <option value="0"><?php echo __('na_plot_land', [], 'N/A (Plot/Land)'); ?></option>
                                     <option value="1">1 BHK</option>
                                     <option value="2">2 BHK</option>
@@ -54,7 +54,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="valAge"><?php echo __('age_of_property', [], 'Age of Property'); ?></label>
-                                <select class="form-select" id="valAge">
+                                <select aria-label="Val age" class="form-select" id="valAge">
                                     <option value="0"><?php echo __('new_0_5', [], 'New (0-5 years)'); ?></option>
                                     <option value="5">5-10 <?php echo __('years', [], 'years'); ?></option>
                                     <option value="10">10-20 <?php echo __('years', [], 'years'); ?></option>
@@ -65,7 +65,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="valCondition"><?php echo __('condition', [], 'Condition'); ?></label>
-                                <select class="form-select" id="valCondition">
+                                <select aria-label="Val condition" class="form-select" id="valCondition">
                                     <option value="new"><?php echo __('new_well_maintained', [], 'New / Well-maintained'); ?></option>
                                     <option value="old"><?php echo __('old_needs_repair', [], 'Old / Needs Repair'); ?></option>
                                     <option value="renovated"><?php echo __('recently_renovated', [], 'Recently Renovated'); ?></option>

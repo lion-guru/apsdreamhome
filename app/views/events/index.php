@@ -92,7 +92,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="evType">Event Type</label>
-                            <select class="form-select" id="evType" name="event_type">
+                            <select aria-label="Event type" class="form-select" id="evType" name="event_type">
                                 <option value="user">User</option>
                                 <option value="system">System</option>
                                 <option value="booking">Booking</option>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="mb-3 mt-3">
                         <label class="form-label" for="evData">Event Data (JSON, optional)</label>
-                        <textarea class="form-control" id="evData" name="event_data_raw" rows="3" placeholder='{"key": "value"}'></textarea>
+                        <textarea aria-label="Event data raw" class="form-control" id="evData" name="event_data_raw" rows="3" placeholder='{"key": "value"}'></textarea>
                     </div>
                     <div id="publishEventStatus" class="small"></div>
                 </div>

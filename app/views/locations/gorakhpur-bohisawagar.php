@@ -232,7 +232,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                         </div>
                         <div class="mb-3">
                             <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" name="message" rows="3">I'm interested in <?php echo e($projectName); ?>. Please contact me with more details.</textarea>
+                            <textarea aria-label="Message" class="form-control" id="message" name="message" rows="3">I'm interested in <?php echo e($projectName); ?>. Please contact me with more details.</textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Submit Enquiry</button>
                     </form>

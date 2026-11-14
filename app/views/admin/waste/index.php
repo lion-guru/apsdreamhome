@@ -58,7 +58,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-waste" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- All Colonies --</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $current_colony == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -155,7 +155,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -168,7 +168,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Shift</label>
-                        <select name="shift" class="form-select">
+                        <select aria-label="Shift" name="shift" class="form-select">
                             <option value="morning_sweep">Morning Sweep (07:00)</option>
                             <option value="evening_sweep">Evening Sweep (16:00)</option>
                         </select>
@@ -193,7 +193,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Disposal Destination</label>
-                        <select name="disposal_destination" class="form-select">
+                        <select aria-label="Disposal destination" name="disposal_destination" class="form-select">
                             <option value="society_compost_pit">Society Vermicompost Pit</option>
                             <option value="nagar_nigam_designated_dump">Nagar Nigam Dump Yard</option>
                             <option value="recycling_vendor">Recycling Vendor Pickup</option>
@@ -210,7 +210,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Storm Drain Desilting Status</label>
-                        <select name="drain_cleaning_status" class="form-select">
+                        <select aria-label="Drain cleaning status" name="drain_cleaning_status" class="form-select">
                             <option value="completed">Completed (Drains Clean &amp; Free Flowing)</option>
                             <option value="in_progress">Desilting In Progress</option>
                             <option value="scheduled">Scheduled Routine Clean</option>
@@ -228,7 +228,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Sanitation Remarks</label>
-                        <textarea name="remarks" class="form-control" rows="2" placeholder="Sector A &amp; B road sweeping finished, dustbins sanitized, compost pit aerated."></textarea>
+                        <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Sector A &amp; B road sweeping finished, dustbins sanitized, compost pit aerated."></textarea>
                     </div>
                 </div>
             </div>

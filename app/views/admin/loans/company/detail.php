@@ -275,7 +275,7 @@ $early_settlement = $early_settlement ?? [];
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">Installment</label>
-                    <select name="installment_id" class="form-select" required>
+                    <select aria-label="Installment id" name="installment_id" class="form-select" required>
                         <option value="">Select installment</option>
                         <?php foreach ($installments as $inst): ?>
                             <?php if ($inst['status'] !== 'paid'): ?>
@@ -291,7 +291,7 @@ $early_settlement = $early_settlement ?? [];
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Payment Method</label>
-                        <select name="payment_method" class="form-select">
+                        <select aria-label="Payment method" name="payment_method" class="form-select">
                             <option value="cash">Cash</option>
                             <option value="bank_transfer">Bank Transfer</option>
                             <option value="cheque">Cheque</option>
@@ -306,7 +306,7 @@ $early_settlement = $early_settlement ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Notes</label>
-                    <textarea name="notes" class="form-control" rows="2"></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -366,7 +366,7 @@ $early_settlement = $early_settlement ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Address</label>
-                    <textarea name="address" class="form-control" rows="2"></textarea>
+                    <textarea aria-label="Address" name="address" class="form-control" rows="2"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -386,7 +386,7 @@ $early_settlement = $early_settlement ?? [];
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">Document Type</label>
-                    <select name="doc_type" id="docTypeSelect" class="form-select">
+                    <select aria-label="Doc type" name="doc_type" id="docTypeSelect" class="form-select">
                         <option value="agreement">Loan Agreement</option>
                         <option value="promissory">Promissory Note</option>
                         <option value="demand">Demand Letter</option>
@@ -395,7 +395,7 @@ $early_settlement = $early_settlement ?? [];
                 </div>
                 <div class="mb-3" id="installmentSelectWrapper" >
                     <label class="form-label">Installment Number</label>
-                    <select name="installment_no" class="form-select">
+                    <select aria-label="Installment no" name="installment_no" class="form-select">
                         <?php for ($i = 1; $i <= count($installments); $i++): ?>
                             <option value="<?= $i ?>">Installment #<?= $i ?></option>
                         <?php endfor; ?>

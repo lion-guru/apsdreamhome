@@ -29,7 +29,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category_id" class="form-select">
+                            <select aria-label="Category id" name="category_id" class="form-select">
                                 <option value="">-- None --</option>
                                 <?php if (!empty($categories)): ?>
                                     <?php foreach ($categories as $cat): ?>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Create Type</button>
                     </form>
@@ -79,7 +79,7 @@
                                                     <div class="col-md-3"><input type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($t['name'] ?? '') ?>" required></div>
                                                     <div class="col-md-2"><input type="text" name="slug" class="form-control form-control-sm" value="<?= htmlspecialchars($t['slug'] ?? '') ?>"></div>
                                                     <div class="col-md-3">
-                                                        <select name="category_id" class="form-select form-select-sm">
+                                                        <select aria-label="Category id" name="category_id" class="form-select form-select-sm">
                                                             <option value="">None</option>
                                                             <?php foreach ($categories as $cat): ?>
                                                                 <option value="<?= (int)$cat['id'] ?>" <?= ((int)($t['category_id'] ?? 0) === (int)$cat['id']) ? 'selected' : '' ?>><?= htmlspecialchars($cat['name'] ?? '') ?></option>

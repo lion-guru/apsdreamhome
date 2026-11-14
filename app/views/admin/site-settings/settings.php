@@ -240,7 +240,7 @@ $tabs = [
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label">Full Address</label>
-                            <textarea name="settings[contact_address_full]" class="form-control" rows="2"><?= sc($settings, 'contact_address_full') ?></textarea>
+                            <textarea aria-label="Settings" name="settings[contact_address_full]" class="form-control" rows="2"><?= sc($settings, 'contact_address_full') ?></textarea>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Latitude</label>
@@ -302,12 +302,12 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Meta Description</label>
-                        <textarea name="settings[seo_description]" class="form-control" rows="3" maxlength="160"><?= sc($settings, 'seo_description') ?></textarea>
+                        <textarea aria-label="Settings" name="settings[seo_description]" class="form-control" rows="3" maxlength="160"><?= sc($settings, 'seo_description') ?></textarea>
                         <div class="form-text">Recommended: 150-160 characters. Currently: <span id="seoDescCount"><?= strlen($settings['seo_description'] ?? '') ?></span>/160</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Meta Keywords</label>
-                        <textarea name="settings[seo_keywords]" class="form-control" rows="2" placeholder="keyword1, keyword2, keyword3"><?= sc($settings, 'seo_keywords') ?></textarea>
+                        <textarea aria-label="Settings" name="settings[seo_keywords]" class="form-control" rows="2" placeholder="keyword1, keyword2, keyword3"><?= sc($settings, 'seo_keywords') ?></textarea>
                         <div class="form-text">Comma-separated keywords</div>
                     </div>
                 </div>
@@ -344,7 +344,7 @@ $tabs = [
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <label class="form-label">About Text (shown in footer)</label>
-                    <textarea name="settings[footer_about]" class="form-control" rows="3"><?= sc($settings, 'footer_about') ?></textarea>
+                    <textarea aria-label="Settings" name="settings[footer_about]" class="form-control" rows="3"><?= sc($settings, 'footer_about') ?></textarea>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Copyright Text</label>
@@ -369,7 +369,7 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Hero Subtitle</label>
-                        <textarea name="settings[hero_subtitle]" class="form-control" rows="2"><?= sc($settings, 'hero_subtitle') ?></textarea>
+                        <textarea aria-label="Settings" name="settings[hero_subtitle]" class="form-control" rows="2"><?= sc($settings, 'hero_subtitle') ?></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -424,14 +424,14 @@ $tabs = [
                     <h6><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp Floating Widget</h6>
                     <div class="mb-3">
                         <label class="form-label">Enable Widget</label>
-                        <select name="settings[whatsapp_enabled]" class="form-select">
+                        <select aria-label="Settings" name="settings[whatsapp_enabled]" class="form-select">
                             <option value="1" <?= ($settings['whatsapp_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             <option value="0" <?= ($settings['whatsapp_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Default Message</label>
-                        <textarea name="settings[whatsapp_message]" class="form-control" rows="2"><?= sc($settings, 'whatsapp_message', 'Hi! I am interested in your properties.') ?></textarea>
+                        <textarea aria-label="Settings" name="settings[whatsapp_message]" class="form-control" rows="2"><?= sc($settings, 'whatsapp_message', 'Hi! I am interested in your properties.') ?></textarea>
                     </div>
                     <div class="alert alert-info small mb-0">
                         <i class="fas fa-info-circle me-1"></i>
@@ -458,7 +458,7 @@ $tabs = [
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Encryption</label>
-                            <select name="settings[smtp_encryption]" class="form-select">
+                            <select aria-label="Settings" name="settings[smtp_encryption]" class="form-select">
                                 <option value="tls" <?= ($settings['smtp_encryption'] ?? '') === 'tls' ? 'selected' : '' ?>>TLS</option>
                                 <option value="ssl" <?= ($settings['smtp_encryption'] ?? '') === 'ssl' ? 'selected' : '' ?>>SSL</option>
                                 <option value="none" <?= ($settings['smtp_encryption'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>
@@ -528,7 +528,7 @@ $tabs = [
                     <h6><i class="fas fa-credit-card me-2"></i>Razorpay Gateway</h6>
                     <div class="mb-3">
                         <label class="form-label">Enable Razorpay</label>
-                        <select name="settings[razorpay_enabled]" class="form-select">
+                        <select aria-label="Settings" name="settings[razorpay_enabled]" class="form-select">
                             <option value="1" <?= ($settings['razorpay_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             <option value="0" <?= ($settings['razorpay_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                         </select>
@@ -555,7 +555,7 @@ $tabs = [
                     <h6><i class="fas fa-mobile-alt me-2"></i>UPI Configuration</h6>
                     <div class="mb-3">
                         <label class="form-label">Enable UPI</label>
-                        <select name="settings[upi_enabled]" class="form-select">
+                        <select aria-label="Settings" name="settings[upi_enabled]" class="form-select">
                             <option value="1" <?= ($settings['upi_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             <option value="0" <?= ($settings['upi_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                         </select>
@@ -592,7 +592,7 @@ $tabs = [
                     <h6><i class="fas fa-sms me-2"></i>SMS Gateway (MSG91)</h6>
                     <div class="mb-3">
                         <label class="form-label">Enable SMS</label>
-                        <select name="settings[sms_enabled]" class="form-select">
+                        <select aria-label="Settings" name="settings[sms_enabled]" class="form-select">
                             <option value="1" <?= ($settings['sms_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             <option value="0" <?= ($settings['sms_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                         </select>
@@ -611,7 +611,7 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Default Route</label>
-                        <select name="settings[sms_route]" class="form-select">
+                        <select aria-label="Settings" name="settings[sms_route]" class="form-select">
                             <option value="transactional" <?= ($settings['sms_route'] ?? '') === 'transactional' ? 'selected' : '' ?>>Transactional</option>
                             <option value="promotional" <?= ($settings['sms_route'] ?? '') === 'promotional' ? 'selected' : '' ?>>Promotional</option>
                         </select>
@@ -623,7 +623,7 @@ $tabs = [
                     <h6><i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp Business API</h6>
                     <div class="mb-3">
                         <label class="form-label">Enable WhatsApp</label>
-                        <select name="settings[whatsapp_api_enabled]" class="form-select">
+                        <select aria-label="Settings" name="settings[whatsapp_api_enabled]" class="form-select">
                             <option value="1" <?= ($settings['whatsapp_api_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             <option value="0" <?= ($settings['whatsapp_api_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                         </select>

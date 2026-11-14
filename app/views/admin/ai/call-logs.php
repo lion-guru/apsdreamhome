@@ -74,7 +74,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Status</label>
-                        <select name="status" class="form-select form-select-sm">
+                        <select aria-label="Status" name="status" class="form-select form-select-sm">
                             <option value="">All Status</option>
                             <?php foreach (['completed','failed','in_progress','no_answer','scheduled'] as $s): ?>
                                 <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
@@ -83,7 +83,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Sentiment</label>
-                        <select name="sentiment" class="form-select form-select-sm">
+                        <select aria-label="Sentiment" name="sentiment" class="form-select form-select-sm">
                             <option value="">All</option>
                             <option value="positive" <?= ($filters['sentiment'] ?? '') === 'positive' ? 'selected' : '' ?>>Positive</option>
                             <option value="neutral" <?= ($filters['sentiment'] ?? '') === 'neutral' ? 'selected' : '' ?>>Neutral</option>
@@ -92,7 +92,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Response</label>
-                        <select name="response" class="form-select form-select-sm">
+                        <select aria-label="Response" name="response" class="form-select form-select-sm">
                             <option value="">All</option>
                             <?php foreach (['interested','not_interested','callback','dnd','no_answer'] as $r): ?>
                                 <option value="<?= $r ?>" <?= ($filters['response'] ?? '') === $r ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$r)) ?></option>
@@ -101,7 +101,7 @@ $base = BASE_URL . '/admin/ai-calling/call-logs';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Agent</label>
-                        <select name="agent" class="form-select form-select-sm">
+                        <select aria-label="Agent" name="agent" class="form-select form-select-sm">
                             <option value="">All Agents</option>
                             <?php foreach ($agents as $a): ?>
                                 <option value="<?= htmlspecialchars($a ?? '') ?>" <?= ($filters['agent'] ?? '') === $a ? 'selected' : '' ?>><?= htmlspecialchars($a ?? '') ?></option>

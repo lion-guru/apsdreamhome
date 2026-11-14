@@ -20,7 +20,7 @@ $content = $content ?? '';
     <?php echo CSRFProtection::csrfField(); ?>
         <div class="col-md-3">
           <label class="small text-muted"><?= __('user_resell_public_property_type', 'Property Type') ?></label>
-          <select name="property_type" class="form-select">
+          <select aria-label="Property type" name="property_type" class="form-select">
             <option value=""><?= __('user_resell_public_all_types', 'All Types') ?></option>
             <option value="plot"><?= __('user_resell_public_type_plot', 'Plot') ?></option>
             <option value="house"><?= __('user_resell_public_type_house', 'House') ?></option>
@@ -40,7 +40,7 @@ $content = $content ?? '';
         </div>
         <div class="col-md-3">
           <label class="small text-muted"><?= __('user_resell_public_district', 'District') ?></label>
-          <select name="district_id" class="form-select">
+          <select aria-label="District id" name="district_id" class="form-select">
             <option value=""><?= __('user_resell_public_all_districts', 'All Districts') ?></option>
           </select>
         </div>

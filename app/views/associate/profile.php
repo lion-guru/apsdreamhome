@@ -323,7 +323,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                         </div>
                         <div class="col-md-4">
                             <label for="profile_gender" class="form-label small fw-semibold">Gender</label>
-                            <select id="profile_gender" name="gender" class="form-select">
+                            <select aria-label="Gender" id="profile_gender" name="gender" class="form-select">
                                 <?php $g = strtolower($associate['gender'] ?? $user['gender'] ?? ''); ?>
                                 <option value="">Select Gender</option>
                                 <option value="male" <?= $g === 'male' ? 'selected' : '' ?>>Male</option>
@@ -338,7 +338,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
 
                         <div class="col-12">
                             <label for="profile_address" class="form-label small fw-semibold">Postal Address</label>
-                            <textarea id="profile_address" name="address" class="form-control" rows="2" placeholder="Street address, colony, landmark..."><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
+                            <textarea aria-label="Address" id="profile_address" name="address" class="form-control" rows="2" placeholder="Street address, colony, landmark..."><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
                         </div>
 
                         <div class="col-md-4">

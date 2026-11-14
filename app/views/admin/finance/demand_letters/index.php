@@ -83,7 +83,7 @@
                 <form method="GET" action="<?= $base ?>/admin/finance/demand-letters" class="row g-3 align-items-end">
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Status</label>
-                        <select name="status" class="form-select form-select-sm">
+                        <select aria-label="Status" name="status" class="form-select form-select-sm">
                             <option value="">All Statuses</option>
                             <?php foreach (['drafted' => 'Drafted', 'sent' => 'Sent', 'viewed' => 'Viewed', 'paid' => 'Paid', 'overdue' => 'Overdue'] as $val => $label): ?>
                                 <option value="<?= $val ?>" <?= ($filters['status'] ?? '') === $val ? 'selected' : '' ?>><?= $label ?></option>
@@ -92,7 +92,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Colony</label>
-                        <select name="colony_id" class="form-select form-select-sm">
+                        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm">
                             <option value="">All Colonies</option>
                             <?php foreach (($colonies ?? []) as $col): ?>
                                 <option value="<?= (int)$col['id'] ?>" <?= (int)($filters['colony_id'] ?? 0) === (int)$col['id'] ? 'selected' : '' ?>><?= htmlspecialchars($col['name'] ?? '') ?></option>
@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Overdue</label>
-                        <select name="overdue_days" class="form-select form-select-sm">
+                        <select aria-label="Overdue days" name="overdue_days" class="form-select form-select-sm">
                             <option value="">All</option>
                             <option value="0" <?= ($filters['overdue_days'] ?? '') === '0' ? 'selected' : '' ?>>Any Overdue</option>
                             <option value="7" <?= ($filters['overdue_days'] ?? '') === '7' ? 'selected' : '' ?>>7+ days</option>

@@ -21,7 +21,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
     </div>
     <form method="GET" class="d-flex gap-2 flex-wrap">
         <input type="date" name="work_date" class="form-control" value="<?= $e($work_date) ?>" onchange="this.form.submit()">
-        <select name="colony_id" class="form-select" onchange="this.form.submit()">
+        <select aria-label="Colony id" name="colony_id" class="form-select" onchange="this.form.submit()">
             <option value="0">All colonies</option>
             <?php foreach ($colonies as $c): ?>
                 <option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>><?= $e($c['name']) ?></option>
@@ -38,7 +38,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
         <div class="row g-2">
             <div class="col-md-3 col-6">
                 <label class="form-label small">Colony</label>
-                <select name="colony_id" class="form-control form-control-lg">
+                <select aria-label="Colony id" name="colony_id" class="form-control form-control-lg">
                     <option value="0">—</option>
                     <?php foreach ($colonies as $c): ?>
                         <option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>><?= $e($c['name']) ?></option>
@@ -51,7 +51,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
             </div>
             <div class="col-md-2 col-6">
                 <label class="form-label small">Role</label>
-                <select name="worker_role" class="form-select form-select-lg" id="musterRole">
+                <select aria-label="Worker role" name="worker_role" class="form-select form-select-lg" id="musterRole">
                     <?php foreach ($roles as $k => $label): ?>
                         <option value="<?= $e($k) ?>"><?= $e($label) ?></option>
                     <?php endforeach; ?>

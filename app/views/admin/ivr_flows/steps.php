@@ -112,7 +112,7 @@ $steps = $steps ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Step Type <span class="text-danger">*</span></label>
-                        <select class="form-select" name="step_type" id="step_type" required onchange="updateConfigFields()">
+                        <select aria-label="Step type" class="form-select" name="step_type" id="step_type" required onchange="updateConfigFields()">
                             <option value="">Select Type</option>
                             <option value="message">Play Message</option>
                             <option value="menu">Menu (Press 1, 2, 3...)</option>
@@ -150,7 +150,7 @@ $steps = $steps ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Step Type <span class="text-danger">*</span></label>
-                        <select class="form-select" name="step_type" id="edit_step_type" required onchange="updateEditConfigFields()">
+                        <select aria-label="Step type" class="form-select" name="step_type" id="edit_step_type" required onchange="updateEditConfigFields()">
                             <option value="message">Play Message</option>
                             <option value="menu">Menu (Press 1, 2, 3...)</option>
                             <option value="transfer">Transfer to Agent/Number</option>
@@ -175,11 +175,11 @@ function getConfigFields(type, prefix = '') {
         message: `
             <div class="mb-3">
                 <label class="form-label">Message Text</label>
-                <textarea class="form-control" name="${prefix}config[message_text]" rows="3" required></textarea>
+                <textarea aria-label="${prefix}config" class="form-control" name="${prefix}config[message_text]" rows="3" required></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Voice</label>
-                <select class="form-select" name="${prefix}config[voice]">
+                <select aria-label="${prefix}config" class="form-select" name="${prefix}config[voice]">
                     <option value="alice">Alice (Female)</option>
                     <option value="man">Man (Male)</option>
                     <option value="woman">Woman (Female)</option>
@@ -189,11 +189,11 @@ function getConfigFields(type, prefix = '') {
         menu: `
             <div class="mb-3">
                 <label class="form-label">Menu Prompt</label>
-                <textarea class="form-control" name="${prefix}config[prompt]" rows="2" required placeholder="Press 1 for Sales, 2 for Support..."></textarea>
+                <textarea aria-label="${prefix}config" class="form-control" name="${prefix}config[prompt]" rows="2" required placeholder="Press 1 for Sales, 2 for Support..."></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Options (JSON)</label>
-                <textarea class="form-control" name="${prefix}config[options]" rows="4" required>
+                <textarea aria-label="${prefix}config" class="form-control" name="${prefix}config[options]" rows="4" required>
 {
   "1": { "action": "transfer", "target": "sales" },
   "2": { "action": "transfer", "target": "support" }
@@ -203,7 +203,7 @@ function getConfigFields(type, prefix = '') {
         transfer: `
             <div class="mb-3">
                 <label class="form-label">Transfer To</label>
-                <select class="form-select" name="${prefix}config[transfer_to]" required>
+                <select aria-label="${prefix}config" class="form-select" name="${prefix}config[transfer_to]" required>
                     <option value="">Select...</option>
                     <option value="agent">Available Agent</option>
                     <option value="number">Phone Number</option>
@@ -215,7 +215,7 @@ function getConfigFields(type, prefix = '') {
         voicemail: `
             <div class="mb-3">
                 <label class="form-label">Greeting Message</label>
-                <textarea class="form-control" name="${prefix}config[greeting]" rows="3"></textarea>
+                <textarea aria-label="${prefix}config" class="form-control" name="${prefix}config[greeting]" rows="3"></textarea>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email for Transcription</label>

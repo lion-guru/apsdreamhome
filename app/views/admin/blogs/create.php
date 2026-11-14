@@ -16,14 +16,14 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
-                                    <textarea name="content" id="blog_content" class="form-control" rows="10" required></textarea>
+                                    <textarea aria-label="Content" name="content" id="blog_content" class="form-control" rows="10" required></textarea>
                                     <button type="button" id="aiGenBlog" class="btn btn-sm mt-2"><i class="fas fa-magic"></i> Generate with AI (Hindi + English)</button>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Category</label>
-                                    <select name="category_id" class="form-select">
+                                    <select aria-label="Category id" name="category_id" class="form-select">
                                         <option value="">Select Category</option>
                                         <?php foreach ($categories ?? [] as $cat): ?>
                                         <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name'] ?? ''); ?></option>
@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="draft">Draft</option>
                                         <option value="published">Published</option>
                                         <option value="archived">Archived</option>
@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Meta Description</label>
-                                    <textarea name="meta_description" class="form-control" rows="3"></textarea>
+                                    <textarea aria-label="Meta description" name="meta_description" class="form-control" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>

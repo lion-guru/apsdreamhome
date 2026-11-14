@@ -42,7 +42,7 @@ $success = $success ?? '';
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Networker / Agent <span class="text-danger">*</span></label>
-                        <select name="agent_id" class="form-select" required>
+                        <select aria-label="Agent id" name="agent_id" class="form-select" required>
                             <option value="">Select Networker</option>
                             <?php foreach ($users as $u): ?>
                                 <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?></option>
@@ -51,7 +51,7 @@ $success = $success ?? '';
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Payment Mode</label>
-                        <select name="payment_mode" class="form-select">
+                        <select aria-label="Payment mode" name="payment_mode" class="form-select">
                             <option value="Full">Full Payment</option>
                             <option value="Installment">Installment</option>
                             <option value="Loan">Loan</option>
@@ -63,7 +63,7 @@ $success = $success ?? '';
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Inventory Plots</label>
-                        <select name="plot_id" class="form-select">
+                        <select aria-label="Plot id" name="plot_id" class="form-select">
                             <option value="">-- Select from Inventory --</option>
                             <?php foreach ($plots as $p): ?>
                                 <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['block_name'] ?? '') ?> - Plot <?= htmlspecialchars($p['plot_no'] ?? '') ?> (<?= $p['size_sqft'] ?? '' ?> sqft) - ₹<?= number_format($p['basic_price'] ?? 0) ?></option>
@@ -72,7 +72,7 @@ $success = $success ?? '';
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">OR Colony Plots</label>
-                        <select name="plot_id_backup" class="form-select">
+                        <select aria-label="Plot id backup" name="plot_id_backup" class="form-select">
                             <option value="">-- Select from Colony Plots --</option>
                             <?php foreach ($plots2 as $p): ?>
                                 <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['block'] ?? '') ?> - Plot <?= htmlspecialchars($p['plot_no'] ?? '') ?> (<?= $p['area_sqft'] ?? '' ?> sqft) - ₹<?= number_format($p['total_price'] ?? 0) ?></option>

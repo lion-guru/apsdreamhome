@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <label class="form-label small">Filter by Colony</label>
-        <select class="form-select form-select-sm" id="colonyFilter" onchange="filterByColony(this.value)">
+        <select aria-label="Colony filter" class="form-select form-select-sm" id="colonyFilter" onchange="filterByColony(this.value)">
             <option value="0">All Colonies</option>
             <?php foreach ($colonies as $c): ?>
                 <option value="<?= (int)$c['id'] ?>" <?= $selected_colony == $c['id'] ? 'selected' : '' ?>>
@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     </div>
     <div class="col-md-4">
         <label class="form-label small">Status</label>
-        <select class="form-select form-select-sm" id="statusFilter" onchange="filterByStatus(this.value)">
+        <select aria-label="Status filter" class="form-select form-select-sm" id="statusFilter" onchange="filterByStatus(this.value)">
             <option value="">All Status</option>
             <option value="1" <?= ($statusFilter ?? '') === '1' ? 'selected' : '' ?>>Active</option>
             <option value="0" <?= ($statusFilter ?? '') === '0' ? 'selected' : '' ?>>Inactive</option>
@@ -135,7 +135,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small">Colony</label>
-                            <select name="colony_id" class="form-select form-select-sm">
+                            <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm">
                                 <option value="0">Global (All Colonies)</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -149,7 +149,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Attribute Key <span class="text-danger">*</span></label>
-                            <select name="attribute_key" class="form-select form-select-sm" required>
+                            <select aria-label="Attribute key" name="attribute_key" class="form-select form-select-sm" required>
                                 <option value="corner_plot">Corner Plot (plots.corner_plot)</option>
                                 <option value="park_facing">Park Facing (plots.park_facing)</option>
                                 <option value="road_width_ft">Road Width (road_width_ft)</option>
@@ -161,7 +161,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Condition Type <span class="text-danger">*</span></label>
-                            <select name="condition_type" class="form-select form-select-sm" required>
+                            <select aria-label="Condition type" name="condition_type" class="form-select form-select-sm" required>
                                 <option value="equals_true">Equals True (Boolean)</option>
                                 <option value="equals">Equals Value</option>
                                 <option value="greater_than">Greater Than (Number)</option>
@@ -176,7 +176,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Charge Type <span class="text-danger">*</span></label>
-                            <select name="charge_type" class="form-select form-select-sm" required>
+                            <select aria-label="Charge type" name="charge_type" class="form-select form-select-sm" required>
                                 <option value="percentage">Percentage of Base Rate</option>
                                 <option value="fixed_per_sqft">Fixed ₹ per Sq Ft</option>
                                 <option value="fixed_total">Fixed Total Amount</option>
@@ -219,7 +219,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small">Colony</label>
-                            <select name="colony_id" class="form-select form-select-sm" id="editColony">
+                            <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" id="editColony">
                                 <option value="0">Global</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -232,7 +232,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Attribute Key <span class="text-danger">*</span></label>
-                            <select name="attribute_key" class="form-select form-select-sm" required id="editAttributeKey">
+                            <select aria-label="Attribute key" name="attribute_key" class="form-select form-select-sm" required id="editAttributeKey">
                                 <option value="corner_plot">Corner Plot</option>
                                 <option value="park_facing">Park Facing</option>
                                 <option value="road_width_ft">Road Width</option>
@@ -244,7 +244,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Condition Type</label>
-                            <select name="condition_type" class="form-select form-select-sm" required id="editConditionType">
+                            <select aria-label="Condition type" name="condition_type" class="form-select form-select-sm" required id="editConditionType">
                                 <option value="equals_true">Equals True</option>
                                 <option value="equals">Equals Value</option>
                                 <option value="greater_than">Greater Than</option>
@@ -258,7 +258,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Charge Type</label>
-                            <select name="charge_type" class="form-select form-select-sm" required id="editChargeType">
+                            <select aria-label="Charge type" name="charge_type" class="form-select form-select-sm" required id="editChargeType">
                                 <option value="percentage">Percentage</option>
                                 <option value="fixed_per_sqft">Fixed ₹/sqft</option>
                                 <option value="fixed_total">Fixed Total</option>

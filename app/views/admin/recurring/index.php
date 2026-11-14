@@ -24,7 +24,7 @@ $filters = $filters ?? ['status'=>''];
 
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row">
-            <div class="col-md-3"><label>Status</label><select name="status" class="form-select"><option value="">All</option><option value="active" <?= $filters['status']==='active'?'selected':'' ?>>Active</option><option value="inactive" <?= $filters['status']==='inactive'?'selected':'' ?>>Inactive</option><option value="due" <?= $filters['status']==='due'?'selected':'' ?>>Due Now</option></select></div>
+            <div class="col-md-3"><label>Status</label><select aria-label="Status" name="status" class="form-select"><option value="">All</option><option value="active" <?= $filters['status']==='active'?'selected':'' ?>>Active</option><option value="inactive" <?= $filters['status']==='inactive'?'selected':'' ?>>Inactive</option><option value="due" <?= $filters['status']==='due'?'selected':'' ?>>Due Now</option></select></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/recurring" class="btn btn-outline-secondary w-100">Clear</a></div>
         </form>

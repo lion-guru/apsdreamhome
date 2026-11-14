@@ -184,7 +184,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label>Select Agent</label>
-                        <select name="agent_user_id" required>
+                        <select aria-label="Agent user id" name="agent_user_id" required>
                             <option value="">-- Choose Agent --</option>
                             <?php foreach ($allAgents as $ag): ?>
                             <option value="<?= (int)$ag['id'] ?>"><?= htmlspecialchars($ag['name'] ?? '') ?> (<?= htmlspecialchars($ag['email'] ?? '') ?>)</option>
@@ -193,7 +193,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <div class="mb-3">
                         <label>Select Property</label>
-                        <select name="property_id" required>
+                        <select aria-label="Property id" name="property_id" required>
                             <option value="">-- Choose Property --</option>
                             <?php foreach ($allProperties as $p): ?>
                             <option value="<?= (int)$p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?> — <?= htmlspecialchars($p['location'] ?? '') ?></option>

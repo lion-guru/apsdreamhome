@@ -108,7 +108,7 @@ $isClosed = in_array($ticket['status'] ?? '', ['resolved', 'closed']);
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('user_ticket_detail_label_reply', 'Your Reply') ?></label>
-                            <textarea name="message" class="form-control" rows="4" required minlength="2"
+                            <textarea aria-label="Message" name="message" class="form-control" rows="4" required minlength="2"
                                       placeholder="<?= __('user_ticket_detail_placeholder_reply', 'Type your reply here...') ?>"></textarea>
                         </div>
                         <div class="d-flex justify-content-end">

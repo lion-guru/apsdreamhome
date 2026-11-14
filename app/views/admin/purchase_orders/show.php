@@ -88,7 +88,7 @@ $grnRecords = $grnRecords ?? [];
                 <tr><td><?= htmlspecialchars($item['item_name']) ?></td><td><?= $item['quantity'] ?></td><td><input type="hidden" name="items_po_id[]" value="<?= $item['id'] ?>"><input type="number" name="items_accepted[]" class="form-control form-control-sm" step="0.01" min="0" max="<?= $item['quantity'] ?>" value="0"></td></tr>
             <?php endforeach; ?>
             </tbody></table>
-            <div class="mt-3"><label>Remarks</label><textarea name="remarks" class="form-control" rows="2"></textarea></div>
+            <div class="mt-3"><label>Remarks</label><textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"></textarea></div>
         </form>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="submit" form="grnForm" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create GRN</button></div>

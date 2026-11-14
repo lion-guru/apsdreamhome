@@ -32,12 +32,12 @@ $page_title = $page_title ?? 'Create IVR Flow';
 
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" rows="3" placeholder="Describe what this IVR flow does..."></textarea>
+                        <textarea aria-label="Description" class="form-control" name="description" rows="3" placeholder="Describe what this IVR flow does..."></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Welcome Message</label>
-                        <textarea class="form-control" name="welcome_message" rows="3" placeholder="Message played when call connects..."></textarea>
+                        <textarea aria-label="Welcome message" class="form-control" name="welcome_message" rows="3" placeholder="Message played when call connects..."></textarea>
                         <div class="form-text">TTS or recorded message played at the start of the call</div>
                     </div>
 

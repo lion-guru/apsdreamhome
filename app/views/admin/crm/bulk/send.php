@@ -23,14 +23,14 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Channel</label>
-                                <select class="form-select" name="channel" id="bulkChannel">
+                                <select aria-label="Channel" class="form-select" name="channel" id="bulkChannel">
                                     <option value="email">Email</option>
                                     <option value="sms">SMS</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Target Segment</label>
-                                <select class="form-select" name="segment_id" id="bulkSegment">
+                                <select aria-label="Segment id" class="form-select" name="segment_id" id="bulkSegment">
                                     <option value="">All Active Leads</option>
                                     <?php foreach ($segments as $s): ?>
                                         <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Template (optional)</label>
-                                <select class="form-select" id="bulkTemplate">
+                                <select aria-label="Bulk template" class="form-select" id="bulkTemplate">
                                     <option value="">-- Custom --</option>
                                     <?php foreach ($email_templates as $t): ?>
                                         <option value="<?= $t['id'] ?>" data-subject="<?= htmlspecialchars($t['subject'] ?? '') ?>" data-type="email">ðŸ“§ <?= htmlspecialchars($t['name'] ?? '') ?></option>
@@ -60,7 +60,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Message Body *</label>
-                            <textarea class="form-control" name="body" id="bulkBody" rows="8" required placeholder="Dear {{name}}, ..."></textarea>
+                            <textarea aria-label="Body" class="form-control" name="body" id="bulkBody" rows="8" required placeholder="Dear {{name}}, ..."></textarea>
                         </div>
 
                         <div class="p-3 bg-light rounded mb-3">

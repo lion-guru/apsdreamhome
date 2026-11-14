@@ -64,7 +64,7 @@ define('LIVE_CHAT_WIDGET_LOADED', true);
                                placeholder="<?= htmlspecialchars(__('component_phone_optional', 'Phone (optional)')) ?>" maxlength="20">
                     </div>
                     <div class="mb-2">
-                        <textarea class="form-control form-control-sm" id="lcw-first-message" name="message"
+                        <textarea aria-label="Message" class="form-control form-control-sm" id="lcw-first-message" name="message"
                                   rows="2" placeholder="<?= htmlspecialchars(__('component_how_can_we_help', 'How can we help? (optional)')) ?>" maxlength="500"></textarea>
                     </div>
                     <div id="lcw-prechat-error" class="alert alert-danger py-1 px-2 small d-none" role="alert"></div>
@@ -86,7 +86,7 @@ define('LIVE_CHAT_WIDGET_LOADED', true);
         </div>
 
         <footer class="lcw-input-bar" id="lcw-input-bar" hidden>
-            <textarea id="lcw-input" class="lcw-input" rows="1"
+            <textarea aria-label="Lcw input" id="lcw-input" class="lcw-input" rows="1"
                       placeholder="<?= htmlspecialchars(__('component_type_a_message', 'Type a message...')) ?>" maxlength="1000"
                       aria-label="<?= htmlspecialchars(__('component_message_label', 'Message')) ?>"></textarea>
             <button id="lcw-send" class="lcw-send" type="button" aria-label="<?= htmlspecialchars(__('component_send_message_label', 'Send message')) ?>" disabled>

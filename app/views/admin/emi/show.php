@@ -186,7 +186,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
-                            <select id="paymentMethod" class="form-select" required>
+                            <select aria-label="Payment method" id="paymentMethod" class="form-select" required>
                                 <option value="">Select method...</option>
                                 <option value="cash">Cash</option>
                                 <option value="cheque">Cheque</option>

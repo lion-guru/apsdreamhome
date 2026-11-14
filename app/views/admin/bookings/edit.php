@@ -47,7 +47,7 @@ $active_page = 'bookings';
                 <!-- Property Selection -->
                 <div class="col-md-6 mb-3">
                     <label for="property_id" class="form-label">Property *</label>
-                    <select class="form-select" id="property_id" name="property_id" required onchange="updateAmount()">
+                    <select aria-label="Property id" class="form-select" id="property_id" name="property_id" required onchange="updateAmount()">
                         <option value="">Select Property</option>
                         <?php foreach ($properties as $property): ?>
                             <option value="<?= $property['id'] ?>"
@@ -62,7 +62,7 @@ $active_page = 'bookings';
                 <!-- Customer Selection -->
                 <div class="col-md-6 mb-3">
                     <label for="customer_id" class="form-label">Customer *</label>
-                    <select class="form-select" id="customer_id" name="customer_id" required>
+                    <select aria-label="Customer id" class="form-select" id="customer_id" name="customer_id" required>
                         <option value="">Select Customer</option>
                         <?php foreach ($users as $customer): ?>
                             <option value="<?= $customer['id'] ?>"
@@ -81,7 +81,7 @@ $active_page = 'bookings';
                         <i class="fas fa-user-tie"></i> Assign Associate
                         <small class="text-muted">(Optional - for commission tracking)</small>
                     </label>
-                    <select class="form-select" id="associate_id" name="associate_id">
+                    <select aria-label="Associate id" class="form-select" id="associate_id" name="associate_id">
                         <option value="">No Associate (Direct Booking)</option>
                         <?php foreach ($users as $associate): ?>
                             <option value="<?= $associate['id'] ?>"
@@ -121,7 +121,7 @@ $active_page = 'bookings';
                 <!-- Status -->
                 <div class="col-md-6 mb-3">
                     <label for="status" class="form-label">Booking Status</label>
-                    <select class="form-select" id="status" name="status">
+                    <select aria-label="Status" class="form-select" id="status" name="status">
                         <option value="pending" <?= $booking['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="confirmed" <?= $booking['status'] == 'confirmed' ? 'selected' : '' ?>>Confirmed</option>
                         <option value="completed" <?= $booking['status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
@@ -134,7 +134,7 @@ $active_page = 'bookings';
             <div class="row">
                 <div class="col-12 mb-3">
                     <label for="notes" class="form-label">Notes</label>
-                    <textarea class="form-control" id="notes" name="notes" rows="3"
+                    <textarea aria-label="Notes" class="form-control" id="notes" name="notes" rows="3"
                         placeholder="Add any notes about this booking"><?= htmlspecialchars($booking['notes'] ?? '') ?></textarea>
                 </div>
             </div>

@@ -32,7 +32,7 @@ $settings = $settings ?? [];
                         
                         <div class="mb-3">
                             <label class="form-label">Enable SMS Gateway</label>
-                            <select name="sms_enabled" class="form-select">
+                            <select aria-label="Sms enabled" name="sms_enabled" class="form-select">
                                 <option value="0" <?= ($settings['sms_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                                 <option value="1" <?= ($settings['sms_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             </select>
@@ -60,7 +60,7 @@ $settings = $settings ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">Default Route</label>
-                            <select name="sms_route" class="form-select">
+                            <select aria-label="Sms route" name="sms_route" class="form-select">
                                 <option value="transactional" <?= ($settings['sms_route'] ?? '') === 'transactional' ? 'selected' : '' ?>>Transactional (OTP, alerts, notifications)</option>
                                 <option value="promotional" <?= ($settings['sms_route'] ?? '') === 'promotional' ? 'selected' : '' ?>>Promotional (marketing, offers)</option>
                             </select>

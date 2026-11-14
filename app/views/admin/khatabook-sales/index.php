@@ -48,7 +48,7 @@
                             <input type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>">
                         </div>
                         <div class="col-md-2">
-                            <select name="batch" class="form-select form-select-sm">
+                            <select aria-label="Batch" name="batch" class="form-select form-select-sm">
                                 <option value="">All Batches</option>
                                 <?php foreach ($batches as $b): ?>
                                     <option value="<?= htmlspecialchars($b['import_batch'] ?? '') ?>" <?= ($_GET['batch'] ?? '') === $b['import_batch'] ? 'selected' : '' ?>><?= htmlspecialchars(substr($b['import_batch'], 0, 20)) ?></option>

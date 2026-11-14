@@ -278,7 +278,7 @@ $department = $department ?? '';
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" id="modalEmployeeId" class="form-select" required>
+                            <select aria-label="Employee id" name="employee_id" id="modalEmployeeId" class="form-select" required>
                                 <option value="">Select employee</option>
                                 <?php foreach ($workload as $w): ?>
                                     <option value="<?= $w['employee_id'] ?>" data-name="<?= htmlspecialchars($w['name']) ?>" data-workload="<?= round($w['workload_percentage']) ?>">
@@ -289,7 +289,7 @@ $department = $department ?? '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Priority <span class="text-danger">*</span></label>
-                            <select name="priority" class="form-select" required>
+                            <select aria-label="Priority" name="priority" class="form-select" required>
                                 <option value="low">Low</option>
                                 <option value="medium" selected>Medium</option>
                                 <option value="high">High</option>
@@ -302,7 +302,7 @@ $department = $department ?? '';
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Description</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Task details..."></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Task details..."></textarea>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Deadline <span class="text-danger">*</span></label>
@@ -315,7 +315,7 @@ $department = $department ?? '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Required Role</label>
-                            <select name="required_role" class="form-select">
+                            <select aria-label="Required role" name="required_role" class="form-select">
                                 <option value="">Any role</option>
                                 <option value="telecalling_executive">Telecaller</option>
                                 <option value="sales_manager">Sales Manager</option>
@@ -327,7 +327,7 @@ $department = $department ?? '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Algorithm</label>
-                            <select name="algorithm" class="form-select">
+                            <select aria-label="Algorithm" name="algorithm" class="form-select">
                                 <option value="hybrid">Hybrid (Default)</option>
                                 <option value="least_loaded">Least Loaded</option>
                                 <option value="skill_based">Skill Based</option>

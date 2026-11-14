@@ -22,7 +22,7 @@ $bookings = $bookings ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Agreement Type <span class="text-danger">*</span></label>
-                            <select name="agreement_type" class="form-select" id="agreement_type" required>
+                            <select aria-label="Agreement type" name="agreement_type" class="form-select" id="agreement_type" required>
                                 <option value="">Select Type</option>
                                 <option value="sale_deed">Sale Deed</option>
                                 <option value="allotment">Allotment Letter</option>
@@ -35,7 +35,7 @@ $bookings = $bookings ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Link to Booking (Optional)</label>
-                            <select name="booking_id" class="form-select" id="booking_id">
+                            <select aria-label="Booking id" name="booking_id" class="form-select" id="booking_id">
                                 <option value="0">— Select Booking (auto-fills parties) —</option>
                                 <?php foreach ($bookings as $b): ?>
                                     <option value="<?= $b['id'] ?>"
@@ -103,7 +103,7 @@ $bookings = $bookings ?? [];
 
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
-                        <textarea name="notes" class="form-control" rows="3" placeholder="Additional notes about this agreement..."></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Additional notes about this agreement..."></textarea>
                     </div>
 
                     <div class="d-flex gap-2">

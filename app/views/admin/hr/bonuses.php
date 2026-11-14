@@ -61,7 +61,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Employee</label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select</option>
                             <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -70,7 +70,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Bonus Type</label>
-                        <select name="bonus_type" class="form-select">
+                        <select aria-label="Bonus type" name="bonus_type" class="form-select">
                             <option value="performance">Performance</option>
                             <option value="attendance">Attendance</option>
                             <option value="target_achievement">Target Achievement</option>
@@ -81,7 +81,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                     <div class="mb-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label><input type="number" name="bonus_amount" class="form-control" step="0.01" required></div>
                     <div class="row mb-3">
                         <div class="col-6"><label class="form-label">Month</label>
-                            <select name="bonus_month" class="form-select">
+                            <select aria-label="Bonus month" name="bonus_month" class="form-select">
                                 <?php for ($m = 1; $m <= 12; $m++): ?>
                                     <option value="<?= $m ?>" <?= $m == date('m') ? 'selected' : '' ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
                                 <?php endfor; ?>
@@ -89,7 +89,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                         </div>
                         <div class="col-6"><label class="form-label">Year</label><input type="number" name="bonus_year" class="form-control" value="<?= date('Y') ?>"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Reason</label><textarea name="reason" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Reason</label><textarea aria-label="Reason" name="reason" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save</button>

@@ -33,7 +33,7 @@ $statusBadge = function ($s) {
                 <input type="text" name="search" value="<?= htmlspecialchars((string)($filters['search'] ?? '')) ?>" placeholder="<?= __('sale_search_placeholder') ?>" class="form-control form-control-sm">
             </div>
             <div class="col-md-2">
-                <select name="status" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" class="form-select form-select-sm">
                     <option value=""><?= __('sale_all_statuses') ?></option>
                     <?php foreach ($statuses as $st): ?>
                         <option value="<?= htmlspecialchars($st ?? '') ?>" <?= (($filters['status'] ?? '') === $st) ? 'selected' : '' ?>><?= htmlspecialchars($st ?? '') ?></option>

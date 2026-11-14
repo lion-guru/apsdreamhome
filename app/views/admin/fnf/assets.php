@@ -62,7 +62,7 @@ $employee_id = $employee_id ?? 0;
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Employee</label>
-                    <select name="employee_id" class="form-select" onchange="this.form.submit()">
+                    <select aria-label="Employee id" name="employee_id" class="form-select" onchange="this.form.submit()">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= $employee_id == $emp['id'] ? 'selected' : '' ?>>
@@ -162,7 +162,7 @@ $employee_id = $employee_id ?? 0;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select" required>
+                            <select aria-label="Employee id" name="employee_id" class="form-select" required>
                                 <option value="">Select Employee</option>
                                 <?php foreach ($employees as $emp): ?>
                                 <option value="<?= $emp['id'] ?>" <?= $employee_id == $emp['id'] ? 'selected' : '' ?>>
@@ -173,7 +173,7 @@ $employee_id = $employee_id ?? 0;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Asset Category <span class="text-danger">*</span></label>
-                            <select name="asset_category" class="form-select" required>
+                            <select aria-label="Asset category" name="asset_category" class="form-select" required>
                                 <option value="laptop">Laptop</option>
                                 <option value="mobile">Mobile Phone</option>
                                 <option value="sim">SIM Card</option>
@@ -205,7 +205,7 @@ $employee_id = $employee_id ?? 0;
                         </div>
                         <div class="col-12">
                             <label class="form-label">Remarks</label>
-                            <textarea name="remarks" class="form-control" rows="2" placeholder="Additional notes..."></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Additional notes..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -234,7 +234,7 @@ $employee_id = $employee_id ?? 0;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Condition on Return <span class="text-danger">*</span></label>
-                            <select name="condition" class="form-select" required>
+                            <select aria-label="Condition" name="condition" class="form-select" required>
                                 <option value="good">Good</option>
                                 <option value="damaged">Damaged</option>
                                 <option value="lost">Lost</option>
@@ -242,7 +242,7 @@ $employee_id = $employee_id ?? 0;
                         </div>
                         <div class="col-12">
                             <label class="form-label">Remarks</label>
-                            <textarea name="remarks" class="form-control" rows="3" placeholder="Notes on condition, damages, missing accessories..."></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control" rows="3" placeholder="Notes on condition, damages, missing accessories..."></textarea>
                         </div>
                     </div>
                 </div>

@@ -46,7 +46,7 @@ $statusColors = [
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Statuses</option>
                         <?php foreach ($statuses as $s): ?>
                             <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>>
@@ -62,7 +62,7 @@ $statusColors = [
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Source</label>
-                    <select name="source" class="form-select form-select-sm">
+                    <select aria-label="Source" name="source" class="form-select form-select-sm">
                         <option value="">All Sources</option>
                         <?php foreach ($sources as $s): ?>
                             <option value="<?= $s ?>" <?= ($filters['source'] ?? '') === $s ? 'selected' : '' ?>>

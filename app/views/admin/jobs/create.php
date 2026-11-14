@@ -32,7 +32,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="department" class="form-label">Department *</label>
-                        <select class="form-select" id="department" name="department" required>
+                        <select aria-label="Department" class="form-select" id="department" name="department" required>
                             <option value="">Select Department</option>
                             <?php foreach ($departments as $key => $value): ?>
                                 <option value="<?php echo e($key); ?>"><?php echo $value; ?></option>
@@ -49,7 +49,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="job_type" class="form-label">Job Type *</label>
-                        <select class="form-select" id="job_type" name="job_type" required>
+                        <select aria-label="Job type" class="form-select" id="job_type" name="job_type" required>
                             <?php foreach ($job_types as $type): ?>
                                 <option value="<?php echo e($type); ?>"><?php echo e($type); ?></option>
                             <?php endforeach; ?>
@@ -76,25 +76,25 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
 
                 <div class="mb-3">
                     <label for="description" class="form-label">Job Description *</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" required
+                    <textarea aria-label="Description" class="form-control" id="description" name="description" rows="4" required
                               placeholder="Describe the job role, responsibilities, and what the candidate can expect..."></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="requirements" class="form-label">Requirements & Qualifications</label>
-                    <textarea class="form-control" id="requirements" name="requirements" rows="3"
+                    <textarea aria-label="Requirements" class="form-control" id="requirements" name="requirements" rows="3"
                               placeholder="List required skills, education, certifications..."></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="responsibilities" class="form-label">Key Responsibilities</label>
-                    <textarea class="form-control" id="responsibilities" name="responsibilities" rows="3"
+                    <textarea aria-label="Responsibilities" class="form-control" id="responsibilities" name="responsibilities" rows="3"
                               placeholder="List main duties and day-to-day tasks..."></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="benefits" class="form-label">Benefits & Perks</label>
-                    <textarea class="form-control" id="benefits" name="benefits" rows="2"
+                    <textarea aria-label="Benefits" class="form-control" id="benefits" name="benefits" rows="2"
                               placeholder="List benefits like health insurance, bonuses, etc..."></textarea>
                 </div>
 

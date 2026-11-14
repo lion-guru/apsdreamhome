@@ -20,7 +20,7 @@ $isAssign = ($mode ?? '') === 'assign';
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -29,7 +29,7 @@ $isAssign = ($mode ?? '') === 'assign';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Shift Type <span class="text-danger">*</span></label>
-                        <select name="shift_type_id" class="form-select" required>
+                        <select aria-label="Shift type id" name="shift_type_id" class="form-select" required>
                             <option value="">Select Shift</option>
                             <?php foreach ($shift_types ?? [] as $st): ?>
                                 <option value="<?= $st['id'] ?>"><?= htmlspecialchars($st['name'] ?? '') ?> (<?= htmlspecialchars($st['start_time'] ?? '') ?> - <?= htmlspecialchars($st['end_time'] ?? '') ?>)</option>

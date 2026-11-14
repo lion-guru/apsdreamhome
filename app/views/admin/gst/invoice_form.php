@@ -49,7 +49,7 @@ $mode = $mode ?? 'create';
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Invoice Type <span class="text-danger">*</span></label>
-                                <select name="invoice_type" class="form-select" id="invoiceType" required>
+                                <select aria-label="Invoice type" name="invoice_type" class="form-select" id="invoiceType" required>
                                     <?php foreach ($invoiceTypes as $t): ?>
                                         <option value="<?= $t ?>" <?= ($data['invoice_type'] ?? '') == $t ? 'selected' : '' ?>><?= $t ?></option>
                                     <?php endforeach; ?>
@@ -57,7 +57,7 @@ $mode = $mode ?? 'create';
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Supply Type</label>
-                                <select name="supply_type" class="form-select" id="supplyType">
+                                <select aria-label="Supply type" name="supply_type" class="form-select" id="supplyType">
                                     <option value="intra_state" <?= ($data['supply_type'] ?? '') == 'intra_state' ? 'selected' : '' ?>>Intra-State</option>
                                     <option value="inter_state" <?= ($data['supply_type'] ?? '') == 'inter_state' ? 'selected' : '' ?>>Inter-State</option>
                                 </select>
@@ -99,7 +99,7 @@ $mode = $mode ?? 'create';
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Address</label>
-                                <textarea name="customer_address" class="form-control" rows="2"><?= htmlspecialchars($data['customer_address'] ?? '') ?></textarea>
+                                <textarea aria-label="Customer address" name="customer_address" class="form-control" rows="2"><?= htmlspecialchars($data['customer_address'] ?? '') ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@ $mode = $mode ?? 'create';
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Booking</label>
-                                <select name="booking_id" class="form-select">
+                                <select aria-label="Booking id" name="booking_id" class="form-select">
                                     <option value="">None</option>
                                     <?php
                                     $bookings = $this->db->fetchAll("SELECT id, booking_number FROM bookings WHERE tenant_id = ? ORDER BY id DESC LIMIT 50", [$this->tenantId()]);
@@ -144,7 +144,7 @@ $mode = $mode ?? 'create';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Plot</label>
-                                <select name="plot_id" class="form-select">
+                                <select aria-label="Plot id" name="plot_id" class="form-select">
                                     <option value="">None</option>
                                     <?php foreach ($plots as $p): ?>
                                         <option value="<?= $p['id'] ?>" <?= ($data['plot_id'] ?? '') == $p['id'] ? 'selected' : '' ?>><?= htmlspecialchars($p['plot_number']) ?></option>
@@ -154,7 +154,7 @@ $mode = $mode ?? 'create';
                         </div>
                         <div class="mt-3">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="2"><?= htmlspecialchars($data['notes'] ?? '') ?></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="2"><?= htmlspecialchars($data['notes'] ?? '') ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@ $mode = $mode ?? 'create';
         <div class="row g-2 align-items-end">
             <div class="col-md-3">
                 <label class="form-label small">HSN Code <span class="text-danger">*</span></label>
-                <select name="item_hsn_{INDEX}" class="form-control form-control-sm item-hsn" required>
+                <select aria-label="Item hsn {index}" name="item_hsn_{INDEX}" class="form-control form-control-sm item-hsn" required>
                     <option value="">Select HSN</option>
                     <?php foreach ($hsnCodes as $h): ?>
                         <option value="<?= $h['hsn_code'] ?>" data-gst="<?= $h['gst_rate'] ?>" data-cess="<?= $h['cess_rate'] ?>" data-unit="<?= $h['unit'] ?>" data-service="<?= $h['is_service'] ?>"><?= $h['hsn_code'] ?> - <?= htmlspecialchars(mb_strimwidth($h['description'], 0, 40, '...')) ?></option>

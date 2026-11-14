@@ -61,7 +61,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/commercial-leases" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <label for="filter_colony" class="visually-hidden">Township Colony</label>
-                    <select name="colony_id" id="filter_colony" class="form-select form-select-sm">
+                    <select aria-label="Colony id" name="colony_id" id="filter_colony" class="form-select form-select-sm">
                         <option value="">All Township Colonies</option>
                         <?php foreach ($colonies as $col): ?>
                             <option value="<?= (int)$col['id'] ?>" <?= ($current_colony == $col['id']) ? 'selected' : '' ?>>
@@ -72,7 +72,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <div class="col-md-3">
                     <label for="filter_status" class="visually-hidden">Status</label>
-                    <select name="status" id="filter_status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" id="filter_status" class="form-select form-select-sm">
                         <option value="all" <?= ($current_status === 'all') ? 'selected' : '' ?>>All Statuses</option>
                         <option value="active" <?= ($current_status === 'active') ? 'selected' : '' ?>>Active Lease</option>
                         <option value="notice_period" <?= ($current_status === 'notice_period') ? 'selected' : '' ?>>Notice Period</option>
@@ -196,7 +196,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="modal_colony" class="form-label fw-semibold">Township Colony / Complex <span class="text-danger">*</span></label>
-                            <select name="colony_id" id="modal_colony" class="form-select" required>
+                            <select aria-label="Colony id" name="colony_id" id="modal_colony" class="form-select" required>
                                 <option value="">Select Colony...</option>
                                 <?php foreach ($colonies as $col): ?>
                                     <option value="<?= (int)$col['id'] ?>"><?= htmlspecialchars($col['name']) ?></option>
@@ -209,7 +209,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-md-3">
                             <label for="modal_type" class="form-label fw-semibold">Unit Type</label>
-                            <select name="unit_type" id="modal_type" class="form-select">
+                            <select aria-label="Unit type" name="unit_type" id="modal_type" class="form-select">
                                 <option value="retail_shop">Retail Shop</option>
                                 <option value="office_space">Office Suite</option>
                                 <option value="atm_kiosk">ATM / Kiosk</option>

@@ -41,7 +41,7 @@ $current_page = 'inquiry';
                         </div>
                         <div class="mb-3">
                             <label for="message" class="form-label"><?= __('contact_form_message') ?></label>
-                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                            <textarea aria-label="Message" class="form-control" id="message" name="message" rows="5" required></textarea>
                         </div>
                         <div class="d-flex justify-content-between">
                             <a href="/" class="btn btn-secondary"><?= __('contact_form_cancel') ?></a>

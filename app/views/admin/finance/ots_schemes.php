@@ -23,7 +23,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
             <div class="col-md-2"><label class="form-label small">Waiver %</label><input type="number" step="0.01" min="0" max="100" name="waiver_percentage" class="form-control" value="100"></div>
             <div class="col-md-1"><label class="form-label small">Min OD mo.</label><input type="number" min="0" name="min_overdue_months" class="form-control" value="2"></div>
             <div class="col-md-2"><label class="form-label small">&nbsp;</label><button type="submit" class="btn btn-primary w-100">Launch</button></div>
-            <div class="col-12"><label class="form-label small">Terms &amp; conditions</label><textarea name="terms_conditions" class="form-control" rows="2" maxlength="2000"></textarea></div>
+            <div class="col-12"><label class="form-label small">Terms &amp; conditions</label><textarea aria-label="Terms conditions" name="terms_conditions" class="form-control" rows="2" maxlength="2000"></textarea></div>
         </div>
     </form>
 </div></div>

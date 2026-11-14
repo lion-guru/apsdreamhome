@@ -58,7 +58,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-genset" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- All Colonies --</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $current_colony == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -166,7 +166,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -179,7 +179,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Outage Reason</label>
-                        <select name="outage_reason" class="form-select">
+                        <select aria-label="Outage reason" name="outage_reason" class="form-select">
                             <option value="discom_grid_failure">DISCOM Grid Failure</option>
                             <option value="transformer_overload">Transformer Overload</option>
                             <option value="storm_feeder_breakdown">Storm Feeder Breakdown</option>
@@ -228,7 +228,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Mechanical Health</label>
-                        <select name="mechanical_status" class="form-select">
+                        <select aria-label="Mechanical status" name="mechanical_status" class="form-select">
                             <option value="optimal">Optimal (Smooth Operation)</option>
                             <option value="lube_oil_service_due">Lube Oil Service Due (AMC)</option>
                             <option value="low_coolant">Low Radiator Coolant</option>
@@ -248,7 +248,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Observations / Load Remarks</label>
-                        <textarea name="remarks" class="form-control" rows="2" placeholder="Streetlights and Phase-1 borewell fed smoothly during 33kV line tripping."></textarea>
+                        <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Streetlights and Phase-1 borewell fed smoothly during 33kV line tripping."></textarea>
                     </div>
                 </div>
             </div>

@@ -86,7 +86,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="position" class="form-label fw-semibold"><?= __('career_apply_position_lbl', null, 'Position Applied For') ?> *</label>
-                                    <select class="form-select" id="position" name="career_id" required>
+                                    <select aria-label="Career id" class="form-select" id="position" name="career_id" required>
                                         <option value="">Select Position</option>
                                         <?php if (!empty($careers)): ?>
                                         <?php foreach ($careers as $job): ?>
@@ -110,7 +110,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
 
                             <div class="mb-3">
                                 <label for="message" class="form-label fw-semibold"><?= __('career_apply_cover_lbl', null, 'Cover Letter / Message') ?></label>
-                                <textarea class="form-control" id="message" name="cover_letter" rows="5" placeholder="Tell us why you're interested in this position..."></textarea>
+                                <textarea aria-label="Cover letter" class="form-control" id="message" name="cover_letter" rows="5" placeholder="Tell us why you're interested in this position..."></textarea>
                             </div>
 
                             <div class="mb-4">

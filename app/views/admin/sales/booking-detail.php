@@ -295,7 +295,7 @@ $plot_gata = $plot_gata ?? null;
             <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/nominee" class="row g-2">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
                 <div class="col-md-3"><input type="text" name="nominee_name" class="form-control form-control-sm" placeholder="Nominee name *" required maxlength="150" value="<?= htmlspecialchars((string)($booking['nominee_name'] ?? '')) ?>"></div>
-                <div class="col-md-2"><select name="nominee_relation" class="form-select form-select-sm"><option value="">Relation…</option><?php foreach (['Spouse','Son','Daughter','Mother','Father','Brother','Sister'] as $rel): ?><option <?= ($booking['nominee_relation'] ?? '') === $rel ? 'selected' : '' ?>><?= $rel ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-2"><select aria-label="Nominee relation" name="nominee_relation" class="form-select form-select-sm"><option value="">Relation…</option><?php foreach (['Spouse','Son','Daughter','Mother','Father','Brother','Sister'] as $rel): ?><option <?= ($booking['nominee_relation'] ?? '') === $rel ? 'selected' : '' ?>><?= $rel ?></option><?php endforeach; ?></select></div>
                 <div class="col-md-2"><input type="date" name="nominee_dob" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($booking['nominee_dob'] ?? '')) ?>" title="DOB"></div>
                 <div class="col-md-2"><input type="text" name="nominee_aadhaar" class="form-control form-control-sm" placeholder="Aadhaar" maxlength="20" value="<?= htmlspecialchars((string)($booking['nominee_aadhaar'] ?? '')) ?>"></div>
                 <div class="col-md-2"><input type="text" name="guardian_name" class="form-control form-control-sm" placeholder="Guardian (if minor)" maxlength="150" value="<?= htmlspecialchars((string)($booking['guardian_name'] ?? '')) ?>"></div>
@@ -304,8 +304,8 @@ $plot_gata = $plot_gata ?? null;
             <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/co-owners/add" class="row g-2 mt-2">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
                 <div class="col-md-3"><input type="text" name="full_name" class="form-control form-control-sm" placeholder="Full name *" required maxlength="150"></div>
-                <div class="col-md-2"><select name="relationship" class="form-select form-select-sm"><option value="">Relation…</option><option>Spouse</option><option>Mother</option><option>Father</option><option>Son</option><option>Daughter</option><option>Brother</option><option>Sister</option></select></div>
-                <div class="col-md-2"><select name="gender" class="form-select form-select-sm"><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
+                <div class="col-md-2"><select aria-label="Relationship" name="relationship" class="form-select form-select-sm"><option value="">Relation…</option><option>Spouse</option><option>Mother</option><option>Father</option><option>Son</option><option>Daughter</option><option>Brother</option><option>Sister</option></select></div>
+                <div class="col-md-2"><select aria-label="Gender" name="gender" class="form-select form-select-sm"><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div>
                 <div class="col-md-2"><input type="text" name="aadhaar_no" class="form-control form-control-sm" placeholder="Aadhaar" maxlength="20"></div>
                 <div class="col-md-1"><input type="number" step="0.01" min="0" max="100" name="share_percentage" value="50" class="form-control form-control-sm" title="Share %"></div>
                 <div class="col-md-2"><button type="submit" class="btn btn-sm btn-primary w-100"><i class="fas fa-plus me-1"></i>Add Owner</button></div>
@@ -340,7 +340,7 @@ $plot_gata = $plot_gata ?? null;
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
         <div class="modal-header"><h5 class="modal-title"><?= __('sale_cancel_booking') ?></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
-            <div class="mb-2"><label class="form-label"><?= __('sale_reason') ?></label><textarea name="reason" class="form-control" required></textarea></div>
+            <div class="mb-2"><label class="form-label"><?= __('sale_reason') ?></label><textarea aria-label="Reason" name="reason" class="form-control" required></textarea></div>
             <div class="mb-2"><label class="form-label"><?= __('sale_cancellation_charge') ?></label><input type="number" step="0.01" name="cancellation_charge" value="0" class="form-control"></div>
         </div>
         <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" type="button"><?= __('sale_close') ?></button><button class="btn btn-danger" type="submit"><?= __('sale_cancel_booking') ?></button></div>
@@ -354,7 +354,7 @@ $plot_gata = $plot_gata ?? null;
         <div class="modal-header"><h5 class="modal-title"><?= __('sale_transfer_booking') ?></h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
             <div class="mb-2"><label class="form-label"><?= __('sale_new_customer_id') ?></label><input type="number" name="new_customer_id" class="form-control" required></div>
-            <div class="mb-2"><label class="form-label"><?= __('sale_reason') ?></label><textarea name="reason" class="form-control" required></textarea></div>
+            <div class="mb-2"><label class="form-label"><?= __('sale_reason') ?></label><textarea aria-label="Reason" name="reason" class="form-control" required></textarea></div>
             <div class="mb-2"><label class="form-label"><?= __('sale_transfer_charge') ?></label><input type="number" step="0.01" name="transfer_charge" value="0" class="form-control"></div>
         </div>
         <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" type="button"><?= __('sale_close') ?></button><button class="btn btn-warning" type="submit"><?= __('sale_initiate_transfer') ?></button></div>

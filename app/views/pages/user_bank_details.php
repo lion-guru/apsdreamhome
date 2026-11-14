@@ -165,7 +165,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                         <label class="aps-cp-label" for="account_type">
                                             <?= __('bank_label_account_type', null, 'Account Type') ?>
                                         </label>
-                                        <select name="account_type" id="account_type" class="form-select">
+                                        <select aria-label="Account type" name="account_type" id="account_type" class="form-select">
                                             <option value="savings" <?= ($bankAccount['account_type'] ?? 'savings') === 'savings' ? 'selected' : '' ?>><?= __('bank_account_type_savings', null, 'Savings Account') ?></option>
                                             <option value="current" <?= ($bankAccount['account_type'] ?? '') === 'current' ? 'selected' : '' ?>><?= __('bank_account_type_current', null, 'Current Account') ?></option>
                                             <option value="od" <?= ($bankAccount['account_type'] ?? '') === 'od' ? 'selected' : '' ?>><?= __('bank_account_type_overdraft', null, 'Overdraft Account') ?></option>

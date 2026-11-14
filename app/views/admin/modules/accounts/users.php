@@ -89,13 +89,13 @@ $users = $users ?? [];
             <h4>Users Directory</h4>
             <div class="table-controls">
                 <input type="text" class="form-control" placeholder="Search users..." id="userSearch" onkeyup="searchUsers()">
-                <select class="form-select" id="roleFilter" onchange="filterByRole()">
+                <select aria-label="Role filter" class="form-select" id="roleFilter" onchange="filterByRole()">
                     <option value="">All Roles</option>
                     <option value="Client">Client</option>
                     <option value="Associate">Associate</option>
                     <option value="Admin">Admin</option>
                 </select>
-                <select class="form-select" id="statusFilter" onchange="filterByStatus()">
+                <select aria-label="Status filter" class="form-select" id="statusFilter" onchange="filterByStatus()">
                     <option value="">All Status</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>

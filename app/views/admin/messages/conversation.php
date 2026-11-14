@@ -93,7 +93,7 @@
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="receiver_id" value="<?= $other_user['id'] ?>">
                 <div class="input-group">
-                    <textarea name="message" class="form-control" rows="2"
+                    <textarea aria-label="Message" name="message" class="form-control" rows="2"
                               placeholder="Type your message..." required
                               ></textarea>
                     <button type="submit" class="btn btn-primary">

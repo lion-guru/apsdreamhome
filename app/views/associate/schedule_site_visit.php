@@ -23,7 +23,7 @@ $selected_lead = $selected_lead ?? '';
 
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('assoc_ssv_link_lead', [], 'Link to Lead') ?> <small class="text-muted">(<?= __('assoc_ssv_optional', [], 'optional') ?>)</small></label>
-                            <select class="form-select" name="lead_id" id="leadSelect">
+                            <select aria-label="Lead id" class="form-select" name="lead_id" id="leadSelect">
                                 <option value="">— <?= __('assoc_ssv_select_lead', [], 'Select a lead') ?> —</option>
                                 <?php foreach ($leads as $l): ?>
                                     <option value="<?= e($l['id'] ?? '') ?>" <?= (string)$l['id'] === (string)$selected_lead ? 'selected' : '' ?>
@@ -59,7 +59,7 @@ $selected_lead = $selected_lead ?? '';
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?= __('assoc_ssv_duration', [], 'Duration') ?></label>
-                                <select class="form-select" name="duration">
+                                <select aria-label="Duration" class="form-select" name="duration">
                                     <option value="30"><?= __('assoc_ssv_30min', [], '30 minutes') ?></option>
                                     <option value="60" selected><?= __('assoc_ssv_1hr', [], '1 hour') ?></option>
                                     <option value="90"><?= __('assoc_ssv_1_5hr', [], '1.5 hours') ?></option>
@@ -70,7 +70,7 @@ $selected_lead = $selected_lead ?? '';
 
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('assoc_ssv_colony', [], 'Colony / Location') ?> <small class="text-muted">(<?= __('assoc_ssv_optional', [], 'optional') ?>)</small></label>
-                            <select class="form-select" name="colony_id">
+                            <select aria-label="Colony id" class="form-select" name="colony_id">
                                 <option value="">— <?= __('assoc_ssv_select_colony', [], 'Select colony') ?> —</option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -80,7 +80,7 @@ $selected_lead = $selected_lead ?? '';
 
                         <div class="mb-4">
                             <label class="form-label fw-bold"><?= __('assoc_ssv_notes', [], 'Notes') ?> <small class="text-muted">(<?= __('assoc_ssv_optional', [], 'optional') ?>)</small></label>
-                            <textarea class="form-control" name="notes" rows="3" placeholder="<?= __('assoc_ssv_notes_placeholder', [], 'Special requirements, what to show, customer preferences...') ?>"></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="<?= __('assoc_ssv_notes_placeholder', [], 'Special requirements, what to show, customer preferences...') ?>"></textarea>
                         </div>
 
                         <div class="d-flex gap-2">

@@ -33,7 +33,7 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label">Cover Letter</label>
-                        <textarea name="cover_letter" class="form-control" rows="4"></textarea>
+                        <textarea aria-label="Cover letter" name="cover_letter" class="form-control" rows="4"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary mt-4"><i class="fas fa-paper-plane me-2"></i>Submit Application</button>

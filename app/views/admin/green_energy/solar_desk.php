@@ -177,7 +177,7 @@ $current_status = $current_status ?? null;
                                                         <div class="modal-body">
                                                             <div class="mb-3">
                                                                 <label class="form-label fw-semibold">Application Status</label>
-                                                                <select name="status" class="form-select">
+                                                                <select aria-label="Status" name="status" class="form-select">
                                                                     <option value="inquiry" <?= $req['status'] === 'inquiry' ? 'selected' : '' ?>>Inquiry (Initial Lead)</option>
                                                                     <option value="site_feasibility" <?= $req['status'] === 'site_feasibility' ? 'selected' : '' ?>>Site Feasibility Survey</option>
                                                                     <option value="subsidy_approved" <?= $req['status'] === 'subsidy_approved' ? 'selected' : '' ?>>PM Surya Ghar Subsidy Pre-Approved</option>
@@ -200,7 +200,7 @@ $current_status = $current_status ?? null;
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label fw-semibold">Admin Notes</label>
-                                                                <textarea name="notes" class="form-control" rows="2"><?= htmlspecialchars($req['notes'] ?? '') ?></textarea>
+                                                                <textarea aria-label="Notes" name="notes" class="form-control" rows="2"><?= htmlspecialchars($req['notes'] ?? '') ?></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">

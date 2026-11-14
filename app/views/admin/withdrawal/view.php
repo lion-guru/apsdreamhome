@@ -386,7 +386,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                     <p>Are you sure you want to <strong>approve</strong> this withdrawal request?</p>
                     <div class="mb-3">
                         <label class="form-label">Admin Notes (Optional)</label>
-                        <textarea name="admin_notes" class="form-control" rows="2" placeholder="Add notes for the user..."></textarea>
+                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="2" placeholder="Add notes for the user..."></textarea>
                         <div class="form-text">Notes will be visible to the user in their withdrawal history.</div>
                     </div>
                     <div class="form-check mb-3">
@@ -431,7 +431,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                     <p class="text-danger"><strong>Warning:</strong> This action will refund the amount to the user's wallet. The funds will be returned to their original wallet.</p>
                     <div class="mb-3">
                         <label class="form-label">Rejection Reason <span class="text-danger">*</span></label>
-                        <textarea name="admin_notes" class="form-control" rows="3" required placeholder="Enter reason for rejection..."></textarea>
+                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="3" required placeholder="Enter reason for rejection..."></textarea>
                         <div class="form-text">This reason will be visible to the user and recorded in the audit trail.</div>
                     </div>
                     <div class="form-check mb-3">
@@ -476,7 +476,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                     <p>Mark this approved withdrawal as <strong>completed</strong>? This indicates the funds have been successfully transferred to the user's bank account.</p>
                     <div class="mb-3">
                         <label class="form-label">Admin Notes (Optional)</label>
-                        <textarea name="admin_notes" class="form-control" rows="2" placeholder="Add completion notes (e.g., UTR number, transfer reference)..."></textarea>
+                        <textarea aria-label="Admin notes" name="admin_notes" class="form-control" rows="2" placeholder="Add completion notes (e.g., UTR number, transfer reference)..."></textarea>
                         <div class="form-text">Notes will be recorded in the audit trail and visible to the user.</div>
                     </div>
                     <div class="form-check mb-3">

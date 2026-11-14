@@ -54,11 +54,11 @@
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Phone Numbers (one per line)</label>
-                        <textarea name="phones" class="form-control" rows="4" placeholder="+919999999999&#10;+918888888888"></textarea>
+                        <textarea aria-label="Phones" name="phones" class="form-control" rows="4" placeholder="+919999999999&#10;+918888888888"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Agent</label>
-                        <select name="agent" class="form-select">
+                        <select aria-label="Agent" name="agent" class="form-select">
                             <option value="auto">Auto Assign</option>
                         </select>
                     </div>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Script</label>
-                        <select name="script_id" class="form-select">
+                        <select aria-label="Script id" name="script_id" class="form-select">
                             <option value="">Default Script</option>
                         </select>
                     </div>

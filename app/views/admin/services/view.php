@@ -106,7 +106,7 @@
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <input type="hidden" name="id" value="<?php echo e($service['id']); ?>">
                     <div class="mb-3">
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="new" <?php echo $service['status'] === 'new' ? 'selected' : ''; ?>>New</option>
                             <option value="contacted" <?php echo $service['status'] === 'contacted' ? 'selected' : ''; ?>>Contacted</option>
                             <option value="interested" <?php echo $service['status'] === 'interested' ? 'selected' : ''; ?>>Interested</option>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small">Notes</label>
-                        <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this service inquiry..."><?php echo htmlspecialchars($service['notes'] ?? ''); ?></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Add notes about this service inquiry..."><?php echo htmlspecialchars($service['notes'] ?? ''); ?></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-save me-1"></i>Update Status

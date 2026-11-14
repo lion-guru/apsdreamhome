@@ -116,7 +116,7 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label" for="broadcastMessage">Message</label>
-                    <textarea class="form-control" id="broadcastMessage" rows="5" maxlength="2000" placeholder="Type your broadcast message..."></textarea>
+                    <textarea aria-label="Broadcast message" class="form-control" id="broadcastMessage" rows="5" maxlength="2000" placeholder="Type your broadcast message..."></textarea>
                     <div class="form-text">Opens WhatsApp with this text pre-filled — pick recipients there to send.</div>
                 </div>
                 <div id="broadcastStatus" class="small"></div>

@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="vendor_type" class="form-label fw-semibold">Vendor Type</label>
-                                <select class="form-select" id="vendor_type" name="vendor_type">
+                                <select aria-label="Vendor type" class="form-select" id="vendor_type" name="vendor_type">
                                     <option value="contractor">Contractor</option>
                                     <option value="supplier">Supplier</option>
                                     <option value="service_provider">Service Provider</option>
@@ -54,7 +54,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="status" class="form-label fw-semibold">Status</label>
-                                <select class="form-select" id="status" name="status">
+                                <select aria-label="Status" class="form-select" id="status" name="status">
                                     <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                     <option value="blacklisted">Blacklisted</option>
@@ -65,7 +65,7 @@
                         <div class="mb-3">
                             <label for="address" class="form-label fw-semibold">Address</label>
                             <div class="input-group">
-                                <textarea class="form-control" id="address" name="address" rows="2" data-map-picker="true"></textarea>
+                                <textarea aria-label="Address" class="form-control" id="address" name="address" rows="2" data-map-picker="true"></textarea>
                                 <button type="button" class="btn btn-outline-secondary" data-action="map-picker" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="entity_type" class="form-label fw-semibold">Entity Type <span class="text-danger">*</span></label>
-                                <select class="form-select" id="entity_type" name="entity_type" onchange="updateTdsSection()">
+                                <select aria-label="Entity type" class="form-select" id="entity_type" name="entity_type" onchange="updateTdsSection()">
                                     <option value="individual">Individual (TDS 1%)</option>
                                     <option value="company">Company (TDS 2%)</option>
                                     <option value="partnership">Partnership (TDS 2%)</option>
@@ -165,7 +165,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="payment_terms" class="form-label fw-semibold">Payment Terms</label>
-                                <select class="form-select" id="payment_terms" name="payment_terms">
+                                <select aria-label="Payment terms" class="form-select" id="payment_terms" name="payment_terms">
                                     <option value="immediate">Immediate</option>
                                     <option value="7_days">7 Days</option>
                                     <option value="15_days">15 Days</option>
@@ -194,7 +194,7 @@
 
                         <div class="mb-4">
                             <label for="notes" class="form-label fw-semibold">Notes</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes about this vendor..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" id="notes" name="notes" rows="3" placeholder="Additional notes about this vendor..."></textarea>
                         </div>
 
                         <div class="d-flex gap-3">

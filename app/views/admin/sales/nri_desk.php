@@ -13,7 +13,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
         <p class="text-muted mb-0">Cross-border buyers (UAE, Saudi, US, UK…) — FIRC + FEMA tracking</p>
     </div>
     <form method="GET" class="d-flex gap-2">
-        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="">All statuses</option>
             <?php foreach (['pending', 'verified', 'rejected'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status_filter === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

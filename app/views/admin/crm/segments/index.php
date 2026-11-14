@@ -113,7 +113,7 @@ document.getElementById('segmentSearch')?.addEventListener('input', function(){
                         <div class="col-12"><hr><h6 class="fw-bold text-muted">Filter Criteria</h6></div>
                         <div class="col-md-4">
                             <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
+                            <select aria-label="Status" class="form-select" name="status">
                                 <option value="">Any</option>
                                 <?php foreach (['new','contacted','qualified','site_visit','proposal','negotiation','booking','won','lost','nurture'] as $s): ?>
                                     <option value="<?= $s ?>"><?= ucfirst(str_replace('_',' ',$s)) ?></option>
@@ -122,7 +122,7 @@ document.getElementById('segmentSearch')?.addEventListener('input', function(){
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Source</label>
-                            <select class="form-select" name="source">
+                            <select aria-label="Source" class="form-select" name="source">
                                 <option value="">Any</option>
                                 <?php foreach (['website','google_ads','facebook','referral','walk_in','phone','email','social_media','event','other'] as $s): ?>
                                     <option value="<?= $s ?>"><?= ucfirst(str_replace('_',' ',$s)) ?></option>

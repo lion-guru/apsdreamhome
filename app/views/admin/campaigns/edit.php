@@ -33,13 +33,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="3"><?php echo htmlspecialchars($campaign['description'] ?? ''); ?></textarea>
+                                <textarea aria-label="Description" class="form-control" id="description" name="description" rows="3"><?php echo htmlspecialchars($campaign['description'] ?? ''); ?></textarea>
                             </div>
                             
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="type" class="form-label">Campaign Type</label>
-                                    <select class="form-select" id="type" name="type">
+                                    <select aria-label="Type" class="form-select" id="type" name="type">
                                         <?php foreach ($campaign_types as $type): ?>
                                             <option value="<?php echo e($type); ?>" <?php echo ($campaign['type'] ?? '') === $type ? 'selected' : ''; ?>>
                                                 <?php echo ucfirst($type); ?>
@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 
                                 <div class="col-md-6 mb-3">
                                     <label for="target_audience" class="form-label">Target Audience</label>
-                                    <select class="form-select" id="target_audience" name="target_audience">
+                                    <select aria-label="Target audience" class="form-select" id="target_audience" name="target_audience">
                                         <?php foreach ($target_audiences as $audience): ?>
                                             <option value="<?php echo e($audience); ?>" <?php echo ($campaign['target_audience'] ?? '') === $audience ? 'selected' : ''; ?>>
                                                 <?php echo ucfirst($audience); ?>
@@ -86,7 +86,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" name="status">
+                                <select aria-label="Status" class="form-select" id="status" name="status">
                                     <option value="planned" <?php echo ($campaign['status'] ?? '') === 'planned' ? 'selected' : ''; ?>>Planned</option>
                                     <option value="active" <?php echo ($campaign['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
                                     <option value="paused" <?php echo ($campaign['status'] ?? '') === 'paused' ? 'selected' : ''; ?>>Paused</option>

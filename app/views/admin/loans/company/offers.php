@@ -64,7 +64,7 @@ $offers = $offers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Type</label>
-                        <select name="offer_type" class="form-select">
+                        <select aria-label="Offer type" name="offer_type" class="form-select">
                             <option value="interest_free">Interest-Free</option>
                             <option value="reduced_rate">Reduced Rate</option>
                         </select>
@@ -72,7 +72,7 @@ $offers = $offers ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="2"></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
@@ -104,7 +104,7 @@ $offers = $offers ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Terms & Conditions</label>
-                    <textarea name="terms_conditions" class="form-control" rows="3"></textarea>
+                    <textarea aria-label="Terms conditions" name="terms_conditions" class="form-control" rows="3"></textarea>
                 </div>
             </div>
             <div class="modal-footer">

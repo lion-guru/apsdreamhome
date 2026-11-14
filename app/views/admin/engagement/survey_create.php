@@ -55,7 +55,7 @@ $surveyTypes = $surveyTypes ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Type</label>
-                        <select name="survey_type" class="form-select">
+                        <select aria-label="Survey type" name="survey_type" class="form-select">
                             <?php foreach ($surveyTypes as $key => $label): ?>
                                 <option value="<?= $key ?>" <?= ($survey['survey_type'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
                             <?php endforeach; ?>
@@ -63,7 +63,7 @@ $surveyTypes = $surveyTypes ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="draft" <?= ($survey['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                             <option value="scheduled" <?= ($survey['status'] ?? '') === 'scheduled' ? 'selected' : '' ?>>Scheduled</option>
                             <option value="active" <?= ($survey['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
@@ -93,7 +93,7 @@ $surveyTypes = $surveyTypes ?? [];
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Survey description and instructions..."><?= htmlspecialchars($survey['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Survey description and instructions..."><?= htmlspecialchars($survey['description'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
@@ -175,7 +175,7 @@ $surveyTypes = $surveyTypes ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Thank You Message</label>
-                        <textarea name="settings[thank_you_message]" class="form-control" rows="2"><?= htmlspecialchars(($survey['settings']['thank_you_message'] ?? 'Thank you for your feedback!')) ?></textarea>
+                        <textarea aria-label="Settings" name="settings[thank_you_message]" class="form-control" rows="2"><?= htmlspecialchars(($survey['settings']['thank_you_message'] ?? 'Thank you for your feedback!')) ?></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Redirect URL (after completion)</label>
@@ -218,7 +218,7 @@ function addQuestion() {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold small">Type</label>
-                    <select name="questions[${index}][type]" class="form-select form-select-sm" onchange="toggleOptions(this, ${index})">
+                    <select aria-label="Questions" name="questions[${index}][type]" class="form-select form-select-sm" onchange="toggleOptions(this, ${index})">
                         <?php foreach ($questionTypes as $key => $label): ?>
                             <option value="<?= $key ?>"><?= $label ?></option>
                         <?php endforeach; ?>
@@ -232,7 +232,7 @@ function addQuestion() {
                 </div>
                 <div class="col-12 options-container" id="options_${index}" style="display: none;">
                     <label class="form-label fw-semibold small">Options (one per line)</label>
-                    <textarea name="questions[${index}][options]" class="form-control" rows="3" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
+                    <textarea aria-label="Questions" name="questions[${index}][options]" class="form-control" rows="3" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
                     <div class="form-text small">Enter each option on a new line</div>
                 </div>
                 <div class="col-12 scale-container" id="scale_${index}" style="display: block;">

@@ -29,7 +29,7 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="credential_type" class="form-label">Credential Type <span class="text-danger">*</span></label>
-                                <select name="credential_type" id="credential_type" class="form-select" required>
+                                <select aria-label="Credential type" name="credential_type" id="credential_type" class="form-select" required>
                                     <option value="">Select Type</option>
                                     <?php foreach ($typeLabels as $val => $lbl): ?>
                                     <option value="<?= $val ?>" <?= ($credential['credential_type'] ?? '') === $val ? 'selected' : '' ?>>
@@ -62,7 +62,7 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
 
                             <div class="col-md-6">
                                 <label for="status" class="form-label">Status</label>
-                                <select name="status" id="status" class="form-select">
+                                <select aria-label="Status" name="status" id="status" class="form-select">
                                     <?php foreach ($statusOptions as $val => $lbl): ?>
                                     <option value="<?= $val ?>" <?= ($credential['status'] ?? 'active') === $val ? 'selected' : '' ?>>
                                         <?= $lbl ?>
@@ -100,7 +100,7 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
 
                             <div class="col-md-12">
                                 <label for="notes" class="form-label">Notes</label>
-                                <textarea name="notes" id="notes" class="form-control" rows="3"
+                                <textarea aria-label="Notes" name="notes" id="notes" class="form-control" rows="3"
                                           placeholder="Any additional notes..."><?= htmlspecialchars($credential['notes'] ?? '') ?></textarea>
                             </div>
                         </div>

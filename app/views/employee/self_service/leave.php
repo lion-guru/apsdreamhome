@@ -76,7 +76,7 @@ $leave_types = $leave_types ?? [];
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="col-md-4">
                                     <label class="form-label">Leave Type <span class="text-danger">*</span></label>
-                                    <select name="leave_type_id" class="form-select" required>
+                                    <select aria-label="Leave type id" name="leave_type_id" class="form-select" required>
                                         <option value="">Select Leave Type</option>
                                         <?php foreach ($leave_types as $lt): ?>
                                         <option value="<?= $lt['id'] ?>"><?= htmlspecialchars($lt['name']) ?> (<?= $lt['code'] ?>)</option>
@@ -93,7 +93,7 @@ $leave_types = $leave_types ?? [];
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Reason <span class="text-danger">*</span></label>
-                                    <textarea name="reason" class="form-control" rows="3" required placeholder="Enter reason for leave..."></textarea>
+                                    <textarea aria-label="Reason" name="reason" class="form-control" rows="3" required placeholder="Enter reason for leave..."></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Emergency Contact</label>

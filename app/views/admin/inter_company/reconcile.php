@@ -9,7 +9,7 @@ $status = $status ?? 'open';
         <div>
             <form method="GET" class="d-inline">
                 <label class="me-2" style="margin-bottom:0;">Status:</label>
-                <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                <select aria-label="Status" name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
                     <option value="open" <?= $status==='open'?'selected':'' ?>>Open</option>
                     <option value="reconciled" <?= $status==='reconciled'?'selected':'' ?>>Reconciled</option>
                     <option value="partial" <?= $status==='partial'?'selected':'' ?>>Partial</option>
@@ -40,13 +40,13 @@ $status = $status ?? 'open';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">From Entity</label>
-                        <select name="from_entity_id" class="form-select" required>
+                        <select aria-label="From entity id" name="from_entity_id" class="form-select" required>
                             <option value="">Select source entity</option>
                             <?php foreach ($entities as $e): ?><option value="<?= (int)$e['id'] ?>"><?= htmlspecialchars($e['entity_name']) ?></option><?php endforeach; ?></select>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">To Entity</label>
-                        <select name="to_entity_id" class="form-select" required>
+                        <select aria-label="To entity id" name="to_entity_id" class="form-select" required>
                             <option value="">Select destination entity</option>
                             <?php foreach ($entities as $e): ?><option value="<?= (int)$e['id'] ?>"><?= htmlspecialchars($e['entity_name']) ?></option><?php endforeach; ?></select>
                     </div>

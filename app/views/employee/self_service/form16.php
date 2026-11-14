@@ -30,7 +30,7 @@ $form16_list = $form16_list ?? [];
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="col-md-6">
                                     <label class="form-label">Financial Year</label>
-                                    <select name="financial_year" class="form-select" required>
+                                    <select aria-label="Financial year" name="financial_year" class="form-select" required>
                                         <?php for ($y = date('Y'); $y >= date('Y') - 5; $y--): ?>
                                         <option value="<?= $y ?>"><?= $y ?>-<?= $y + 1 ?></option>
                                         <?php endfor; ?>

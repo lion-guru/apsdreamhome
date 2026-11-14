@@ -147,7 +147,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Stage Code</label>
-                        <select name="milestone_code" class="form-select">
+                        <select aria-label="Milestone code" name="milestone_code" class="form-select">
                             <option value="DEMARCATION">Demarcation &amp; Boundaries</option>
                             <option value="LEVELING">Earth Leveling</option>
                             <option value="DRAINAGE">Sewerage &amp; Drainage</option>
@@ -160,13 +160,13 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 
                 <div class="mb-3">
                     <label class="form-label small">Engineering Description</label>
-                    <textarea name="description" class="form-control" rows="2" placeholder="Describe the materials used, road width, transformer capacity, etc."></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Describe the materials used, road width, transformer capacity, etc."></textarea>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="in_progress">In Progress</option>
                             <option value="completed">Completed</option>
                             <option value="planned">Planned</option>

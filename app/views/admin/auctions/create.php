@@ -21,7 +21,7 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Auction Type</label>
-                        <select name="auction_type" class="form-select">
+                        <select aria-label="Auction type" name="auction_type" class="form-select">
                             <option value="english">English (ascending)</option>
                             <option value="sealed">Sealed Bid</option>
                             <option value="dutch">Dutch (descending)</option>
@@ -30,11 +30,11 @@ ob_start();
                     </div>
                     <div class="col-12">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="3"></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3"></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Property (optional)</label>
-                        <select name="property_id" class="form-select">
+                        <select aria-label="Property id" name="property_id" class="form-select">
                             <option value="">-- Not linked --</option>
                             <?php foreach ($properties as $p): ?>
                                 <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['title'] ?? '') ?> - <?= htmlspecialchars($p['address'] ?? '') ?></option>
@@ -79,7 +79,7 @@ ob_start();
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="draft">Draft</option>
                             <option value="scheduled" selected>Scheduled</option>
                             <option value="live">Live (start now)</option>
@@ -87,7 +87,7 @@ ob_start();
                     </div>
                     <div class="col-12">
                         <label class="form-label">Terms & Conditions</label>
-                        <textarea name="terms" class="form-control" rows="3"></textarea>
+                        <textarea aria-label="Terms" name="terms" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
             </div>

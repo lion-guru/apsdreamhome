@@ -101,7 +101,7 @@ $groupLabels = [
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">Type</label>
-                        <select name="content_type" class="form-select">
+                        <select aria-label="Content type" name="content_type" class="form-select">
                             <option value="text">Text</option>
                             <option value="textarea">Textarea</option>
                             <option value="image">Image</option>
@@ -119,7 +119,7 @@ $groupLabels = [
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Value</label>
-                    <textarea name="content_value" class="form-control" rows="2" placeholder="Content value"></textarea>
+                    <textarea aria-label="Content value" name="content_value" class="form-control" rows="2" placeholder="Content value"></textarea>
                 </div>
             </form>
         </div>

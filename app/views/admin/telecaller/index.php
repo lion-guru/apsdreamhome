@@ -104,7 +104,7 @@ $telecallerFilter = $telecallerFilter ?? '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Telecaller</label>
-                    <select name="telecaller_id" class="form-select">
+                    <select aria-label="Telecaller id" name="telecaller_id" class="form-select">
                         <option value="">All Telecallers</option>
                         <?php foreach ($telecallers as $tc): ?>
                             <option value="<?php echo e($tc['id']); ?>" <?php echo ($telecallerFilter == $tc['id']) ? 'selected' : ''; ?>>
@@ -208,7 +208,7 @@ $telecallerFilter = $telecallerFilter ?? '';
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Telecaller <span class="text-danger">*</span></label>
-                            <select name="user_id" class="form-select" required>
+                            <select aria-label="User id" name="user_id" class="form-select" required>
                                 <option value="">Select Telecaller</option>
                                 <?php foreach ($telecallers as $tc): ?>
                                     <option value="<?php echo $tc['id']; ?>"><?php echo htmlspecialchars($tc['name'] ?? ''); ?></option>
@@ -253,7 +253,7 @@ $telecallerFilter = $telecallerFilter ?? '';
                         </div>
                         <div class="col-12">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea>
                         </div>
                     </div>
                 </div>

@@ -29,11 +29,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="col-md-4 mb-3"><label class="form-label">Renewable %</label><input type="number" step="0.01" name="renewable_pct" class="form-control" value="<?= $isEdit ? ($audit['renewable_pct'] ?? '0') : '0' ?>"></div>
                 <div class="col-md-4 mb-3"><label class="form-label">Est. CO₂ (t/yr)</label><input type="number" step="0.01" name="estimated_co2_tonnes_yr" class="form-control" value="<?= $isEdit ? ($audit['estimated_co2_tonnes_yr'] ?? '') : '' ?>"></div>
             </div>
-            <div class="mb-3"><label class="form-label">Recommendations (one per line)</label><textarea name="recommendations" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars(is_array($audit['recommendations'] ?? null) ? implode("\n", $audit['recommendations']) : '') : '' ?></textarea></div>
-            <div class="mb-3"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2"><?= $isEdit ? htmlspecialchars($audit['notes'] ?? '') : '' ?></textarea></div>
+            <div class="mb-3"><label class="form-label">Recommendations (one per line)</label><textarea aria-label="Recommendations" name="recommendations" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars(is_array($audit['recommendations'] ?? null) ? implode("\n", $audit['recommendations']) : '') : '' ?></textarea></div>
+            <div class="mb-3"><label class="form-label">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"><?= $isEdit ? htmlspecialchars($audit['notes'] ?? '') : '' ?></textarea></div>
             <div class="mb-3">
                 <label class="form-label">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="draft" <?= $isEdit && ($audit['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                     <option value="completed" <?= $isEdit && ($audit['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completed</option>
                     <option value="reviewed" <?= $isEdit && ($audit['status'] ?? '') === 'reviewed' ? 'selected' : '' ?>>Reviewed</option>

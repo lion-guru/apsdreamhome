@@ -22,11 +22,11 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
             <div class="col-md-4"><label class="form-label small">Buyer Aadhaar (optional)</label><input type="text" name="customer_aadhaar" class="form-control" maxlength="20"></div>
             <div class="col-md-3"><label class="form-label small">Token amount ₹ *</label><input type="number" step="1" min="1" name="token_amount" class="form-control" required value="11000"></div>
             <div class="col-md-3"><label class="form-label small">Payment mode</label>
-                <select name="payment_mode" class="form-select"><option value="upi">UPI</option><option value="cash">Cash</option><option value="bank_transfer">Bank Transfer</option><option value="cheque">Cheque</option></select>
+                <select aria-label="Payment mode" name="payment_mode" class="form-select"><option value="upi">UPI</option><option value="cash">Cash</option><option value="bank_transfer">Bank Transfer</option><option value="cheque">Cheque</option></select>
             </div>
             <div class="col-md-3"><label class="form-label small">Payment ref (UTR/cheque no.)</label><input type="text" name="payment_ref" class="form-control" maxlength="100"></div>
             <div class="col-md-3"><label class="form-label small">Associate ID (optional)</label><input type="number" name="associate_id" class="form-control" min="0"></div>
-            <div class="col-12"><label class="form-label small">Notes</label><textarea name="notes" class="form-control" rows="2" maxlength="1000"></textarea></div>
+            <div class="col-12"><label class="form-label small">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2" maxlength="1000"></textarea></div>
         </div>
         <button type="submit" class="btn btn-success mt-3"><i class="fas fa-lock me-1"></i>Collect Token &amp; Lock Plot 7 Days</button>
     </form>

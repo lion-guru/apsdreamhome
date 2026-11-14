@@ -20,7 +20,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                 <!-- Agent Selection -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold" for="user_id">Select Agent / Salesman <span class="text-danger">*</span></label>
-                    <select name="user_id" id="user_id" class="form-select" required>
+                    <select aria-label="User id" name="user_id" id="user_id" class="form-select" required>
                         <option value="">— Choose Agent —</option>
                         <?php foreach ($all_associates as $assoc): ?>
                             <option value="<?= (int)$assoc['user_id'] ?>"
@@ -73,7 +73,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" for="incentive_type">Incentive Type</label>
-                        <select name="incentive_type" id="incentive_type" class="form-select">
+                        <select aria-label="Incentive type" name="incentive_type" id="incentive_type" class="form-select">
                             <option value="flat_per_plot">Flat ₹ per Plot Sold</option>
                             <option value="percentage">% of Plot Sale Value</option>
                         </select>
@@ -102,7 +102,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
 
                 <div class="mb-4">
                     <label class="form-label" for="remarks">Remarks / Notes (optional)</label>
-                    <textarea name="remarks" id="remarks" class="form-control" rows="2"
+                    <textarea aria-label="Remarks" name="remarks" id="remarks" class="form-control" rows="2"
                               placeholder="E.g. Revised after appraisal in July 2026"></textarea>
                 </div>
 

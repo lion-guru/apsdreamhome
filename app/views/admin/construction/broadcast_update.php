@@ -17,7 +17,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="row g-2">
             <div class="col-md-3"><label class="form-label small">Colony *</label>
-                <select name="colony_id" class="form-select" required>
+                <select aria-label="Colony id" name="colony_id" class="form-select" required>
                     <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>"><?= $e($c['name']) ?></option><?php endforeach; ?>
                 </select>
             </div>

@@ -47,7 +47,7 @@ $error = $error ?? null;
                         <label for="type" class="form-label fw-bold">
                             <i class="fas fa-list"></i> Campaign Type
                         </label>
-                        <select class="form-select" id="type" name="type">
+                        <select aria-label="Type" class="form-select" id="type" name="type">
                             <?php foreach ($campaign_types as $type): ?>
                                 <option value="<?= $type ?>" <?= (($_POST['type'] ?? '') === $type) ? 'selected' : '' ?>>
                                     <?= ucfirst($type) ?>
@@ -62,7 +62,7 @@ $error = $error ?? null;
                     <label for="description" class="form-label fw-bold">
                         <i class="fas fa-align-left"></i> Description
                     </label>
-                    <textarea class="form-control" id="description" name="description" rows="4"
+                    <textarea aria-label="Description" class="form-control" id="description" name="description" rows="4"
                         placeholder="Describe your campaign goals and details"><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
                 </div>
 
@@ -72,7 +72,7 @@ $error = $error ?? null;
                         <label for="target_audience" class="form-label fw-bold">
                             <i class="fas fa-users"></i> Target Audience
                         </label>
-                        <select class="form-select" id="target_audience" name="target_audience">
+                        <select aria-label="Target audience" class="form-select" id="target_audience" name="target_audience">
                             <?php foreach ($target_audiences as $audience): ?>
                                 <option value="<?= $audience ?>" <?= (($_POST['target_audience'] ?? '') === $audience) ? 'selected' : '' ?>>
                                     <?= ucfirst($audience) ?>

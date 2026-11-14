@@ -19,7 +19,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Target</label>
-                            <select name="target_user" class="form-select">
+                            <select aria-label="Target user" name="target_user" class="form-select">
                                 <option value="all">All Subscribers (<?= number_format($stats['total_subscribers'] ?? 0) ?> users)</option>
                             </select>
                             <small class="text-muted">Notifications are delivered to users with active browser push subscriptions.</small>
@@ -33,7 +33,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Body <span class="text-danger">*</span></label>
-                            <textarea name="body" class="form-control" rows="4" placeholder="e.g. Check out our new 3BHK apartments in Lucknow starting at ₹45 Lakh!" required maxlength="300"></textarea>
+                            <textarea aria-label="Body" name="body" class="form-control" rows="4" placeholder="e.g. Check out our new 3BHK apartments in Lucknow starting at ₹45 Lakh!" required maxlength="300"></textarea>
                             <small class="text-muted">Max 300 characters. The main notification message.</small>
                         </div>
 

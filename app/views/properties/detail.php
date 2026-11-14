@@ -390,7 +390,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Message</label>
-                        <textarea name="message" class="form-control" rows="3" placeholder="I'm interested in this property...">I'm interested in this property. Please contact me.</textarea>
+                        <textarea aria-label="Message" name="message" class="form-control" rows="3" placeholder="I'm interested in this property...">I'm interested in this property. Please contact me.</textarea>
                     </div>
                     <button type="submit" class="btn btn-submit w-100 mb-2">
                         <i class="fas fa-paper-plane me-1"></i> Send Enquiry
@@ -487,7 +487,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
             <div class="mb-3">
                 <label class="form-label">Rating *</label>
-                <select name="rating" class="form-select" required>
+                <select aria-label="Rating" name="rating" class="form-select" required>
                     <option value="">Select Rating</option>
                     <option value="5">5 — Excellent</option>
                     <option value="4">4 — Good</option>
@@ -498,7 +498,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
             <div class="mb-3">
                 <label class="form-label">Your Review *</label>
-                <textarea name="review_text" class="form-control" rows="4" required placeholder="Share your experience..."></textarea>
+                <textarea aria-label="Review text" name="review_text" class="form-control" rows="4" required placeholder="Share your experience..."></textarea>
             </div>
             <button type="submit" class="btn">
                 <i class="fas fa-paper-plane me-1"></i> Submit Review

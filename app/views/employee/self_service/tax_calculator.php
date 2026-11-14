@@ -165,7 +165,7 @@ if ($employeeId) {
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">City Type</label>
-                                <select name="city_type" class="form-select">
+                                <select aria-label="City type" name="city_type" class="form-select">
                                     <option value="metro">Metro (50% of Basic)</option>
                                     <option value="non_metro">Non-Metro (40% of Basic)</option>
                                 </select>

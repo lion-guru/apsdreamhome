@@ -214,7 +214,7 @@ $userId = $userId ?? 0;
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Outcome <span class="text-danger">*</span></label>
-                        <select class="form-select" name="outcome" id="log_outcome" required>
+                        <select aria-label="Outcome" class="form-select" name="outcome" id="log_outcome" required>
                             <option value="">Select outcome...</option>
                             <option value="connected">Connected — Spoke with lead</option>
                             <option value="interested">Interested — Wants to proceed</option>
@@ -232,7 +232,7 @@ $userId = $userId ?? 0;
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
-                        <textarea class="form-control" name="notes" id="log_notes" rows="3" placeholder="Call notes..."></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" id="log_notes" rows="3" placeholder="Call notes..."></textarea>
                     </div>
                 </form>
             </div>
@@ -262,7 +262,7 @@ $userId = $userId ?? 0;
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Message:</label>
-                    <textarea class="form-control" id="sms_text" rows="4" readonly></textarea>
+                    <textarea aria-label="Sms text" class="form-control" id="sms_text" rows="4" readonly></textarea>
                 </div>
             </div>
             <div class="modal-footer">

@@ -141,7 +141,7 @@ $statusBadge = function ($s) {
                     <p>Approve booking <strong><?= htmlspecialchars($b['booking_number'] ?? '') ?></strong> for customer <strong><?= htmlspecialchars($b['customer_name'] ?? '') ?></strong>?</p>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Approval Notes</label>
-                        <textarea class="form-control" name="approval_notes" rows="3" placeholder="Optional notes about approval..."></textarea>
+                        <textarea aria-label="Approval notes" class="form-control" name="approval_notes" rows="3" placeholder="Optional notes about approval..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -167,7 +167,7 @@ $statusBadge = function ($s) {
                     <p>Reject booking <strong><?= htmlspecialchars($b['booking_number'] ?? '') ?></strong> for customer <strong><?= htmlspecialchars($b['customer_name'] ?? '') ?></strong>?</p>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Rejection Reason *</label>
-                        <textarea class="form-control" name="rejection_reason" rows="3" placeholder="Why is this booking being rejected?" required></textarea>
+                        <textarea aria-label="Rejection reason" class="form-control" name="rejection_reason" rows="3" placeholder="Why is this booking being rejected?" required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

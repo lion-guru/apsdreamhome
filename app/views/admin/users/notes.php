@@ -101,7 +101,7 @@
                     
                     <div class="mb-3">
                         <label class="form-label">Note <span class="text-danger">*</span></label>
-                        <textarea name="note" class="form-control" rows="4" placeholder="Enter your note..." required></textarea>
+                        <textarea aria-label="Note" name="note" class="form-control" rows="4" placeholder="Enter your note..." required></textarea>
                     </div>
                     
                     <div class="mb-3">
@@ -139,7 +139,7 @@
                     
                     <div class="mb-3">
                         <label class="form-label">Note <span class="text-danger">*</span></label>
-                        <textarea name="note" class="form-control" rows="4" required></textarea>
+                        <textarea aria-label="Note" name="note" class="form-control" rows="4" required></textarea>
                     </div>
                     
                     <div class="mb-3">

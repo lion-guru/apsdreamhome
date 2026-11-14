@@ -64,7 +64,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                     <div class="row align-items-end">
                         <div class="col-md-4 mb-2 mb-md-0">
                             <label class="form-label fw-bold">Colony / Site</label>
-                            <select id="colonyFilter" class="form-select" onchange="filterByColony(this.value)">
+                            <select aria-label="Colony filter" id="colonyFilter" class="form-select" onchange="filterByColony(this.value)">
                                 <option value="">-- All Colonies --</option>
                                 <?php foreach ($colonies as $col): ?>
                                     <option value="<?= $col['id'] ?>"><?= htmlspecialchars($col['name'] ?? $col['site_name'] ?? '') ?></option>
@@ -73,7 +73,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                         </div>
                         <div class="col-md-3 mb-2 mb-md-0">
                             <label class="form-label fw-bold">Status Filter</label>
-                            <select id="statusFilter" class="form-select" onchange="filterByStatus(this.value)">
+                            <select aria-label="Status filter" id="statusFilter" class="form-select" onchange="filterByStatus(this.value)">
                                 <option value="">-- All Status --</option>
                                 <option value="available">Available</option>
                                 <option value="booked">Booked</option>
@@ -188,7 +188,7 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                     <input type="hidden" name="plot_id" id="statusPlotId">
                     <div class="mb-3">
                         <label class="form-label fw-bold">New Status</label>
-                        <select name="status" class="form-select" required>
+                        <select aria-label="Status" name="status" class="form-select" required>
                             <option value="available">Available</option>
                             <option value="booked">Booked</option>
                             <option value="sold">Sold</option>

@@ -47,7 +47,7 @@ $old = $old ?? [];
                 <div class="mb-3">
                     <label class="form-label">Budget Range</label>
                     <?php $bud = $state['form_data']['budget_range'] ?? ''; ?>
-                    <select name="budget_range" class="form-select">
+                    <select aria-label="Budget range" name="budget_range" class="form-select">
                         <option value="">-- Select --</option>
                         <?php foreach (['Under 20 Lakh','20-50 Lakh','50 Lakh - 1 Cr','1-3 Cr','3-5 Cr','Above 5 Cr'] as $b): ?>
                             <option value="<?= e($b) ?>" <?= $bud === $b ? 'selected' : '' ?>><?= e($b) ?></option>

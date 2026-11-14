@@ -15,7 +15,7 @@ ob_start();
         <form method="GET" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-auto">
-                <select name="type" class="form-select form-select-sm">
+                <select aria-label="Type" name="type" class="form-select form-select-sm">
                     <option value="">All Types</option>
                     <option value="tds_return" <?= ($type ?? '') === 'tds_return' ? 'selected' : '' ?>>TDS Return</option>
                     <option value="tds_challan" <?= ($type ?? '') === 'tds_challan' ? 'selected' : '' ?>>TDS Challan</option>
@@ -26,7 +26,7 @@ ob_start();
                 </select>
             </div>
             <div class="col-auto">
-                <select name="status" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" class="form-select form-select-sm">
                     <option value="">All Status</option>
                     <option value="draft" <?= ($status ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                     <option value="prepared" <?= ($status ?? '') === 'prepared' ? 'selected' : '' ?>>Prepared</option>
@@ -36,7 +36,7 @@ ob_start();
                 </select>
             </div>
             <div class="col-auto">
-                <select name="fy" class="form-select form-select-sm">
+                <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                     <option value="">All FY</option>
                     <?php foreach ($fy_list as $k => $v): ?>
                         <option value="<?= $k ?>" <?= ($fy ?? '') === $k ? 'selected' : '' ?>><?= $k ?></option>

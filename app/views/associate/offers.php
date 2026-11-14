@@ -304,7 +304,7 @@ foreach ($claims as $cl) {
 
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold">Delivery / Handover Address (if physical gift chosen)</label>
-                                                <textarea class="form-control" name="shipping_address" rows="2" placeholder="Gorakhpur Office Handover or Full Postal Address..."></textarea>
+                                                <textarea aria-label="Shipping address" class="form-control" name="shipping_address" rows="2" placeholder="Gorakhpur Office Handover or Full Postal Address..."></textarea>
                                             </div>
 
                                             <div class="alert alert-warning small mb-0">

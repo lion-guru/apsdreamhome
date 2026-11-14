@@ -9,7 +9,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Rating</label>
-            <select name="rating" class="form-select">
+            <select aria-label="Rating" name="rating" class="form-select">
                 <option value="5">5 - Excellent</option>
                 <option value="4">4 - Good</option>
                 <option value="3">3 - Average</option>
@@ -19,7 +19,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Comments</label>
-            <textarea name="comments" class="form-control"></textarea>
+            <textarea aria-label="Comments" name="comments" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Submit Feedback</button>
     </form>

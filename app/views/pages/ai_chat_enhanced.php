@@ -42,7 +42,7 @@ $base = $base ?? BASE_URL;
                         </div>
                         <?php if (!empty($available_roles)): ?>
                         <label class="form-label small fw-bold"><?= __('user_ai_chat_enhanced_switch_role', 'Switch Role') ?></label>
-                        <select id="ai-role-select-enhanced" class="form-select form-select-sm mb-3" onchange="changeEnhancedRole(this.value)">
+                        <select aria-label="Ai role select enhanced" id="ai-role-select-enhanced" class="form-select form-select-sm mb-3" onchange="changeEnhancedRole(this.value)">
                             <?php foreach ($available_roles as $role_key => $role_name): ?>
                             <option value="<?= htmlspecialchars($role_key ?? '') ?>" <?= $role_key === $current_user_role ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($role_name ?? '') ?>

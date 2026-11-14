@@ -32,7 +32,7 @@ $settings = $settings ?? [];
                         
                         <div class="mb-3">
                             <label class="form-label">Enable WhatsApp Business API</label>
-                            <select name="whatsapp_api_enabled" class="form-select">
+                            <select aria-label="Whatsapp api enabled" name="whatsapp_api_enabled" class="form-select">
                                 <option value="0" <?= ($settings['whatsapp_api_enabled'] ?? '') === '0' ? 'selected' : '' ?>>Disabled</option>
                                 <option value="1" <?= ($settings['whatsapp_api_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
                             </select>
@@ -60,7 +60,7 @@ $settings = $settings ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">Webhook Verified</label>
-                            <select name="whatsapp_webhook_verified" class="form-select">
+                            <select aria-label="Whatsapp webhook verified" name="whatsapp_webhook_verified" class="form-select">
                                 <option value="0" <?= ($settings['whatsapp_webhook_verified'] ?? '') === '0' ? 'selected' : '' ?>>Not Verified</option>
                                 <option value="1" <?= ($settings['whatsapp_webhook_verified'] ?? '') === '1' ? 'selected' : '' ?>>Verified</option>
                             </select>

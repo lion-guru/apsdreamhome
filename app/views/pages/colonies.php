@@ -246,7 +246,7 @@ function getAmenityIcon($amenity) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_message') ?></label>
-                        <textarea class="form-control" name="message" rows="3" placeholder="<?= htmlspecialchars(__('colonies_form_placeholder')) ?>"></textarea>
+                        <textarea aria-label="Message" class="form-control" name="message" rows="3" placeholder="<?= htmlspecialchars(__('colonies_form_placeholder')) ?>"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-paper-plane me-2"></i><?= __('colonies_form_submit') ?>

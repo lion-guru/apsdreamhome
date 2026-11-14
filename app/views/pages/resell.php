@@ -65,7 +65,7 @@ $pagination = $pagination ?? [];
 
             <div class="col-md-2">
                 <label class="form-label fw-bold"><?= __('resell_city') ?></label>
-                <select name="city" class="form-select">
+                <select aria-label="City" name="city" class="form-select">
                     <option value=""><?= __('resell_all_cities') ?></option>
                     <?php foreach ($cities as $city): ?>
                         <?php $cityValue = is_array($city) ? ($city['city'] ?? '') : ($city ?? ''); ?>
@@ -78,7 +78,7 @@ $pagination = $pagination ?? [];
 
             <div class="col-md-2">
                 <label class="form-label fw-bold"><?= __('resell_type') ?></label>
-                <select name="type" class="form-select">
+                <select aria-label="Type" name="type" class="form-select">
                     <option value=""><?= __('resell_all_types') ?></option>
                     <?php foreach ($property_types as $type): ?>
                         <?php $typeValue = is_array($type) ? ($type['type'] ?? '') : ($type ?? ''); ?>

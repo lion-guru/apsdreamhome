@@ -200,11 +200,11 @@ $templates = $templates ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Notes</label>
-                        <textarea name="notes" class="form-control" rows="4" placeholder="Add notes about this item..."></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="4" placeholder="Add notes about this item..."></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Update Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="pending">Pending</option>
                             <option value="in_progress">In Progress</option>
                             <option value="completed">Completed</option>

@@ -84,7 +84,7 @@ function get_plot_status_badge($status) {
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white" data-aos="fade-left">
                 <label class="fw-bold text-dark mb-2 text-uppercase small letter-spacing-1"><?= __('plot_filter_category', [], 'Filter by Category') ?></label>
-                <select class="form-select border-light bg-light rounded-3 py-2" id="categoryFilter">
+                <select aria-label="Category filter" class="form-select border-light bg-light rounded-3 py-2" id="categoryFilter">
                     <option value="ALL"><?= __('plot_all_categories', [], 'All Categories') ?></option>
                     <?php foreach ($plot_categories as $cat): ?>
                         <option value="<?= h($cat) ?>"><?= h($cat) ?></option>

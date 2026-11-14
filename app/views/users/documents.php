@@ -164,7 +164,7 @@ function docTypeLabel($type) {
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Document Type *</label>
-                            <select name="document_type" class="form-select" required>
+                            <select aria-label="Document type" name="document_type" class="form-select" required>
                                 <option value="">Select type...</option>
                                 <option value="aadhaar">Aadhaar Card</option>
                                 <option value="pan">PAN Card</option>

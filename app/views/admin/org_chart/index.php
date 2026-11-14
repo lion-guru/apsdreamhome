@@ -193,7 +193,7 @@ $nodes = $nodes ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $e): ?>
                                 <?php 
@@ -207,7 +207,7 @@ $nodes = $nodes ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Reports To</label>
-                        <select name="parent_id" class="form-select">
+                        <select aria-label="Parent id" name="parent_id" class="form-select">
                             <option value="">Top Level (No Manager)</option>
                             <?php foreach ($nodes as $n): ?>
                                 <option value="<?= $n['id'] ?>"><?= htmlspecialchars($n['position_title'] . ' - ' . ($n['employee_name'] ?? 'Vacant')) ?></option>
@@ -220,7 +220,7 @@ $nodes = $nodes ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Department</label>
-                        <select name="department" class="form-select">
+                        <select aria-label="Department" name="department" class="form-select">
                             <option value="">Select Department</option>
                             <?php foreach ($departments as $dept): ?>
                                 <option value="<?= htmlspecialchars($dept) ?>"><?= htmlspecialchars($dept) ?></option>

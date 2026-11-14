@@ -49,7 +49,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan A</label>
-                    <select name="plan_id" class="cp-input">
+                    <select aria-label="Plan id" name="plan_id" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= ($activePlan && $activePlan['id'] == $p['id'] && empty($_POST['plan_id'])) || ($_POST['plan_id'] ?? 0) == $p['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?>
@@ -59,7 +59,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Seller Rank</label>
-                    <select name="rank_index" class="cp-input">
+                    <select aria-label="Rank index" name="rank_index" class="cp-input">
                         <?php foreach ($ranks as $i => $r): ?>
                             <option value="<?= $i ?>" <?= ($_POST['rank_index'] ?? 0) == $i ? 'selected' : '' ?>><?= $r ?></option>
                         <?php endforeach; ?>
@@ -77,7 +77,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
             </div>
             <div class="col-md-2">
                 <label class="cp-label">Presets</label>
-                <select name="preset_id" class="cp-input" id="presetSelect" onchange="loadPreset(this.value)">
+                <select aria-label="Preset id" name="preset_id" class="cp-input" id="presetSelect" onchange="loadPreset(this.value)">
                     <option value="">-- Load Preset --</option>
                     <?php foreach (($presets ?? []) as $pr): ?>
                         <option value="<?= $pr['id'] ?>" data-mode="<?= htmlspecialchars($pr['sim_mode']) ?>" data-params='<?= htmlspecialchars($pr['params_json'], ENT_QUOTES) ?>'>
@@ -89,7 +89,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
             <?php if ($simMode === 'compare'): ?>
                 <div class="col-md-2">
                     <label class="cp-label">Plan B</label>
-                    <select name="plan_id_b" class="cp-input">
+                    <select aria-label="Plan id b" name="plan_id_b" class="cp-input">
                         <?php foreach ($plans as $p): ?>
                             <option value="<?= $p['id'] ?>" <?= ($_POST['plan_id_b'] ?? 0) == $p['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($p['plan_name'] ?? '') ?> v<?= $p['version'] ?>
@@ -360,7 +360,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                     </div>
                     <div class="mb-3">
                         <label class="form-label text-white">Description</label>
-                        <textarea name="description" class="cp-input" rows="3" placeholder="Optional notes about this scenario..."></textarea>
+                        <textarea aria-label="Description" name="description" class="cp-input" rows="3" placeholder="Optional notes about this scenario..."></textarea>
                     </div>
                     <div class="alert alert-info small mb-0">Current mode: <strong id="currentMode"><?= $simMode ?></strong> — will be saved with all current parameters</div>
                 </div>

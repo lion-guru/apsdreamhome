@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active" <?= ($edit_structure['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                             <option value="inactive" <?= ($edit_structure['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                         </select>
@@ -206,7 +206,7 @@
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-body">
                             <label class="form-label font-weight-bold text-primary">Select Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select select2-modal" required >
+                            <select aria-label="Employee id" name="employee_id" class="form-select select2-modal" required >
                                 <option value="">Search and select an employee...</option>
                                 <?php foreach ($users ?? [] as $e): ?>
                                 <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>

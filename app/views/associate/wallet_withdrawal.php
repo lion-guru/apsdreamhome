@@ -61,7 +61,7 @@ $page_title = $page_title ?? 'Withdraw Funds';
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label">Bank Account</label>
-                        <select name="bank_account_id" class="form-select" required>
+                        <select aria-label="Bank account id" name="bank_account_id" class="form-select" required>
                             <option value="">Select Bank Account</option>
                             <?php foreach ($bankAccounts as $ba): ?>
                                 <option value="<?= $ba['id'] ?>">

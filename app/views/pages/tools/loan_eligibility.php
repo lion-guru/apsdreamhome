@@ -29,7 +29,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="foir"><?php echo __('foir_limit', [], 'FOIR Limit (%)'); ?></label>
-                                <select class="form-select" id="foir" onchange="calcLoan()">
+                                <select aria-label="Foir" class="form-select" id="foir" onchange="calcLoan()">
                                     <option value="50" selected>50%</option>
                                     <option value="60">60%</option>
                                 </select>

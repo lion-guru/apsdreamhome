@@ -267,7 +267,7 @@ $priorities = $priorities ?? [];
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="detail_assignee_id" class="form-label fw-semibold">Select Staff Member <span class="text-danger">*</span></label>
-                            <select name="assignee_id" id="detail_assignee_id" class="form-select" required>
+                            <select aria-label="Assignee id" name="assignee_id" id="detail_assignee_id" class="form-select" required>
                                 <option value="">-- Choose Investigator / Staff --</option>
                                 <?php foreach ($assignees as $staff): ?>
                                     <option value="<?= $staff['id'] ?>" <?= (!empty($grievance['assigned_to']) && $grievance['assigned_to'] == $staff['id']) ? 'selected' : '' ?>>
@@ -302,7 +302,7 @@ $priorities = $priorities ?? [];
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="detail_comment" class="form-label fw-semibold">Comment <span class="text-danger">*</span></label>
-                            <textarea name="comment" id="detail_comment" class="form-control" rows="4" required placeholder="Enter your comment..."></textarea>
+                            <textarea aria-label="Comment" name="comment" id="detail_comment" class="form-control" rows="4" required placeholder="Enter your comment..."></textarea>
                         </div>
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" name="is_internal" id="is_internal" value="1">

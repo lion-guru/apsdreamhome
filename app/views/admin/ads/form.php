@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Slot Type</label>
-                    <select name="slot_type" class="form-select">
+                    <select aria-label="Slot type" name="slot_type" class="form-select">
                         <option value="banner" <?= ($ad['slot_type'] ?? '') === 'banner' ? 'selected' : '' ?>>Banner</option>
                         <option value="sidebar" <?= ($ad['slot_type'] ?? '') === 'sidebar' ? 'selected' : '' ?>>Sidebar</option>
                         <option value="inline" <?= ($ad['slot_type'] ?? '') === 'inline' ? 'selected' : '' ?>>Inline</option>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="active" <?= ($ad['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="inactive" <?= ($ad['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                     </select>
@@ -48,11 +48,11 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label">Content / Text Ad</label>
-                    <textarea name="content" rows="3" class="form-control" placeholder="Text content for non-image ads"><?= htmlspecialchars($ad['content'] ?? '') ?></textarea>
+                    <textarea aria-label="Content" name="content" rows="3" class="form-control" placeholder="Text content for non-image ads"><?= htmlspecialchars($ad['content'] ?? '') ?></textarea>
                 </div>
                 <div class="col-12">
                     <label class="form-label">HTML Code (for Google AdSense or custom HTML)</label>
-                    <textarea name="html_code" rows="5" class="form-control font-monospace" placeholder="&lt;script async src=...&gt;&lt;/script&gt;"><?= htmlspecialchars($ad['html_code'] ?? '') ?></textarea>
+                    <textarea aria-label="Html code" name="html_code" rows="5" class="form-control font-monospace" placeholder="&lt;script async src=...&gt;&lt;/script&gt;"><?= htmlspecialchars($ad['html_code'] ?? '') ?></textarea>
                     <div class="form-text">Paste Google AdSense code or custom HTML here. If set, this overrides image/content.</div>
                 </div>
                 <div class="col-12">

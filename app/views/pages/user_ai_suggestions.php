@@ -15,7 +15,7 @@ $extraHead = '<link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawes
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('user_ai_suggestions_label_property_type', 'Property Type') ?></label>
-                            <select class="form-select" name="property_type" required>
+                            <select aria-label="Property type" class="form-select" name="property_type" required>
                                 <option value=""><?= __('user_ai_suggestions_select_type', 'Select Type') ?></option>
                                 <option value="plot"><?= __('user_ai_suggestions_type_plot', 'Plot / Land') ?></option>
                                 <option value="house"><?= __('user_ai_suggestions_type_house', 'House / Villa') ?></option>
@@ -26,7 +26,7 @@ $extraHead = '<link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawes
 
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('user_ai_suggestions_label_budget', 'Budget Range') ?></label>
-                            <select class="form-select" name="budget">
+                            <select aria-label="Budget" class="form-select" name="budget">
                                 <option value=""><?= __('user_ai_suggestions_select_budget', 'Select Budget') ?></option>
                                 <option value="under_5_lakh"><?= __('user_ai_suggestions_budget_under5', 'Under 5 Lakh') ?></option>
                                 <option value="5_to_10_lakh"><?= __('user_ai_suggestions_budget_5_10', '5 - 10 Lakh') ?></option>
@@ -38,7 +38,7 @@ $extraHead = '<link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawes
 
                         <div class="mb-3">
                             <label class="form-label fw-bold"><?= __('user_ai_suggestions_label_location', 'Preferred Location') ?></label>
-                            <select class="form-select" name="location">
+                            <select aria-label="Location" class="form-select" name="location">
                                 <option value=""><?= __('user_ai_suggestions_select_location', 'Select Location') ?></option>
                                 <option value="gorakhpur"><?= __('city_gorakhpur', 'Gorakhpur') ?></option>
                                 <option value="lucknow"><?= __('city_lucknow', 'Lucknow') ?></option>

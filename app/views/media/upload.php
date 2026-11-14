@@ -12,7 +12,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Folder</label>
-            <select name="folder" class="form-select">
+            <select aria-label="Folder" name="folder" class="form-select">
                 <option value="general">General</option>
                 <option value="properties">Properties</option>
                 <option value="projects">Projects</option>

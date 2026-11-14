@@ -24,7 +24,7 @@ ob_start();
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Collector (Field Agent) *</label>
-                                <select class="form-select" name="collector_id" required>
+                                <select aria-label="Collector id" class="form-select" name="collector_id" required>
                                     <option value="">Select collector...</option>
                                     <?php foreach ($collectors as $u): ?>
                                         <option value="<?= $u['id'] ?>" <?= ($u['id'] ?? 0) == ($_SESSION['user_id'] ?? 0) ? 'selected' : '' ?>><?= htmlspecialchars($u['name'] ?? '') ?></option>
@@ -45,7 +45,7 @@ ob_start();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Payment Method</label>
-                                <select class="form-select" name="payment_method">
+                                <select aria-label="Payment method" class="form-select" name="payment_method">
                                     <option value="cash">Cash</option>
                                     <option value="cheque">Cheque</option>
                                     <option value="upi">UPI</option>
@@ -62,7 +62,7 @@ ob_start();
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Booking</label>
-                                <select class="form-select" name="booking_id" id="bookingSelect">
+                                <select aria-label="Booking id" class="form-select" name="booking_id" id="bookingSelect">
                                     <option value="">Select booking...</option>
                                     <?php foreach ($bookings as $b): ?>
                                         <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['booking_number'] ?? '#'.$b['id']) ?> — <?= htmlspecialchars($b['customer_name'] ?? '') ?></option>
@@ -91,7 +91,7 @@ ob_start();
                         </div>
                         <div class="mb-0">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="notes" rows="3" placeholder="Any additional notes..."></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="3" placeholder="Any additional notes..."></textarea>
                         </div>
                     </div>
                 </div>

@@ -63,7 +63,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Permanent Residential Address</label>
-                            <textarea name="new_buyer_address" class="form-control" rows="2" placeholder="Full postal address of the new buyer..."></textarea>
+                            <textarea aria-label="New buyer address" name="new_buyer_address" class="form-control" rows="2" placeholder="Full postal address of the new buyer..."></textarea>
                         </div>
                     </div>
 
@@ -74,7 +74,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Transfer Nature <span class="text-danger">*</span></label>
-                            <select name="transfer_type" class="form-select" required>
+                            <select aria-label="Transfer type" name="transfer_type" class="form-select" required>
                                 <option value="resale">Open Market Resale to Third-Party Buyer</option>
                                 <option value="family_gift">Family Gift / Blood Relative Transfer</option>
                                 <option value="legal_heir">Legal Heir / Succession</option>
@@ -87,7 +87,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Remarks / Reason for Transfer</label>
-                            <textarea name="transfer_reason" class="form-control" rows="2" placeholder="e.g. Plot being sold due to relocation."></textarea>
+                            <textarea aria-label="Transfer reason" name="transfer_reason" class="form-control" rows="2" placeholder="e.g. Plot being sold due to relocation."></textarea>
                         </div>
                     </div>
 

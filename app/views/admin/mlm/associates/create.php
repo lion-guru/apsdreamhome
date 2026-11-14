@@ -43,7 +43,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="level_id" class="form-label">Level *</label>
-                                    <select class="form-select" id="level_id" name="level_id" required>
+                                    <select aria-label="Level id" class="form-select" id="level_id" name="level_id" required>
                                         <option value="">Select Level</option>
                                         <option value="1">Associate (10%)</option>
                                         <option value="2">Senior Associate (12%)</option>
@@ -60,7 +60,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="sponsor_id" class="form-label">Sponsor</label>
-                                    <select class="form-select" id="sponsor_id" name="sponsor_id">
+                                    <select aria-label="Sponsor id" class="form-select" id="sponsor_id" name="sponsor_id">
                                         <option value="">No Sponsor</option>
                                         <?php if (!empty($sponsors)): ?>
                                             <?php foreach ($sponsors as $sponsor): ?>

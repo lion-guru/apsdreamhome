@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Type <span class="text-danger">*</span></label>
-                        <select name="transaction_type" required class="form-select">
+                        <select aria-label="Transaction type" name="transaction_type" required class="form-select">
                             <option value="receipt">Receipt (In)</option>
                             <option value="payment">Payment (Out)</option>
                             <option value="contra">Contra (Transfer)</option>
@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Payment Mode</label>
-                        <select name="payment_mode" class="form-select">
+                        <select aria-label="Payment mode" name="payment_mode" class="form-select">
                             <option value="cash">Cash</option>
                             <option value="bank">Bank Transfer</option>
                             <option value="cheque">Cheque</option>
@@ -41,7 +41,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Bank Account</label>
-                        <select name="bank_account_id" class="form-select">
+                        <select aria-label="Bank account id" name="bank_account_id" class="form-select">
                             <option value="">Cash (no bank)</option>
                             <?php foreach (($banks ?? []) as $b): ?>
                                 <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name'] ?? '') ?></option>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Reference Type</label>
-                        <select name="reference_type" class="form-select">
+                        <select aria-label="Reference type" name="reference_type" class="form-select">
                             <option value="">—</option>
                             <option value="booking">Booking</option>
                             <option value="installment">Installment</option>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label">Narration</label>
-                        <textarea name="narration" class="form-control" rows="2" placeholder="Description / notes"></textarea>
+                        <textarea aria-label="Narration" name="narration" class="form-control" rows="2" placeholder="Description / notes"></textarea>
                     </div>
                 </div>
                 <div class="mt-4 d-flex gap-2">

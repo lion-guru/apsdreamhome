@@ -30,7 +30,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">From Entity</label>
-                                    <select name="from_entity_id" class="form-select" required>
+                                    <select aria-label="From entity id" name="from_entity_id" class="form-select" required>
                                         <option value="">Select source entity</option>
                                         <?php foreach ($entities as $e): ?><option value="<?= (int)$e['id'] ?>"><?= htmlspecialchars($e['entity_name']) ?> (<?= htmlspecialchars($e['entity_code']) ?>)</option><?php endforeach; ?>
                                     </select>
@@ -39,7 +39,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">To Entity</label>
-                                    <select name="to_entity_id" class="form-select" required>
+                                    <select aria-label="To entity id" name="to_entity_id" class="form-select" required>
                                         <option value="">Select destination entity</option>
                                         <?php foreach ($entities as $e): ?><option value="<?= (int)$e['id'] ?>"><?= htmlspecialchars($e['entity_name']) ?> (<?= htmlspecialchars($e['entity_code']) ?>)</option><?php endforeach; ?></select>
                                 </div>
@@ -47,7 +47,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Transaction Type</label>
-                                    <select name="transaction_type" class="form-select" required>
+                                    <select aria-label="Transaction type" name="transaction_type" class="form-select" required>
                                         <option value="sale">Sale</option>
                                         <option value="purchase">Purchase</option>
                                         <option value="service">Service</option>
@@ -67,7 +67,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Currency</label>
-                                    <select name="currency" class="form-select">
+                                    <select aria-label="Currency" name="currency" class="form-select">
                                         <option value="INR">INR</option>
                                         <option value="USD">USD</option>
                                         <option value="EUR">EUR</option>
@@ -91,7 +91,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form-label">Description</label>
-                                    <textarea name="description" class="form-control" rows="3"></textarea>
+                                    <textarea aria-label="Description" name="description" class="form-control" rows="3"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -103,7 +103,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="form-label">Notes</label>
-                                    <textarea name="notes" class="form-control" rows="2"></textarea>
+                                    <textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-12 mt-4">

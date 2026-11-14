@@ -297,7 +297,7 @@ $pct = $order['completion_pct'] ?? 0;
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Site Engineer Verification Notes</label>
-                    <textarea name="measurement_notes" rows="2" class="form-control" placeholder="Work verified on site by Er. Ajay Sharma. Quality check passed..."></textarea>
+                    <textarea aria-label="Measurement notes" name="measurement_notes" rows="2" class="form-control" placeholder="Work verified on site by Er. Ajay Sharma. Quality check passed..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">

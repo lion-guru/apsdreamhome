@@ -51,7 +51,7 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label">Address</label>
-                        <textarea name="address" class="form-control" rows="2"></textarea>
+                        <textarea aria-label="Address" name="address" class="form-control" rows="2"></textarea>
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create Customer</button>

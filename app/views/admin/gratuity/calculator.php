@@ -22,7 +22,7 @@ $result = $result ?? null;
                     <form method="GET" class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Select Employee <span class="text-danger">*</span></label>
-                            <select name="employee_id" class="form-select" required onchange="this.form.submit()">
+                            <select aria-label="Employee id" name="employee_id" class="form-select" required onchange="this.form.submit()">
                                 <option value="">Select Employee</option>
                                 <?php foreach ($employees as $emp): ?>
                                 <option value="<?= $emp['id'] ?>" <?= $selected_employee == $emp['id'] ? 'selected' : '' ?>>

@@ -23,7 +23,7 @@ $isEdit = !empty($payment['id']);
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label small">Payment Type <span class="text-danger">*</span></label>
-                                <select name="payment_type" class="form-select form-select-sm" required>
+                                <select aria-label="Payment type" name="payment_type" class="form-select form-select-sm" required>
                                     <?php
                                     $types = ['earnest_money'=>'Earnest Money','advance'=>'Advance','installment'=>'Installment','final_payment'=>'Final Payment','stamp_duty'=>'Stamp Duty','registration_fee'=>'Registration Fee','broker_commission'=>'Broker Commission','mutation_fee'=>'Mutation Fee','other'=>'Other'];
                                     foreach ($types as $k=>$v):
@@ -43,7 +43,7 @@ $isEdit = !empty($payment['id']);
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Mode</label>
-                                <select name="payment_mode" class="form-select form-select-sm">
+                                <select aria-label="Payment mode" name="payment_mode" class="form-select form-select-sm">
                                     <?php foreach (['cash'=>'Cash','cheque'=>'Cheque','dd'=>'Demand Draft','neft'=>'NEFT','rtgs'=>'RTGS','upi'=>'UPI','bank_transfer'=>'Bank Transfer'] as $k=>$v):
                                         $sel = ($payment['payment_mode'] ?? 'neft') === $k ? 'selected' : ''; ?>
                                         <option value="<?= $k ?>" <?= $sel ?>><?= $v ?></option>
@@ -52,7 +52,7 @@ $isEdit = !empty($payment['id']);
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Status</label>
-                                <select name="status" class="form-select form-select-sm">
+                                <select aria-label="Status" name="status" class="form-select form-select-sm">
                                     <?php foreach (['pending'=>'Pending','cleared'=>'Cleared','bounced'=>'Bounced','cancelled'=>'Cancelled'] as $k=>$v):
                                         $sel = ($payment['status'] ?? 'pending') === $k ? 'selected' : ''; ?>
                                         <option value="<?= $k ?>" <?= $sel ?>><?= $v ?></option>
@@ -69,7 +69,7 @@ $isEdit = !empty($payment['id']);
                             </div>
                             <div class="col-12">
                                 <label class="form-label small">Remarks</label>
-                                <textarea name="remarks" class="form-control form-control-sm" rows="2"><?= htmlspecialchars($payment['remarks'] ?? '') ?></textarea>
+                                <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2"><?= htmlspecialchars($payment['remarks'] ?? '') ?></textarea>
                             </div>
                         </div>
                         <div class="mt-3">

@@ -48,7 +48,7 @@
             <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" required></div>
             <div class="mb-3"><label class="form-label">Phone</label><input type="text" name="phone" class="form-control"></div>
             <div class="mb-3"><label class="form-label">Package</label>
-                <select name="package_id" class="form-select">
+                <select aria-label="Package id" name="package_id" class="form-select">
                     <?php foreach ($packages ?? [] as $p): ?>
                     <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['name'] ?? '') ?> (₹<?= number_format((float)$p['price']) ?>)</option>
                     <?php endforeach; ?>

@@ -39,7 +39,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Payment Method</label>
-                        <select name="payment_method" class="form-select">
+                        <select aria-label="Payment method" name="payment_method" class="form-select">
                             <option value="bank_transfer">Bank Transfer</option>
                             <option value="cash">Cash</option>
                             <option value="cheque">Cheque</option>
@@ -54,7 +54,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="completed">Completed</option>
                             <option value="pending">Pending</option>
                             <option value="cancelled">Cancelled</option>
@@ -63,7 +63,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-12">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="3" maxlength="1000"
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" maxlength="1000"
                                   placeholder="Land details, seller, registry reference..."></textarea>
                     </div>
                 </div>

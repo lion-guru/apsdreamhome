@@ -59,7 +59,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-2">
                             <label class="form-label small">Cost Type <span class="text-danger">*</span></label>
-                            <select name="cost_type" class="form-select form-select-sm" required>
+                            <select aria-label="Cost type" name="cost_type" class="form-select form-select-sm" required>
                                 <option value="acquisition">Acquisition</option>
                                 <option value="development">Development</option>
                                 <option value="infrastructure">Infrastructure</option>
@@ -105,7 +105,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Notes</label>
-                            <textarea name="notes" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-save me-1"></i>Add Cost

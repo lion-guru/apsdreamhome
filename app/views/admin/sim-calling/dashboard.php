@@ -78,7 +78,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <label>Agent Script</label>
-                                    <select id="agentScript" class="form-control form-control-sm">
+                                    <select aria-label="Agent script" id="agentScript" class="form-control form-control-sm">
                                         <option value="default">Default IVR</option>
                                         <option value="property_inquiry">Property Inquiry</option>
                                         <option value="lead_followup">Lead Follow-up</option>

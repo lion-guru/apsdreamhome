@@ -36,7 +36,7 @@ unset($_SESSION['bulk_result']);
                               <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <div class="mb-3">
               <label class="form-label">Target Table</label>
-              <select name="table" class="form-select" required>
+              <select aria-label="Table" name="table" class="form-select" required>
                 <option value="">-- Select table --</option>
                 <?php foreach ($tables as $t): ?>
                   <option value="<?= $t ?>"><?= htmlspecialchars($t ?? '') ?> (<?= $row_counts[$t] ?? 0 ?> rows)</option>

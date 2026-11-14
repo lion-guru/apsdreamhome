@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <input type="text" name="search" class="form-control" placeholder="Search by booking or customer..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
                     </div>
                     <div class="col-md-3">
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="">All Status</option>
                             <option value="active" <?php echo ($filters['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
                             <option value="completed" <?php echo ($filters['status'] ?? '') === 'completed' ? 'selected' : ''; ?>>Completed</option>

@@ -26,7 +26,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Role</label>
-                    <select name="role" class="form-select">
+                    <select aria-label="Role" name="role" class="form-select">
                         <?php foreach ($roles as $r): ?>
                             <option value="<?= $r ?>"><?= ucfirst($r) ?></option>
                         <?php endforeach; ?>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                         <option value="suspended">Suspended</option>

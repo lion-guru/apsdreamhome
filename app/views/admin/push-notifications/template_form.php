@@ -39,7 +39,7 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Channel</label>
-                                <select name="channel" class="form-select">
+                                <select aria-label="Channel" name="channel" class="form-select">
                                     <?php
                                         $channels = ['push' => 'Push Notification', 'email' => 'Email', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp'];
                                         $current = $template['channel'] ?? 'push';
@@ -68,7 +68,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Body <span >*</span></label>
-                            <textarea name="body" class="form-control" rows="5" required
+                            <textarea aria-label="Body" name="body" class="form-control" rows="5" required
                                       placeholder="Notification body text. Use {{variable}} for dynamic content."
                                       ><?= htmlspecialchars($template['body'] ?? '') ?></textarea>
                         </div>

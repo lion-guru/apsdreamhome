@@ -189,7 +189,7 @@ $appointment = $appointment ?? [];
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Instructions to Buyer</label>
-                                <textarea name="notes" rows="2" class="form-control" placeholder="Report at Tehsil Sadar Room 14 at 11:00 AM with original Aadhaar cards..."></textarea>
+                                <textarea aria-label="Notes" name="notes" rows="2" class="form-control" placeholder="Report at Tehsil Sadar Room 14 at 11:00 AM with original Aadhaar cards..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-check me-1"></i>Confirm Appointment Slot

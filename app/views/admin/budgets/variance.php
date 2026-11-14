@@ -16,7 +16,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'budget_id' => null];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Fiscal Year</label>
-                    <select name="fiscal_year" class="form-select">
+                    <select aria-label="Fiscal year" name="fiscal_year" class="form-select">
                         <option value="">All Years</option>
                         <?php foreach ($fiscalYears as $fy): ?>
                         <option value="<?= htmlspecialchars($fy['fiscal_year'] ?? '') ?>" <?= $filters['fiscal_year'] === ($fy['fiscal_year'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($fy['fiscal_year'] ?? '') ?></option>

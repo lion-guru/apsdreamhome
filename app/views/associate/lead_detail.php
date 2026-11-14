@@ -236,7 +236,7 @@ $today = date('Y-m-d');
                 <form action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/note" method="POST">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
-                        <textarea class="form-control" name="note" rows="3" placeholder="<?= __('assoc_lead_note_placeholder', [], 'Add a note about this lead, follow-up details, client feedback...') ?>" required></textarea>
+                        <textarea aria-label="Note" class="form-control" name="note" rows="3" placeholder="<?= __('assoc_lead_note_placeholder', [], 'Add a note about this lead, follow-up details, client feedback...') ?>" required></textarea>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
@@ -251,7 +251,7 @@ $today = date('Y-m-d');
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label class="form-label"><?= __('assoc_lead_task_type', [], 'Task Type') ?></label>
-                            <select class="form-select form-select-sm" name="task_type">
+                            <select aria-label="Task type" class="form-select form-select-sm" name="task_type">
                                 <option value="follow_up"><?= __('assoc_lead_call', [], 'Call') ?></option>
                                 <option value="visit"><?= __('assoc_status_site_visit', [], 'Site Visit') ?></option>
                                 <option value="email"><?= __('assoc_lead_email', [], 'Email') ?></option>
@@ -261,7 +261,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-6">
                             <label class="form-label"><?= __('assoc_lead_priority_label', [], 'Priority') ?></label>
-                            <select class="form-select form-select-sm" name="task_priority">
+                            <select aria-label="Task priority" class="form-select form-select-sm" name="task_priority">
                                 <option value="medium"><?= __('assoc_priority_medium', [], 'Medium') ?></option>
                                 <option value="high"><?= __('assoc_priority_high', [], 'High') ?></option>
                                 <option value="urgent"><?= __('assoc_priority_urgent', [], 'Urgent') ?></option>
@@ -309,7 +309,7 @@ $today = date('Y-m-d');
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-2">
                         <div class="col-md-5">
-                            <select class="form-select form-select-sm" name="document_type">
+                            <select aria-label="Document type" class="form-select form-select-sm" name="document_type">
                                 <option value="general">General</option>
                                 <option value="kyc">KYC</option>
                                 <option value="site_photo">Site Photo</option>
@@ -365,7 +365,7 @@ $today = date('Y-m-d');
                 <form action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/status" method="POST">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
-                        <select class="form-select" name="status">
+                        <select aria-label="Status" class="form-select" name="status">
                             <?php foreach ($statuses as $key => $s): ?>
                                 <option value="<?= e($key ?? '') ?>" <?= $currentStatus === $key ? 'selected' : '' ?>><?= e($s['label'] ?? '') ?></option>
                             <?php endforeach; ?>
@@ -373,7 +373,7 @@ $today = date('Y-m-d');
                     </div>
                     <div class="mb-3">
                         <label class="form-label small text-muted"><?= __('assoc_lead_lost_reason', [], 'Lost reason (needed for Closed Lost)') ?></label>
-                        <select class="form-select form-select-sm" name="lost_reason">
+                        <select aria-label="Lost reason" class="form-select form-select-sm" name="lost_reason">
                             <option value="">—</option>
                             <option value="price"><?= __('assoc_lead_lr_price', [], 'Price / budget') ?></option>
                             <option value="location"><?= __('assoc_lead_lr_location', [], 'Location') ?></option>
@@ -415,7 +415,7 @@ $today = date('Y-m-d');
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <h6 class="small text-muted"><?= __('assoc_lead_log_call', [], 'Log a call') ?></h6>
                         <div class="input-group input-group-sm mb-2">
-                            <select class="form-select" name="outcome">
+                            <select aria-label="Outcome" class="form-select" name="outcome">
                                 <option value="connected"><?= __('assoc_call_connected', [], 'Connected') ?></option>
                                 <option value="interested"><?= __('assoc_call_interested', [], 'Interested') ?></option>
                                 <option value="callback"><?= __('assoc_call_callback', [], 'Callback later') ?></option>
@@ -633,7 +633,7 @@ $today = date('Y-m-d');
                 <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/assign">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="input-group">
-                        <select class="form-select form-select-sm" name="assign_to">
+                        <select aria-label="Assign to" class="form-select form-select-sm" name="assign_to">
                             <option value=""><?= __('assoc_lead_select_member', [], '— Select member —') ?></option>
                             <?php foreach ($teamMembers as $tm): ?>
                                 <option value="<?= $tm['id'] ?>"><?= htmlspecialchars($tm['name'] ?? '') ?></option>
@@ -675,7 +675,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_duration', [], 'Duration') ?></label>
-                            <select class="form-select" name="duration">
+                            <select aria-label="Duration" class="form-select" name="duration">
                                 <option value="30">30 min</option>
                                 <option value="60" selected>1 hour</option>
                                 <option value="90">1.5 hours</option>
@@ -684,7 +684,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_colony', [], 'Colony') ?></label>
-                            <select class="form-select" name="colony_id">
+                            <select aria-label="Colony id" class="form-select" name="colony_id">
                                 <option value=""><?= __('assoc_lead_modal_select', [], '— Select —') ?></option>
                                 <?php foreach ($colonies as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -693,7 +693,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_notes', [], 'Notes') ?></label>
-                            <textarea class="form-control" name="notes" rows="2" placeholder="<?= __('assoc_lead_modal_notes_placeholder', [], 'What to show, special instructions...') ?>"></textarea>
+                            <textarea aria-label="Notes" class="form-control" name="notes" rows="2" placeholder="<?= __('assoc_lead_modal_notes_placeholder', [], 'What to show, special instructions...') ?>"></textarea>
                         </div>
                     </div>
                 </div>

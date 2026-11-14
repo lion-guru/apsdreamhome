@@ -71,7 +71,7 @@ $statusLabels = [
                     <input type="text" class="form-control" name="search" placeholder="Search name, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="status">
+                    <select aria-label="Status" class="form-select" name="status">
                         <option value="">All Statuses</option>
                         <?php foreach ($statusLabels as $key => $info): ?>
                             <option value="<?= $key ?>" <?= ($status ?? '') === $key ? 'selected' : '' ?>><?= $info['label'] ?></option>

@@ -29,7 +29,7 @@ $page_description = 'Create a new marketing strategy';
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="5" placeholder="Describe the marketing strategy"></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="5" placeholder="Describe the marketing strategy"></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Image URL</label>

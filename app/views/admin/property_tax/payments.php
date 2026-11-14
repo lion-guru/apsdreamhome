@@ -105,7 +105,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Payment Mode</label>
-                                <select name="payment_mode" class="form-select" id="paymentMode" required>
+                                <select aria-label="Payment mode" name="payment_mode" class="form-select" id="paymentMode" required>
                                     <option value="cash">Cash</option>
                                     <option value="cheque">Cheque</option>
                                     <option value="dd">Demand Draft</option>
@@ -142,7 +142,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Plot</label>
-                                <select name="plot_id" class="form-select">
+                                <select aria-label="Plot id" name="plot_id" class="form-select">
                                     <option value="">Select Plot</option>
                                     <?php
                                     $plots = $this->db->fetchAll("SELECT id, plot_number FROM plots WHERE tenant_id = ? ORDER BY plot_number", [$this->tenantId()]);
@@ -153,7 +153,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Customer</label>
-                                <select name="customer_id" class="form-select">
+                                <select aria-label="Customer id" name="customer_id" class="form-select">
                                     <option value="">Select Customer</option>
                                     <?php
                                     $customers = $this->db->fetchAll("SELECT id, name, phone FROM users WHERE tenant_id = ? AND role = 'customer' ORDER BY name", [$this->tenantId()]);
@@ -172,11 +172,11 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Rebate Conditions (JSON)</label>
-                                <textarea name="rebate_conditions" class="form-control" rows="2" placeholder='{"early_payment_days": 30, "senior_citizen": false}'>{}</textarea>
+                                <textarea aria-label="Rebate conditions" name="rebate_conditions" class="form-control" rows="2" placeholder='{"early_payment_days": 30, "senior_citizen": false}'>{}</textarea>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Notes</label>
-                                <textarea name="notes" class="form-control" rows="2"></textarea>
+                                <textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea>
                             </div>
                         </div>
                     </div>

@@ -33,7 +33,7 @@ $eligible_bookings = $eligible_bookings ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold"><?= __('admin_booking_label') ?> <span class="text-danger">*</span></label>
-                        <select name="booking_id" class="form-select" required>
+                        <select aria-label="Booking id" name="booking_id" class="form-select" required>
                             <option value="">— Select Booking —</option>
                             <?php foreach ($eligible_bookings as $b): ?>
                                 <option value="<?= $b['id'] ?>">
@@ -46,7 +46,7 @@ $eligible_bookings = $eligible_bookings ?? [];
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold"><?= __('admin_purpose_label') ?> <span class="text-danger">*</span></label>
-                        <select name="purpose" class="form-select" required>
+                        <select aria-label="Purpose" name="purpose" class="form-select" required>
                             <option value="Property transfer / Registry"><?= __('admin_noc_purpose_transfer') ?></option>
                             <option value="Bank loan processing"><?= __('admin_noc_purpose_bank_loan') ?></option>
                             <option value="Court order compliance"><?= __('admin_noc_purpose_court_order') ?></option>
@@ -57,7 +57,7 @@ $eligible_bookings = $eligible_bookings ?? [];
 
                     <div class="col-12">
                         <label class="form-label fw-semibold"><?= __('admin_notes_remarks') ?></label>
-                        <textarea name="notes" class="form-control" rows="3" placeholder="<?= __('admin_noc_notes_placeholder') ?>"></textarea>
+                        <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="<?= __('admin_noc_notes_placeholder') ?>"></textarea>
                     </div>
                 </div>
 

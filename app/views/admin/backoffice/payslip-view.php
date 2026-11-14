@@ -70,14 +70,14 @@
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="col-md-4">
               <label for="payment_mode" class="form-label fw-bold"><?= __('bko_payment_mode') ?></label>
-              <select name="payment_mode" id="payment_mode" class="form-select" onchange="toggleBankSelect(this.value)">
+              <select aria-label="Payment mode" name="payment_mode" id="payment_mode" class="form-select" onchange="toggleBankSelect(this.value)">
                 <option value="cash"><?= __('bko_cash') ?></option>
                 <option value="bank"><?= __('bko_bank_transfer') ?></option>
               </select>
             </div>
             <div class="col-md-5" id="bank_select_container" >
               <label for="bank_account_id" class="form-label fw-bold"><?= __('bko_bank_account') ?></label>
-              <select name="bank_account_id" id="bank_account_id" class="form-select">
+              <select aria-label="Bank account id" name="bank_account_id" id="bank_account_id" class="form-select">
                 <option value=""><?= __('bko_select_bank_account') ?></option>
                 <?php foreach ($bank_accounts ?? [] as $bank): ?>
                   <option value="<?= $bank['id'] ?>"><?= htmlspecialchars($bank['bank_name'] ?? '') ?> (Acc: ...<?= substr($bank['account_number'], -4) ?>) - Balance: &#8377;<?= number_format($bank['current_balance'], 2) ?></option>

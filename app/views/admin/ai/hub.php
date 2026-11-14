@@ -578,11 +578,11 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= h($mlSupport->translate('Description')) ?></label>
-                        <textarea name="description" class="form-control"></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= h($mlSupport->translate('Trigger Type')) ?></label>
-                        <select name="trigger_type" class="form-select">
+                        <select aria-label="Trigger type" name="trigger_type" class="form-select">
                             <option value="webhook"><?= h($mlSupport->translate('Webhook')) ?></option>
                             <option value="schedule"><?= h($mlSupport->translate('Schedule')) ?></option>
                             <option value="event"><?= h($mlSupport->translate('System Event')) ?></option>

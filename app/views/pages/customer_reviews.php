@@ -80,7 +80,7 @@ $satisfaction = $satisfaction ?? 98;
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('reviews_property') ?></label>
-                                <select class="form-select" name="property">
+                                <select aria-label="Property" class="form-select" name="property">
                                     <option value=""><?= __('reviews_select_property') ?></option>
                                     <option>APS Suryoday</option>
                                     <option>Braj Radha Nagri</option>
@@ -98,7 +98,7 @@ $satisfaction = $satisfaction ?? 98;
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('reviews_your_review') ?></label>
-                                <textarea class="form-control" rows="4" name="review" required></textarea>
+                                <textarea aria-label="Review" class="form-control" rows="4" name="review" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg w-100"><?= __('reviews_submit') ?></button>
                         </form>

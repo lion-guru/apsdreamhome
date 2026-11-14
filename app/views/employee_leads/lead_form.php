@@ -34,7 +34,7 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Source</label>
-                    <select name="source" class="form-select">
+                    <select aria-label="Source" name="source" class="form-select">
                         <option value="manual">Manual Entry</option>
                         <?php foreach ($sources as $s): ?>
                             <option value="<?= htmlspecialchars($s['name'] ?? $s['id']) ?>"><?= htmlspecialchars($s['name'] ?? '') ?></option>
@@ -58,7 +58,7 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold">Notes</label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Initial notes about the lead..."></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Initial notes about the lead..."></textarea>
                 </div>
             </div>
 

@@ -31,7 +31,7 @@ $page_title = 'Bank Reconciliation';
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Bank</label>
-                    <select class="form-select" name="bank_name">
+                    <select aria-label="Bank name" class="form-select" name="bank_name">
                         <option value="">All Banks</option>
                         <?php foreach ($banks as $b): ?>
                             <option value="<?php echo htmlspecialchars($b['bank_name'] ?? $b); ?>" <?php echo (isset($_GET['bank_name']) && $_GET['bank_name'] === ($b['bank_name'] ?? $b)) ? 'selected' : ''; ?>>
@@ -42,7 +42,7 @@ $page_title = 'Bank Reconciliation';
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Type</label>
-                    <select class="form-select" name="type">
+                    <select aria-label="Type" class="form-select" name="type">
                         <option value="">All Types</option>
                         <option value="credit" <?php echo (isset($_GET['type']) && $_GET['type'] === 'credit') ? 'selected' : ''; ?>>Credit</option>
                         <option value="debit" <?php echo (isset($_GET['type']) && $_GET['type'] === 'debit') ? 'selected' : ''; ?>>Debit</option>

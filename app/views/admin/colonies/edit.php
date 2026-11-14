@@ -23,7 +23,7 @@ $districts = $districts ?? [];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">State</label>
-                        <select name="state_id" class="form-select" onchange="loadDistricts(this.value)">
+                        <select aria-label="State id" name="state_id" class="form-select" onchange="loadDistricts(this.value)">
                             <option value="">Select State</option>
                             <?php foreach ($states as $s): ?>
                             <option value="<?php echo $s['id']; ?>" <?php echo ($colony['state_id'] ?? 0) == $s['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['name'] ?? ''); ?></option>
@@ -32,7 +32,7 @@ $districts = $districts ?? [];
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">District *</label>
-                        <select name="district_id" class="form-select" id="district_select">
+                        <select aria-label="District id" name="district_id" class="form-select" id="district_select">
                             <?php foreach ($districts as $d): ?>
                             <option value="<?php echo $d['id']; ?>" <?php echo ($colony['district_id'] ?? 0) == $d['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($d['name'] ?? ''); ?></option>
                             <?php endforeach; ?>
@@ -41,11 +41,11 @@ $districts = $districts ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="4"><?php echo htmlspecialchars($colony['description'] ?? ''); ?></textarea>
+                    <textarea aria-label="Description" name="description" class="form-control" rows="4"><?php echo htmlspecialchars($colony['description'] ?? ''); ?></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Amenities (one per line)</label>
-                    <textarea name="amenities" class="form-control" rows="3"><?php echo htmlspecialchars($colony['amenities'] ?? ''); ?></textarea>
+                    <textarea aria-label="Amenities" name="amenities" class="form-control" rows="3"><?php echo htmlspecialchars($colony['amenities'] ?? ''); ?></textarea>
                 </div>
             </div></div>
 
@@ -72,7 +72,7 @@ $districts = $districts ?? [];
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Pipeline Stage</label>
-                        <select name="pipeline_stage" class="form-select">
+                        <select aria-label="Pipeline stage" name="pipeline_stage" class="form-select">
                             <option value="planning" <?php echo ($colony['pipeline_stage'] ?? '') == 'planning' ? 'selected' : ''; ?>>Planning</option>
                             <option value="approval" <?php echo ($colony['pipeline_stage'] ?? '') == 'approval' ? 'selected' : ''; ?>>Approval</option>
                             <option value="development" <?php echo ($colony['pipeline_stage'] ?? '') == 'development' ? 'selected' : ''; ?>>Development</option>
@@ -87,11 +87,11 @@ $districts = $districts ?? [];
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Key Highlights (JSON array)</label>
-                    <textarea name="key_highlights" class="form-control" rows="3"><?php echo htmlspecialchars($colony['key_highlights'] ?? ''); ?></textarea>
+                    <textarea aria-label="Key highlights" name="key_highlights" class="form-control" rows="3"><?php echo htmlspecialchars($colony['key_highlights'] ?? ''); ?></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Nearby Places (JSON)</label>
-                    <textarea name="nearby_places" class="form-control" rows="3"><?php echo htmlspecialchars($colony['nearby_places'] ?? ''); ?></textarea>
+                    <textarea aria-label="Nearby places" name="nearby_places" class="form-control" rows="3"><?php echo htmlspecialchars($colony['nearby_places'] ?? ''); ?></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -126,7 +126,7 @@ $districts = $districts ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Gallery Images (JSON array)</label>
-                    <textarea name="gallery_images" class="form-control" rows="2"><?php echo htmlspecialchars($colony['gallery_images'] ?? ''); ?></textarea>
+                    <textarea aria-label="Gallery images" name="gallery_images" class="form-control" rows="2"><?php echo htmlspecialchars($colony['gallery_images'] ?? ''); ?></textarea>
                 </div>
             </div></div>
         </div>
@@ -159,7 +159,7 @@ $districts = $districts ?? [];
                 <div class="mb-3"><label class="form-label">Phone</label><input name="contact_phone" class="form-control" value="<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>"></div>
                 <div class="mb-3"><label class="form-label">Email</label><input name="contact_email" class="form-control" value="<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>"></div>
                 <div class="mb-3"><label class="form-label">Meta Title</label><input name="meta_title" class="form-control" value="<?php echo htmlspecialchars($colony['meta_title'] ?? ''); ?>"></div>
-                <div class="mb-3"><label class="form-label">Meta Description</label><textarea name="meta_description" class="form-control" rows="2"><?php echo htmlspecialchars($colony['meta_description'] ?? ''); ?></textarea></div>
+                <div class="mb-3"><label class="form-label">Meta Description</label><textarea aria-label="Meta description" name="meta_description" class="form-control" rows="2"><?php echo htmlspecialchars($colony['meta_description'] ?? ''); ?></textarea></div>
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Settings</h2></div>

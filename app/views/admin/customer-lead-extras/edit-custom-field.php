@@ -38,7 +38,7 @@ $page_description = 'Edit existing custom field for lead tracking';
                             
                             <div class="mb-3">
                                 <label class="form-label">Field Type</label>
-                                <select class="form-select" name="field_type" required>
+                                <select aria-label="Field type" class="form-select" name="field_type" required>
                                     <option value="text" <?php echo $customField['field_type'] === 'text' ? 'selected' : ''; ?>>Text</option>
                                     <option value="number" <?php echo $customField['field_type'] === 'number' ? 'selected' : ''; ?>>Number</option>
                                     <option value="date" <?php echo $customField['field_type'] === 'date' ? 'selected' : ''; ?>>Date</option>

@@ -58,7 +58,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/township-horticulture" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">-- All Colonies --</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $current_colony == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -159,7 +159,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Township Colony *</label>
-                        <select name="colony_id" class="form-select" required>
+                        <select aria-label="Colony id" name="colony_id" class="form-select" required>
                             <option value="">-- Select Colony --</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -195,7 +195,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Watering Method</label>
-                        <select name="watering_method" class="form-select">
+                        <select aria-label="Watering method" name="watering_method" class="form-select">
                             <option value="automated_sprinkler">Automated Sprinkler System</option>
                             <option value="tractor_tanker">Tractor Water Tanker</option>
                             <option value="manual_hose">Manual Hose Pipe</option>
@@ -213,7 +213,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Maintenance Task Carried Out</label>
-                        <select name="maintenance_tasks" class="form-select">
+                        <select aria-label="Maintenance tasks" name="maintenance_tasks" class="form-select">
                             <option value="routine_watering">Routine Daily Watering</option>
                             <option value="grass_cutting_mowing">Lawn Mowing &amp; De-weeding</option>
                             <option value="sapling_plantation">New Sapling Plantation Drive</option>
@@ -232,7 +232,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Observations &amp; Landscaping Remarks</label>
-                        <textarea name="remarks" class="form-control" rows="2" placeholder="Central lawn fertilized, flowering borders pruned, saplings staked with bamboo supports."></textarea>
+                        <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" placeholder="Central lawn fertilized, flowering borders pruned, saplings staked with bamboo supports."></textarea>
                     </div>
                 </div>
             </div>

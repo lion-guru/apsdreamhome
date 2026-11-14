@@ -154,7 +154,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="search-bar mb-4">
             <form method="GET" action="<?= $base ?>/admin/campaign-templates" style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;width:100%;">
                 <input type="text" name="search" placeholder="Search templates..." value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
-                <select name="type">
+                <select aria-label="Type" name="type">
                     <option value="">All Types</option>
                     <option value="email" <?= $typeFilter === 'email' ? 'selected' : '' ?>>Email</option>
                     <option value="sms" <?= $typeFilter === 'sms' ? 'selected' : '' ?>>SMS</option>

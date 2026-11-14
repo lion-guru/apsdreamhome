@@ -16,13 +16,13 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
-                                    <textarea name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($blog['content'] ?? ''); ?></textarea>
+                                    <textarea aria-label="Content" name="content" class="form-control" rows="10" required><?php echo htmlspecialchars($blog['content'] ?? ''); ?></textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Category</label>
-                                    <select name="category_id" class="form-select">
+                                    <select aria-label="Category id" name="category_id" class="form-select">
                                         <option value="">Select Category</option>
                                         <?php foreach ($categories ?? [] as $cat): ?>
                                         <option value="<?php echo $cat['id']; ?>" <?php echo $blog['category_id'] == $cat['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($cat['name'] ?? ''); ?></option>
@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select name="status" class="form-select">
+                                    <select aria-label="Status" name="status" class="form-select">
                                         <option value="draft" <?php echo $blog['status'] == 'draft' ? 'selected' : ''; ?>>Draft</option>
                                         <option value="published" <?php echo $blog['status'] == 'published' ? 'selected' : ''; ?>>Published</option>
                                         <option value="archived" <?php echo $blog['status'] == 'archived' ? 'selected' : ''; ?>>Archived</option>
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Meta Description</label>
-                                    <textarea name="meta_description" class="form-control" rows="3"><?php echo htmlspecialchars($blog['meta_description'] ?? ''); ?></textarea>
+                                    <textarea aria-label="Meta description" name="meta_description" class="form-control" rows="3"><?php echo htmlspecialchars($blog['meta_description'] ?? ''); ?></textarea>
                                 </div>
                             </div>
                         </div>

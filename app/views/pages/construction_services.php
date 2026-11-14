@@ -228,7 +228,7 @@
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_phone') ?> <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('contact_form_email') ?></label><input type="email" name="email" class="form-control form-control-lg"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_project_type') ?></label>
-                                    <select name="project_type" class="form-select form-select-lg" required>
+                                    <select aria-label="Project type" name="project_type" class="form-select form-select-lg" required>
                                         <option value=""><?= __('const_select') ?></option>
                                         <option value="residential"><?= __('const_type_residential') ?></option>
                                         <option value="commercial"><?= __('const_type_commercial') ?></option>
@@ -240,7 +240,7 @@
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_budget_range') ?></label><input type="number" name="budget" class="form-control form-control-lg" placeholder="<?= __('const_budget_placeholder') ?>" min="100000"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_location') ?></label><input type="text" name="location" class="form-control form-control-lg" placeholder="<?= __('const_location_placeholder') ?>" required></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_timeline') ?></label>
-                                    <select name="timeline" class="form-select form-select-lg">
+                                    <select aria-label="Timeline" name="timeline" class="form-select form-select-lg">
                                         <option value=""><?= __('const_select_timeline') ?></option>
                                         <option value="1-3"><?= __('const_timeline_1_3') ?></option>
                                         <option value="3-6"><?= __('const_timeline_3_6') ?></option>
@@ -249,7 +249,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('const_plot_area') ?></label><input type="number" name="plot_area" class="form-control form-control-lg" placeholder="<?= __('const_plot_area_placeholder') ?>" min="100"></div>
-                                <div class="col-12"><label class="form-label fw-medium"><?= __('const_project_details') ?></label><textarea name="message" rows="4" class="form-control" placeholder="<?= __('const_project_details_placeholder') ?>" required></textarea></div>
+                                <div class="col-12"><label class="form-label fw-medium"><?= __('const_project_details') ?></label><textarea aria-label="Message" name="message" rows="4" class="form-control" placeholder="<?= __('const_project_details_placeholder') ?>" required></textarea></div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-paper-plane me-2"></i><?= __('const_submit_inquiry') ?></button>
                                 </div>
@@ -338,10 +338,10 @@ function openConstModal() {
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Name *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Phone *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Email *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
-    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Project Type</label><select class="form-select form-control-sm" name="project_type"><option value="">Select</option><option value="residential">Residential</option><option value="commercial">Commercial</option><option value="renovation">Renovation</option><option value="infrastructure">Infrastructure</option><option value="turnkey">Turnkey</option></select></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Project Type</label><select aria-label="Project type" class="form-select form-control-sm" name="project_type"><option value="">Select</option><option value="residential">Residential</option><option value="commercial">Commercial</option><option value="renovation">Renovation</option><option value="infrastructure">Infrastructure</option><option value="turnkey">Turnkey</option></select></div>';
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Budget (₹)</label><input type="number" class="form-control form-control-sm" name="budget" min="100000"></div>';
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Location</label><input type="text" class="form-control form-control-sm" name="location" required></div>';
-    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Details</label><textarea class="form-control form-control-sm" name="message" rows="2" placeholder="Brief description..."></textarea></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Details</label><textarea aria-label="Message" class="form-control form-control-sm" name="message" rows="2" placeholder="Brief description..."></textarea></div>';
     featuresHtml += '<button type="submit" class="btn btn-sm btn-warning w-100 mt-1" id="constModalSubmitBtn"><i class="fas fa-paper-plane me-1"></i>Submit Inquiry</button>';
     featuresHtml += '<div id="constModalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
     featuresHtml += '</form></div></div></div>';

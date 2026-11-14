@@ -19,7 +19,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="state_id" class="form-label">State <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="state_id" name="state_id" required>
+                                    <select aria-label="State id" class="form-select" id="state_id" name="state_id" required>
                                         <option value="">Select State</option>
                                         <?php foreach ($states as $state): ?>
                                             <option value="<?= e($state['id']) ?>">

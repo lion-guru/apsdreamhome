@@ -61,7 +61,7 @@ $old = $old ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Address *</label>
-                            <textarea name="address" class="form-control" required rows="2"><?= htmlspecialchars($old['address'] ?? $d['address'] ?? '') ?></textarea>
+                            <textarea aria-label="Address" name="address" class="form-control" required rows="2"><?= htmlspecialchars($old['address'] ?? $d['address'] ?? '') ?></textarea>
                         </div>
                         <div class="d-flex justify-content-between mt-4">
                             <a href="<?= BASE_URL ?>/list-property/step1" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Back</a>

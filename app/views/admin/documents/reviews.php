@@ -21,7 +21,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Document <span class="text-danger">*</span></label>
-                            <select name="document_id" class="form-select" required>
+                            <select aria-label="Document id" name="document_id" class="form-select" required>
                                 <option value="">-- Select --</option>
                                 <?php if (!empty($documents)): ?>
                                     <?php foreach ($documents as $d): ?>
@@ -32,7 +32,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Review Status</label>
-                            <select name="review_status" class="form-select">
+                            <select aria-label="Review status" name="review_status" class="form-select">
                                 <option value="pending">Pending</option>
                                 <option value="approved">Approved</option>
                                 <option value="rejected">Rejected</option>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Comments</label>
-                            <textarea name="comments" class="form-control" rows="3"></textarea>
+                            <textarea aria-label="Comments" name="comments" class="form-control" rows="3"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Submit Review</button>
                     </form>

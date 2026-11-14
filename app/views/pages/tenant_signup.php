@@ -189,7 +189,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
                 <div class="form-group">
                     <label for="plan_id">Select Plan</label>
-                    <select id="plan_id" name="plan_id" required>
+                    <select aria-label="Plan id" id="plan_id" name="plan_id" required>
                         <option value="">Choose a plan</option>
                         <option value="1">Starter - ₹29,999/mo</option>
                         <option value="2">Professional - ₹59,999/mo</option>

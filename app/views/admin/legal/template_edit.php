@@ -22,11 +22,11 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                     <div class="aps-cp-card-body">
                         <div class="row g-3">
                             <div class="col-md-6"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required></div>
-                            <div class="col-md-6"><label class="form-label">Category</label><select name="category_id" class="form-select"><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>" <?= ($template['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                            <div class="col-md-4"><label class="form-label">Status</label><select name="status" class="form-select"><option value="draft" <?= $template['status'] === 'draft' ? 'selected' : '' ?>>Draft</option><option value="active" <?= $template['status'] === 'active' ? 'selected' : '' ?>>Active</option><option value="archived" <?= $template['status'] === 'archived' ? 'selected' : '' ?>>Archived</option></select></div>
-                            <div class="col-md-4"><label class="form-label">Language</label><select name="language" class="form-select"><option value="en" <?= ($template['language'] ?? 'en') === 'en' ? 'selected' : '' ?>>English</option><option value="hi" <?= ($template['language'] ?? '') === 'hi' ? 'selected' : '' ?>>Hindi</option></select></div>
-                            <div class="col-md-4"><label class="form-label">Customer Facing</label><select name="is_customer_facing" class="form-select"><option value="1" <?= !empty($template['is_customer_facing']) ? 'selected' : '' ?>>Yes</option><option value="0" <?= empty($template['is_customer_facing']) ? 'selected' : '' ?>>No</option></select></div>
-                            <div class="col-12"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($template['description'] ?? '') ?></textarea></div>
+                            <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category id" name="category_id" class="form-select"><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>" <?= ($template['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
+                            <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="draft" <?= $template['status'] === 'draft' ? 'selected' : '' ?>>Draft</option><option value="active" <?= $template['status'] === 'active' ? 'selected' : '' ?>>Active</option><option value="archived" <?= $template['status'] === 'archived' ? 'selected' : '' ?>>Archived</option></select></div>
+                            <div class="col-md-4"><label class="form-label">Language</label><select aria-label="Language" name="language" class="form-select"><option value="en" <?= ($template['language'] ?? 'en') === 'en' ? 'selected' : '' ?>>English</option><option value="hi" <?= ($template['language'] ?? '') === 'hi' ? 'selected' : '' ?>>Hindi</option></select></div>
+                            <div class="col-md-4"><label class="form-label">Customer Facing</label><select aria-label="Is customer facing" name="is_customer_facing" class="form-select"><option value="1" <?= !empty($template['is_customer_facing']) ? 'selected' : '' ?>>Yes</option><option value="0" <?= empty($template['is_customer_facing']) ? 'selected' : '' ?>>No</option></select></div>
+                            <div class="col-12"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($template['description'] ?? '') ?></textarea></div>
                         </div>
                     </div>
                 </div>
@@ -49,7 +49,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                             </div>
                             <small class="text-muted ms-2">Change notes: <input type="text" name="change_notes" class="form-control-sm" placeholder="What changed?" ></small>
                         </div>
-                        <textarea name="content" id="content" class="form-control font-monospace" rows="20"><?= htmlspecialchars($template['content'] ?? '') ?></textarea>
+                        <textarea aria-label="Content" name="content" id="content" class="form-control font-monospace" rows="20"><?= htmlspecialchars($template['content'] ?? '') ?></textarea>
                     </div>
                 </div>
 

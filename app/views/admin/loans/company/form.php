@@ -21,7 +21,7 @@ $early_incentives = $early_incentives ?? [];
                     <div class="aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Customer <span class="text-danger">*</span></label>
-                            <select name="customer_id" class="form-select" required>
+                            <select aria-label="Customer id" name="customer_id" class="form-select" required>
                                 <option value="">Select Customer</option>
                                 <?php foreach ($customers as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] . ' (' . $c['phone'] . ')') ?></option>
@@ -30,7 +30,7 @@ $early_incentives = $early_incentives ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Plot / Property</label>
-                            <select name="property_id" class="form-select">
+                            <select aria-label="Property id" name="property_id" class="form-select">
                                 <option value="">Select Plot (optional)</option>
                                 <?php foreach ($plots as $p): ?>
                                     <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['colony_name'] . ' - Plot ' . $p['plot_no'] . ' (₹' . number_format($p['total_price'] / 100000, 1) . 'L)') ?></option>
@@ -61,7 +61,7 @@ $early_incentives = $early_incentives ?? [];
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Interest Type</label>
-                                <select name="interest_type" class="form-select">
+                                <select aria-label="Interest type" name="interest_type" class="form-select">
                                     <option value="reducing">Reducing Balance</option>
                                     <option value="fixed">Fixed Rate</option>
                                 </select>
@@ -87,7 +87,7 @@ $early_incentives = $early_incentives ?? [];
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <select name="offer_id" id="offerSelect" class="form-select">
+                                    <select aria-label="Offer id" name="offer_id" id="offerSelect" class="form-select">
                                         <option value="">No Offer (Standard Interest)</option>
                                         <?php foreach ($offers as $o): ?>
                                             <option value="<?= $o['id'] ?>" data-months="<?= $o['interest_free_months'] ?>" data-type="<?= $o['offer_type'] ?>">
@@ -111,7 +111,7 @@ $early_incentives = $early_incentives ?? [];
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label">Notes / Remarks</label>
-                                <textarea name="notes" class="form-control" rows="2" placeholder="Internal notes about this loan"></textarea>
+                                <textarea aria-label="Notes" name="notes" class="form-control" rows="2" placeholder="Internal notes about this loan"></textarea>
                             </div>
                         </div>
                     </div>

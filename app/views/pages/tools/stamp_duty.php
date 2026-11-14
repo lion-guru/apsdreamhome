@@ -14,7 +14,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="stateSel"><?php echo __('state', [], 'State'); ?></label>
-                            <select class="form-select" id="stateSel" onchange="calcStamp()">
+                            <select aria-label="State sel" class="form-select" id="stateSel" onchange="calcStamp()">
                                 <option value="7"><?php echo __('up_stamp', [], 'Uttar Pradesh (7% Stamp Duty)'); ?></option>
                                 <option value="6"><?php echo __('bihar', [], 'Bihar'); ?> (6%)</option>
                                 <option value="5"><?php echo __('mp', [], 'Madhya Pradesh'); ?> (5%)</option>

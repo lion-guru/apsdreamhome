@@ -23,15 +23,15 @@ $social = json_encode(json_decode($s['social_json'] ?? '[]', true), JSON_PRETTY_
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Navigation (JSON)</label>
-                    <textarea name="nav_json" class="form-control" rows="8"><?php echo h($nav); ?></textarea>
+                    <textarea aria-label="Nav json" name="nav_json" class="form-control" rows="8"><?php echo h($nav); ?></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Social Links (JSON)</label>
-                    <textarea name="social_json" class="form-control" rows="6"><?php echo h($social); ?></textarea>
+                    <textarea aria-label="Social json" name="social_json" class="form-control" rows="6"><?php echo h($social); ?></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Footer HTML</label>
-                    <textarea name="footer_html" class="form-control" rows="6"><?php echo h($s['footer_html'] ?? ''); ?></textarea>
+                    <textarea aria-label="Footer html" name="footer_html" class="form-control" rows="6"><?php echo h($s['footer_html'] ?? ''); ?></textarea>
                 </div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary">Save</button>

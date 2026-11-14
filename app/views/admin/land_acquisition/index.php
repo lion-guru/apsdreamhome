@@ -61,7 +61,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="GET" action="/admin/farmer-acquisitions" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <label for="filter_colony" class="visually-hidden">Target Township Colony</label>
-                    <select name="colony_id" id="filter_colony" class="form-select form-select-sm">
+                    <select aria-label="Colony id" name="colony_id" id="filter_colony" class="form-select form-select-sm">
                         <option value="">All Township Colonies</option>
                         <?php foreach ($colonies as $col): ?>
                             <option value="<?= (int)$col['id'] ?>" <?= ($current_colony == $col['id']) ? 'selected' : '' ?>>
@@ -72,7 +72,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <div class="col-md-3">
                     <label for="filter_status" class="visually-hidden">Status</label>
-                    <select name="status" id="filter_status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" id="filter_status" class="form-select form-select-sm">
                         <option value="all" <?= ($current_status === 'all') ? 'selected' : '' ?>>All Statuses</option>
                         <option value="bayana_agreement" <?= ($current_status === 'bayana_agreement') ? 'selected' : '' ?>>Bayana Agreement</option>
                         <option value="mutation_in_progress" <?= ($current_status === 'mutation_in_progress') ? 'selected' : '' ?>>Sec 143 Mutation</option>
@@ -202,7 +202,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="acq_colony" class="form-label fw-semibold">Target Expansion Township Colony</label>
-                            <select name="target_colony_id" id="acq_colony" class="form-select">
+                            <select aria-label="Target colony id" name="target_colony_id" id="acq_colony" class="form-select">
                                 <option value="">Select Colony (Optional)...</option>
                                 <?php foreach ($colonies as $col): ?>
                                     <option value="<?= (int)$col['id'] ?>"><?= htmlspecialchars($col['name']) ?></option>

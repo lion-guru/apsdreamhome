@@ -73,7 +73,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Credit Type</label><input type="text" name="credit_type" class="form-control" placeholder="e.g. renewable_energy" required></div>
                     <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label">Reference Type</label><select name="reference_type" class="form-select"><option value="project">Project</option><option value="plot">Plot</option><option value="audit">Audit</option></select></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Reference Type</label><select aria-label="Reference type" name="reference_type" class="form-select"><option value="project">Project</option><option value="plot">Plot</option><option value="audit">Audit</option></select></div>
                         <div class="col-md-6 mb-3"><label class="form-label">Reference ID</label><input type="number" name="reference_id" class="form-control"></div>
                     </div>
                     <div class="row">

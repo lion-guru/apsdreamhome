@@ -40,7 +40,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Category')) ?></label>
-                                <select name="category" class="form-select">
+                                <select aria-label="Category" name="category" class="form-select">
                                     <option value="Operational"><?= h($mlSupport->translate('Operational')) ?></option>
                                     <option value="Salary"><?= h($mlSupport->translate('Salary')) ?></option>
                                     <option value="Marketing"><?= h($mlSupport->translate('Marketing')) ?></option>
@@ -52,7 +52,7 @@
 
                         <div class="mb-4">
                             <label class="form-label"><?= h($mlSupport->translate('Description')) ?></label>
-                            <textarea name="description" class="form-control" rows="3"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="3"></textarea>
                         </div>
 
                         <div class="text-end">

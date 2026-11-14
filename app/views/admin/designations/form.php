@@ -44,7 +44,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Department *</label>
-                                    <select name="department_id" class="form-control" required>
+                                    <select aria-label="Department id" name="department_id" class="form-control" required>
                                         <option value=""> Select Department </option>
                                         <?php foreach ($departments as $d): ?>
                                             <option value="<?= $d['id'] ?>" <?= ($designation['department_id'] ?? '') == $d['id'] ? 'selected' : '' ?>>
@@ -57,7 +57,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Level *</label>
-                                    <select name="level" class="form-control" required>
+                                    <select aria-label="Level" name="level" class="form-control" required>
                                         <option value="1" <?= ($designation['level'] ?? 1) == 1 ? 'selected' : '' ?>>1  Junior</option>
                                         <option value="2" <?= ($designation['level'] ?? 1) == 2 ? 'selected' : '' ?>>2  Executive</option>
                                         <option value="3" <?= ($designation['level'] ?? 1) == 3 ? 'selected' : '' ?>>3  Senior</option>
@@ -86,7 +86,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select name="status" class="form-control">
+                                    <select aria-label="Status" name="status" class="form-control">
                                         <option value="active" <?= ($designation['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                                         <option value="inactive" <?= ($designation['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                                     </select>

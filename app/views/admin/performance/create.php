@@ -37,7 +37,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $emp): ?>
                                 <option value="<?= $emp['id'] ?>" <?= ($goal['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
@@ -46,7 +46,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Goal Type <span class="text-danger">*</span></label>
-                        <select name="goal_type" class="form-select" required>
+                        <select aria-label="Goal type" name="goal_type" class="form-select" required>
                             <option value="okr" <?= ($goal['goal_type'] ?? '') === 'okr' ? 'selected' : '' ?>>OKR (Objectives & Key Results)</option>
                             <option value="kpi" <?= ($goal['goal_type'] ?? '') === 'kpi' ? 'selected' : '' ?>>KPI (Key Performance Indicator)</option>
                             <option value="personal" <?= ($goal['goal_type'] ?? '') === 'personal' ? 'selected' : '' ?>>Personal Development</option>
@@ -60,7 +60,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Assigned By</label>
-                        <select name="assigned_by" class="form-select">
+                        <select aria-label="Assigned by" name="assigned_by" class="form-select">
                             <option value="">Select Manager</option>
                             <?php foreach ($managers as $mgr): ?>
                                 <option value="<?= $mgr['id'] ?>" <?= ($goal['assigned_by'] ?? '') == $mgr['id'] ? 'selected' : '' ?>><?= htmlspecialchars($mgr['name']) ?></option>
@@ -69,7 +69,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Describe the goal, key results, success criteria..."><?= htmlspecialchars($goal['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Describe the goal, key results, success criteria..."><?= htmlspecialchars($goal['description'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Review Frequency</label>
-                        <select name="review_frequency" class="form-select">
+                        <select aria-label="Review frequency" name="review_frequency" class="form-select">
                             <option value="weekly" <?= ($goal['review_frequency'] ?? '') === 'weekly' ? 'selected' : '' ?>>Weekly</option>
                             <option value="biweekly" <?= ($goal['review_frequency'] ?? '') === 'biweekly' ? 'selected' : '' ?>>Bi-weekly</option>
                             <option value="monthly" <?= ($goal['review_frequency'] ?? '') === 'monthly' ? 'selected' : '' ?>>Monthly</option>
@@ -128,7 +128,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="draft" <?= ($goal['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                             <option value="active" <?= ($goal['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                             <option value="on_track" <?= ($goal['status'] ?? '') === 'on_track' ? 'selected' : '' ?>>On Track</option>
@@ -151,7 +151,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Parent Goal (for cascading OKRs)</label>
-                        <select name="parent_goal_id" class="form-select">
+                        <select aria-label="Parent goal id" name="parent_goal_id" class="form-select">
                             <option value="">No Parent (Top-level Goal)</option>
                             <?php
                             // Fetch existing goals that can be parents
@@ -163,7 +163,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Review Frequency</label>
-                        <select name="review_frequency" class="form-select">
+                        <select aria-label="Review frequency" name="review_frequency" class="form-select">
                             <option value="weekly" <?= ($goal['review_frequency'] ?? '') === 'weekly' ? 'selected' : '' ?>>Weekly</option>
                             <option value="biweekly" <?= ($goal['review_frequency'] ?? '') === 'biweekly' ? 'selected' : '' ?>>Bi-weekly</option>
                             <option value="monthly" <?= ($goal['review_frequency'] ?? '') === 'monthly' ? 'selected' : '' ?>>Monthly</option>

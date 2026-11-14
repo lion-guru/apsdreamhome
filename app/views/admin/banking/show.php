@@ -149,7 +149,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
-                                <select class="form-select" name="reconciliation_status" required>
+                                <select aria-label="Reconciliation status" class="form-select" name="reconciliation_status" required>
                                     <option value="cleared">Cleared</option>
                                     <option value="bounced">Bounced</option>
                                     <option value="reconciled">Reconciled</option>
@@ -157,7 +157,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Financial Year</label>
-                                <select class="form-select" name="financial_year">
+                                <select aria-label="Financial year" class="form-select" name="financial_year">
                                     <option value="">-- Select --</option>
                                     <option value="2024-2025">2024-2025</option>
                                     <option value="2025-2026" selected>2025-2026</option>
@@ -166,7 +166,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Period</label>
-                                <select class="form-select" name="financial_period">
+                                <select aria-label="Financial period" class="form-select" name="financial_period">
                                     <option value="">-- Select --</option>
                                     <option value="Q1">Q1 (Apr-Jun)</option>
                                     <option value="Q2">Q2 (Jul-Sep)</option>

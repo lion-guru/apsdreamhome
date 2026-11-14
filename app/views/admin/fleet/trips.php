@@ -26,7 +26,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                     <div class="col-6"><label class="form-label small">Trip Date</label>
                         <input type="date" name="trip_date" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime('next sunday')) ?>" required></div>
                     <div class="col-6"><label class="form-label small">Vehicle</label>
-                        <select name="vehicle_id" class="form-select form-select-sm">
+                        <select aria-label="Vehicle id" name="vehicle_id" class="form-select form-select-sm">
                             <option value="0">— No vehicle —</option>
                             <?php foreach ($vehicles as $v): ?>
                                 <option value="<?= (int)$v['id'] ?>"><?= htmlspecialchars($v['vehicle_name'] . ' (' . $v['vehicle_no'] . ')') ?></option>
@@ -42,14 +42,14 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                             <?php foreach ($pickups as $p): ?><option value="<?= htmlspecialchars($p) ?>"><?php endforeach; ?>
                         </datalist></div>
                     <div class="col-12"><label class="form-label small">Colony</label>
-                        <select name="colony_id" class="form-select form-select-sm">
+                        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm">
                             <option value="0">— Select —</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
                             <?php endforeach; ?>
                         </select></div>
                     <div class="col-12"><label class="form-label small">Associate</label>
-                        <select name="associate_id" class="form-select form-select-sm">
+                        <select aria-label="Associate id" name="associate_id" class="form-select form-select-sm">
                             <option value="0">— Select —</option>
                             <?php foreach ($associates as $a): ?>
                                 <option value="<?= (int)$a['id'] ?>"><?= htmlspecialchars($a['name']) ?> (<?= htmlspecialchars($a['phone'] ?? '') ?>)</option>
@@ -58,7 +58,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                     <div class="col-6"><label class="form-label small">Customers Planned</label>
                         <input type="number" min="0" name="customers_planned" class="form-control form-control-sm" value="0"></div>
                     <div class="col-12"><label class="form-label small">Notes</label>
-                        <textarea name="notes" class="form-control form-control-sm" rows="2"></textarea></div>
+                        <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2"></textarea></div>
                     <div class="col-12"><button class="btn btn-primary btn-sm w-100"><i class="fas fa-check me-1"></i>Schedule</button></div>
                 </form>
             </div>
@@ -92,7 +92,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                                 <?php if (!in_array($t['status'], ['completed', 'cancelled'], true)): ?>
                                 <form method="POST" action="<?= $base ?>/admin/site-visits/fleet/trips/<?= (int)$t['id'] ?>/status" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                    <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+                                    <select aria-label="Status" name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
                                         <option value="">Set…</option>
                                         <option value="in_progress">In Progress</option>
                                         <option value="completed">Completed</option>

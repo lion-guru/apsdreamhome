@@ -89,7 +89,7 @@
         </div>
         <div class="col-md-2">
           <label class="form-label">Status</label>
-          <select name="status" class="form-select">
+          <select aria-label="Status" name="status" class="form-select">
             <option value="">All Status</option>
             <?php foreach ($statuses as $s): ?>
               <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_', ' ', $s)) ?></option>
@@ -98,7 +98,7 @@
         </div>
         <div class="col-md-2">
           <label class="form-label">Type</label>
-          <select name="type" class="form-select">
+          <select aria-label="Type" name="type" class="form-select">
             <option value="">All Types</option>
             <?php foreach ($types as $t): ?>
               <option value="<?= $t ?>" <?= ($filters['type'] ?? '') === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>

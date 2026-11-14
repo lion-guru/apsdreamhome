@@ -298,7 +298,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Account Type</label>
-                <select class="form-select" id="accountType" name="account_type">
+                <select aria-label="Account type" class="form-select" id="accountType" name="account_type">
                     <option value="savings">Savings</option>
                     <option value="current">Current</option>
                     <option value="salary">Salary</option>
@@ -370,7 +370,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Account Type</label>
-                <select class="form-select" id="editAccountType" name="account_type">
+                <select aria-label="Account type" class="form-select" id="editAccountType" name="account_type">
                     <option value="savings">Savings</option>
                     <option value="current">Current</option>
                     <option value="salary">Salary</option>

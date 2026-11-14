@@ -140,7 +140,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Colony / Location</label>
-                        <select class="form-select" name="colony_id">
+                        <select aria-label="Colony id" class="form-select" name="colony_id">
                             <option value="">— Select —</option>
                             <?php foreach ($colonies as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -159,7 +159,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Notes</label>
-                        <textarea class="form-control" name="notes" rows="2" placeholder="What you'd like to see, preferences..."></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" rows="2" placeholder="What you'd like to see, preferences..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

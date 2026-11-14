@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">State <span class="text-danger">*</span></label>
-                                <select name="state" class="form-select" required>
+                                <select aria-label="State" name="state" class="form-select" required>
                                     <option value="">Select State</option>
                                     <?php foreach (($indianStates ?? []) as $st): ?>
                                     <option value="<?= htmlspecialchars($st ?? '') ?>"><?= htmlspecialchars($st ?? '') ?></option>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="col-12">
                                 <label class="form-label small">Address <span class="text-danger">*</span></label>
-                                <textarea name="address" class="form-control" rows="2" required></textarea>
+                                <textarea aria-label="Address" name="address" class="form-control" rows="2" required></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Pincode <span class="text-danger">*</span></label>

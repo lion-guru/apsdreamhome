@@ -10,7 +10,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Customer</label>
-                        <select name="user_id" class="form-select">
+                        <select aria-label="User id" name="user_id" class="form-select">
                             <option value="0">Walk-in / No Account</option>
                             <?php foreach ($users ?? [] as $c): ?>
                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?> (<?= htmlspecialchars($c['email'] ?? '') ?>)</option>
@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="draft">Draft</option>
                             <option value="sent">Sent</option>
                         </select>
@@ -57,14 +57,14 @@
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label">GST Type</label>
-                        <select name="gst_type" class="form-select">
+                        <select aria-label="Gst type" name="gst_type" class="form-select">
                             <option value="cgst_sgst">CGST + SGST (Intra-state)</option>
                             <option value="igst">IGST (Inter-state)</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">GST Rate (%)</label>
-                        <select name="gst_rate" class="form-select">
+                        <select aria-label="Gst rate" name="gst_rate" class="form-select">
                             <option value="0">0% (Nil)</option>
                             <option value="5">5%</option>
                             <option value="12">12%</option>

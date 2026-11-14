@@ -61,7 +61,7 @@
                     <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
                 </div>
                 <div class="col-md-3">
-                    <select name="type" class="form-select">
+                    <select aria-label="Type" name="type" class="form-select">
                         <option value="">All Types</option>
                         <option value="plot" <?php echo $type === 'plot' ? 'selected' : ''; ?>>Plot</option>
                         <option value="house" <?php echo $type === 'house' ? 'selected' : ''; ?>>House</option>
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Update Type</label>
-                    <select class="form-select" id="bulkPriceType" onchange="toggleBulkPriceInputs()">
+                    <select aria-label="Bulk price type" class="form-select" id="bulkPriceType" onchange="toggleBulkPriceInputs()">
                         <option value="set">Set Fixed Price</option>
                         <option value="adjust">Adjust by Percentage</option>
                     </select>
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="number" class="form-control" id="bulkPricePercent" placeholder="e.g., 10" min="0.01" max="100" step="0.01">
                     <div class="mt-2">
                         <label class="form-label fw-bold">Adjustment</label>
-                        <select class="form-select" id="bulkPriceAdjust">
+                        <select aria-label="Bulk price adjust" class="form-select" id="bulkPriceAdjust">
                             <option value="increase">Increase by %</option>
                             <option value="decrease">Decrease by %</option>
                         </select>

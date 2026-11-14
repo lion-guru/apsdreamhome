@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_vendor_type') ?> <span class="text-danger">*</span></label>
-                        <select name="vendor_type" required class="form-select">
+                        <select aria-label="Vendor type" name="vendor_type" required class="form-select">
                             <option value="contractor"><?= __('vpay_contractor') ?></option>
                             <option value="broker"><?= __('vpay_broker') ?></option>
                             <option value="consultant"><?= __('vpay_consultant') ?></option>
@@ -35,7 +35,7 @@
                     <!-- Currency selector -->
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_currency') ?> <span class="text-danger">*</span></label>
-                        <select name="currency" id="vCurrency" class="form-select" onchange="vUpdateFx()">
+                        <select aria-label="Currency" name="currency" id="vCurrency" class="form-select" onchange="vUpdateFx()">
                             <?php foreach ($currencies as $code => $c): ?>
                                 <option value="<?= $code ?>" data-rate="<?= $c['rate'] ?>" data-symbol="<?= $c['symbol'] ?>">
                                     <?= htmlspecialchars($code) ?> — <?= htmlspecialchars($c['name'] ?? '') ?>
@@ -82,7 +82,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_payment_mode') ?></label>
-                        <select name="payment_mode" class="form-select">
+                        <select aria-label="Payment mode" name="payment_mode" class="form-select">
                             <option value="bank"><?= __('vpay_bank_transfer') ?></option>
                             <option value="cheque"><?= __('vpay_cheque') ?></option>
                             <option value="cash"><?= __('vpay_cash') ?></option>
@@ -91,14 +91,14 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_bank_account') ?></label>
-                        <select name="bank_account_id" class="form-select">
+                        <select aria-label="Bank account id" name="bank_account_id" class="form-select">
                             <option value=""><?= __('vpay_select') ?></option>
                             <?php foreach (($banks ?? []) as $b): ?>
                                 <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] ?? '') ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-12"><label class="form-label"><?= __('vpay_narration') ?></label><textarea name="narration" class="form-control" rows="2"></textarea></div>
+                    <div class="col-12"><label class="form-label"><?= __('vpay_narration') ?></label><textarea aria-label="Narration" name="narration" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="mt-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i><?= __('vpay_record_btn') ?></button>

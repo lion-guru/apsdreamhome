@@ -73,19 +73,19 @@
                 <div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="fas fa-plus me-1"></i>Create Payout Batch</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Payment Method</label>
-                        <select name="payment_method" class="form-select">
+                        <select aria-label="Payment method" name="payment_method" class="form-select">
                             <option value="bank_transfer">Bank Transfer</option>
                             <option value="cheque">Cheque</option>
                             <option value="cash">Cash</option>
                         </select>
                     </div>
-                    <div class="mb-3"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea></div>
                     <table class="table table-bordered">
                         <thead class="table-light"><tr><th>Employee</th><th>Amount (₹)</th></tr></thead>
                         <tbody id="payoutRows">
                             <tr>
                                 <td>
-                                    <select name="employee_ids[]" class="form-select" required>
+                                    <select aria-label="Employee ids" name="employee_ids[]" class="form-select" required>
                                         <option value="">Select</option>
                                         <?php foreach ($users ?? [] as $e): ?>
                                         <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['name'] ?? '') ?></option>

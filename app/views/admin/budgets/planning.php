@@ -16,7 +16,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'department_id' => null];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Fiscal Year</label>
-                    <select name="fiscal_year" class="form-select">
+                    <select aria-label="Fiscal year" name="fiscal_year" class="form-select">
                         <option value="">All Years</option>
                         <?php foreach ($fiscalYears as $fy): ?>
                         <option value="<?= htmlspecialchars($fy['fiscal_year'] ?? '') ?>" <?= $filters['fiscal_year'] === ($fy['fiscal_year'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($fy['fiscal_year'] ?? '') ?></option>
@@ -25,7 +25,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'department_id' => null];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Department</label>
-                    <select name="department_id" class="form-select">
+                    <select aria-label="Department id" name="department_id" class="form-select">
                         <option value="">All Departments</option>
                         <?php foreach ($departments as $d): ?>
                         <option value="<?= $d['id'] ?>" <?= $filters['department_id'] == $d['id'] ? 'selected' : '' ?>><?= htmlspecialchars($d['name']) ?></option>
@@ -81,14 +81,14 @@ $filters = $filters ?? ['fiscal_year' => '', 'department_id' => null];
             <form method="POST" action="<?= BASE_URL ?>/admin/budgets/save-planning" class="row g-3">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="col-md-4"><label class="form-label">Fiscal Year</label><input type="text" name="fiscal_year" class="form-control" value="<?= $filters['fiscal_year'] ?: date('Y') ?>" required></div>
-                <div class="col-md-4"><label class="form-label">Department</label><select name="department_id" class="form-select"><option value="">None</option><?php foreach ($departments as $d): ?><option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name']) ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-4"><label class="form-label">Department</label><select aria-label="Department id" name="department_id" class="form-select"><option value="">None</option><?php foreach ($departments as $d): ?><option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name']) ?></option><?php endforeach; ?></select></div>
                 <div class="col-md-4"><label class="form-label">Line Item</label><input type="text" name="line_item" class="form-control" placeholder="e.g., Road Construction Phase 1" required></div>
-                <div class="col-md-3"><label class="form-label">Category</label><select name="category" class="form-select"><option value="">Select</option><?php foreach ($categories as $c): ?><option value="<?= $c ?>"><?= ucwords(str_replace('_', ' ', $c)) ?></option><?php endforeach; ?></select></div>
+                <div class="col-md-3"><label class="form-label">Category</label><select aria-label="Category" name="category" class="form-select"><option value="">Select</option><?php foreach ($categories as $c): ?><option value="<?= $c ?>"><?= ucwords(str_replace('_', ' ', $c)) ?></option><?php endforeach; ?></select></div>
                 <div class="col-md-3"><label class="form-label">Q1 Amount</label><input type="number" name="q1_amount" class="form-control" step="0.01" value="0"></div>
                 <div class="col-md-3"><label class="form-label">Q2 Amount</label><input type="number" name="q2_amount" class="form-control" step="0.01" value="0"></div>
                 <div class="col-md-2"><label class="form-label">Q3 Amount</label><input type="number" name="q3_amount" class="form-control" step="0.01" value="0"></div>
                 <div class="col-md-2"><label class="form-label">Q4 Amount</label><input type="number" name="q4_amount" class="form-control" step="0.01" value="0"></div>
-                <div class="col-md-12"><label class="form-label">Justification</label><textarea name="justification" class="form-control" rows="2"></textarea></div>
+                <div class="col-md-12"><label class="form-label">Justification</label><textarea aria-label="Justification" name="justification" class="form-control" rows="2"></textarea></div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Planning</button>
                     <a href="<?= BASE_URL ?>/admin/budgets/planning" class="btn btn-outline-secondary ms-2">Clear Filters</a>

@@ -12,7 +12,7 @@
         <form method="get" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-auto">
-                <select name="status" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" class="form-select form-select-sm">
                     <option value="">All Status</option>
                     <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                     <option value="processing" <?= ($filters['status'] ?? '') === 'processing' ? 'selected' : '' ?>>Processing</option>
@@ -22,7 +22,7 @@
                 </select>
             </div>
             <div class="col-auto">
-                <select name="agent_id" class="form-select form-select-sm">
+                <select aria-label="Agent id" name="agent_id" class="form-select form-select-sm">
                     <option value="">All Agents</option>
                     <?php foreach ($agents as $a): ?>
                     <option value="<?= htmlspecialchars($a['agent_id'] ?? '', ENT_QUOTES, 'UTF-8') ?>" <?= ($filters['agent_id'] ?? '') === ($a['agent_id'] ?? '') ? 'selected' : '' ?>>

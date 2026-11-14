@@ -28,7 +28,7 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                 <div class="col-md-3">
                     <form method="get" action="/admin/tax-planning">
                         <div class="input-group">
-                            <select name="fy" class="form-control">
+                            <select aria-label="Fy" name="fy" class="form-control">
                                 <?php
                                 $y = (int)substr($fy, 0, 4);
                                 if ($y < 2000) { $y = (int)date('Y'); }
@@ -219,7 +219,7 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                     </div>
                     <div class="form-group">
                         <label>Notes</label>
-                        <textarea class="form-control" name="notes" rows="2"></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" rows="2"></textarea>
                     </div>
                 </form>
             </div>

@@ -137,7 +137,7 @@
                             <input type="hidden" name="recalc_id" value="<?= $item['id'] ?>">
                             <div class="mb-2">
                                 <label >Admin Notes (optional)</label>
-                                <textarea name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Reason for approval..." ></textarea>
+                                <textarea aria-label="Admin notes" name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Reason for approval..." ></textarea>
                             </div>
                             <button type="submit" class="btn btn-success" data-aps-confirm="Approve this recalculation? A new ledger entry will be created.">
                                 <i class="fas fa-check me-1"></i> Approve & Apply
@@ -150,7 +150,7 @@
                             <input type="hidden" name="recalc_id" value="<?= $item['id'] ?>">
                             <div class="mb-2">
                                 <label >Rejection Reason</label>
-                                <textarea name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Why rejecting?" ></textarea>
+                                <textarea aria-label="Admin notes" name="admin_notes" class="form-control form-control-sm" rows="2" placeholder="Why rejecting?" ></textarea>
                             </div>
                             <button type="submit" class="btn btn-danger" data-aps-confirm="Reject this recalculation request?">
                                 <i class="fas fa-times me-1"></i> Reject

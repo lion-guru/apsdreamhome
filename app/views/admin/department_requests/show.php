@@ -71,7 +71,7 @@
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <select class="form-select" name="status" required>
+                            <select aria-label="Status" class="form-select" name="status" required>
                                 <option value="open">Open</option>
                                 <option value="in_progress">In Progress</option>
                                 <option value="resolved">Resolved</option>
@@ -121,7 +121,7 @@
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-2">
                         <div class="col-12">
-                            <textarea class="form-control" name="comment" rows="2" placeholder="Add a comment..." required></textarea>
+                            <textarea aria-label="Comment" class="form-control" name="comment" rows="2" placeholder="Add a comment..." required></textarea>
                         </div>
                         <div class="col-12">
                             <label class="form-check">

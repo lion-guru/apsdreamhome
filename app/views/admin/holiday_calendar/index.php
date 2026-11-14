@@ -80,7 +80,7 @@ $filters = $filters ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Type</label>
-                    <select name="type" class="form-select form-select-sm">
+                    <select aria-label="Type" name="type" class="form-select form-select-sm">
                         <option value="">All Types</option>
                         <?php foreach ($holiday_types as $key => $label): ?>
                             <option value="<?= $key ?>" <?= ($filters['type'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
@@ -93,7 +93,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Year</label>
-                    <select name="year" class="form-select form-select-sm">
+                    <select aria-label="Year" name="year" class="form-select form-select-sm">
                         <option value="">All Years</option>
                         <?php for ($y = date('Y') + 2; $y >= date('Y') - 5; $y--): ?>
                             <option value="<?= $y ?>" <?= ($filters['year'] ?? '') == $y ? 'selected' : '' ?>><?= $y ?></option>
@@ -102,7 +102,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Month</label>
-                    <select name="month" class="form-select form-select-sm">
+                    <select aria-label="Month" name="month" class="form-select form-select-sm">
                         <option value="">All Months</option>
                         <?php for ($m = 1; $m <= 12; $m++): ?>
                             <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>" <?= ($filters['month'] ?? '') == str_pad($m, 2, '0', STR_PAD_LEFT) ? 'selected' : '' ?>>
@@ -113,7 +113,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="is_active" class="form-select form-select-sm">
+                    <select aria-label="Is active" name="is_active" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="1" <?= ($filters['is_active'] ?? '') === '1' ? 'selected' : '' ?>>Active</option>
                         <option value="0" <?= ($filters['is_active'] ?? '') === '0' ? 'selected' : '' ?>>Inactive</option>

@@ -34,7 +34,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($cert['description'] ?? '') : '' ?></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($cert['description'] ?? '') : '' ?></textarea>
             </div>
             <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i> Save</button>
         </form>

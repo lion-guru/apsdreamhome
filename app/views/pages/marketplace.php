@@ -98,7 +98,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <?php echo CSRFProtection::csrfField(); ?>
         <div class="col-md-2">
           <label class="form-label small">Property Type</label>
-          <select name="type" class="form-select form-select-sm">
+          <select aria-label="Type" name="type" class="form-select form-select-sm">
             <option value="">All Types</option>
             <?php foreach ($propertyTypes as $pt): ?>
                <option value="<?= e($pt ?? '') ?>" <?= (($filters['type'] ?? '') === $pt) ? 'selected' : '' ?>><?= ucfirst($pt) ?></option>
@@ -107,7 +107,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="col-md-2">
           <label class="form-label small">Listing Type</label>
-          <select name="listing_type" class="form-select form-select-sm">
+          <select aria-label="Listing type" name="listing_type" class="form-select form-select-sm">
             <option value="">All</option>
             <?php foreach ($listingTypes as $lt): ?>
                <option value="<?= e($lt ?? '') ?>" <?= (($filters['listing_type'] ?? '') === $lt) ? 'selected' : '' ?>><?= ucfirst($lt) ?></option>

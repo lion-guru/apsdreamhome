@@ -41,7 +41,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Description</label>
-                            <textarea name="description" class="form-control" rows="2"
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2"
                                       placeholder="Internal note about this campaign"
                                       ><?= htmlspecialchars($campaign['description'] ?? '') ?></textarea>
                         </div>
@@ -56,7 +56,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Notification Body <span >*</span></label>
-                            <textarea name="body" class="form-control" rows="4" required maxlength="300"
+                            <textarea aria-label="Body" name="body" class="form-control" rows="4" required maxlength="300"
                                       placeholder="Notification message body"
                                       ><?= htmlspecialchars($campaign['body'] ?? '') ?></textarea>
                             <small >Max 300 characters for push notifications.</small>
@@ -72,7 +72,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Channel</label>
-                                <select name="channel" class="form-select">
+                                <select aria-label="Channel" name="channel" class="form-select">
                                     <?php
                                         $channels = ['push' => 'Push Notification', 'email' => 'Email', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp', 'all' => 'All Channels'];
                                         $current = $campaign['channel'] ?? 'push';
@@ -84,7 +84,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Target Type</label>
-                                <select name="target_type" class="form-select">
+                                <select aria-label="Target type" name="target_type" class="form-select">
                                     <?php
                                         $targets = ['all_users' => 'All Users', 'role' => 'Role-Based', 'segment' => 'Segment', 'individual' => 'Individual User'];
                                         $current = $campaign['target_type'] ?? 'all_users';
@@ -97,7 +97,7 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Target Value</label>
                                 <div id="targetValueWrapper">
-                                    <select name="target_value" id="target_value_select" class="form-select">
+                                    <select aria-label="Target value" name="target_value" id="target_value_select" class="form-select">
                                         <option value="">Not applicable for All Users</option>
                                     </select>
                                     <input type="text" name="target_value" id="target_value_input" class="form-control"
@@ -116,7 +116,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Template (optional)</label>
-                                <select name="template_id" class="form-select">
+                                <select aria-label="Template id" name="template_id" class="form-select">
                                     <option value="">No template</option>
                                     <?php foreach ($templates as $t): ?>
                                         <option value="<?= $t['id'] ?>" <?= ($campaign['template_id'] ?? '') == $t['id'] ? 'selected' : '' ?>

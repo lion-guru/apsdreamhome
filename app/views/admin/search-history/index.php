@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-semibold">Entity Type</label>
-                    <select name="entity_type" class="form-select form-select-sm">
+                    <select aria-label="Entity type" name="entity_type" class="form-select form-select-sm">
                         <option value="all" <?= $entity_type === 'all' || $entity_type === '' ? 'selected' : '' ?>>All Types</option>
                         <?php foreach ($entity_types as $et): ?>
                             <?php if ($et === 'all') continue; ?>

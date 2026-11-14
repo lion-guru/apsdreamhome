@@ -116,7 +116,7 @@
                 <input type="hidden" id="rejectUserId">
                 <div class="mb-3">
                     <label class="form-label">Reason for rejection (optional)</label>
-                    <textarea class="form-control" id="rejectReason" rows="3" placeholder="Enter reason..."></textarea>
+                    <textarea aria-label="Reject reason" class="form-control" id="rejectReason" rows="3" placeholder="Enter reason..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">

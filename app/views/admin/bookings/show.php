@@ -803,7 +803,7 @@ $extraHead = '<style>
 
                     <div class="mb-3">
                         <label for="payment_method" class="form-label"><?= __('admin_payment_method') ?></label>
-                        <select class="form-select" id="payment_method" name="payment_method" required>
+                        <select aria-label="Payment method" class="form-select" id="payment_method" name="payment_method" required>
                             <option value=""><?= __('admin_select_method') ?></option>
                             <option value="cash"><?= __('admin_cash') ?></option>
                             <option value="bank_transfer"><?= __('admin_bank_transfer') ?></option>
@@ -852,7 +852,7 @@ $extraHead = '<style>
 
                         <div class="col-md-5">
                             <label for="doc_type" class="form-label fw-semibold">विलेख का प्रकार (Type) <span class="text-danger">*</span></label>
-                            <select id="doc_type" name="document_type" class="form-select" required>
+                            <select aria-label="Document type" id="doc_type" name="document_type" class="form-select" required>
                                 <option value="signed_master_deed">हस्ताक्षरित मास्टर डीड (Signed Master Deed)</option>
                                 <option value="cancellation_settlement_deed">रद्दीकरण व समझौता विलेख (Cancellation Deed)</option>
                                 <option value="stamp_paper_agreement">स्टाम्प पेपर अनुबंध (Stamp Paper Agreement)</option>
@@ -871,7 +871,7 @@ $extraHead = '<style>
 
                         <div class="col-md-6">
                             <label for="doc_status" class="form-label fw-semibold">सत्यापन स्थिति (Status)</label>
-                            <select id="doc_status" name="status" class="form-select">
+                            <select aria-label="Status" id="doc_status" name="status" class="form-select">
                                 <option value="verified" selected>सत्यापित (Verified & Archived)</option>
                                 <option value="approved">स्वीकृत (Approved)</option>
                                 <option value="pending">लंबित (Pending Verification)</option>
@@ -914,7 +914,7 @@ $extraHead = '<style>
 
                         <div class="col-12">
                             <label for="doc_notes" class="form-label fw-semibold">अतिरिक्त विवरण / गवाह व नोट (Internal Notes)</label>
-                            <textarea id="doc_notes" name="notes" class="form-control" rows="2" placeholder="गवाहों के नाम, उप-निबंधक बही संख्या या अन्य प्रासंगिक विवरण..."></textarea>
+                            <textarea aria-label="Notes" id="doc_notes" name="notes" class="form-control" rows="2" placeholder="गवाहों के नाम, उप-निबंधक बही संख्या या अन्य प्रासंगिक विवरण..."></textarea>
                         </div>
                     </div>
                 </div>

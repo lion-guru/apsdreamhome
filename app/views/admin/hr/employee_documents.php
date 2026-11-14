@@ -11,7 +11,7 @@ $page_title = $page_title ?? 'Employee Documents';
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-4">
                 <label class="form-label small">Employee</label>
-                <select name="employee_id" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Employee id" name="employee_id" class="form-select" onchange="this.form.submit()">
                     <option value="">All users</option>
                     <?php foreach ($users ?? [] as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= ($emp_id ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -112,7 +112,7 @@ $page_title = $page_title ?? 'Employee Documents';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Employee</label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select</option>
                             <?php foreach ($users ?? [] as $emp): ?>
                                 <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['name'] ?? '') ?></option>
@@ -121,7 +121,7 @@ $page_title = $page_title ?? 'Employee Documents';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Document Type</label>
-                        <select name="document_type" class="form-select">
+                        <select aria-label="Document type" name="document_type" class="form-select">
                             <option value="id_proof">ID Proof</option>
                             <option value="address_proof">Address Proof</option>
                             <option value="education">Education Certificate</option>

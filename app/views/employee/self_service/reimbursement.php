@@ -26,7 +26,7 @@ $claim_types = $claim_types ?? [];
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="col-md-4">
                                     <label class="form-label">Claim Type <span class="text-danger">*</span></label>
-                                    <select name="claim_type" class="form-select" required>
+                                    <select aria-label="Claim type" name="claim_type" class="form-select" required>
                                         <option value="">Select Claim Type</option>
                                         <?php foreach ($claim_types as $key => $label): ?>
                                         <option value="<?= $key ?>"><?= htmlspecialchars($label) ?></option>
@@ -43,7 +43,7 @@ $claim_types = $claim_types ?? [];
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Description <span class="text-danger">*</span></label>
-                                    <textarea name="description" class="form-control" rows="3" required placeholder="Describe the expense (purpose, vendor, etc.)"></textarea>
+                                    <textarea aria-label="Description" name="description" class="form-control" rows="3" required placeholder="Describe the expense (purpose, vendor, etc.)"></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Receipt / Bill <span class="text-danger">*</span></label>

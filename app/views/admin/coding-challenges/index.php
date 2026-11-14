@@ -71,7 +71,7 @@ $difficultyLabels = [
                     <input type="text" class="form-control" name="search" placeholder="Search title or slug..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="difficulty">
+                    <select aria-label="Difficulty" class="form-select" name="difficulty">
                         <option value="">All Difficulties</option>
                         <?php foreach ($difficultyLabels as $key => $info): ?>
                             <option value="<?= $key ?>" <?= ($difficulty ?? '') === $key ? 'selected' : '' ?>><?= $info['label'] ?></option>

@@ -17,7 +17,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select" onchange="this.form.submit()">
+                    <select aria-label="Status" name="status" class="form-select" onchange="this.form.submit()">
                         <option value="">All Statuses</option>
                         <option value="sent" <?php echo ($statusFilter ?? '') === 'sent' ? 'selected' : ''; ?>>Sent</option>
                         <option value="failed" <?php echo ($statusFilter ?? '') === 'failed' ? 'selected' : ''; ?>>Failed</option>

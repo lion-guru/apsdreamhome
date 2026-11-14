@@ -36,7 +36,7 @@ $id   = (int)($rank['id'] ?? 0);
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold" for="is_active">Status</label>
-                        <select id="is_active" name="is_active" class="form-select">
+                        <select aria-label="Is active" id="is_active" name="is_active" class="form-select">
                             <option value="1" <?= ($rank['is_active'] ?? 1) ? 'selected' : '' ?>>Active</option>
                             <option value="0" <?= !($rank['is_active'] ?? 1) ? 'selected' : '' ?>>Inactive</option>
                         </select>
@@ -85,7 +85,7 @@ $id   = (int)($rank['id'] ?? 0);
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <label class="form-label" for="royalty_eligible">Royalty Pool Eligible</label>
-                        <select id="royalty_eligible" name="royalty_eligible" class="form-select">
+                        <select aria-label="Royalty eligible" id="royalty_eligible" name="royalty_eligible" class="form-select">
                             <option value="0" <?= !($rank['royalty_eligible'] ?? 0) ? 'selected' : '' ?>>No</option>
                             <option value="1" <?= ($rank['royalty_eligible'] ?? 0) ? 'selected' : '' ?>>Yes</option>
                         </select>
@@ -98,7 +98,7 @@ $id   = (int)($rank['id'] ?? 0);
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="profit_share_eligible">Profit Share / Shareholder Level</label>
-                        <select id="profit_share_eligible" name="profit_share_eligible" class="form-select">
+                        <select aria-label="Profit share eligible" id="profit_share_eligible" name="profit_share_eligible" class="form-select">
                             <option value="0" <?= !($rank['profit_share_eligible'] ?? 0) ? 'selected' : '' ?>>No</option>
                             <option value="1" <?= ($rank['profit_share_eligible'] ?? 0) ? 'selected' : '' ?>>Yes (Shareholder)</option>
                         </select>

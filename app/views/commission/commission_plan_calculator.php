@@ -389,7 +389,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                             <label class="form-label">
                                                 <i class="fas fa-layer-group me-1"></i>Select Commission Plan
                                             </label>
-                                            <select class="form-select" name="plan_id" required onchange="loadPlanLevels(this.value)">
+                                            <select aria-label="Plan id" class="form-select" name="plan_id" required onchange="loadPlanLevels(this.value)">
                                                 <option value="">Choose a plan...</option>
                                                 <?php foreach ($plans as $plan): ?>
                                                     <option value="<?php echo e($plan['id']); ?>">

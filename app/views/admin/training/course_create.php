@@ -46,7 +46,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Category</label>
-                        <select name="category" class="form-select">
+                        <select aria-label="Category" name="category" class="form-select">
                             <?php foreach ($categories as $key => $label): ?>
                                 <option value="<?= $key ?>" <?= ($course['category'] ?? '') === $key ? 'selected' : '' ?>><?= $label ?></option>
                             <?php endforeach; ?>
@@ -58,7 +58,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Format</label>
-                        <select name="format" class="form-select">
+                        <select aria-label="Format" name="format" class="form-select">
                             <option value="online" <?= ($course['format'] ?? '') === 'online' ? 'selected' : '' ?>>Online</option>
                             <option value="offline" <?= ($course['format'] ?? '') === 'offline' ? 'selected' : '' ?>>Offline</option>
                             <option value="hybrid" <?= ($course['format'] ?? '') === 'hybrid' ? 'selected' : '' ?>>Hybrid</option>
@@ -79,7 +79,7 @@ $categories = $categories ?? [];
                 <h5 class="mb-0 fw-semibold"><i class="fas fa-align-left me-2"></i>Description</h5>
             </div>
             <div class="card-body">
-                <textarea name="description" class="form-control" rows="4" placeholder="Course description, learning objectives..."><?= htmlspecialchars($course['description'] ?? '') ?></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="4" placeholder="Course description, learning objectives..."><?= htmlspecialchars($course['description'] ?? '') ?></textarea>
             </div>
         </div>
 
@@ -92,7 +92,7 @@ $categories = $categories ?? [];
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label fw-semibold">Prerequisites</label>
-                        <textarea name="prerequisites" class="form-control" rows="3" placeholder="Required knowledge, prior courses, or experience..."><?= htmlspecialchars($course['prerequisites'] ?? '') ?></textarea>
+                        <textarea aria-label="Prerequisites" name="prerequisites" class="form-control" rows="3" placeholder="Required knowledge, prior courses, or experience..."><?= htmlspecialchars($course['prerequisites'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Instructor Name</label>
@@ -137,7 +137,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Status</label>
-                        <select name="is_active" class="form-select">
+                        <select aria-label="Is active" name="is_active" class="form-select">
                             <option value="1" <?= ($course['is_active'] ?? 1) ? 'selected' : '' ?>>Active</option>
                             <option value="0" <?= empty($course['is_active']) ? 'selected' : '' ?>>Inactive</option>
                         </select>

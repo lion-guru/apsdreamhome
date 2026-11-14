@@ -52,7 +52,7 @@ $colonies = $colonies ?? [];
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_colony', [], 'Colony') ?> *</label>
-                    <select class="form-select" id="colonyFilter" onchange="filterPlots()">
+                    <select aria-label="Colony filter" class="form-select" id="colonyFilter" onchange="filterPlots()">
                         <option value=""><?= __('assoc_bp_all_colonies', [], 'All Colonies') ?></option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -61,7 +61,7 @@ $colonies = $colonies ?? [];
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_plot', [], 'Plot') ?> *</label>
-                    <select name="plot_id" id="plotSelect" class="form-select" required>
+                    <select aria-label="Plot id" name="plot_id" id="plotSelect" class="form-select" required>
                         <option value=""><?= __('assoc_bp_select_plot_placeholder', [], 'Select Plot') ?></option>
                         <?php foreach ($plots as $p): ?>
                             <option value="<?= e($p['id'] ?? '') ?>" data-colony="<?= e($p['colony_id'] ?? '') ?>" data-price="<?= e($p['price'] ?? '') ?>" data-area="<?= e($p['area_sqft'] ?? '') ?>">
@@ -120,7 +120,7 @@ $colonies = $colonies ?? [];
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_payment_mode', [], 'Payment Mode') ?> *</label>
-                    <select name="payment_mode" class="form-select" required>
+                    <select aria-label="Payment mode" name="payment_mode" class="form-select" required>
                         <?php if (!empty($can_collect_cash)): ?>
                             <option value="cash"><?= __('assoc_bp_mode_cash', [], 'Cash') ?> (अधिकृत दैनिक सीमा: ₹<?= number_format($daily_cash_limit ?? 0, 2) ?>)</option>
                         <?php else: ?>
@@ -229,7 +229,7 @@ $colonies = $colonies ?? [];
 
             <div class="mb-4">
                 <label class="form-label fw-bold"><?= __('assoc_bp_notes', [], 'Notes / Special Instructions') ?></label>
-                <textarea name="notes" class="form-control" rows="3" placeholder="<?= __('assoc_bp_notes_placeholder', [], 'Any special requests or notes about this booking...') ?>"></textarea>
+                <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="<?= __('assoc_bp_notes_placeholder', [], 'Any special requests or notes about this booking...') ?>"></textarea>
             </div>
 
             <div class="mb-4">

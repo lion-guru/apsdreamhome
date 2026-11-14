@@ -193,7 +193,7 @@ foreach ($results as $variant => $r) {
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                         <label class="form-label small">Set Winner Variant</label>
                         <div class="input-group">
-                            <select name="winner" class="form-select">
+                            <select aria-label="Winner" name="winner" class="form-select">
                                 <option value="">— pick variant —</option>
                                 <?php foreach ($results as $variant => $r): ?>
                                     <option value="<?= htmlspecialchars($variant ?? '') ?>" <?= ($experiment['winner'] ?? '') === $variant ? 'selected' : '' ?>>

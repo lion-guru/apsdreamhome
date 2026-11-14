@@ -33,7 +33,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
         <div class="card-body p-3">
             <form method="GET" action="/admin/land-plot-link" class="row g-2 align-items-center">
                 <div class="col-md-5">
-                    <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= (int)$c['id'] ?>" <?= ((int)$c['id'] === $colony_id) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($c['name']) ?><?= empty($c['is_active']) ? ' (hidden)' : '' ?>
@@ -176,7 +176,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                         <input type="hidden" name="colony_id" value="<?= $colony_id ?>">
                         <div class="col-md-5">
-                            <select name="plot_id" class="form-select form-select-sm" required>
+                            <select aria-label="Plot id" name="plot_id" class="form-select form-select-sm" required>
                                 <option value="">Plot chuno (<?= count($unlinked) ?>)…</option>
                                 <?php foreach ($unlinked as $u): ?>
                                     <option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['plot_number']) ?> (<?= number_format((float)$u['area_sqft'], 0) ?> sqft)</option>
@@ -184,7 +184,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
                             </select>
                         </div>
                         <div class="col-md-5">
-                            <select name="parcel_id" class="form-select form-select-sm" required>
+                            <select aria-label="Parcel id" name="parcel_id" class="form-select form-select-sm" required>
                                 <option value="">Gata chuno…</option>
                                 <?php foreach ($parcels as $pc): ?>
                                     <option value="<?= (int)$pc['id'] ?>"><?= htmlspecialchars($pc['khasra_no']) ?> — <?= htmlspecialchars($pc['village'] ?? '') ?></option>

@@ -94,7 +94,7 @@
         <div class="modal-body">
             <div class="mb-3">
                 <label class="form-label">Select Stage</label>
-                <select name="stage" class="form-select" required>
+                <select aria-label="Stage" name="stage" class="form-select" required>
                     <option value="lead" <?= $stageLower === 'lead' ? 'selected' : '' ?>>Lead</option>
                     <option value="qualified" <?= $stageLower === 'qualified' ? 'selected' : '' ?>>Qualified</option>
                     <option value="proposal" <?= $stageLower === 'proposal' ? 'selected' : '' ?>>Proposal</option>

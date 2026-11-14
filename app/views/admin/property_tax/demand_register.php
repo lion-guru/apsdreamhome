@@ -30,7 +30,7 @@ $csrf = $this->getCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="col-md-5">
                     <label class="form-label">Colony <span class="text-danger">*</span></label>
-                    <select name="colony_id" class="form-select" required>
+                    <select aria-label="Colony id" name="colony_id" class="form-select" required>
                         <option value="">Select Colony</option>
                         <?php foreach ($colonies as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= $colony_id == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name']) ?></option>
@@ -39,7 +39,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Assessment Year <span class="text-danger">*</span></label>
-                    <select name="year" class="form-select" required>
+                    <select aria-label="Year" name="year" class="form-select" required>
                         <?php for ($y = date('Y'); $y >= 2020; $y--): ?>
                             <option value="<?= $y ?>" <?= $year == $y ? 'selected' : '' ?>><?= $y ?></option>
                         <?php endfor; ?>

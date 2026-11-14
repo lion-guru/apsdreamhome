@@ -19,7 +19,7 @@ $filters = $filters ?? [];
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All</option>
                         <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="running" <?= ($filters['status'] ?? '') === 'running' ? 'selected' : '' ?>>Running</option>
@@ -30,7 +30,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Task Type</label>
-                    <select name="task_type" class="form-select">
+                    <select aria-label="Task type" name="task_type" class="form-select">
                         <option value="">All</option>
                         <option value="email" <?= ($filters['task_type'] ?? '') === 'email' ? 'selected' : '' ?>>Email</option>
                         <option value="image_processing" <?= ($filters['task_type'] ?? '') === 'image_processing' ? 'selected' : '' ?>>Image Processing</option>
@@ -41,7 +41,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Priority</label>
-                    <select name="priority" class="form-select">
+                    <select aria-label="Priority" name="priority" class="form-select">
                         <option value="">All</option>
                         <option value="1" <?= ($filters['priority'] ?? '') === '1' ? 'selected' : '' ?>>Low</option>
                         <option value="2" <?= ($filters['priority'] ?? '') === '2' ? 'selected' : '' ?>>Normal</option>

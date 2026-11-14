@@ -21,7 +21,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category" class="form-select">
+                            <select aria-label="Category" name="category" class="form-select">
                                 <option value="general">General</option>
                                 <option value="property">Property</option>
                                 <option value="document">Document</option>
@@ -32,7 +32,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="2" placeholder="Brief description of the file"></textarea>
+                            <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Brief description of the file"></textarea>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" name="is_public" class="form-check-input" id="isPublic" value="1">

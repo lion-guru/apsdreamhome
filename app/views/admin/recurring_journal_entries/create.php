@@ -21,13 +21,13 @@ $entryTypes = $entryTypes ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Entry Type</label>
-                    <select name="entry_type" class="form-select">
+                    <select aria-label="Entry type" name="entry_type" class="form-select">
                         <?php foreach ($entryTypes as $k=>$v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Frequency</label>
-                    <select name="frequency" class="form-select" required>
+                    <select aria-label="Frequency" name="frequency" class="form-select" required>
                         <?php foreach ($frequencies as $k=>$v): ?><option value="<?= $k ?>"><?= $v ?></option><?php endforeach; ?>
                     </select>
                 </div>
@@ -45,7 +45,7 @@ $entryTypes = $entryTypes ?? [];
 
             <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="2" placeholder="Purpose of this recurring entry"></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Purpose of this recurring entry"></textarea>
             </div>
 
             <div class="mb-4">
@@ -84,7 +84,7 @@ function addLine() {
     row.id = 'line-' + idx;
     const accOptions = accounts.map(a => '<option value="' + a.id + '">' + a.code + ' - ' + a.name + ' (' + a.type + ')</option>').join('');
     row.innerHTML = `
-        <td><select name="lines[${idx}][account_id]" class="form-select form-select-sm" required>${accOptions}</select></td>
+        <td><select aria-label="Lines" name="lines[${idx}][account_id]" class="form-select form-select-sm" required>${accOptions}</select></td>
         <td><input type="number" name="lines[${idx}][debit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
         <td><input type="number" name="lines[${idx}][credit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
         <td><input type="text" name="lines[${idx}][description]" class="form-control form-control-sm"></td>

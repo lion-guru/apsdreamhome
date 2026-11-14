@@ -99,7 +99,7 @@
                     <form method="POST" action="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>/move-stage" class="mb-2">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <label class="form-label">Move to Stage:</label>
-                        <select name="stage" class="form-select mb-2">
+                        <select aria-label="Stage" name="stage" class="form-select mb-2">
                             <option value="qualified" <?= $deal['stage'] === 'qualified' ? 'selected' : '' ?>>Qualified</option>
                             <option value="site_visit" <?= $deal['stage'] === 'site_visit' ? 'selected' : '' ?>>Site Visit</option>
                             <option value="negotiation" <?= $deal['stage'] === 'negotiation' ? 'selected' : '' ?>>Negotiation</option>

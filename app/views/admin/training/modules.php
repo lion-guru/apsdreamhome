@@ -86,7 +86,7 @@ $page_description = 'Manage course modules';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Course <span class="text-danger">*</span></label>
-                        <select name="course_id" class="form-select" required>
+                        <select aria-label="Course id" name="course_id" class="form-select" required>
                             <option value="">Select Course</option>
                             <?php if (!empty($courses)): ?>
                             <?php foreach ($courses as $c): ?>
@@ -101,7 +101,7 @@ $page_description = 'Manage course modules';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea name="description" class="form-control" rows="2"></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -110,7 +110,7 @@ $page_description = 'Manage course modules';
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Content Type</label>
-                            <select name="content_type" class="form-select">
+                            <select aria-label="Content type" name="content_type" class="form-select">
                                 <option value="video">Video</option>
                                 <option value="document">Document</option>
                                 <option value="quiz">Quiz</option>

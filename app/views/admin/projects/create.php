@@ -27,7 +27,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="project_type" class="form-label">Project Type *</label>
-                                    <select class="form-select" id="project_type" name="project_type" required>
+                                    <select aria-label="Project type" class="form-select" id="project_type" name="project_type" required>
                                         <option value="">Select Type</option>
                                         <option value="residential">Residential</option>
                                         <option value="commercial">Commercial</option>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            <textarea aria-label="Description" class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
 
                         <h5 class="mb-3 mt-4">Developer Information</h5>
@@ -69,7 +69,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="state_id" class="form-label">State</label>
-                                    <select class="form-select" id="state_id" name="state_id">
+                                    <select aria-label="State id" class="form-select" id="state_id" name="state_id">
                                         <option value="">Select State</option>
                                         <?php foreach (($states ?? []) as $state): ?>
                                             <option value="<?php echo $state['id'] ?? ''; ?>"><?php echo htmlspecialchars($state['name'] ?? ''); ?></option>
@@ -80,7 +80,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="district_id" class="form-label">District</label>
-                                    <select class="form-select" id="district_id" name="district_id">
+                                    <select aria-label="District id" class="form-select" id="district_id" name="district_id">
                                         <option value="">Select District</option>
                                         <?php foreach (($districts ?? []) as $district): ?>
                                             <option value="<?php echo $district['id'] ?? ''; ?>"><?php echo htmlspecialchars($district['name'] ?? ''); ?></option>
@@ -91,7 +91,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="colony_id" class="form-label">Colony</label>
-                                    <select class="form-select" id="colony_id" name="colony_id">
+                                    <select aria-label="Colony id" class="form-select" id="colony_id" name="colony_id">
                                         <option value="">Select Colony</option>
                                         <?php foreach (($colonies ?? []) as $colony): ?>
                                             <option value="<?php echo $colony['id'] ?? ''; ?>"><?php echo htmlspecialchars($colony['name'] ?? ''); ?></option>
@@ -102,7 +102,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="2"></textarea>
+                            <textarea aria-label="Address" class="form-control" id="address" name="address" rows="2"></textarea>
                         </div>
 
                         <h5 class="mb-3 mt-4">Project Details</h5>
@@ -162,7 +162,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Status</label>
-                                    <select class="form-select" id="status" name="status">
+                                    <select aria-label="Status" class="form-select" id="status" name="status">
                                         <option value="planning">Planning</option>
                                         <option value="under_construction">Under Construction</option>
                                         <option value="completed">Completed</option>
@@ -198,7 +198,7 @@
                         <h5 class="mb-3 mt-4">Marketing</h5>
                         <div class="mb-3">
                             <label for="marketing_description" class="form-label">Marketing Description</label>
-                            <textarea class="form-control" id="marketing_description" name="marketing_description" rows="3"></textarea>
+                            <textarea aria-label="Marketing description" class="form-control" id="marketing_description" name="marketing_description" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="tags" class="form-label">Tags</label>
@@ -286,7 +286,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="risk_flags" class="form-label">Risk Flags / Notes</label>
-                            <textarea class="form-control" id="risk_flags" name="risk_flags" rows="2" placeholder="Describe any risks, delays, or issues..."></textarea>
+                            <textarea aria-label="Risk flags" class="form-control" id="risk_flags" name="risk_flags" rows="2" placeholder="Describe any risks, delays, or issues..."></textarea>
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">

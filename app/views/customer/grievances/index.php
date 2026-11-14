@@ -114,7 +114,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                                 <p class="text-muted small mb-3">Our civil estate team marked this request as resolved. Please rate the service quality.</p>
                                                                 <div class="mb-3">
                                                                     <label for="rating_<?= $row['id'] ?>" class="form-label fw-semibold">Satisfaction Rating</label>
-                                                                    <select name="resident_rating" id="rating_<?= $row['id'] ?>" class="form-select">
+                                                                    <select aria-label="Resident rating" name="resident_rating" id="rating_<?= $row['id'] ?>" class="form-select">
                                                                         <option value="5">★★★★★ 5 Stars — Excellent &amp; Timely</option>
                                                                         <option value="4">★★★★☆ 4 Stars — Satisfied</option>
                                                                         <option value="3">★★★☆☆ 3 Stars — Average</option>

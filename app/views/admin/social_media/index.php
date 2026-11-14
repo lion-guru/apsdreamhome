@@ -17,7 +17,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-auto">
                 <label class="form-label small">Platform</label>
-                <select name="platform" class="form-select">
+                <select aria-label="Platform" name="platform" class="form-select">
                     <option value="">All</option>
                     <?php foreach ($platforms as $p): ?>
                         <option value="<?= $p ?>" <?= ($filters['platform'] ?? '') === $p ? 'selected' : '' ?>><?= ucfirst($p) ?></option>
@@ -26,7 +26,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-auto">
                 <label class="form-label small">Status</label>
-                <select name="status" class="form-select">
+                <select aria-label="Status" name="status" class="form-select">
                     <option value="">All</option>
                     <option value="connected" <?= ($filters['status'] ?? '') === 'connected' ? 'selected' : '' ?>>Connected</option>
                     <option value="expired" <?= ($filters['status'] ?? '') === 'expired' ? 'selected' : '' ?>>Expired</option>

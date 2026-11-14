@@ -93,7 +93,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Stage</label>
-                    <select class="form-select" name="stage">
+                    <select aria-label="Stage" class="form-select" name="stage">
                         <option value="">All Stages</option>
                         <?php foreach (($stages ?? []) as $stage): ?>
                             <option value="<?= $stage['id'] ?>" <?= ($filters['stage'] ?? '') == $stage['id'] ? 'selected' : '' ?>>

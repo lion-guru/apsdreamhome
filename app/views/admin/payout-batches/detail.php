@@ -160,7 +160,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="populate_type" class="form-label">Type Filter</label>
-                            <select id="populate_type" name="populate_type" class="form-select form-select-sm">
+                            <select aria-label="Populate type" id="populate_type" name="populate_type" class="form-select form-select-sm">
                                 <option value="">All Types</option>
                                 <option value="direct_sale">Direct Sale</option>
                                 <option value="override">Override</option>
@@ -286,7 +286,7 @@
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="modal-body">
                     <label for="reject_reason" class="form-label">Reason for rejection</label>
-                    <textarea id="reject_reason" name="reason" class="form-control" rows="3" required></textarea>
+                    <textarea aria-label="Reason" id="reject_reason" name="reason" class="form-control" rows="3" required></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

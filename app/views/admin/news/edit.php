@@ -23,12 +23,12 @@
 
                         <div class="mb-3">
                             <label for="summary" class="form-label">Summary *</label>
-                            <textarea class="form-control" id="summary" name="summary" rows="2" required><?= htmlspecialchars($news['summary'] ?? '') ?></textarea>
+                            <textarea aria-label="Summary" class="form-control" id="summary" name="summary" rows="2" required><?= htmlspecialchars($news['summary'] ?? '') ?></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="content" class="form-label">Content *</label>
-                            <textarea class="form-control summernote" id="content" name="content" rows="10" required><?= htmlspecialchars($news['content'] ?? '') ?></textarea>
+                            <textarea aria-label="Content" class="form-control summernote" id="content" name="content" rows="10" required><?= htmlspecialchars($news['content'] ?? '') ?></textarea>
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@
 
                                 <div class="mb-3">
                                     <label for="status" class="form-label">Status</label>
-                                    <select class="form-select" id="status" name="status">
+                                    <select aria-label="Status" class="form-select" id="status" name="status">
                                         <option value="draft" <?= ($news['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                                         <option value="published" <?= ($news['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option>
                                         <option value="archived" <?= ($news['status'] ?? '') === 'archived' ? 'selected' : '' ?>>Archived</option>

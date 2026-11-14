@@ -33,13 +33,13 @@
                             <div class="modal-header bg-warning"><h5 class="modal-title"><i class="fas fa-edit me-1"></i>Edit Plan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                             <div class="modal-body">
                                 <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= htmlspecialchars($p['name'] ?? '') ?>" required></div>
-                                <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control"><?= htmlspecialchars($p['description'] ?? '') ?></textarea></div>
+                                <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control"><?= htmlspecialchars($p['description'] ?? '') ?></textarea></div>
                                 <div class="row">
                                     <div class="col-md-4 mb-3"><label class="form-label">Base Salary</label><input type="number" step="0.01" name="base_salary" class="form-control" value="<?= $p['base_salary'] ?? 0 ?>"></div>
                                     <div class="col-md-4 mb-3"><label class="form-label">Bonus %</label><input type="number" step="0.01" name="bonus_percent" class="form-control" value="<?= $p['bonus_percent'] ?? 0 ?>"></div>
                                     <div class="col-md-4 mb-3"><label class="form-label">Commission %</label><input type="number" step="0.01" name="commission_percent" class="form-control" value="<?= $p['commission_percent'] ?? 0 ?>"></div>
                                 </div>
-                                <div class="mb-3"><label class="form-label">Benefits (JSON)</label><textarea name="benefits_json" class="form-control" rows="3"><?= htmlspecialchars($p['benefits_json'] ?? '') ?></textarea></div>
+                                <div class="mb-3"><label class="form-label">Benefits (JSON)</label><textarea aria-label="Benefits json" name="benefits_json" class="form-control" rows="3"><?= htmlspecialchars($p['benefits_json'] ?? '') ?></textarea></div>
                                 <div class="form-check">
                                     <input type="checkbox" name="is_active" class="form-check-input" value="1" <?= ($p['is_active'] ?? 0) ? 'checked' : '' ?>>
                                     <label class="form-check-label">Active</label>
@@ -65,13 +65,13 @@
                 <div class="modal-header bg-primary text-white"><h5 class="modal-title"><i class="fas fa-plus me-1"></i>New Salary Plan</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control"></textarea></div>
                     <div class="row">
                         <div class="col-md-4 mb-3"><label class="form-label">Base Salary</label><input type="number" step="0.01" name="base_salary" class="form-control" value="0"></div>
                         <div class="col-md-4 mb-3"><label class="form-label">Bonus %</label><input type="number" step="0.01" name="bonus_percent" class="form-control" value="0"></div>
                         <div class="col-md-4 mb-3"><label class="form-label">Commission %</label><input type="number" step="0.01" name="commission_percent" class="form-control" value="0"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Benefits (JSON)</label><textarea name="benefits_json" class="form-control" rows="3" placeholder='{"health_insurance":true,"meal_coupon":1500}'></textarea></div>
+                    <div class="mb-3"><label class="form-label">Benefits (JSON)</label><textarea aria-label="Benefits json" name="benefits_json" class="form-control" rows="3" placeholder='{"health_insurance":true,"meal_coupon":1500}'></textarea></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

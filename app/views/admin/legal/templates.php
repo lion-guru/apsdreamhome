@@ -17,7 +17,7 @@ $merge_fields = $merge_fields ?? [];
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small">Category</label>
-                    <select name="category_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Category id" name="category_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $c): ?>
                             <option value="<?= $c['id'] ?>" <?= ($_GET['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option>
@@ -26,7 +26,7 @@ $merge_fields = $merge_fields ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Status</label>
-                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All</option>
                         <option value="active" <?= ($_GET['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="draft" <?= ($_GET['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
@@ -91,14 +91,14 @@ $merge_fields = $merge_fields ?? [];
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-6"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
-                        <div class="col-md-6"><label class="form-label">Category</label><select name="category_id" class="form-select"><option value="">None</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                        <div class="col-md-6"><label class="form-label">Status</label><select name="status" class="form-select"><option value="draft">Draft</option><option value="active">Active</option></select></div>
-                        <div class="col-md-6"><label class="form-label">Language</label><select name="language" class="form-select"><option value="en">English</option><option value="hi">Hindi</option></select></div>
-                        <div class="col-12"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                        <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category id" name="category_id" class="form-select"><option value="">None</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
+                        <div class="col-md-6"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="draft">Draft</option><option value="active">Active</option></select></div>
+                        <div class="col-md-6"><label class="form-label">Language</label><select aria-label="Language" name="language" class="form-select"><option value="en">English</option><option value="hi">Hindi</option></select></div>
+                        <div class="col-12"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea></div>
                         <div class="col-12">
                             <label class="form-label">Content (HTML with merge fields like {{customer_name}})</label>
                             <small class="text-muted d-block mb-1">Available fields: <?php $all = []; foreach ($merge_fields as $group => $fields) { foreach ($fields as $key => $label) { $all[] = $key; } } echo implode(', ', $all); ?></small>
-                            <textarea name="content" class="form-control font-monospace" rows="12" required></textarea>
+                            <textarea aria-label="Content" name="content" class="form-control font-monospace" rows="12" required></textarea>
                         </div>
                     </div>
                 </div>

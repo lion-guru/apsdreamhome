@@ -164,7 +164,7 @@ $documents = $documents ?? $pending_documents ?? [];
                     <p class="text-muted small mb-3">Reviewing: <strong id="reviewDocTitle"></strong></p>
                     <div class="mb-3">
                         <label class="form-label" for="reviewDocDecision">Decision *</label>
-                        <select class="form-select" id="reviewDocDecision" name="status" required>
+                        <select aria-label="Status" class="form-select" id="reviewDocDecision" name="status" required>
                             <option value="active">Approve</option>
                             <option value="draft">Request Changes</option>
                             <option value="rejected">Reject</option>
@@ -172,7 +172,7 @@ $documents = $documents ?? $pending_documents ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="reviewDocNotes">Review Notes</label>
-                        <textarea class="form-control" id="reviewDocNotes" name="review_notes" rows="3" maxlength="2000" placeholder="Notes for the submitter..."></textarea>
+                        <textarea aria-label="Review notes" class="form-control" id="reviewDocNotes" name="review_notes" rows="3" maxlength="2000" placeholder="Notes for the submitter..."></textarea>
                     </div>
                     <div id="reviewDocMsg" class="small"></div>
                 </div>

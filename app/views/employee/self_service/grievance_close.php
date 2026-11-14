@@ -99,7 +99,7 @@ $grievance = $grievance ?? [];
 
                         <div class="mb-3">
                             <label for="feedback" class="form-label fw-semibold small text-dark">Feedback / Closing Remarks (Optional)</label>
-                            <textarea name="feedback" id="feedback" rows="4" class="form-control rounded-2" placeholder="Let us know how the resolution process went or if any ongoing actions are needed..."></textarea>
+                            <textarea aria-label="Feedback" name="feedback" id="feedback" rows="4" class="form-control rounded-2" placeholder="Let us know how the resolution process went or if any ongoing actions are needed..."></textarea>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2 pt-3 border-top">

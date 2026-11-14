@@ -909,7 +909,7 @@ $related_projects = $normRelated;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold" for="sv_time">पसंदीदा समय (Time Slot) *</label>
-                            <select class="form-select" name="visit_time" id="sv_time" required>
+                            <select aria-label="Visit time" class="form-select" name="visit_time" id="sv_time" required>
                                 <option value="Morning (10:00 AM - 01:00 PM)">सुबह (10 AM - 1 PM)</option>
                                 <option value="Afternoon (02:00 PM - 05:00 PM)">दोपहर (2 PM - 5 PM)</option>
                             </select>
@@ -918,7 +918,7 @@ $related_projects = $normRelated;
 
                     <div class="mb-2">
                         <label class="form-label small fw-bold" for="sv_pickup">पिकअप पता / लैंडमार्क (Pickup Location) *</label>
-                        <textarea class="form-control" name="message" id="sv_pickup" rows="2" required placeholder="उदा. रेलवे स्टेशन के पास, मोहद्दीपुर, गोरखपुर"></textarea>
+                        <textarea aria-label="Message" class="form-control" name="message" id="sv_pickup" rows="2" required placeholder="उदा. रेलवे स्टेशन के पास, मोहद्दीपुर, गोरखपुर"></textarea>
                     </div>
 
                     <div id="quickSvFeedback" class="small mt-2"></div>

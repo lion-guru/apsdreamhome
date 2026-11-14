@@ -72,7 +72,7 @@ $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Employee</label>
-                    <select name="employee_id" class="form-select form-select-sm">
+                    <select aria-label="Employee id" name="employee_id" class="form-select form-select-sm">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $emp): ?>
                             <option value="<?= $emp['id'] ?>" <?= ($filters['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
@@ -81,7 +81,7 @@ $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Category</label>
-                    <select name="category_id" class="form-select form-select-sm">
+                    <select aria-label="Category id" name="category_id" class="form-select form-select-sm">
                         <option value="">All Categories</option>
                         <?php foreach ($categories as $cat): ?>
                             <option value="<?= $cat['id'] ?>" <?= ($filters['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
@@ -90,7 +90,7 @@ $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="submitted" <?= ($filters['status'] ?? '') === 'submitted' ? 'selected' : '' ?>>Submitted</option>

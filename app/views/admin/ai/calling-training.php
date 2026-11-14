@@ -215,14 +215,14 @@ $page_title = $page_title ?? 'AI Calling Training';
             <input type="hidden" name="id" id="vm_id">
             <div class="mb-3"><label class="form-label">Model Name *</label><input type="text" name="model_name" id="vm_name" class="form-control" required></div>
             <div class="row mb-3">
-                <div class="col"><label class="form-label">Language</label><select name="language" id="vm_language" class="form-select"><option value="hi-IN">Hindi</option><option value="en-US">English</option><option value="hi-EN">Hinglish</option></select></div>
-                <div class="col"><label class="form-label">Gender</label><select name="voice_gender" id="vm_gender" class="form-select"><option value="female">Female</option><option value="male">Male</option><option value="neutral">Neutral</option></select></div>
+                <div class="col"><label class="form-label">Language</label><select aria-label="Language" name="language" id="vm_language" class="form-select"><option value="hi-IN">Hindi</option><option value="en-US">English</option><option value="hi-EN">Hinglish</option></select></div>
+                <div class="col"><label class="form-label">Gender</label><select aria-label="Voice gender" name="voice_gender" id="vm_gender" class="form-select"><option value="female">Female</option><option value="male">Male</option><option value="neutral">Neutral</option></select></div>
             </div>
             <div class="row mb-3">
-                <div class="col"><label class="form-label">Provider</label><select name="model_provider" id="vm_provider" class="form-select"><option value="google">Google TTS</option><option value="espeak">eSpeak</option><option value="azure">Azure Speech</option><option value="custom">Custom</option></select></div>
-                <div class="col"><label class="form-label">Status</label><select name="status" id="vm_status" class="form-select"><option value="inactive">Inactive</option><option value="active">Active</option><option value="training">Training</option></select></div>
+                <div class="col"><label class="form-label">Provider</label><select aria-label="Model provider" name="model_provider" id="vm_provider" class="form-select"><option value="google">Google TTS</option><option value="espeak">eSpeak</option><option value="azure">Azure Speech</option><option value="custom">Custom</option></select></div>
+                <div class="col"><label class="form-label">Status</label><select aria-label="Status" name="status" id="vm_status" class="form-select"><option value="inactive">Inactive</option><option value="active">Active</option><option value="training">Training</option></select></div>
             </div>
-            <div class="mb-3"><label class="form-label">Notes</label><textarea name="notes" id="vm_notes" class="form-control" rows="2"></textarea></div>
+            <div class="mb-3"><label class="form-label">Notes</label><textarea aria-label="Notes" name="notes" id="vm_notes" class="form-control" rows="2"></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
     </form>
@@ -240,13 +240,13 @@ $page_title = $page_title ?? 'AI Calling Training';
                 <div class="col-md-4"><label class="form-label">Script Code</label><input type="text" name="script_code" id="sc_code" class="form-control" placeholder="SCRIPT_001"></div>
             </div>
             <div class="row mb-3">
-                <div class="col-md-4"><label class="form-label">Category</label><select name="category" id="sc_category" class="form-select"><option value="sales">Sales</option><option value="follow_up">Follow-up</option><option value="emi_reminder">EMI Reminder</option><option value="appointment">Appointment</option><option value="cold_call">Cold Call</option><option value="survey">Survey</option><option value="support">Support</option><option value="general">General</option></select></div>
-                <div class="col-md-4"><label class="form-label">Language</label><select name="language" id="sc_language" class="form-select"><option value="hi-IN">Hindi</option><option value="en-US">English</option><option value="hi-EN">Hinglish</option></select></div>
+                <div class="col-md-4"><label class="form-label">Category</label><select aria-label="Category" name="category" id="sc_category" class="form-select"><option value="sales">Sales</option><option value="follow_up">Follow-up</option><option value="emi_reminder">EMI Reminder</option><option value="appointment">Appointment</option><option value="cold_call">Cold Call</option><option value="survey">Survey</option><option value="support">Support</option><option value="general">General</option></select></div>
+                <div class="col-md-4"><label class="form-label">Language</label><select aria-label="Language" name="language" id="sc_language" class="form-select"><option value="hi-IN">Hindi</option><option value="en-US">English</option><option value="hi-EN">Hinglish</option></select></div>
                 <div class="col-md-4"><label class="form-label">Est. Duration (sec)</label><input type="number" name="estimated_duration_seconds" id="sc_duration" class="form-control" value="120"></div>
             </div>
-            <div class="mb-3"><label class="form-label">Greeting *</label><textarea name="greeting_text" id="sc_greeting" class="form-control" rows="3" required placeholder="Namaste! Main APS Dream Home se bol raha hoon..."></textarea></div>
-            <div class="mb-3"><label class="form-label">Main Body</label><textarea name="main_body" id="sc_body" class="form-control" rows="3" placeholder="Main conversation body..."></textarea></div>
-            <div class="mb-3"><label class="form-label">Closing</label><textarea name="closing_text" id="sc_closing" class="form-control" rows="2" placeholder="Thank you script..."></textarea></div>
+            <div class="mb-3"><label class="form-label">Greeting *</label><textarea aria-label="Greeting text" name="greeting_text" id="sc_greeting" class="form-control" rows="3" required placeholder="Namaste! Main APS Dream Home se bol raha hoon..."></textarea></div>
+            <div class="mb-3"><label class="form-label">Main Body</label><textarea aria-label="Main body" name="main_body" id="sc_body" class="form-control" rows="3" placeholder="Main conversation body..."></textarea></div>
+            <div class="mb-3"><label class="form-label">Closing</label><textarea aria-label="Closing text" name="closing_text" id="sc_closing" class="form-control" rows="2" placeholder="Thank you script..."></textarea></div>
             <div class="form-check form-switch"><input type="checkbox" name="is_active" id="sc_active" class="form-check-input" value="1" checked><label class="form-check-label" for="sc_active">Active</label></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
@@ -263,9 +263,9 @@ $page_title = $page_title ?? 'AI Calling Training';
             <div class="mb-3"><label class="form-label">Intent Name *</label><input type="text" name="intent_name" id="in_name" class="form-control" required></div>
             <div class="row mb-3">
                 <div class="col-md-6"><label class="form-label">Intent Code</label><input type="text" name="intent_code" id="in_code" class="form-control" placeholder="INT_NAME"></div>
-                <div class="col-md-6"><label class="form-label">Category</label><select name="category" id="in_category" class="form-select"><option value="interest">Interest</option><option value="objection">Objection</option><option value="question">Question</option><option value="action">Action</option><option value="sentiment">Sentiment</option><option value="info_request">Info Request</option><option value="callback">Callback</option><option value="not_interested">Not Interested</option><option value="dnd">Do Not Call</option><option value="other">Other</option></select></div>
+                <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category" name="category" id="in_category" class="form-select"><option value="interest">Interest</option><option value="objection">Objection</option><option value="question">Question</option><option value="action">Action</option><option value="sentiment">Sentiment</option><option value="info_request">Info Request</option><option value="callback">Callback</option><option value="not_interested">Not Interested</option><option value="dnd">Do Not Call</option><option value="other">Other</option></select></div>
             </div>
-            <div class="mb-3"><label class="form-label">Description</label><textarea name="description" id="in_desc" class="form-control" rows="2"></textarea></div>
+            <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" id="in_desc" class="form-control" rows="2"></textarea></div>
             <div class="row mb-3">
                 <div class="col-md-6"><label class="form-label">Priority (1-10)</label><input type="number" name="priority" id="in_priority" class="form-control" value="5" min="1" max="10"></div>
                 <div class="col-md-6"><div class="form-check form-switch mt-4"><input type="checkbox" name="is_active" id="in_active" class="form-check-input" value="1" checked><label class="form-check-label">Active</label></div></div>

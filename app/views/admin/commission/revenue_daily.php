@@ -19,7 +19,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><label class="form-label">Date</label><input type="date" name="stat_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
                         <div class="mb-2"><label class="form-label">Agent</label>
-                            <select name="agent_id" class="form-select" required>
+                            <select aria-label="Agent id" name="agent_id" class="form-select" required>
                                 <option value="">Select</option>
                                 <?php foreach ($users ?? [] as $a): ?>
                                 <option value="<?= $a['id'] ?>"><?= htmlspecialchars($a['name'] ?? '') ?></option>

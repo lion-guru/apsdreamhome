@@ -26,7 +26,7 @@ $_date = $date ?? date('Y-m-d');
                     <form method="GET" class="form-inline">
     <?php echo CSRFProtection::csrfField(); ?>
                         <label class="mr-2">Agent:</label>
-                        <select name="agent" class="form-control form-control-sm mr-3">
+                        <select aria-label="Agent" name="agent" class="form-control form-control-sm mr-3">
                             <option value="">All Agents</option>
                             <?php foreach ($_ag as $key => $a): ?>
                             <option value="<?= $key ?>" <?= $_filter === $key ? 'selected' : '' ?>><?= htmlspecialchars($a['name'] ?? '') ?></option>

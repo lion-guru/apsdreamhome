@@ -111,7 +111,7 @@ $terminatedCount = $terminated_count ?? 0;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Type</label>
-                            <select name="agreement_type" class="form-select">
+                            <select aria-label="Agreement type" name="agreement_type" class="form-select">
                                 <option value="land_purchase">Land Purchase</option>
                                 <option value="lease">Lease</option>
                                 <option value="crop_share">Crop Share</option>
@@ -141,11 +141,11 @@ $terminatedCount = $terminated_count ?? 0;
                         </div>
                         <div class="col-12">
                             <label class="form-label">Terms & Conditions</label>
-                            <textarea name="terms_conditions" class="form-control" rows="3"></textarea>
+                            <textarea aria-label="Terms conditions" name="terms_conditions" class="form-control" rows="3"></textarea>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Remarks</label>
-                            <textarea name="remarks" class="form-control" rows="2"></textarea>
+                            <textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"></textarea>
                         </div>
                     </div>
                 </div>

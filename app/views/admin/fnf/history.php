@@ -28,7 +28,7 @@ $total = $total ?? 0;
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Employee</label>
-                    <select name="employee_id" class="form-select">
+                    <select aria-label="Employee id" name="employee_id" class="form-select">
                         <option value="">All Employees</option>
                         <?php foreach ($employees as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= $employee_id == $emp['id'] ? 'selected' : '' ?>>
@@ -39,7 +39,7 @@ $total = $total ?? 0;
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All</option>
                         <option value="calculated" <?= $status === 'calculated' ? 'selected' : '' ?>>Calculated</option>
                         <option value="approved" <?= $status === 'approved' ? 'selected' : '' ?>>Approved</option>

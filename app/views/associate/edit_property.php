@@ -39,7 +39,7 @@ $states = $states ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold"><?= __('assoc_ep_type', [], 'Property Type') ?> *</label>
-                        <select name="property_type" class="form-select" required>
+                        <select aria-label="Property type" name="property_type" class="form-select" required>
                             <?php foreach ([
                                 'residential_plot' => __('assoc_ep_type_residential', [], 'Residential Plot'),
                                 'commercial_plot' => __('assoc_ep_type_commercial', [], 'Commercial Plot'),
@@ -54,7 +54,7 @@ $states = $states ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold"><?= __('assoc_ep_listing_type', [], 'Listing Type') ?> *</label>
-                        <select name="listing_type" class="form-select" required>
+                        <select aria-label="Listing type" name="listing_type" class="form-select" required>
                             <option value="sell" <?= ($property['listing_type'] ?? '') === 'sell' ? 'selected' : '' ?>><?= __('assoc_ep_sell', [], 'Sell') ?></option>
                             <option value="rent" <?= ($property['listing_type'] ?? '') === 'rent' ? 'selected' : '' ?>><?= __('assoc_ep_rent', [], 'Rent') ?></option>
                         </select>
@@ -73,7 +73,7 @@ $states = $states ?? [];
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-bold"><?= __('assoc_ep_description', [], 'Description') ?></label>
-                        <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($property['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="4"><?= htmlspecialchars($property['description'] ?? '') ?></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold"><?= __('assoc_ep_replace_image', [], 'Replace Image (optional)') ?></label>

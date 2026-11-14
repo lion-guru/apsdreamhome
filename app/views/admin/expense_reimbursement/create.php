@@ -42,7 +42,7 @@ $employees = $employees ?? [];
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $emp): ?>
                                 <option value="<?= $emp['id'] ?>" <?= ($claim['employee_id'] ?? '') == $emp['id'] ? 'selected' : '' ?>><?= htmlspecialchars($emp['name']) ?></option>
@@ -51,7 +51,7 @@ $employees = $employees ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-                        <select name="category_id" class="form-select" required>
+                        <select aria-label="Category id" name="category_id" class="form-select" required>
                             <option value="">Select Category</option>
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?= $cat['id'] ?>" <?= ($claim['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['name']) ?></option>
@@ -64,7 +64,7 @@ $employees = $employees ?? [];
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
-                        <textarea name="description" class="form-control" rows="3" placeholder="Business purpose, client meeting, etc."><?= htmlspecialchars($claim['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" name="description" class="form-control" rows="3" placeholder="Business purpose, client meeting, etc."><?= htmlspecialchars($claim['description'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>

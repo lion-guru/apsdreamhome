@@ -9,7 +9,7 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Type</label>
-                <select name="type" class="form-select">
+                <select aria-label="Type" name="type" class="form-select">
                     <option value="email">Email</option>
                     <option value="sms">SMS</option>
                     <option value="social">Social Media</option>
@@ -17,7 +17,7 @@
             </div>
             <div class="col-12">
                 <label class="form-label">Description</label>
-                <textarea name="description" class="form-control" rows="4"></textarea>
+                <textarea aria-label="Description" name="description" class="form-control" rows="4"></textarea>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Start Date</label>

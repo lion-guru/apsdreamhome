@@ -95,7 +95,7 @@ ob_start();
                     <input type="hidden" name="return_type" value="gstr1">
                     <div class="mb-3">
                         <label class="form-label small">Financial Year</label>
-                        <select name="fy" class="form-select form-select-sm">
+                        <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                             <?php foreach ($fy_list as $val => $label): ?>
                                 <option value="<?= $val ?>" <?= $val === $fy ? 'selected' : '' ?>><?= $label ?></option>
                             <?php endforeach; ?>
@@ -104,7 +104,7 @@ ob_start();
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label small">Month</label>
-                            <select name="month" class="form-select form-select-sm">
+                            <select aria-label="Month" name="month" class="form-select form-select-sm">
                                 <?php foreach ($months as $num => $name): ?>
                                     <option value="<?= $num ?>"><?= $name ?></option>
                                 <?php endforeach; ?>
@@ -132,7 +132,7 @@ ob_start();
                     <input type="hidden" name="return_type" value="gstr3b">
                     <div class="mb-3">
                         <label class="form-label small">Financial Year</label>
-                        <select name="fy" class="form-select form-select-sm">
+                        <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                             <?php foreach ($fy_list as $val => $label): ?>
                                 <option value="<?= $val ?>" <?= $val === $fy ? 'selected' : '' ?>><?= $label ?></option>
                             <?php endforeach; ?>
@@ -141,7 +141,7 @@ ob_start();
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label small">Month</label>
-                            <select name="month" class="form-select form-select-sm">
+                            <select aria-label="Month" name="month" class="form-select form-select-sm">
                                 <?php foreach ($months as $num => $name): ?>
                                     <option value="<?= $num ?>"><?= $name ?></option>
                                 <?php endforeach; ?>

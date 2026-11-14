@@ -67,7 +67,7 @@ ob_start();
             <form method="GET" action="<?= BASE_URL ?>/admin/cash-collections" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Statuses</option>
                         <?php foreach (['submitted' => 'Submitted', 'verified' => 'Verified', 'rejected' => 'Rejected', 'reconciled' => 'Reconciled'] as $val => $lbl): ?>
                             <option value="<?= $val ?>" <?= ($filters['status'] ?? '') === $val ? 'selected' : '' ?>><?= $lbl ?></option>
@@ -76,7 +76,7 @@ ob_start();
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Collector</label>
-                    <select name="collector_id" class="form-select">
+                    <select aria-label="Collector id" name="collector_id" class="form-select">
                         <option value="">All Collectors</option>
                         <?php foreach ($collectors as $c): ?>
                             <option value="<?= $c['collector_id'] ?>" <?= ($filters['collector_id'] ?? '') == $c['collector_id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?> (<?= number_format($c['collection_count'] ?? 0) ?>)</option>

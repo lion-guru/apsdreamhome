@@ -24,7 +24,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <form method="POST" action="/admin/farmer-acquisitions/<?= (int)$acquisition['id'] ?>/status" class="d-inline-flex gap-2 align-items-center">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <label for="deal_status_select" class="visually-hidden">Lifecycle Stage</label>
-                <select name="status" id="deal_status_select" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" id="deal_status_select" class="form-select form-select-sm">
                     <option value="bayana_agreement" <?= ($acquisition['status'] === 'bayana_agreement') ? 'selected' : '' ?>>Bayana Agreement</option>
                     <option value="mutation_in_progress" <?= ($acquisition['status'] === 'mutation_in_progress') ? 'selected' : '' ?>>Sec 143 Mutation</option>
                     <option value="possession_taken" <?= ($acquisition['status'] === 'possession_taken') ? 'selected' : '' ?>>Possession Taken</option>
@@ -171,7 +171,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="pay_mode_<?= $m['id'] ?>" class="form-label">Payout Mode</label>
-                                                            <select name="payment_mode" id="pay_mode_<?= $m['id'] ?>" class="form-select">
+                                                            <select aria-label="Payment mode" name="payment_mode" id="pay_mode_<?= $m['id'] ?>" class="form-select">
                                                                 <option value="rtgs">RTGS (Real-Time Gross Settlement)</option>
                                                                 <option value="neft">NEFT Electronic Transfer</option>
                                                                 <option value="cheque">Bank Demand Draft / Cheque</option>

@@ -31,7 +31,7 @@ $total_pages = $total_pages ?? 1;
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Statuses</option>
                         <option value="queued" <?= ($filters['status'] ?? '') === 'queued' ? 'selected' : '' ?>>Queued</option>
                         <option value="processing" <?= ($filters['status'] ?? '') === 'processing' ? 'selected' : '' ?>>Processing</option>
@@ -43,7 +43,7 @@ $total_pages = $total_pages ?? 1;
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Document Type</label>
-                    <select name="document_type" class="form-select">
+                    <select aria-label="Document type" name="document_type" class="form-select">
                         <option value="">All Types</option>
                         <option value="sale_deed" <?= ($filters['document_type'] ?? '') === 'sale_deed' ? 'selected' : '' ?>>Sale Deed</option>
                         <option value="agreement_to_sell" <?= ($filters['document_type'] ?? '') === 'agreement_to_sell' ? 'selected' : '' ?>>Agreement to Sell</option>
@@ -59,7 +59,7 @@ $total_pages = $total_pages ?? 1;
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Engine</label>
-                    <select name="engine" class="form-select">
+                    <select aria-label="Engine" name="engine" class="form-select">
                         <option value="">All Engines</option>
                         <option value="mock" <?= ($filters['engine'] ?? '') === 'mock' ? 'selected' : '' ?>>Mock (Testing)</option>
                         <option value="tesseract_ocr" <?= ($filters['engine'] ?? '') === 'tesseract_ocr' ? 'selected' : '' ?>>Tesseract OCR</option>
@@ -362,10 +362,10 @@ function renderReviewForm(job) {
                     html += `<input type="number" step="0.01" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="%">`;
                     break;
                 case 'select':
-                    html += `<select name="${field.field_name}" class="form-select" ${required}><option value="">Select...</option></select>`;
+                    html += `<select aria-label="${field.field name}" name="${field.field_name}" class="form-select" ${required}><option value="">Select...</option></select>`;
                     break;
                 case 'address':
-                    html += `<textarea name="${field.field_name}" class="form-control" rows="2" ${required}>${value}</textarea>`;
+                    html += `<textarea aria-label="${field.field name}" name="${field.field_name}" class="form-control" rows="2" ${required}>${value}</textarea>`;
                     break;
                 case 'aadhaar':
                     html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="XXXX-XXXX-1234" maxlength="14">`;

@@ -20,12 +20,12 @@
 
   <form class="row g-2 mb-3" method="get">
     <?php echo CSRFProtection::csrfField(); ?>
-    <div class="col-auto"><select name="status" class="form-select form-select-sm"><option value=""><?= __('admin_all_status') ?></option>
+    <div class="col-auto"><select aria-label="Status" name="status" class="form-select form-select-sm"><option value=""><?= __('admin_all_status') ?></option>
       <?php foreach(['new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold'] as $s): ?>
         <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
       <?php endforeach; ?>
     </select></div>
-    <div class="col-auto"><select name="priority" class="form-select form-select-sm"><option value=""><?= __('admin_all_priority') ?></option>
+    <div class="col-auto"><select aria-label="Priority" name="priority" class="form-select form-select-sm"><option value=""><?= __('admin_all_priority') ?></option>
       <?php foreach(['hot','warm','cold','dead'] as $p): ?>
         <option value="<?= $p ?>" <?= ($filters['priority'] ?? '') === $p ? 'selected' : '' ?>><?= ucfirst($p) ?></option>
       <?php endforeach; ?>

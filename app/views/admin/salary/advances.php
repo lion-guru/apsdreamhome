@@ -43,7 +43,7 @@ $filter_status = $filter_status ?? '';
         <form method="GET" class="row g-3">
             <div class="col-md-3">
                 <label class="form-label">Status</label>
-                <select name="status" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Status" name="status" class="form-select" onchange="this.form.submit()">
                     <option value="">All</option>
                     <?php foreach (['pending','active','approved','rejected','closed'] as $st): ?>
                     <option value="<?= $st ?>" <?= $filter_status === $st ? 'selected' : '' ?>><?= ucfirst($st) ?></option>
@@ -96,7 +96,7 @@ $filter_status = $filter_status ?? '';
                                 <div class="modal-header"><h5 class="modal-title">Reject Advance <?= htmlspecialchars($a['advance_no'] ?? '') ?></h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                 <div class="modal-body"><label class="form-label">Reason (optional)</label>
-                                <textarea name="rejection_reason" class="form-control" rows="2"></textarea></div>
+                                <textarea aria-label="Rejection reason" name="rejection_reason" class="form-control" rows="2"></textarea></div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-danger">Reject</button>
@@ -123,7 +123,7 @@ $filter_status = $filter_status ?? '';
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
                 <div class="mb-3"><label class="form-label">Employee <span class="text-danger">*</span></label>
-                    <select name="employee_id" class="form-select" required>
+                    <select aria-label="Employee id" name="employee_id" class="form-select" required>
                         <option value="">Select Employee</option>
                         <?php foreach ($users as $u): ?>
                         <option value="<?= (int)$u['id'] ?>"><?= htmlspecialchars($u['name']) ?> (<?= htmlspecialchars($u['employee_code'] ?? '') ?>)</option>
@@ -144,7 +144,7 @@ $filter_status = $filter_status ?? '';
                         <input type="number" min="2020" max="2100" name="start_year" class="form-control" value="<?= date('Y') ?>"></div>
                 </div>
                 <div class="mb-3"><label class="form-label">Reason</label>
-                    <textarea name="reason" class="form-control" rows="2" placeholder="Purpose of advance..."></textarea></div>
+                    <textarea aria-label="Reason" name="reason" class="form-control" rows="2" placeholder="Purpose of advance..."></textarea></div>
                 <div class="alert alert-info mb-0"><i class="fas fa-info-circle me-1"></i>EMI is auto-computed. Recovery starts from the start month via payroll (logged per month, idempotent).</div>
             </div>
             <div class="modal-footer">

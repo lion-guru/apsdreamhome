@@ -248,7 +248,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold"><?= __('user_new_booking_label_notes', 'Notes') ?> <span class="text-muted fw-normal">(<?= __('user_new_booking_label_optional', 'optional') ?>)</span></label>
-                            <textarea class="form-control" id="bookingNotes" rows="2" placeholder="<?= __('user_new_booking_notes_placeholder', 'Any special requirements or notes...') ?>"></textarea>
+                            <textarea aria-label="Booking notes" class="form-control" id="bookingNotes" rows="2" placeholder="<?= __('user_new_booking_notes_placeholder', 'Any special requirements or notes...') ?>"></textarea>
                         </div>
                     </div>
 

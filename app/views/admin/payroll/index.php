@@ -66,7 +66,7 @@ $stats = $stats ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All Status</option>
                         <option value="draft" <?= ($filters['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                         <option value="calculating" <?= ($filters['status'] ?? '') === 'calculating' ? 'selected' : '' ?>>Calculating</option>

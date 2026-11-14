@@ -69,7 +69,7 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                     <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="active" <?= $filters['status'] === 'active' ? 'selected' : '' ?>>Active</option>
                         <option value="inactive" <?= $filters['status'] === 'inactive' ? 'selected' : '' ?>>Inactive</option>

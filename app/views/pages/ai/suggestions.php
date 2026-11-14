@@ -11,7 +11,7 @@
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="property_type" class="form-label"><?= __('aisug_label_type', [], 'Property Type') ?></label>
-                                <select id="property_type" name="property_type" class="form-select" required>
+                                <select aria-label="Property type" id="property_type" name="property_type" class="form-select" required>
                                     <option value=""><?= __('aisug_select_type', [], 'Select Property Type') ?></option>
                                     <?php foreach ($property_types as $type): ?>
                                         <option value="<?= h($type['type_name']) ?>"><?= h($type['type_name']) ?></option>

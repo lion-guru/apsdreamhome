@@ -21,7 +21,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">State <span class="text-danger">*</span></label>
-                            <select class="form-select" name="state_id" required>
+                            <select aria-label="State id" class="form-select" name="state_id" required>
                                 <option value="">Select State...</option>
                                 <?php foreach ($states as $s): ?>
                                 <option value="<?= $s['id'] ?? 0 ?>" <?= ($district['state_id'] ?? '') == ($s['id'] ?? '') ? 'selected' : '' ?>><?= htmlspecialchars($s['name'] ?? '-') ?></option>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
+                            <select aria-label="Status" class="form-select" name="status">
                                 <option value="active" <?= ($district['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                                 <option value="inactive" <?= ($district['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                             </select>

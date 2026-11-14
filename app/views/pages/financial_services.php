@@ -272,7 +272,7 @@ try {
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold"><?= __('fs_service_interested') ?></label>
-                                    <select name="service" class="form-select" required>
+                                    <select aria-label="Service" name="service" class="form-select" required>
                                         <option value=""><?= __('fs_select_service') ?></option>
                                         <?php foreach ($services as $svc): ?>
                                             <option value="<?= htmlspecialchars($svc['slug'] ?? $svc['title']) ?>"><?= htmlspecialchars($svc['title'] ?? '') ?></option>
@@ -281,7 +281,7 @@ try {
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label fw-bold"><?= __('fs_message') ?></label>
-                                    <textarea name="message" class="form-control" rows="4" placeholder="<?= __('fs_message_placeholder') ?>"></textarea>
+                                    <textarea aria-label="Message" name="message" class="form-control" rows="4" placeholder="<?= __('fs_message_placeholder') ?>"></textarea>
                                 </div>
                             </div>
                             
@@ -478,7 +478,7 @@ function openFSModal(serviceSlug, serviceTitle) {
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Name *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Phone *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
     featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Email *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
-    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Details</label><textarea class="form-control form-control-sm" name="message" rows="2" placeholder="Tell us about your requirement..."></textarea></div>';
+    featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1">Details</label><textarea aria-label="Message" class="form-control form-control-sm" name="message" rows="2" placeholder="Tell us about your requirement..."></textarea></div>';
     featuresHtml += '<button type="submit" class="btn btn-sm btn-primary w-100 mt-1" id="fsModalSubmitBtn"><i class="fas fa-paper-plane me-1"></i>Submit Inquiry</button>';
     featuresHtml += '<div id="fsModalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
     featuresHtml += '</form></div></div></div>';

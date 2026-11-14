@@ -21,7 +21,7 @@ ob_start();
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small">Assessment Year <span class="text-danger">*</span></label>
-                    <select name="assessment_year" class="form-select form-select-sm" required>
+                    <select aria-label="Assessment year" name="assessment_year" class="form-select form-select-sm" required>
                         <option value="">Select</option>
                         <?php foreach ($ay_list as $ay): ?>
                             <option value="<?= $ay ?>" <?= $ay === $current_ay ? 'selected' : '' ?>><?= $ay ?></option>
@@ -30,7 +30,7 @@ ob_start();
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">TDS Section <span class="text-danger">*</span></label>
-                    <select name="section" class="form-select form-select-sm" required>
+                    <select aria-label="Section" name="section" class="form-select form-select-sm" required>
                         <option value="">Select</option>
                         <option value="194C">194C - Contractor</option>
                         <option value="194H">194H - Commission/Brokerage</option>
@@ -56,7 +56,7 @@ ob_start();
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Deposited Via <span class="text-danger">*</span></label>
-                    <select name="deposited_via" class="form-select form-select-sm" required>
+                    <select aria-label="Deposited via" name="deposited_via" class="form-select form-select-sm" required>
                         <option value="bank">Bank Branch</option>
                         <option value="online">Online (e-Payment)</option>
                     </select>
@@ -79,7 +79,7 @@ ob_start();
                 </div>
                 <div class="col-12">
                     <label class="form-label small">Remarks</label>
-                    <textarea name="remarks" class="form-control form-control-sm" rows="2" placeholder="Optional notes about this challan..."></textarea>
+                    <textarea aria-label="Remarks" name="remarks" class="form-control form-control-sm" rows="2" placeholder="Optional notes about this challan..."></textarea>
                 </div>
             </div>
 

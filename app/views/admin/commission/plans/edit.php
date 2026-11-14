@@ -94,7 +94,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Type</label>
-                    <select name="plan_type" class="cp-input" <?= $canEdit ? '' : 'disabled' ?>>
+                    <select aria-label="Plan type" name="plan_type" class="cp-input" <?= $canEdit ? '' : 'disabled' ?>>
                         <?php foreach (['hybrid','binary','unilevel','matrix'] as $t): ?>
                             <option value="<?= $t ?>" <?= $plan['plan_type'] === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
                         <?php endforeach; ?>

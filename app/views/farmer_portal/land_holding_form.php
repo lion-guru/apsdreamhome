@@ -39,7 +39,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Area Unit</label>
-                        <select name="land_area_unit" class="form-select">
+                        <select aria-label="Land area unit" name="land_area_unit" class="form-select">
                             <option value="acre">Acre</option>
                             <option value="bigha">Bigha</option>
                             <option value="sqft">Sq. Ft.</option>
@@ -70,7 +70,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Electricity Available</label>
-                        <select name="electricity_available" class="form-select">
+                        <select aria-label="Electricity available" name="electricity_available" class="form-select">
                             <option value="0">No</option>
                             <option value="1">Yes</option>
                         </select>
@@ -103,7 +103,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Current Status</label>
-                        <select name="current_status" class="form-select">
+                        <select aria-label="Current status" name="current_status" class="form-select">
                             <option value="owned">Owned</option>
                             <option value="leased">Leased</option>
                             <option value="disputed">Disputed</option>
@@ -112,7 +112,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Acquisition Status</label>
-                        <select name="acquisition_status" class="form-select">
+                        <select aria-label="Acquisition status" name="acquisition_status" class="form-select">
                             <option value="none">None</option>
                             <option value="initiated">Initiated</option>
                             <option value="negotiating">Negotiating</option>
@@ -130,7 +130,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Payment Status</label>
-                        <select name="payment_status" class="form-select">
+                        <select aria-label="Payment status" name="payment_status" class="form-select">
                             <option value="pending">Pending</option>
                             <option value="partial">Partial</option>
                             <option value="paid">Paid</option>
@@ -152,7 +152,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-12">
                         <label class="form-label">Remarks</label>
-                        <textarea name="remarks" class="form-control" rows="3" maxlength="1000"></textarea>
+                        <textarea aria-label="Remarks" name="remarks" class="form-control" rows="3" maxlength="1000"></textarea>
                     </div>
                 </div>
 

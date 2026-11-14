@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 <div class="col-md-4">
                                     <label
                                         class="form-label text-white-50 small"><?= __('home_investment_amount') ?></label>
-                                    <select class="form-select form-select-sm bg-dark text-white border-light" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>" style="background-color: #1e293b !important; color: #ffffff !important;">
+                                    <select aria-label="Inv amount" class="form-select form-select-sm bg-dark text-white border-light" id="invAmount" onchange="calcGrowth()" title="<?= __('home_investment_amount') ?>" style="background-color: #1e293b !important; color: #ffffff !important;">
                                         <option value="500000"><?= __('home_amount_5l') ?></option>
                                         <option value="1000000" selected><?= __('home_amount_10l') ?></option>
                                         <option value="2500000"><?= __('home_amount_25l') ?></option>
@@ -790,7 +790,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-white-50 small"><?= __('home_time_period') ?></label>
-                                    <select class="form-select form-select-sm bg-dark text-white border-light" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>" style="background-color: #1e293b !important; color: #ffffff !important;">
+                                    <select aria-label="Inv years" class="form-select form-select-sm bg-dark text-white border-light" id="invYears" onchange="calcGrowth()" title="<?= __('home_time_period') ?>" style="background-color: #1e293b !important; color: #ffffff !important;">
                                         <option value="5"><?= __('home_years_5') ?></option>
                                         <option value="10" selected><?= __('home_years_10') ?></option>
                                         <option value="15"><?= __('home_years_15') ?></option>
@@ -1345,7 +1345,7 @@ document.addEventListener('DOMContentLoaded', function(){
         featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("your_name", null, "Name") ?> *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
         featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("phone", null, "Phone") ?> *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
         featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("email", null, "Email") ?> *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
-        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("additional_details", null, "Details") ?></label><textarea class="form-control form-control-sm" name="message" rows="2" placeholder="<?= __('home_placeholder_tell_us') ?>"></textarea></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("additional_details", null, "Details") ?></label><textarea aria-label="Message" class="form-control form-control-sm" name="message" rows="2" placeholder="<?= __('home_placeholder_tell_us') ?>"></textarea></div>';
         featuresHtml += '<button type="submit" class="btn btn-sm btn-' + svc.ctaColor + ' w-100 mt-1" id="modalSubmitBtn"><i class="fas fa-paper-plane me-1"></i><?= __("submit_inquiry", null, "Submit Inquiry") ?></button>';
         featuresHtml += '<div id="modalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
         featuresHtml += '</form></div></div></div>';
@@ -1830,14 +1830,14 @@ document.addEventListener('DOMContentLoaded', function(){
         return '<div class="row g-4">' +
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mInvAmt">' + T.invAmt + '</label>' +
-            '<select class="form-select" id="mInvAmt" onchange="mCalcInv()">' +
+            '<select aria-label="M inv amt" class="form-select" id="mInvAmt" onchange="mCalcInv()">' +
             '<option value="500000">' + '<?= __("home_amount_5l") ?>' + '</option><option value="1000000" selected>' +
             '<?= __("home_amount_10l") ?>' + '</option>' +
             '<option value="2500000">' + '<?= __("home_amount_25l") ?>' + '</option><option value="5000000">' +
             '<?= __("home_amount_50l") ?>' + '</option><option value="10000000">' + '<?= __("home_amount_1cr") ?>' +
             '</option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mInvYrs">' + T.timePeriod + '</label>' +
-            '<select class="form-select" id="mInvYrs" onchange="mCalcInv()">' +
+            '<select aria-label="M inv yrs" class="form-select" id="mInvYrs" onchange="mCalcInv()">' +
             '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10" selected>' +
             '<?= __("home_years_10") ?>' + '</option>' +
             '<option value="15">' + '<?= __("home_years_15") ?>' + '</option><option value="20">' +
@@ -1869,12 +1869,12 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="mb-3"><label class="form-label fw-bold">' + T.propPrice + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mStampPrice" value="5000000" oninput="mCalcStamp()"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mStampState">' + T.state + '</label>' +
-            '<select class="form-select" id="mStampState" onchange="mCalcStamp()">' +
+            '<select aria-label="M stamp state" class="form-select" id="mStampState" onchange="mCalcStamp()">' +
             '<option value="up">' + T.up + '</option><option value="bihar">' + T.bihar + '</option>' +
             '<option value="mp">' + T.mp + '</option><option value="delhi">' + T.delhi + '</option>' +
             '<option value="maharashtra">' + T.maharashtra + '</option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mStampType">' + T.propType + '</label>' +
-            '<select class="form-select" id="mStampType" onchange="mCalcStamp()">' +
+            '<select aria-label="M stamp type" class="form-select" id="mStampType" onchange="mCalcStamp()">' +
             '<option value="male">' + T.male + '</option><option value="female">' + T.female + '</option>' +
             '<option value="joint">' + T.joint + '</option></select></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +
@@ -1899,9 +1899,9 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="mb-3"><label class="form-label fw-bold">' + T.value + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mConvVal" value="1000" oninput="mCalcConv()"></div>' +
             '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small" for="mConvFrom">' + T.from + '</label>' +
-            '<select class="form-select" id="mConvFrom" onchange="mCalcConv()">' + unitOptions + '</select></div>' +
+            '<select aria-label="M conv from" class="form-select" id="mConvFrom" onchange="mCalcConv()">' + unitOptions + '</select></div>' +
             '<div class="col-6"><label class="form-label small" for="mConvTo">' + T.to + '</label>' +
-            '<select class="form-select" id="mConvTo" onchange="mCalcConv()"><option value="0" selected>'+T.sqft+'</option><option value="1">'+T.sqm+'</option><option value="2">'+T.acre+'</option><option value="3">'+T.hectare+'</option><option value="4">'+T.bigha+'</option><option value="5">'+T.gaj+'</option><option value="6">'+T.sqYd+'</option><option value="7">'+T.katha+'</option><option value="8">'+T.marla+'</option></select></div></div>' +
+            '<select aria-label="M conv to" class="form-select" id="mConvTo" onchange="mCalcConv()"><option value="0" selected>'+T.sqft+'</option><option value="1">'+T.sqm+'</option><option value="2">'+T.acre+'</option><option value="3">'+T.hectare+'</option><option value="4">'+T.bigha+'</option><option value="5">'+T.gaj+'</option><option value="6">'+T.sqYd+'</option><option value="7">'+T.katha+'</option><option value="8">'+T.marla+'</option></select></div></div>' +
             '<div class="alert alert-success mb-0"><i class="fas fa-exchange-alt me-2"></i>' + T.result +
             ' <strong id="mConvResult">0.0913 Acre</strong></div></div>' +
             '<div class="col-md-5"><div class="bg-light rounded-4 p-4 h-100">' +
@@ -1918,10 +1918,10 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="mb-3"><label class="form-label fw-bold">' + T.existEmi + '</label>' +
             '<input type="number" class="form-control" id="mEligEmi" value="0" oninput="mCalcElig()"></div>' +
             '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small" for="mEligRate">' + T.intRate + '</label>' +
-            '<select class="form-select" id="mEligRate" onchange="mCalcElig()">' +
+            '<select aria-label="M elig rate" class="form-select" id="mEligRate" onchange="mCalcElig()">' +
             '<option value="8.5">8.5%</option><option value="9.0" selected>9.0%</option><option value="9.5">9.5%</option><option value="10.0">10%</option></select></div>' +
             '<div class="col-6"><label class="form-label small" for="mEligTenure">' + T.tenureYrs + '</label>' +
-            '<select class="form-select" id="mEligTenure" onchange="mCalcElig()">' +
+            '<select aria-label="M elig tenure" class="form-select" id="mEligTenure" onchange="mCalcElig()">' +
             '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10">' +
             '<?= __("home_years_10") ?>' + '</option><option value="15">' + '<?= __("home_years_15") ?>' +
             '</option><option value="20" selected>' + '<?= __("home_years_20") ?>' + '</option><option value="25">' + '<?= __("home_years_25") ?>' +
@@ -1941,19 +1941,19 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="row g-4">' +
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mValType">' + T.propType + '</label>' +
-            '<select class="form-select" id="mValType" onchange="mCalcVal()">' +
+            '<select aria-label="M val type" class="form-select" id="mValType" onchange="mCalcVal()">' +
             '<option value="plot">' + '<?= __("home_prop_plot") ?>' + '</option><option value="house">' + '<?= __("home_prop_house") ?>' + '</option><option value="flat">' + '<?= __("home_prop_flat") ?>' + '</option><option value="commercial">' + '<?= __("home_prop_commercial") ?>' + '</option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mValLoc">' + T.location + '</label>' +
-            '<select class="form-select" id="mValLoc" onchange="mCalcVal()">' +
+            '<select aria-label="M val loc" class="form-select" id="mValLoc" onchange="mCalcVal()">' +
             '<option value="gorakhpur"><?= __("loc_gorakhpur") ?></option><option value="lucknow"><?= __("loc_lucknow") ?></option>' +
             '<option value="kushinagar"><?= __("loc_kushinagar") ?></option><option value="varanasi"><?= __("loc_varanasi") ?></option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.areaSqft + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
             '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small" for="mValBhk">' + T.bedrooms +
             '</label>' +
-            '<select class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">' + T.bhk1 + '</option><option value="2" selected>' + T.bhk2 + '</option><option value="3">' + T.bhk3 + '</option><option value="4">' + T.bhk4 + '</option></select></div>' +
+            '<select aria-label="M val bhk" class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">' + T.bhk1 + '</option><option value="2" selected>' + T.bhk2 + '</option><option value="3">' + T.bhk3 + '</option><option value="4">' + T.bhk4 + '</option></select></div>' +
             '<div class="flex-fill"><label class="form-label small" for="mValFurn">' + T.furnishing + '</label>' +
-            '<select class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">' + T.unfurnished +
+            '<select aria-label="M val furn" class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">' + T.unfurnished +
             '</option><option value="1" selected>' + T.semiFurn + '</option><option value="1.2">' + T.fullFurn +
             '</option></select></div></div></div>' +
             '<div class="col-md-5"><div class="bg-dark text-white rounded-4 p-4 h-100 d-flex flex-column justify-content-center">' +

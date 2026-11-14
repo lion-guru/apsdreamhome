@@ -11,7 +11,7 @@
                 <input type="hidden" name="url" value="/admin/finance/expenses">
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('finance_status'); ?></label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value=""><?php echo __('finance_all'); ?></option>
                         <?php foreach (['pending','approved','rejected'] as $s): ?>
                             <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>

@@ -84,7 +84,7 @@ foreach ($blogList as $b) {
         <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Blog Posts</h2>
         <div class="d-flex gap-2">
             <input type="text" id="blogSearch" class="form-control form-control-sm" placeholder="Search posts..." style="width:200px;">
-            <select id="blogStatusFilter" class="form-select form-select-sm" style="width:140px;">
+            <select aria-label="Blog status filter" id="blogStatusFilter" class="form-select form-select-sm" style="width:140px;">
                 <option value="">All Status</option>
                 <option value="published">Published</option>
                 <option value="draft">Draft</option>

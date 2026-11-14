@@ -22,7 +22,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="status" class="form-label">Project Status</label>
-                            <select class="form-select" id="status" name="status" required>
+                            <select aria-label="Status" class="form-select" id="status" name="status" required>
                                 <option value="planning">Planning</option>
                                 <option value="under_construction">Under Construction</option>
                                 <option value="completed">Completed</option>

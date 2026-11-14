@@ -787,7 +787,7 @@ $base = BASE_URL;
                             <div class="field-group">
                                 <label>Experience</label>
                                 <div class="input-wrap">
-                                    <select class="form-select" name="experience">
+                                    <select aria-label="Experience" class="form-select" name="experience">
                                         <option value="" selected>Select your experience</option>
                                         <option value="fresher">Fresher (0 years)</option>
                                         <option value="1-2">1-2 years</option>

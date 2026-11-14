@@ -172,7 +172,7 @@ $comments = $comments ?? [];
                         <form method="POST" action="<?= BASE_URL ?>/employee/self-service/grievances/<?= $grievance['id'] ?>/comment">
                             <div class="mb-3">
                                 <label for="comment" class="form-label fw-semibold small text-dark">Add Clarification / Response</label>
-                                <textarea name="comment" id="comment" rows="3" class="form-control rounded-2" required placeholder="Type your response or additional context here..."></textarea>
+                                <textarea aria-label="Comment" name="comment" id="comment" rows="3" class="form-control rounded-2" required placeholder="Type your response or additional context here..."></textarea>
                             </div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary btn-sm px-3">

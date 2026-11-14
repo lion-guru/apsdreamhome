@@ -11,7 +11,7 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label"><?php echo __('finance_type'); ?></label>
-                        <select name="instrument_type" class="form-select">
+                        <select aria-label="Instrument type" name="instrument_type" class="form-select">
                             <option value="cheque"><?php echo __('finance_cheque'); ?></option>
                             <option value="dd"><?php echo __('finance_demand_draft'); ?></option>
                         </select>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_bank_account'); ?> <span class="text-danger">*</span></label>
-                        <select name="bank_account_id" required class="form-select">
+                        <select aria-label="Bank account id" name="bank_account_id" required class="form-select">
                             <option value="">— <?php echo __('finance_select_bank'); ?> —</option>
                             <?php foreach (($banks ?? []) as $b): ?>
                                 <option value="<?= (int)$b['id'] ?>"><?= htmlspecialchars($b['account_name'] . ' — ' . $b['bank_name'] ?? '') ?></option>
@@ -43,11 +43,11 @@
                     </div>
                     <div class="col-12">
                         <label class="form-label"><?php echo __('finance_purpose_narration'); ?></label>
-                        <textarea name="purpose" class="form-control" rows="2" required></textarea>
+                        <textarea aria-label="Purpose" name="purpose" class="form-control" rows="2" required></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_reference_type'); ?></label>
-                        <select name="reference_type" class="form-select">
+                        <select aria-label="Reference type" name="reference_type" class="form-select">
                             <option value="">—</option>
                             <option value="vendor"><?php echo __('finance_vendor_payment'); ?></option>
                             <option value="expense"><?php echo __('finance_expense'); ?></option>

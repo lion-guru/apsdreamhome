@@ -111,7 +111,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_reason') ?> *</label>
-                    <select name="reason" class="form-select" required id="cancelReason">
+                    <select aria-label="Reason" name="reason" class="form-select" required id="cancelReason">
                         <option value="">— Select reason —</option>
                         <?php foreach (['Customer request', 'EMI default', 'Title issue', 'Payment failure', 'Force majeure', 'Other'] as $r): ?>
                             <option value="<?= htmlspecialchars($r ?? '') ?>"><?= htmlspecialchars($r ?? '') ?></option>
@@ -125,7 +125,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('sale_notes') ?></label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Optional context for the audit log..."></textarea>
+                    <textarea aria-label="Notes" name="notes" class="form-control" rows="3" placeholder="Optional context for the audit log..."></textarea>
                 </div>
             </div>
 

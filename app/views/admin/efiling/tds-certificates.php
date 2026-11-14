@@ -16,14 +16,14 @@ ob_start();
         <form method="GET" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-auto">
-                <select name="fy" class="form-select form-select-sm">
+                <select aria-label="Fy" name="fy" class="form-select form-select-sm">
                     <?php foreach ($fy_list as $k => $v): ?>
                         <option value="<?= $k ?>" <?= $k === $fy ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-auto">
-                <select name="quarter" class="form-select form-select-sm">
+                <select aria-label="Quarter" name="quarter" class="form-select form-select-sm">
                     <option value="">All Quarters</option>
                     <?php for ($q = 1; $q <= 4; $q++): ?>
                         <option value="Q<?= $q ?>" <?= ($quarter ?? '') === "Q$q" ? 'selected' : '' ?>>Q<?= $q ?></option>
@@ -31,7 +31,7 @@ ob_start();
                 </select>
             </div>
             <div class="col-auto">
-                <select name="status" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" class="form-select form-select-sm">
                     <option value="">All Status</option>
                     <option value="draft" <?= ($status ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option>
                     <option value="generated" <?= ($status ?? '') === 'generated' ? 'selected' : '' ?>>Generated</option>

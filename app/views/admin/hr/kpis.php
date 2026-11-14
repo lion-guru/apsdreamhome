@@ -52,7 +52,7 @@ $page_title = $page_title ?? 'KPI Definitions';
                     <div class="mb-3"><label class="form-label">Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" required></div>
                     <div class="mb-3">
                         <label class="form-label">Category</label>
-                        <select name="category" class="form-select">
+                        <select aria-label="Category" name="category" class="form-select">
                             <option value="productivity">Productivity</option>
                             <option value="sales">Sales</option>
                             <option value="customer_satisfaction">Customer Satisfaction</option>
@@ -64,7 +64,7 @@ $page_title = $page_title ?? 'KPI Definitions';
                     <div class="mb-3"><label class="form-label">Unit</label><input type="text" name="unit" class="form-control" placeholder="e.g., %, count, ₹"></div>
                     <div class="mb-3"><label class="form-label">Default Target</label><input type="number" name="default_target" class="form-control" step="0.01"></div>
                     <div class="mb-3"><label class="form-label">Weightage</label><input type="number" name="weightage" class="form-control" step="0.01" value="1.00"></div>
-                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save</button>

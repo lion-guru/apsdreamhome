@@ -107,7 +107,7 @@ $ratingBadge = function($rating) {
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Telecaller</label>
-                    <select name="telecaller_id" class="form-select">
+                    <select aria-label="Telecaller id" name="telecaller_id" class="form-select">
                         <option value="">All Telecallers</option>
                         <?php foreach ($telecallers as $tc): ?>
                             <option value="<?php echo e($tc['id']); ?>" <?php echo ($telecallerFilter == $tc['id']) ? 'selected' : ''; ?>>

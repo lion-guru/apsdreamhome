@@ -6,7 +6,7 @@
         <div class="card-body aps-cp-card-body">
             <form method="get" class="row g-2 align-items-end">
                 <div class="col-auto">
-                    <select name="employee_id" class="form-select">
+                    <select aria-label="Employee id" name="employee_id" class="form-select">
                         <option value="">All users</option>
                         <?php foreach ($users ?? [] as $e): ?>
                         <option value="<?= $e['id'] ?>" <?= ($filter_employee ?? 0) == $e['id'] ? 'selected' : '' ?>><?= htmlspecialchars($e['name'] ?? '') ?></option>
@@ -14,7 +14,7 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="month" class="form-select">
+                    <select aria-label="Month" name="month" class="form-select">
                         <option value="">All Months</option>
                         <?php for ($m=1;$m<=12;$m++): ?>
                         <option value="<?= $m ?>" <?= ($filter_month ?? 0) == $m ? 'selected' : '' ?>><?= date('F', mktime(0,0,0,$m,1)) ?></option>
@@ -22,7 +22,7 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="year" class="form-select">
+                    <select aria-label="Year" name="year" class="form-select">
                         <option value="">All Years</option>
                         <?php for ($y=date('Y')-2;$y<=date('Y')+1;$y++): ?>
                         <option value="<?= $y ?>" <?= ($filter_year ?? 0) == $y ? 'selected' : '' ?>><?= $y ?></option>
@@ -73,7 +73,7 @@
                                                 <div class="mb-3"><label class="form-label">Paid Amount (₹)</label><input type="number" step="0.01" name="paid_amount" class="form-control" value="<?= $t['paid_amount'] ?? 0 ?>"></div>
                                                 <div class="mb-3"><label class="form-label">Payment Date</label><input type="date" name="payment_date" class="form-control" value="<?= $t['payment_date'] ?? date('Y-m-d') ?>"></div>
                                                 <div class="mb-3"><label class="form-label">Status</label>
-                                                    <select name="payment_status" class="form-select">
+                                                    <select aria-label="Payment status" name="payment_status" class="form-select">
                                                         <option value="pending" <?= ($t['payment_status']??'')==='pending'?'selected':'' ?>>Pending</option>
                                                         <option value="processed" <?= ($t['payment_status']??'')==='processed'?'selected':'' ?>>Processed</option>
                                                         <option value="paid" <?= ($t['payment_status']??'')==='paid'?'selected':'' ?>>Paid</option>

@@ -15,7 +15,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
-                                <select class="form-select" id="propType" onchange="calcStamp()">
+                                <select aria-label="Prop type" class="form-select" id="propType" onchange="calcStamp()">
                                     <option value="residential"><?php echo __('residential', [], 'Residential'); ?></option>
                                     <option value="commercial"><?php echo __('commercial', [], 'Commercial'); ?></option>
                                 </select>
@@ -24,7 +24,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="stateSel"><?php echo __('state', [], 'State'); ?></label>
-                                <select class="form-select" id="stateSel" onchange="calcStamp()">
+                                <select aria-label="State sel" class="form-select" id="stateSel" onchange="calcStamp()">
                                     <option value="up" data-stamp="5" data-reg="1" data-regcap="30000">Uttar Pradesh</option>
                                     <option value="bihar" data-stamp="6" data-reg="2" data-regcap="50000">Bihar</option>
                                     <option value="mp" data-stamp="5" data-reg="1" data-regcap="30000">Madhya Pradesh</option>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="buyerType"><?php echo __('buyer_type', [], 'Buyer Type'); ?></label>
-                                <select class="form-select" id="buyerType" onchange="calcStamp()">
+                                <select aria-label="Buyer type" class="form-select" id="buyerType" onchange="calcStamp()">
                                     <option value="individual"><?php echo __('individual', [], 'Individual'); ?></option>
                                     <option value="female"><?php echo __('woman_buyer_rebate', [], 'Woman Buyer (0.1% rebate in UP)'); ?></option>
                                 </select>

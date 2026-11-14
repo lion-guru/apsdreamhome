@@ -26,7 +26,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Colony *</label>
-                                            <select class="form-select" name="colony_id" id="colony_id" required onchange="filterGataParcels()">
+                                            <select aria-label="Colony id" class="form-select" name="colony_id" id="colony_id" required onchange="filterGataParcels()">
                                                 <option value="">Select Colony</option>
                                                 <?php if (empty($colonies)): ?>
                                                     <option value="" disabled>No colonies found</option>
@@ -63,7 +63,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Gata / Khasra <span class="text-muted">(zameen source — cutting ke time)</span></label>
-                                            <select class="form-select" name="land_parcel_id" id="land_parcel_id">
+                                            <select aria-label="Land parcel id" class="form-select" name="land_parcel_id" id="land_parcel_id">
                                                 <option value="">— Bina gata ke (baad me link kar sakte ho) —</option>
                                                 <?php foreach (($gata_parcels ?? []) as $gp): ?>
                                                     <option value="<?= (int)$gp['id'] ?>" data-colony="<?= (int)$gp['colony_id'] ?>">
@@ -98,7 +98,7 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Plot Type</label>
-                                            <select class="form-select" name="plot_type">
+                                            <select aria-label="Plot type" class="form-select" name="plot_type">
                                                 <option value="residential">Residential</option>
                                                 <option value="commercial">Commercial</option>
                                                 <option value="industrial">Industrial</option>
@@ -108,7 +108,7 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Status</label>
-                                            <select class="form-select" name="status">
+                                            <select aria-label="Status" class="form-select" name="status">
                                                 <option value="available">Available</option>
                                                 <option value="booked">Booked</option>
                                                 <option value="hold">Hold</option>
@@ -119,7 +119,7 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Facing</label>
-                                            <select class="form-select" name="facing">
+                                            <select aria-label="Facing" class="form-select" name="facing">
                                                 <option value="">Select</option>
                                                 <option value="north">North</option>
                                                 <option value="south">South</option>
@@ -245,7 +245,7 @@
                                             <i class="fas fa-wand-magic-sparkles me-1"></i> AI Generate
                                         </button>
                                     </div>
-                                    <textarea class="form-control" id="plotDescription" name="description" rows="3" placeholder="Optional plot description, features, or notes"></textarea>
+                                    <textarea aria-label="Description" class="form-control" id="plotDescription" name="description" rows="3" placeholder="Optional plot description, features, or notes"></textarea>
                                     <small class="text-muted"><i class="fas fa-robot me-1"></i>AI generates SEO description from colony, area, facing & price. You can edit before saving.</small>
                                 </div>
                             </div>

@@ -36,7 +36,7 @@ $departments = $departments ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-select" required>
+                        <select aria-label="Employee id" name="employee_id" class="form-select" required>
                             <option value="">Select Employee</option>
                             <?php foreach ($employees as $e): ?>
                                 <?php 
@@ -58,7 +58,7 @@ $departments = $departments ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Reports To</label>
-                        <select name="parent_id" class="form-select">
+                        <select aria-label="Parent id" name="parent_id" class="form-select">
                             <option value="">Top Level (No Manager)</option>
                             <?php foreach ($nodes as $n): ?>
                                 <?php if ($mode === 'edit' && $n['id'] == $node['id']) continue; ?>
@@ -74,7 +74,7 @@ $departments = $departments ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Department</label>
-                        <select name="department" class="form-select">
+                        <select aria-label="Department" name="department" class="form-select">
                             <option value="">Select Department</option>
                             <?php foreach ($departments as $dept): ?>
                                 <option value="<?= htmlspecialchars($dept) ?>" <?= ($node['department'] ?? '') === $dept ? 'selected' : '' ?>>
@@ -115,7 +115,7 @@ $departments = $departments ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Custom Data (JSON)</label>
-                        <textarea name="custom_data" class="form-control" rows="3" placeholder='{"location": "Building A", "extension": "1234"}'><?= htmlspecialchars($node['custom_data'] ?? '') ?></textarea>
+                        <textarea aria-label="Custom data" name="custom_data" class="form-control" rows="3" placeholder='{"location": "Building A", "extension": "1234"}'><?= htmlspecialchars($node['custom_data'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>

@@ -165,7 +165,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="pay_mode_<?= $inv['id'] ?>" class="form-label">Payment Mode</label>
-                                                                <select name="payment_mode" id="pay_mode_<?= $inv['id'] ?>" class="form-select">
+                                                                <select aria-label="Payment mode" name="payment_mode" id="pay_mode_<?= $inv['id'] ?>" class="form-select">
                                                                     <option value="upi">UPI / QR (apsdreamhome@icici)</option>
                                                                     <option value="neft">NEFT / RTGS</option>
                                                                     <option value="cheque">Cheque</option>

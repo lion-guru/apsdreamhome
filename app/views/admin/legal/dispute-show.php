@@ -80,7 +80,7 @@ $dispute = $dispute ?? [];
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select aria-label="Status" name="status" class="form-select">
                                 <option value="open" <?php echo ($dispute['status'] ?? '') === 'open' ? 'selected' : ''; ?>>Open</option>
                                 <option value="in_progress" <?php echo ($dispute['status'] ?? '') === 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                                 <option value="resolved" <?php echo ($dispute['status'] ?? '') === 'resolved' ? 'selected' : ''; ?>>Resolved</option>
@@ -89,7 +89,7 @@ $dispute = $dispute ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Assigned To</label>
-                            <select name="assigned_to" class="form-select">
+                            <select aria-label="Assigned to" name="assigned_to" class="form-select">
                                 <option value="">Unassigned</option>
                                 <?php $users = $users ?? []; foreach ($users as $u): ?>
                                     <option value="<?php echo e($u['id']); ?>" <?php echo (($dispute['assigned_to'] ?? 0) == $u['id']) ? 'selected' : ''; ?>><?php echo $u['name']; ?></option>
@@ -98,7 +98,7 @@ $dispute = $dispute ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="4"><?php echo $dispute['notes'] ?? ''; ?></textarea>
+                            <textarea aria-label="Notes" name="notes" class="form-control" rows="4"><?php echo $dispute['notes'] ?? ''; ?></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Update</button>
                     </form>

@@ -31,11 +31,11 @@ $content = $content ?? '';
             </div>
             <div class="col-md-12">
               <label class="form-label"><?= __('user_resell_submit_description', 'Description') ?></label>
-              <textarea name="description" class="form-control" rows="4" placeholder="<?= __('user_resell_submit_desc_ph', 'Describe your property...') ?>"></textarea>
+              <textarea aria-label="Description" name="description" class="form-control" rows="4" placeholder="<?= __('user_resell_submit_desc_ph', 'Describe your property...') ?>"></textarea>
             </div>
             <div class="col-md-4">
               <label class="form-label"><?= __('user_resell_submit_property_type', 'Property Type') ?> *</label>
-              <select name="property_type" class="form-select" required>
+              <select aria-label="Property type" name="property_type" class="form-select" required>
                 <option value=""><?= __('user_resell_submit_select', 'Select') ?></option>
                 <option value="plot"><?= __('user_resell_submit_type_plot', 'Plot') ?></option>
                 <option value="house"><?= __('user_resell_submit_type_house', 'House') ?></option>

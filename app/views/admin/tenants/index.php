@@ -75,7 +75,7 @@ $base = BASE_URL ?? '';
                 <input type="text" name="search" class="form-control form-control-sm" placeholder="Search tenants..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>
             <div class="col-md-2">
-                <select name="status" class="form-select form-select-sm">
+                <select aria-label="Status" name="status" class="form-select form-select-sm">
                     <option value="">All Status</option>
                     <?php foreach (['active','trial','suspended','cancelled'] as $s): ?>
                         <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
@@ -83,7 +83,7 @@ $base = BASE_URL ?? '';
                 </select>
             </div>
             <div class="col-md-2">
-                <select name="plan_id" class="form-select form-select-sm">
+                <select aria-label="Plan id" name="plan_id" class="form-select form-select-sm">
                     <option value="">All Plans</option>
                     <?php foreach ($plans as $p): ?>
                         <option value="<?= $p['id'] ?>" <?= (int)($filters['plan_id'] ?? 0) === (int)$p['id'] ? 'selected' : '' ?>><?= htmlspecialchars($p['name'] ?? '') ?></option>

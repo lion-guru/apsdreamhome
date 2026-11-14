@@ -22,7 +22,7 @@
         <div class="card border-0 shadow-sm mb-3"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-sticky-note me-1"></i>Voice Note</h6>
             <div class="mb-2"><button class="btn btn-sm btn-outline-primary" id="btn-dictate" onclick="startDictation()"><i class="fas fa-microphone me-1"></i>Start Dictating</button></div>
-            <textarea id="note-text" class="form-control" rows="3" placeholder="Or type your note here..."></textarea>
+            <textarea aria-label="Note text" id="note-text" class="form-control" rows="3" placeholder="Or type your note here..."></textarea>
             <button class="btn btn-primary btn-sm mt-2" onclick="saveNote()"><i class="fas fa-save me-1"></i>Save Note</button>
         </div></div>
 

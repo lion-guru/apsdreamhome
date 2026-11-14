@@ -21,11 +21,11 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
         <p class="text-muted mb-0">Outstanding <strong class="text-danger">₹<?= number_format((float)($totals['outstanding'] ?? 0)) ?></strong> · pending dues block registry NOC</p>
     </div>
     <form method="GET" class="d-flex gap-2 flex-wrap">
-        <select name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="0">All colonies</option>
             <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>><?= $e($c['name']) ?></option><?php endforeach; ?>
         </select>
-        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+        <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="">All statuses</option>
             <?php foreach (['pending', 'paid', 'waived'] as $s): ?><option value="<?= $s ?>" <?= $status_filter === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?>
         </select>
@@ -47,7 +47,7 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="row g-2">
             <div class="col-md-3"><label class="form-label small">Colony *</label>
-                <select name="colony_id" class="form-select" required>
+                <select aria-label="Colony id" name="colony_id" class="form-select" required>
                     <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>><?= $e($c['name']) ?></option><?php endforeach; ?>
                 </select>
             </div>
@@ -75,7 +75,7 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
                     <?php if (($r['status'] ?? '') === 'pending'): ?>
                     <form method="POST" action="<?= $base ?>/admin/maintenance-dues/collect/<?= (int)$r['id'] ?>" class="d-inline-flex gap-1">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                        <select name="payment_mode" class="form-select form-select-sm"><option value="upi">UPI</option><option value="cash">Cash</option><option value="bank_transfer">Bank</option><option value="cheque">Cheque</option></select>
+                        <select aria-label="Payment mode" name="payment_mode" class="form-select form-select-sm"><option value="upi">UPI</option><option value="cash">Cash</option><option value="bank_transfer">Bank</option><option value="cheque">Cheque</option></select>
                         <button type="submit" class="btn btn-sm btn-success" data-aps-confirm="Mark this bill paid?">Collect</button>
                     </form>
                     <?php elseif (($r['status'] ?? '') === 'paid'): ?>

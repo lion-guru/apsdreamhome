@@ -78,7 +78,7 @@ $employeeUsers = $employeeUsers ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">User <span class="text-danger">*</span></label>
-                        <select name="user_id" class="form-select" required>
+                        <select aria-label="User id" name="user_id" class="form-select" required>
                             <option value="">Select User</option>
                             <?php foreach ($employeeUsers as $u): ?>
                             <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['name'] ?? '') ?> (<?= htmlspecialchars($u['email'] ?? '') ?>)</option>
@@ -99,7 +99,7 @@ $employeeUsers = $employeeUsers ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                        <select aria-label="Status" name="status" class="form-select">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>

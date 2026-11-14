@@ -19,11 +19,11 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label">Bio / Description</label>
-                    <textarea name="bio" class="form-control" rows="3"><?php echo htmlspecialchars($member['bio'] ?? ''); ?></textarea>
+                    <textarea aria-label="Bio" name="bio" class="form-control" rows="3"><?php echo htmlspecialchars($member['bio'] ?? ''); ?></textarea>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Category <span class="text-danger">*</span></label>
-                    <select name="category" class="form-select" required>
+                    <select aria-label="Category" name="category" class="form-select" required>
                         <option value="">Select...</option>
                         <option value="leadership" <?php echo (($member['category'] ?? '') === 'leadership') ? 'selected' : ''; ?>>Leadership</option>
                         <option value="department" <?php echo (($member['category'] ?? '') === 'department') ? 'selected' : ''; ?>>Department Head</option>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Group</label>
-                    <select name="group_name" class="form-select">
+                    <select aria-label="Group name" name="group_name" class="form-select">
                         <option value="">None</option>
                         <option value="APS Warriors" <?php echo (($member['group_name'] ?? '') === 'APS Warriors') ? 'selected' : ''; ?>>APS Warriors</option>
                         <option value="Dream Builders" <?php echo (($member['group_name'] ?? '') === 'Dream Builders') ? 'selected' : ''; ?>>Dream Builders</option>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select">
+                    <select aria-label="Status" name="status" class="form-select">
                         <option value="active" <?php echo (($member['status'] ?? 'active') === 'active') ? 'selected' : ''; ?>>Active</option>
                         <option value="inactive" <?php echo (($member['status'] ?? '') === 'inactive') ? 'selected' : ''; ?>>Inactive</option>
                     </select>

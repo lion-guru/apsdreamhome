@@ -190,7 +190,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
                     <input type="hidden" id="assignVisitId">
                     <div class="mb-3">
                         <label class="form-label">Sales Executive *</label>
-                        <select id="assignExecId" class="form-select" required>
+                        <select aria-label="Assign exec id" id="assignExecId" class="form-select" required>
                             <option value="">— Select executive —</option>
                             <?php foreach ($executives as $ex): ?>
                                 <option value="<?= (int)$ex['id'] ?>"><?= htmlspecialchars($ex['name'] ?? ('User #' . $ex['id'])) ?><?= !empty($ex['phone']) ? ' (' . htmlspecialchars($ex['phone']) . ')' : '' ?></option>
@@ -237,7 +237,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
                     <input type="hidden" id="outcomeVisitId">
                     <div class="mb-3">
                         <label class="form-label">Outcome *</label>
-                        <select id="outcomeValue" class="form-select" required>
+                        <select aria-label="Outcome value" id="outcomeValue" class="form-select" required>
                             <option value="completed">Completed</option>
                             <option value="interested">Interested (creates CRM Opportunity)</option>
                             <option value="token_booked">Token Booked (creates CRM Opportunity)</option>
@@ -259,7 +259,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
-                        <textarea id="outcomeNotes" class="form-control" rows="2" placeholder="Visit feedback, objections, next steps..."></textarea>
+                        <textarea aria-label="Outcome notes" id="outcomeNotes" class="form-control" rows="2" placeholder="Visit feedback, objections, next steps..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

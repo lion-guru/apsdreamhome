@@ -13,7 +13,7 @@
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Select Lead <span class="text-danger">*</span></label>
-                        <select name="lead_id" class="form-select" id="leadSelect" required>
+                        <select aria-label="Lead id" name="lead_id" class="form-select" id="leadSelect" required>
                             <option value="">-- Select Lead --</option>
                             <?php foreach ($leads as $l): ?>
                             <option value="<?= $l['id'] ?>" data-phone="<?= htmlspecialchars($l['phone'] ?? '', ENT_QUOTES, 'UTF-8') ?>" data-name="<?= htmlspecialchars($l['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
@@ -35,7 +35,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">AI Agent <span class="text-danger">*</span></label>
-                            <select name="agent_id" class="form-select" required>
+                            <select aria-label="Agent id" name="agent_id" class="form-select" required>
                                 <option value="">-- Select Agent --</option>
                                 <?php foreach ($agents as $a): ?>
                                 <option value="<?= htmlspecialchars($a['agent_id'] ?? '', ENT_QUOTES, 'UTF-8') ?>" <?= ($a['status'] ?? 'offline') !== 'active' ? 'disabled' : '' ?>>
@@ -58,7 +58,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Script</label>
-                            <select name="script_template" class="form-select">
+                            <select aria-label="Script template" name="script_template" class="form-select">
                                 <option value="property_introduction">Default Introduction</option>
                                 <?php foreach ($scripts as $sc): ?>
                                 <option value="<?= htmlspecialchars($sc['script_code'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
@@ -69,7 +69,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Priority</label>
-                            <select name="priority" class="form-select">
+                            <select aria-label="Priority" name="priority" class="form-select">
                                 <option value="low">Low</option>
                                 <option value="medium" selected>Medium</option>
                                 <option value="high">High</option>

@@ -22,7 +22,7 @@
             </div>
             <div class="mb-3 mt-3">
               <label class="form-label">Description</label>
-              <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($pkg['description'] ?? '') ?></textarea>
+              <textarea aria-label="Description" name="description" class="form-control" rows="2"><?= htmlspecialchars($pkg['description'] ?? '') ?></textarea>
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-3">

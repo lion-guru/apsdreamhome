@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="vendor_type" class="form-label fw-semibold">Vendor Type</label>
-                                <select class="form-select" id="vendor_type" name="vendor_type">
+                                <select aria-label="Vendor type" class="form-select" id="vendor_type" name="vendor_type">
                                     <option value="contractor" <?= ($vendor['vendor_type'] ?? '') === 'contractor' ? 'selected' : '' ?>>Contractor</option>
                                     <option value="supplier" <?= ($vendor['vendor_type'] ?? '') === 'supplier' ? 'selected' : '' ?>>Supplier</option>
                                     <option value="service_provider" <?= ($vendor['vendor_type'] ?? '') === 'service_provider' ? 'selected' : '' ?>>Service Provider</option>
@@ -54,7 +54,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="status" class="form-label fw-semibold">Status</label>
-                                <select class="form-select" id="status" name="status">
+                                <select aria-label="Status" class="form-select" id="status" name="status">
                                     <option value="active" <?= ($vendor['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                                     <option value="inactive" <?= ($vendor['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
                                     <option value="blacklisted" <?= ($vendor['status'] ?? '') === 'blacklisted' ? 'selected' : '' ?>>Blacklisted</option>
@@ -62,7 +62,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="rating" class="form-label fw-semibold">Rating (1-5)</label>
-                                <select class="form-select" id="rating" name="rating">
+                                <select aria-label="Rating" class="form-select" id="rating" name="rating">
                                     <?php $curRating = floatval($vendor['rating'] ?? 0); ?>
                                     <?php for ($r = 0; $r <= 5; $r++): ?>
                                         <option value="<?= $r ?>" <?= $curRating == $r ? 'selected' : '' ?>><?= $r ?> <?= $r === 1 ? 'Star' : ($r > 1 ? 'Stars' : '') ?></option>
@@ -74,7 +74,7 @@
                         <div class="mb-3">
                             <label for="address" class="form-label fw-semibold">Address</label>
                             <div class="input-group">
-                                <textarea class="form-control" id="address" name="address" rows="2"><?= htmlspecialchars($vendor['address'] ?? '') ?></textarea>
+                                <textarea aria-label="Address" class="form-control" id="address" name="address" rows="2"><?= htmlspecialchars($vendor['address'] ?? '') ?></textarea>
                                 <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="entity_type" class="form-label fw-semibold">Entity Type <span class="text-danger">*</span></label>
-                                <select class="form-select" id="entity_type" name="entity_type" onchange="updateTdsSection()">
+                                <select aria-label="Entity type" class="form-select" id="entity_type" name="entity_type" onchange="updateTdsSection()">
                                     <option value="individual" <?= ($vendor['entity_type'] ?? '') === 'individual' ? 'selected' : '' ?>>Individual (TDS 1%)</option>
                                     <option value="company" <?= ($vendor['entity_type'] ?? '') === 'company' ? 'selected' : '' ?>>Company (TDS 2%)</option>
                                     <option value="partnership" <?= ($vendor['entity_type'] ?? '') === 'partnership' ? 'selected' : '' ?>>Partnership (TDS 2%)</option>
@@ -184,7 +184,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="payment_terms" class="form-label fw-semibold">Payment Terms</label>
-                                <select class="form-select" id="payment_terms" name="payment_terms">
+                                <select aria-label="Payment terms" class="form-select" id="payment_terms" name="payment_terms">
                                     <option value="immediate" <?= ($vendor['payment_terms'] ?? '') === 'immediate' ? 'selected' : '' ?>>Immediate</option>
                                     <option value="7_days" <?= ($vendor['payment_terms'] ?? '') === '7_days' ? 'selected' : '' ?>>7 Days</option>
                                     <option value="15_days" <?= ($vendor['payment_terms'] ?? '') === '15_days' ? 'selected' : '' ?>>15 Days</option>
@@ -213,7 +213,7 @@
 
                         <div class="mb-4">
                             <label for="notes" class="form-label fw-semibold">Notes</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3"><?= htmlspecialchars($vendor['notes'] ?? '') ?></textarea>
+                            <textarea aria-label="Notes" class="form-control" id="notes" name="notes" rows="3"><?= htmlspecialchars($vendor['notes'] ?? '') ?></textarea>
                         </div>
 
                         <div class="d-flex gap-3">

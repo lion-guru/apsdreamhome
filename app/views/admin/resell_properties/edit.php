@@ -27,7 +27,7 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label small fw-semibold">Property Type</label>
-                            <select class="form-select" name="property_type">
+                            <select aria-label="Property type" class="form-select" name="property_type">
                                 <?php foreach (['plot','house','flat','shop','farmhouse','land','apartment','villa'] as $t): ?>
                                     <option value="<?= $t ?>" <?= ($p['property_type'] ?? '') === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
                                 <?php endforeach; ?>
@@ -59,7 +59,7 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-semibold">Furnished</label>
-                            <select class="form-select" name="furnished">
+                            <select aria-label="Furnished" class="form-select" name="furnished">
                                 <?php foreach (['unfurnished','semi-furnished','fully-furnished'] as $f): ?>
                                     <option value="<?= $f ?>" <?= ($p['furnished'] ?? 'unfurnished') === $f ? 'selected' : '' ?>><?= ucfirst(str_replace('-',' ',$f)) ?></option>
                                 <?php endforeach; ?>
@@ -75,11 +75,11 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Address</label>
-                        <textarea class="form-control" name="address" rows="2"><?= htmlspecialchars($p['address'] ?? '') ?></textarea>
+                        <textarea aria-label="Address" class="form-control" name="address" rows="2"><?= htmlspecialchars($p['address'] ?? '') ?></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Description</label>
-                        <textarea class="form-control" name="description" rows="4"><?= htmlspecialchars($p['description'] ?? '') ?></textarea>
+                        <textarea aria-label="Description" class="form-control" name="description" rows="4"><?= htmlspecialchars($p['description'] ?? '') ?></textarea>
                     </div>
                 </div>
             </div>

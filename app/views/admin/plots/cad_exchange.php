@@ -30,7 +30,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
         <form method="GET" action="<?= $base ?>/admin/plots/cad-exchange" class="row g-2 align-items-center">
             <div class="col-md-5">
                 <label class="form-label small fw-semibold">Select Colony / Township</label>
-                <select name="colony_id" class="form-select" onchange="this.form.submit()">
+                <select aria-label="Colony id" name="colony_id" class="form-select" onchange="this.form.submit()">
                     <option value="">-- Choose Colony --</option>
                     <?php foreach ($colonies as $c): ?>
                         <option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>>

@@ -190,7 +190,7 @@ $channels = $channels ?? [];
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-list me-2"></i>Recent Sessions (Last 50)</h2>
             <div class="d-flex gap-2">
-                <select class="form-select form-select-sm" id="filterStatus" onchange="filterSessions()">
+                <select aria-label="Filter status" class="form-select form-select-sm" id="filterStatus" onchange="filterSessions()">
                     <option value="">All Status</option>
                     <option value="pending_otp">Pending OTP</option>
                     <option value="otp_sent">OTP Sent</option>
@@ -200,7 +200,7 @@ $channels = $channels ?? [];
                     <option value="profile_complete">Profile Complete</option>
                     <option value="abandoned">Abandoned</option>
                 </select>
-                <select class="form-select form-select-sm" id="filterChannel" onchange="filterSessions()">
+                <select aria-label="Filter channel" class="form-select form-select-sm" id="filterChannel" onchange="filterSessions()">
                     <option value="">All Channels</option>
                     <option value="whatsapp">WhatsApp</option>
                     <option value="sms">SMS</option>

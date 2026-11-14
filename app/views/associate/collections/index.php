@@ -61,7 +61,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-auto">
                     <label class="form-label small mb-1">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select aria-label="Status" name="status" class="form-select form-select-sm">
                         <option value="">All</option>
                         <option value="submitted" <?php echo ($filters['status'] ?? '') === 'submitted' ? 'selected' : ''; ?>>Pending</option>
                         <option value="verified" <?php echo ($filters['status'] ?? '') === 'verified' ? 'selected' : ''; ?>>Verified</option>

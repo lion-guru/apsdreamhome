@@ -109,7 +109,7 @@
                             <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
                             <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (₹)" required></div>
                             <div class="mb-2">
-                                <select name="mode" class="form-select">
+                                <select aria-label="Mode" name="mode" class="form-select">
                                     <option value="cash">Cash</option>
                                     <option value="bank_transfer">Bank Transfer</option>
                                     <option value="cheque">Cheque</option>
@@ -141,7 +141,7 @@
                     <p>Reject booking by <strong><?= htmlspecialchars($status['booking']['customer_name'] ?? 'N/A') ?></strong> for plot #<?= htmlspecialchars($status['booking']['plot_number'] ?? 'N/A') ?>?</p>
                     <div class="mb-3">
                         <label class="form-label">Reason for rejection</label>
-                        <textarea name="reason" class="form-control" rows="2" placeholder="Optional reason..."></textarea>
+                        <textarea aria-label="Reason" name="reason" class="form-control" rows="2" placeholder="Optional reason..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

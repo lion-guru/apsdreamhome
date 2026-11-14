@@ -42,13 +42,13 @@
 
                                 <div class="form-group">
                                     <label>Greeting Message</label>
-                                    <textarea name="greeting_message" class="form-control" rows="3" placeholder="Namaste! APS Dream Homes mein aapka swagat hai..."><?= htmlspecialchars($settings['greeting_message'] ?? 'Namaste! APS Dream Homes mein aapka swagat hai. Main aapki kya madad kar sakta hoon?') ?></textarea>
+                                    <textarea aria-label="Greeting message" name="greeting_message" class="form-control" rows="3" placeholder="Namaste! APS Dream Homes mein aapka swagat hai..."><?= htmlspecialchars($settings['greeting_message'] ?? 'Namaste! APS Dream Homes mein aapka swagat hai. Main aapki kya madad kar sakta hoon?') ?></textarea>
                                     <small class="text-muted">First message sent to new customers.</small>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Away Message (After Hours)</label>
-                                    <textarea name="away_message" class="form-control" rows="3" placeholder="Abhi hamare agents busy hain..."><?= htmlspecialchars($settings['away_message'] ?? 'Abhi hamare agents busy hain. Ham jald hi aapse sampark karenge.') ?></textarea>
+                                    <textarea aria-label="Away message" name="away_message" class="form-control" rows="3" placeholder="Abhi hamare agents busy hain..."><?= htmlspecialchars($settings['away_message'] ?? 'Abhi hamare agents busy hain. Ham jald hi aapse sampark karenge.') ?></textarea>
                                     <small class="text-muted">Sent when message received outside business hours.</small>
                                 </div>
 
@@ -71,7 +71,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>AI Model</label>
-                                            <select name="ai_model" class="form-control">
+                                            <select aria-label="Ai model" name="ai_model" class="form-control">
                                                 <option value="chatgpt" <?= ($settings['ai_model'] ?? '') === 'chatgpt' ? 'selected' : '' ?>>ChatGPT (via SmartAI)</option>
                                                 <option value="gemini" <?= ($settings['ai_model'] ?? '') === 'gemini' ? 'selected' : '' ?>>Gemini</option>
                                                 <option value="local" <?= ($settings['ai_model'] ?? '') === 'local' ? 'selected' : '' ?>>Local Pattern Matching</option>

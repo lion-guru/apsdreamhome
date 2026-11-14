@@ -53,7 +53,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <label >Commission Type</label>
-                        <select name="commission_type" class="form-control" required>
+                        <select aria-label="Commission type" name="commission_type" class="form-control" required>
                             <option value="">Select type...</option>
                             <option value="direct_sale">Direct Sale</option>
                             <option value="override">Override</option>

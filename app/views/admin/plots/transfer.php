@@ -80,7 +80,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold">New Owner <span class="text-danger">*</span></label>
-                                        <select name="new_owner_id" class="form-select" required>
+                                        <select aria-label="New owner id" name="new_owner_id" class="form-select" required>
                                             <option value="">-- Select Customer --</option>
                                             <?php foreach ($customers as $c): ?>
                                                 <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] . ' (' . $c['email'] . ' - ' . $c['phone'] . ')') ?></option>
@@ -93,7 +93,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Transfer Reason <span class="text-danger">*</span></label>
-                                        <select name="transfer_reason" class="form-select" required>
+                                        <select aria-label="Transfer reason" name="transfer_reason" class="form-select" required>
                                             <?php foreach ($transferReasons as $tr): ?>
                                                 <option value="<?= htmlspecialchars($tr ?? '') ?>"><?= htmlspecialchars($tr ?? '') ?></option>
                                             <?php endforeach; ?>
@@ -120,7 +120,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">New Plot Status After Transfer</label>
-                                        <select name="new_status" class="form-select">
+                                        <select aria-label="New status" name="new_status" class="form-select">
                                             <option value="sold">Sold (Completed)</option>
                                             <option value="booked">Booked (Pending)</option>
                                             <option value="hold">Hold</option>
@@ -134,7 +134,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Remarks / Notes</label>
-                                    <textarea name="remarks" class="form-control" rows="3" placeholder="Additional details about this transfer..."></textarea>
+                                    <textarea aria-label="Remarks" name="remarks" class="form-control" rows="3" placeholder="Additional details about this transfer..."></textarea>
                                 </div>
 
                                 <div class="alert alert-warning">

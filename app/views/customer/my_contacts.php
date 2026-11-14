@@ -54,7 +54,7 @@ $stages = ['new' => 'New', 'contacted' => 'Contacted', 'closed' => 'Closed'];
                         <td>
                             <form method="POST" action="<?= BASE_URL ?>/user/contacts/<?= (int)$c['id'] ?>/stage" class="d-flex gap-1">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                <select name="stage" class="form-select form-select-sm" style="width:auto">
+                                <select aria-label="Stage" name="stage" class="form-select form-select-sm" style="width:auto">
                                     <?php foreach ($stages as $k => $label): ?>
                                     <option value="<?= $k ?>" <?= ($c['stage'] ?? '') === $k ? 'selected' : '' ?>><?= $label ?></option>
                                     <?php endforeach; ?>

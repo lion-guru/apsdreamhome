@@ -248,7 +248,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                         <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-sticky-note text-primary me-2"></i><?= __('book_notes', 'Special Remarks & Preferences') ?></h2>
                     </div>
                     <div class="card-body p-3 p-md-4">
-                        <textarea class="form-control" name="notes" rows="2" placeholder="<?= __('book_notes_placeholder', 'Enter any preferred possession timeline, registry co-allottee details, or instructions...') ?>"></textarea>
+                        <textarea aria-label="Notes" class="form-control" name="notes" rows="2" placeholder="<?= __('book_notes_placeholder', 'Enter any preferred possession timeline, registry co-allottee details, or instructions...') ?>"></textarea>
                     </div>
                 </div>
 

@@ -24,7 +24,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <h5 class="fw-bold text-primary mb-3">1. Select Plot & Booking</h5>
                         <div class="mb-4">
                             <label for="plot_select" class="form-label fw-semibold">Your Registered / Allotted Plot <span class="text-danger">*</span></label>
-                            <select name="plot_id" id="plot_select" class="form-select" required>
+                            <select aria-label="Plot id" name="plot_id" id="plot_select" class="form-select" required>
                                 <option value="">Select your township plot...</option>
                                 <?php foreach ($plots as $p): ?>
                                     <option value="<?= (int)$p['plot_id'] ?>" data-booking="<?= (int)$p['booking_id'] ?>">
@@ -39,7 +39,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label for="building_type" class="form-label fw-semibold">Building Category <span class="text-danger">*</span></label>
-                                <select name="building_type" id="building_type" class="form-select" required>
+                                <select aria-label="Building type" name="building_type" id="building_type" class="form-select" required>
                                     <option value="residential_g1">Residential (G+1 Floor)</option>
                                     <option value="residential_g2">Residential (G+2 Floors)</option>
                                     <option value="duplex_villa">Duplex Villa</option>

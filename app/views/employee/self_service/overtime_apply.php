@@ -56,7 +56,7 @@ $policy = $policy ?? [];
                         <div class="row mb-3">
                             <label for="reason" class="col-sm-3 col-form-label fw-bold">Reason <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="reason" name="reason" rows="4" required placeholder="Describe the work done during overtime (project name, task details, etc.)"></textarea>
+                                <textarea aria-label="Reason" class="form-control" id="reason" name="reason" rows="4" required placeholder="Describe the work done during overtime (project name, task details, etc.)"></textarea>
                             </div>
                         </div>
 

@@ -47,7 +47,7 @@
             <div class="col-md-6 mb-3"><label class="form-label">Direct Reward (₹)</label><input type="number" step="0.01" name="direct_reward" id="pkgDirect" class="form-control"></div></div>
             <div class="row"><div class="col-md-6 mb-3"><label class="form-label">Level Reward (₹)</label><input type="number" step="0.01" name="level_reward" id="pkgLevel" class="form-control"></div>
             <div class="col-md-6 mb-3"><label class="form-label">Daily Capping (₹)</label><input type="number" step="0.01" name="daily_capping" id="pkgCap" class="form-control"></div></div>
-            <div class="mb-3"><label class="form-label">Description</label><textarea name="description" id="pkgDesc" class="form-control" rows="2"></textarea></div>
+            <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" id="pkgDesc" class="form-control" rows="2"></textarea></div>
             <div class="form-check"><input type="checkbox" name="is_active" class="form-check-input" id="pkgActive" value="1" checked><label class="form-check-label">Active</label></div>
         </div>
         <div class="modal-footer"><button type="submit" class="btn btn-primary">Save</button></div>

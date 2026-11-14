@@ -41,12 +41,12 @@ $id = (int)($lead['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Observations</label>
-                            <textarea name="observations" class="form-control form-control-sm" rows="3"></textarea>
+                            <textarea aria-label="Observations" name="observations" class="form-control form-control-sm" rows="3"></textarea>
                         </div>
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="form-label small">Risk Rating</label>
-                                <select name="risk_rating" class="form-select form-select-sm">
+                                <select aria-label="Risk rating" name="risk_rating" class="form-select form-select-sm">
                                     <option value="low">Low</option>
                                     <option value="medium">Medium</option>
                                     <option value="high">High</option>
@@ -61,11 +61,11 @@ $id = (int)($lead['id'] ?? 0);
                         </div>
                         <div class="mb-2 mt-2">
                             <label class="form-label small">Encroachment Details</label>
-                            <textarea name="encroachment_details" class="form-control form-control-sm" rows="2"></textarea>
+                            <textarea aria-label="Encroachment details" name="encroachment_details" class="form-control form-control-sm" rows="2"></textarea>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Photos (JSON URLs)</label>
-                            <textarea name="photos_json" class="form-control form-control-sm" rows="2" placeholder='["https://...", "https://..."]'></textarea>
+                            <textarea aria-label="Photos json" name="photos_json" class="form-control form-control-sm" rows="2" placeholder='["https://...", "https://..."]'></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-sm w-100">
                             <i class="fas fa-save me-1"></i>Record Visit

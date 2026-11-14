@@ -19,13 +19,13 @@ $protos = ['wifi'=>'WiFi','zigbee'=>'Zigbee','zwave'=>'Z-Wave','ble'=>'Bluetooth
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Category</label>
-                    <select name="category" class="form-select">
+                    <select aria-label="Category" name="category" class="form-select">
                         <?php foreach ($cats as $k=>$l): ?><option value="<?= $k ?>" <?= $isEdit && ($item['category'] ?? '')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Protocol</label>
-                    <select name="protocol" class="form-select">
+                    <select aria-label="Protocol" name="protocol" class="form-select">
                         <?php foreach ($protos as $k=>$l): ?><option value="<?= $k ?>" <?= $isEdit && ($item['protocol'] ?? '')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?>
                     </select>
                 </div>
@@ -34,7 +34,7 @@ $protos = ['wifi'=>'WiFi','zigbee'=>'Zigbee','zwave'=>'Z-Wave','ble'=>'Bluetooth
                 <div class="col-md-6 mb-3"><label class="form-label">Manufacturer</label><input type="text" name="manufacturer" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['manufacturer'] ?? '') : '' ?>"></div>
                 <div class="col-md-6 mb-3"><label class="form-label">Model</label><input type="text" name="model" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['model'] ?? '') : '' ?>"></div>
             </div>
-            <div class="mb-3"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($item['description'] ?? '') : '' ?></textarea></div>
+            <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($item['description'] ?? '') : '' ?></textarea></div>
             <div class="form-check mb-3"><input class="form-check-input" type="checkbox" name="is_active" <?= (!$isEdit || ($item['is_active'] ?? 1)) ? 'checked' : '' ?> id="a"><label class="form-check-label" for="a">Active</label></div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save</button>
         </form>

@@ -25,7 +25,7 @@ $settlement = $settlement ?? null;
             <form method="GET" class="row g-3 mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Select Employee <span class="text-danger">*</span></label>
-                    <select name="employee_id" class="form-select" onchange="this.form.submit()">
+                    <select aria-label="Employee id" name="employee_id" class="form-select" onchange="this.form.submit()">
                         <option value="">Select Employee</option>
                         <?php foreach ($employees as $emp): ?>
                         <option value="<?= $emp['id'] ?>" <?= $selected_employee == $emp['id'] ? 'selected' : '' ?>>
@@ -58,7 +58,7 @@ $settlement = $settlement ?? null;
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Exit Type</label>
-                    <select name="exit_type" class="form-select">
+                    <select aria-label="Exit type" name="exit_type" class="form-select">
                         <?php foreach (['resignation','termination','retirement','abandonment'] as $et): ?>
                         <option value="<?= $et ?>" <?= ($_POST['exit_type'] ?? 'resignation') === $et ? 'selected' : '' ?>><?= ucfirst($et) ?></option>
                         <?php endforeach; ?>

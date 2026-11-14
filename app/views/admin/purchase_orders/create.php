@@ -12,11 +12,11 @@ $today = $today ?? date('Y-m-d');
         <form method="POST" action="<?= BASE_URL ?>/admin/purchase-orders/store" id="poForm">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="row">
-                <div class="col-md-3"><label>Vendor <span class="text-danger">*</span></label><select name="vendor_id" class="form-select" required id="vendorSelect"><option value="">Select Vendor</option><?php foreach ($vendors as $v) { ?><option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['name']) ?></option><?php } ?></select></div>
+                <div class="col-md-3"><label>Vendor <span class="text-danger">*</span></label><select aria-label="Vendor id" name="vendor_id" class="form-select" required id="vendorSelect"><option value="">Select Vendor</option><?php foreach ($vendors as $v) { ?><option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['name']) ?></option><?php } ?></select></div>
                 <div class="col-md-3"><label>Order Number</label><input type="text" name="order_number" class="form-control" value="PO-<?= date('YmdHis') ?>" readonly></div>
                 <div class="col-md-3"><label>Order Date <span class="text-danger">*</span></label><input type="date" name="order_date" class="form-control" value="<?= $today ?>" required></div>
                 <div class="col-md-3"><label>Expected Delivery</label><input type="date" name="expected_delivery" class="form-control"></div>
-                <div class="col-md-4"><label>Department</label><select name="department_id" class="form-select"><option value="">None</option><?php foreach ($departments as $d) { ?><option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name']) ?></option><?php } ?></select></div>
+                <div class="col-md-4"><label>Department</label><select aria-label="Department id" name="department_id" class="form-select"><option value="">None</option><?php foreach ($departments as $d) { ?><option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name']) ?></option><?php } ?></select></div>
                 <div class="col-md-4"><label>Delivery Location</label><input type="text" name="delivery_location" class="form-control"></div>
                 <div class="col-md-4"><label>Payment Terms</label><input type="text" name="payment_terms" class="form-control"></div>
             </div>
@@ -45,8 +45,8 @@ $today = $today ?? date('Y-m-d');
                 <div class="col-md-3"><div class="alert alert-success mb-0">Total: <strong id="poGrandTotal">0.00</strong><input type="hidden" name="total_amount" id="poTotalInput" value="0"></div></div>
             </div>
             <div class="row mt-4">
-                <div class="col-md-6"><label>Terms & Conditions</label><textarea name="terms_conditions" class="form-control" rows="2"></textarea></div>
-                <div class="col-md-6"><label>Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+                <div class="col-md-6"><label>Terms & Conditions</label><textarea aria-label="Terms conditions" name="terms_conditions" class="form-control" rows="2"></textarea></div>
+                <div class="col-md-6"><label>Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea></div>
             </div>
             <div class="mt-4"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Create Purchase Order</button></div>
         </form>

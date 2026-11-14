@@ -15,7 +15,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label small">Department</label>
-                            <select class="form-select form-select-sm" name="category">
+                            <select aria-label="Category" class="form-select form-select-sm" name="category">
                                 <option value="">All Departments</option>
                                 <?php foreach ($categories as $k => $v): ?>
                                 <option value="<?= $k ?>" <?= (($_GET['category'] ?? '') === $k) ? 'selected' : '' ?>><?= htmlspecialchars($v ?? '') ?></option>
@@ -28,7 +28,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small">Type</label>
-                            <select class="form-select form-select-sm" name="type">
+                            <select aria-label="Type" class="form-select form-select-sm" name="type">
                                 <option value="">All Types</option>
                                 <option value="full-time" <?= (($_GET['type'] ?? '') === 'full-time') ? 'selected' : '' ?>>Full Time</option>
                                 <option value="part-time" <?= (($_GET['type'] ?? '') === 'part-time') ? 'selected' : '' ?>>Part Time</option>

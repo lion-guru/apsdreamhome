@@ -14,7 +14,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="convFrom"><?php echo __('select_unit', [], 'Select Unit'); ?></label>
-                            <select class="form-select" id="convFrom" onchange="convertAll()">
+                            <select aria-label="Conv from" class="form-select" id="convFrom" onchange="convertAll()">
                                 <option value="sqft"><?php echo __('sqft', [], 'Square Feet (sq ft)'); ?></option>
                                 <option value="gaj"><?php echo __('gaj', [], 'Gaj'); ?></option>
                                 <option value="yard"><?php echo __('sq_yard', [], 'Square Yard'); ?></option>
