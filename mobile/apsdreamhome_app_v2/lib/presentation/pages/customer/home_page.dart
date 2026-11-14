@@ -218,7 +218,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 Text(
                   'Premium Plots & Townships • Gorakhpur',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFF64748B),
+                    color: AppTheme.plotSold,
                     fontWeight: FontWeight.w600,
                     fontSize: 11,
                   ),
@@ -236,12 +236,12 @@ class _HomePageState extends ConsumerState<HomePage>
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFFE8DFD0),
+                  color: AppTheme.goldBorder,
                   width: 1.2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.04),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -297,7 +297,7 @@ class _HomePageState extends ConsumerState<HomePage>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF0D47A1),
+                    AppTheme.indigoDeep,
                     AppTheme.primaryColor,
                     AppTheme.secondaryColor,
                   ],
@@ -407,7 +407,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                     Icon(
                                       Icons.verified_rounded,
                                       size: 12,
-                                      color: Color(0xFFFDE68A),
+                                      color: AppTheme.amberLightTint,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
@@ -542,12 +542,12 @@ class _HomePageState extends ConsumerState<HomePage>
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFE8DFD0),
+            color: AppTheme.goldBorder,
             width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+              color: AppTheme.primaryColor.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -565,7 +565,7 @@ class _HomePageState extends ConsumerState<HomePage>
               child: Text(
                 'Search colonies, plots, locations...',
                 style: TextStyle(
-                  color: Color(0xFF94A3B8),
+                  color: AppTheme.slateMid,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -574,9 +574,9 @@ class _HomePageState extends ConsumerState<HomePage>
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xFFFAF7F0),
+                color: AppTheme.backgroundColor,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFFE8DFD0)),
+                border: Border.all(color: AppTheme.goldBorder),
               ),
               child: const Icon(
                 Icons.tune_rounded,
@@ -599,7 +599,7 @@ class _HomePageState extends ConsumerState<HomePage>
         label: 'Colonies',
         route: '/colonies',
         gradient: LinearGradient(
-          colors: [Color(0xFF43A047), Color(0xFF66BB6A)],
+          colors: [AppTheme.emeraldDeep, AppTheme.materialGreenLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -609,7 +609,7 @@ class _HomePageState extends ConsumerState<HomePage>
         label: 'Plots',
         route: '/plots',
         gradient: LinearGradient(
-          colors: [Color(0xFF1E88E5), Color(0xFF42A5F5)],
+          colors: [AppTheme.lightBlue, AppTheme.indigoLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -619,7 +619,7 @@ class _HomePageState extends ConsumerState<HomePage>
         label: 'Properties',
         route: '/properties',
         gradient: LinearGradient(
-          colors: [Color(0xFFFB8C00), Color(0xFFFFB74D)],
+          colors: [AppTheme.orangeDark, AppTheme.orangeLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -629,7 +629,7 @@ class _HomePageState extends ConsumerState<HomePage>
         label: 'EMI Calc',
         route: '/emi-calculator',
         gradient: LinearGradient(
-          colors: [Color(0xFF8E24AA), Color(0xFFBA68C8)],
+          colors: [AppTheme.purpleDark, AppTheme.purpleLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -639,7 +639,7 @@ class _HomePageState extends ConsumerState<HomePage>
         label: 'Post',
         route: '/post-property',
         gradient: LinearGradient(
-          colors: [Color(0xFFD81B60), Color(0xFFF06292)],
+          colors: [AppTheme.pinkDeep, AppTheme.pinkLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -675,7 +675,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.auto_awesome, color: Color(0xFF9C27B0), size: 20),
+                      const Icon(Icons.auto_awesome, color: AppTheme.purple, size: 20),
                       const SizedBox(width: 8),
                       const Text(
                         'Recommended For You',
@@ -722,7 +722,7 @@ class _HomePageState extends ConsumerState<HomePage>
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFF3E5F5), Color(0xFFFFFFFF)],
+          colors: [AppTheme.chipPurpleTint, Colors.white],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -734,7 +734,7 @@ class _HomePageState extends ConsumerState<HomePage>
         children: [
           Row(
             children: [
-              const Icon(Icons.recommend, color: Color(0xFF9C27B0), size: 16),
+              const Icon(Icons.recommend, color: AppTheme.purple, size: 16),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -751,7 +751,7 @@ class _HomePageState extends ConsumerState<HomePage>
             const SizedBox(height: 6),
             Text(
               '₹${price.toString()}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0B194C)),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
             ),
           ],
           if (reason.isNotEmpty) ...[
@@ -768,7 +768,7 @@ class _HomePageState extends ConsumerState<HomePage>
             LinearProgressIndicator(
               value: confidence / 100,
               backgroundColor: Colors.purple.shade100,
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF9C27B0)),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.purple),
               minHeight: 4,
               borderRadius: BorderRadius.circular(2),
             ),
@@ -791,18 +791,18 @@ class _HomePageState extends ConsumerState<HomePage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF0B194C), Color(0xFF1E3A8A)],
+          colors: [AppTheme.primaryColor, AppTheme.navyLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFD4AF37),
+          color: AppTheme.goldMetallic,
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0B194C).withValues(alpha: 0.25),
+            color: AppTheme.primaryColor.withValues(alpha: 0.25),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -816,20 +816,20 @@ class _HomePageState extends ConsumerState<HomePage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37),
+                  color: AppTheme.goldMetallic,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.directions_car_rounded, size: 14, color: Color(0xFF0B194C)),
+                    Icon(Icons.directions_car_rounded, size: 14, color: AppTheme.primaryColor),
                     SizedBox(width: 4),
                     Text(
                       'VIP COMPLIMENTARY',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF0B194C),
+                        color: AppTheme.primaryColor,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -865,7 +865,7 @@ class _HomePageState extends ConsumerState<HomePage>
             'Pickup available from Railway Station, Airport, Mohaddipur or Home. Experience your future plot in person.',
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xFFCBD5E1),
+              color: AppTheme.slateLight,
               height: 1.4,
             ),
           ),
@@ -881,8 +881,8 @@ class _HomePageState extends ConsumerState<HomePage>
                     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD4AF37),
-                    foregroundColor: const Color(0xFF0B194C),
+                    backgroundColor: AppTheme.goldMetallic,
+                    foregroundColor: AppTheme.primaryColor,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -922,49 +922,49 @@ class _HomePageState extends ConsumerState<HomePage>
         Icons.directions_car_rounded,
         'Site Visit',
         '/book-site-visit',
-        Color(0xFFE65100),
+        AppTheme.orangeDeep,
       ),
       const _ToolItem(
         Icons.receipt_long_rounded,
         'Maintenance',
         '/maintenance-dues',
-        Color(0xFF0D9488),
+        AppTheme.tealDeep,
       ),
       const _ToolItem(
         Icons.support_agent_rounded,
         'Helpdesk',
         '/township-grievances',
-        Color(0xFF1E88E5),
+        AppTheme.lightBlue,
       ),
       const _ToolItem(
         Icons.domain_outlined,
         'Township Ops',
         '/township-operations',
-        Color(0xFF7C3AED),
+        AppTheme.aiGradientStart,
       ),
       const _ToolItem(
         Icons.wb_sunny_outlined,
         'Solar Subsidy',
         '/solar-subsidy',
-        Color(0xFFF59E0B),
+        AppTheme.warningColor,
       ),
       const _ToolItem(
         Icons.event_available_rounded,
         'Registry Appt',
         '/registry-appointments',
-        Color(0xFF6D28D9),
+        AppTheme.aiVioletDark,
       ),
       const _ToolItem(
         Icons.calculate,
         'Stamp Duty',
         '/stamp-duty-calculator',
-        Color(0xFF43A047),
+        AppTheme.emeraldDeep,
       ),
       const _ToolItem(
         Icons.straighten,
         'Plot Convert',
         '/plot-converter',
-        Color(0xFF00897B),
+        AppTheme.teal,
       ),
       const _ToolItem(
         Icons.question_answer,
@@ -994,19 +994,19 @@ class _HomePageState extends ConsumerState<HomePage>
         Icons.health_and_safety_outlined,
         'Insurance',
         '/insurance',
-        Color(0xFF4CAF50),
+        AppTheme.materialGreen,
       ),
       const _ToolItem(
         Icons.receipt_long_outlined,
         'E-Mandate',
         '/nach-mandate',
-        Color(0xFF00897B),
+        AppTheme.teal,
       ),
       const _ToolItem(
         Icons.auto_stories_outlined,
         'Agreements',
         '/agreements',
-        Color(0xFF1565C0),
+        AppTheme.indigoIndigo,
       ),
       const _ToolItem(
         Icons.info_outline,
@@ -1036,68 +1036,68 @@ class _HomePageState extends ConsumerState<HomePage>
         Icons.storefront_outlined,
         'Services',
         '/services',
-        Color(0xFF6A1B9A),
+        AppTheme.purpleDeep,
       ),
       const _ToolItem(
         Icons.build_circle_outlined,
         'Tools Hub',
         '/tools-hub',
-        Color(0xFF4CAF50),
+        AppTheme.materialGreen,
       ),
       const _ToolItem(
         Icons.business_outlined,
         'Projects',
         '/projects',
-        Color(0xFF1565C0),
+        AppTheme.indigoIndigo,
       ),
       const _ToolItem(
         Icons.shopping_cart_outlined,
         'Buy',
         '/buy',
-        Color(0xFF43A047),
+        AppTheme.emeraldDeep,
       ),
-      const _ToolItem(Icons.sell_outlined, 'Sell', '/sell', Color(0xFFE65100)),
+      const _ToolItem(Icons.sell_outlined, 'Sell', '/sell', AppTheme.orangeDeep),
       const _ToolItem(
         Icons.home_work_outlined,
         'Rent',
         '/rent',
-        Color(0xFF00897B),
+        AppTheme.teal,
       ),
       const _ToolItem(
         Icons.trending_up_outlined,
         'Invest',
         '/invest',
-        Color(0xFF6A1B9A),
+        AppTheme.purpleDeep,
       ),
       const _ToolItem(
         Icons.card_giftcard_outlined,
         'Referral Earnings',
         '/referral-earnings',
-        Color(0xFFF59E0B),
+        AppTheme.warningColor,
       ),
       const _ToolItem(
         Icons.local_offer_outlined,
         'Offers',
         '/offers',
-        Color(0xFFE91E63),
+        AppTheme.pink,
       ),
       const _ToolItem(
         Icons.account_balance_wallet_outlined,
         'Activate Wallet',
         '/wallet-activation',
-        Color(0xFF0D9488),
+        AppTheme.tealDeep,
       ),
       const _ToolItem(
         Icons.photo_library_outlined,
         'Gallery',
         '/gallery',
-        Color(0xFF1565C0),
+        AppTheme.indigoIndigo,
       ),
       const _ToolItem(
         Icons.contact_phone_outlined,
         'Contact',
         '/contact',
-        Color(0xFF4CAF50),
+        AppTheme.materialGreen,
       ),
       const _ToolItem(
         Icons.group_outlined,
@@ -1115,50 +1115,50 @@ class _HomePageState extends ConsumerState<HomePage>
         Icons.explore_outlined,
         'Neighborhood',
         '/neighborhood',
-        Color(0xFF1565C0),
+        AppTheme.indigoIndigo,
       ),
       const _ToolItem(
         Icons.videocam_outlined,
         'Virtual Tour',
         '/virtual-tour',
-        Color(0xFF6A1B9A),
+        AppTheme.purpleDeep,
       ),
-      const _ToolItem(Icons.newspaper, 'News', '/news', Color(0xFFE65100)),
+      const _ToolItem(Icons.newspaper, 'News', '/news', AppTheme.orangeDeep),
       const _ToolItem(
         Icons.chat_bubble_outline_rounded,
         'Messages',
         '/inbox',
-        Color(0xFF4F46E5),
+        AppTheme.indigo,
       ),
       const _ToolItem(
         Icons.verified_outlined,
         'Registry',
         '/my-bookings',
-        Color(0xFF0d9488),
+        AppTheme.tealDeep,
       ),
       const _ToolItem(
         Icons.account_balance_wallet_outlined,
         'Payouts',
         '/admin/payout-batches',
-        Color(0xFF7c3aed),
+        AppTheme.aiGradientStart,
       ),
       const _ToolItem(
         Icons.receipt_long_rounded,
         'Demand',
         '/demand-letters',
-        Color(0xFFe11d48),
+        AppTheme.rose,
       ),
       const _ToolItem(
         Icons.construction_rounded,
         'Site Work',
         '/admin/colony-progress',
-        Color(0xFFea580c),
+        AppTheme.orangeDarker,
       ),
       const _ToolItem(
         Icons.inventory_2_rounded,
         'Stock',
         '/admin/material-inventory',
-        Color(0xFF0d9488),
+        AppTheme.tealDeep,
       ),
     ];
 
@@ -1199,12 +1199,12 @@ class _HomePageState extends ConsumerState<HomePage>
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: const Color(0xFFE8DFD0),
+                        color: AppTheme.goldBorder,
                         width: 1.2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.04),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -1314,7 +1314,7 @@ class _HomePageState extends ConsumerState<HomePage>
       imgUrl,
       fit: BoxFit.cover,
       errorBuilder: (_, _, _) => Container(
-        color: const Color(0xFFF5EFE3),
+        color: AppTheme.surfaceWarm,
         child: const Center(
           child: Icon(Icons.home_work_rounded, color: AppTheme.accentColor, size: 36),
         ),
@@ -1335,12 +1335,12 @@ class _HomePageState extends ConsumerState<HomePage>
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFE8DFD0),
+            color: AppTheme.goldBorder,
             width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF0B194C).withValues(alpha: 0.06),
+              color: AppTheme.primaryColor.withValues(alpha: 0.06),
               blurRadius: 14,
               offset: const Offset(0, 4),
             ),
@@ -1409,7 +1409,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
+                          color: AppTheme.successColor,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: const [
                             BoxShadow(
@@ -1464,7 +1464,7 @@ class _HomePageState extends ConsumerState<HomePage>
                               : colony.location,
                           style: const TextStyle(
                             fontSize: 11,
-                            color: Color(0xFF64748B),
+                            color: AppTheme.plotSold,
                             fontWeight: FontWeight.w500,
                           ),
                           maxLines: 1,
@@ -1480,9 +1480,9 @@ class _HomePageState extends ConsumerState<HomePage>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFAF7F0),
+                          color: AppTheme.backgroundColor,
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFFE8DFD0)),
+                          border: Border.all(color: AppTheme.goldBorder),
                         ),
                         child: Text(
                           '${colony.availablePlots} plots avail.',
@@ -1497,7 +1497,7 @@ class _HomePageState extends ConsumerState<HomePage>
                         'Instant Registry',
                         style: TextStyle(
                           fontSize: 9,
-                          color: Color(0xFF10B981),
+                          color: AppTheme.successColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -1694,16 +1694,16 @@ class _HomePageState extends ConsumerState<HomePage>
     switch (status) {
       case 'available':
       case 'open':
-        return const Color(0xFF388E3C);
+        return AppTheme.materialGreenDeep;
       case 'booked':
       case 'reserved':
-        return const Color(0xFF1565C0);
+        return AppTheme.indigoIndigo;
       case 'sold':
-        return const Color(0xFF9E9E9E);
+        return AppTheme.textHint;
       case 'hold':
-        return const Color(0xFFF57C00);
+        return AppTheme.amberDeep;
       default:
-        return const Color(0xFF616161);
+        return AppTheme.greyDeep;
     }
   }
 
@@ -1711,14 +1711,14 @@ class _HomePageState extends ConsumerState<HomePage>
     switch (status) {
       case 'available':
       case 'open':
-        return const Color(0xFFF1F8E9);
+        return AppTheme.greenSurface;
       case 'booked':
       case 'reserved':
-        return const Color(0xFFE3F2FD);
+        return AppTheme.blueSurface;
       case 'sold':
-        return const Color(0xFFF5F5F5);
+        return AppTheme.greySurface;
       case 'hold':
-        return const Color(0xFFFFF3E0);
+        return AppTheme.orangeSurface;
       default:
         return Colors.white;
     }
@@ -1727,14 +1727,14 @@ class _HomePageState extends ConsumerState<HomePage>
   static Color _statusShadowColor(String status) {
     switch (status) {
       case 'available':
-        return const Color(0xFF388E3C);
+        return AppTheme.materialGreenDeep;
       case 'booked':
       case 'reserved':
-        return const Color(0xFF1565C0);
+        return AppTheme.indigoIndigo;
       case 'sold':
-        return const Color(0xFF9E9E9E);
+        return AppTheme.textHint;
       case 'hold':
-        return const Color(0xFFF57C00);
+        return AppTheme.amberDeep;
       default:
         return Colors.black;
     }
@@ -1820,8 +1820,8 @@ class _HomePageState extends ConsumerState<HomePage>
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
                                         colors: [
-                                          Color(0xFFFFD700),
-                                          Color(0xFFFFA000),
+                                          AppTheme.goldClassic,
+                                          AppTheme.amberDark,
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(4),
@@ -2119,10 +2119,10 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _buildStatsCounter(BuildContext context) {
     final stats = [
-      const _StatData('7+', 'Colonies', Icons.location_city_rounded, Color(0xFF43A047)),
-      const _StatData('750+', 'Plots', Icons.grid_on_rounded, Color(0xFF1E88E5)),
-      const _StatData('1000+', 'Families', Icons.people_rounded, Color(0xFFFF9800)),
-      const _StatData('12+', 'Years', Icons.workspace_premium_rounded, Color(0xFF9C27B0)),
+      const _StatData('7+', 'Colonies', Icons.location_city_rounded, AppTheme.emeraldDeep),
+      const _StatData('750+', 'Plots', Icons.grid_on_rounded, AppTheme.lightBlue),
+      const _StatData('1000+', 'Families', Icons.people_rounded, AppTheme.orangeMaterial),
+      const _StatData('12+', 'Years', Icons.workspace_premium_rounded, AppTheme.purple),
     ];
 
     return Container(
@@ -2132,12 +2132,12 @@ class _HomePageState extends ConsumerState<HomePage>
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFFE8DFD0),
+          color: AppTheme.goldBorder,
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+            color: AppTheme.primaryColor.withValues(alpha: 0.05),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -2170,7 +2170,7 @@ class _HomePageState extends ConsumerState<HomePage>
               Text(
                 stat.label,
                 style: const TextStyle(
-                  color: Color(0xFF64748B),
+                  color: AppTheme.plotSold,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -2246,7 +2246,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           i < t.rating
                               ? Icons.star_rounded
                               : Icons.star_border_rounded,
-                          color: const Color(0xFFFFB300),
+                          color: AppTheme.amberSoft,
                           size: 18,
                         ),
                       ),
@@ -2322,14 +2322,14 @@ class _HomePageState extends ConsumerState<HomePage>
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF25D366), Color(0xFF128C7E)],
+          colors: [AppTheme.whatsappGreen, AppTheme.whatsappGreenDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF25D366).withValues(alpha: 0.3),
+            color: AppTheme.whatsappGreen.withValues(alpha: 0.3),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -2372,7 +2372,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     child: const Text(
                       'Start Chat',
                       style: TextStyle(
-                        color: Color(0xFF128C7E),
+                        color: AppTheme.whatsappGreenDark,
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                       ),
@@ -2400,25 +2400,25 @@ class _HomePageState extends ConsumerState<HomePage>
         icon: Icons.verified_outlined,
         title: 'RERA Registered',
         description: 'All projects are RERA approved',
-        color: Color(0xFF4CAF50),
+        color: AppTheme.materialGreen,
       ),
       const _FeatureData(
         icon: Icons.security_outlined,
         title: 'Secure Investment',
         description: 'Legal verification of all plots',
-        color: Color(0xFF2196F3),
+        color: AppTheme.indigoMaterial,
       ),
       const _FeatureData(
         icon: Icons.location_city_outlined,
         title: 'Prime Locations',
         description: 'Best locations in Gorakhpur & beyond',
-        color: Color(0xFFFF9800),
+        color: AppTheme.orangeMaterial,
       ),
       const _FeatureData(
         icon: Icons.support_agent_outlined,
         title: '24/7 Support',
         description: 'Dedicated customer service',
-        color: Color(0xFF9C27B0),
+        color: AppTheme.purple,
       ),
     ];
 
@@ -2447,10 +2447,10 @@ class _HomePageState extends ConsumerState<HomePage>
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE8DFD0), width: 1.2),
+                  border: Border.all(color: AppTheme.goldBorder, width: 1.2),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.04),
                       blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),
@@ -2481,7 +2481,7 @@ class _HomePageState extends ConsumerState<HomePage>
                       feature.description,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Color(0xFF64748B),
+                        color: AppTheme.plotSold,
                         fontWeight: FontWeight.w500,
                       ),
                       maxLines: 2,
@@ -2729,12 +2729,12 @@ class _ProfileAvatar extends StatelessWidget {
           color: Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: const Color(0xFFE8DFD0),
+            color: AppTheme.goldBorder,
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+              color: AppTheme.primaryColor.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
