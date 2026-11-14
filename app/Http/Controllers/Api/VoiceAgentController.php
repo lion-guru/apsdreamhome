@@ -50,7 +50,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
             }
             $leadIdRaw = $_POST['lead_id'] ?? null;
-            $leadId = (is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== '') ? (int)$leadIdRaw : (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
+            $leadId = (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
             $phone = preg_replace('/[^0-9+\-\s()]/', '', $_POST['phone'] ?? '');
             $agentType = in_array(($_POST['agent_type'] ?? ''), ['followup', 'cold_call', 'qualification']) ? $_POST['agent_type'] : 'followup';
             $scriptCode = \App\Core\Security::sanitize($_POST['script_code'] ?? 'default');
@@ -69,34 +69,24 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
 
             $sessionId = bin2hex(random_bytes(16));
 
-            $agent = null;
-            try {
-                $agent = $this->db->fetch(
-                    "SELECT script_code AS agent_id, script_name AS agent_name, 0 AS current_calls
-                     FROM ai_call_scripts WHERE is_active = 1 AND script_code = ? LIMIT 1",
-                    [$scriptCode]
-                );
-            } catch (\Throwable $e) {
-                $agent = null;
-            }
-
-            $agentName = $agent['agent_name'] ?? 'APS Dream Home AI';
-            $agentId = $agent['agent_id'] ?? null;
-
+            // No ai_calling_agents exists on purpose — the AI voice is the lead
+            // avatar, keyed by the script it speaks. agent_id stays NULL.
             $script = null;
             try {
                 $script = $this->db->fetch(
-                    "SELECT * FROM ai_calling_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
+                    "SELECT script_code, script_name, script_body FROM ai_call_scripts WHERE is_active = 1 AND script_code = ? LIMIT 1",
                     [$scriptCode]
                 );
             } catch (\Throwable $e) {
                 $script = null;
             }
 
+            $agentName = $script['script_name'] ?? 'APS Dream Home AI';
+
             $this->db->execute(
                 "INSERT INTO ai_call_sessions (session_id, lead_id, phone, agent_id, agent_type, script_code, agent_name, status, started_at, created_at)
                  VALUES (?, ?, ?, ?, ?, ?, ?, 'in_progress', NOW(), NOW())",
-                [$sessionId, $leadId, $phone, $agentId, $agentType, $scriptCode, $agentName]
+                [$sessionId, $leadId, $phone, null, $agentType, $scriptCode, $agentName]
             );
 
 
@@ -107,9 +97,9 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 'agent_name' => $agentName,
                 'agent_type' => $agentType,
                 'script_info' => $script ? [
-                    'name' => $script['name'] ?? '',
-                    'greeting' => $script['greeting'] ?? '',
-                    'questions' => isset($script['questions']) ? json_decode($script['questions'], true) : []
+                    'script_code' => $script['script_code'] ?? '',
+                    'script_name' => $script['script_name'] ?? '',
+                    'script_body' => $script['script_body'] ?? '',
                 ] : null,
                 'lead_phone' => $phone
             ]);
@@ -129,7 +119,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             $sessionId = \App\Core\Security::sanitize($_POST['session_id'] ?? '');
             $transcript = \App\Core\Security::sanitize($_POST['transcript'] ?? '');
             $leadIdRaw = $_POST['lead_id'] ?? null;
-            $leadId = (is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== '') ? (int)$leadIdRaw : (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
+            $leadId = (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
 
             if (!$sessionId || !$transcript) {
                 return $this->jsonResponse(['success' => false, 'error' => 'session_id and transcript are required'], 400);
@@ -370,7 +360,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
             }
             $leadIdRaw = $_POST['lead_id'] ?? null;
-            $leadId = (is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== '') ? (int)$leadIdRaw : (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
+            $leadId = (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
             $phone = preg_replace('/[^0-9+\-\s()]/', '', $_POST['phone'] ?? '');
             $agentType = in_array(($_POST['agent_type'] ?? ''), ['followup', 'cold_call', 'qualification']) ? $_POST['agent_type'] : 'followup';
             $scheduledDate = \App\Core\Security::sanitize($_POST['scheduled_date'] ?? date('Y-m-d', strtotime('+1 day')));

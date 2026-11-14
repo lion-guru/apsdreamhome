@@ -250,6 +250,48 @@ _1120. **The public mobile API is part of the blast radius** — `/api/voice-age
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 542 (parallel actor). This entry = **S543**. Next-free = **544**.
 
+## Session 544: Mobile AI Voice Path — Login To Start-Call End-To-End Green, Two Real Defects Closed (2026-11-14)
+
+### Trigger
+User: "do next" — continuing to exercise the mobile-voice chain with the fix from S543 in place. Found by **re-running the same authenticated probe that had found the 500**:
+
+1. `POST /api/v2/mobile/auth/login` → success token minted.
+2. `POST /api/voice-agent/start-call` (Flutter chain) → `{"success":false,"error":"Internal server error"}`.
+3. `php_error.log` showed: `Invalid integer value: 'property_introduction' for column ai_call_sessions.agent_id`.
+
+### The two defects (both from S543 half-measures)
+
+**A. `startCall()` stored `script_code` (a string) in `agent_id` (int)** — the S543 patch swapped `ai_calling_agents` for `ai_call_scripts` but kept writing the script code into the int `agent_id` column. WHERE the INSERT was legal was accidental. Fix:
+- `agent_id = NULL` always — there will never be an agent table, by design.
+- `$agentName = $script['script_name'] ?? 'APS Dream Home AI'` — read from the real `ai_call_scripts` row (`SELECT script_code, script_name, script_body FROM ai_call_scripts WHERE is_active = 1 AND script_code = ? LIMIT 1`), not from the removed alias.
+
+**B. `script_info` was built from columns that do not exist** (`name`, `greeting`, `questions`). `ai_call_scripts` actually carries `script_code`, `script_name`, `script_body`. The API was returning empty values in `script_info` after every call. Fixed:
+```php
+'script_info' => $script ? [
+    'script_code' => $script['script_code'] ?? '',
+    'script_name' => $script['script_name'] ?? '',
+    'script_body' => $script['script_body'] ?? '',
+] : null,
+```
+
+**Also surfaced by PHPStan and fixed in the same round**:
+- Three `is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== ''` — `!== ''` is always true on numeric-strings; collapsed all three to `is_numeric($leadIdRaw) ? (int)$leadIdRaw : null`.
+
+### Verification (authenticated end-to-end, sacrificial account)
+- Sacrificial `probe_s544_*` customer + token minted via real login → `POST /api/voice-agent/start-call` → **`{"success":true,"session_id":"...","agent_name":"Property Introduction (hi-en)",...}`** — `script_info` carries `script_code`/`script_name`/`script_body` read from the live DB exactly as the Flutter `voice_call_page.dart` expects.
+- Session row verified in `ai_call_sessions` (id=36, status=`in_progress`, `lead_type=outbound`).
+- `php phpstan analyse` → **[OK] No errors**. `php testing/master_test_runner.php` → **11/11 PASSED**.
+- Backup `backups/db/voice_mobile_s544_pre.sql` kept. Probe + sacrificial user + token + row **fully deleted**, baseline restored byte-identical (users=75, ai_call_sessions=26, api_tokens=591).
+- AGENTS.md integrity → OK (291 headings).
+
+### Key lessons (carried, continued)
+_1121. **A half-fix against a removed table is worse than no fix** — S543 removed the phantom `ai_calling_agents` table everywhere but left the `startCall()` INSERT writing the script code into `agent_id (int)`. The endpoint returned `500 Internal server error` precisely because the probe actually re-ran the authenticated path after the "fix". **Verify by exercising the exact user path you believe you repaired, with the exact token the mobile app holds.**
+_1122. **A column alias is not a column** — `SELECT script_code AS agent_id, script_name AS agent_name` compiles and PHPStan blesses it, but the landing INSERT still expects `agent_id` to be an int. When you remove a table, remove every alias that mimicked its columns, or the next reader assumes `agent_` fields still exist.
+_1123. **A "still works" symptom is not proof of correctness** — the probe showed `{"success":false,"error":"Authentication required"}` (controller-level), but the underlying INSERT was silently broken. Distinguish the reach point from the runtime path; a middleware pass and a 200 body do not prove the row was written correctly.
+_1124. **PHPStan's `always true` warnings on double-predicates are honest** — `is_string($x) && ctype_digit($x) && $x !== ''` was redundant; collapsing it to `is_numeric($x)` removed three warnings under one rule and reduced the code size.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 543 (parallel actor, this round). This entry = **S544**. Next-free = **545**.
 ## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
 
 ### Trigger
