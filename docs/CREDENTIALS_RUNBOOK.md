@@ -90,13 +90,12 @@ Rules added:
 
 ## Addendum 3 (2026-11-14): exact plaintext token manifest - rotate at providers, then delete rows
 
-`scripts/secret_audit.php` (committed, exit 1 on findings) flags **19 STRICTLY token-shaped plaintext rows** (signature + length pattern).
-A looser prefix-only scan returns 31 (includes short/test keys such as `sk-test123`-style values that are *not* valid production tokens); the committed audit number is authoritative.
-Every `api_keys` row audited: `usage_count = 0`, `last_used_at = NULL` - the app reads credentials from `.env` / `service_configs`, never from these tables.
+`scripts/secret_audit.php` (committed, exit 1 on findings) flags **22 STRICTLY token-shaped plaintext rows** (signature + length pattern). A looser prefix-only scan returns 31 (test/short keys included); the committed audit number is authoritative. Every `api_keys` row audited: `usage_count = 0`, `last_used_at = NULL` - the app reads credentials from `.env` / `service_configs`, never from these tables.
 
-### `settings` (10 flagged; loose prefix shows 14 - IDs 423, 425, 427, 428, 436 are short/test values not flagged)
+### `settings` (11 flagged; loose prefix shows 14)
 | id | key |
 |----|-----|
+| 423 | `api_groq_key` |
 | 426 | `api_openrouter_key_backup` |
 | 429 | `api_openai_key_test` |
 | 430 | `api_gemini_key` |
@@ -108,14 +107,16 @@ Every `api_keys` row audited: `usage_count = 0`, `last_used_at = NULL` - the app
 | 458 | `api_opencode_key_techguru` |
 | 459 | `api_opencode_key_aps` |
 
-### `api_keys` (9 flagged; loose prefix shows 17 - IDs 10, 19, 23, 25, 26, 27, 28, 30 are short/test values not flagged)
+### `api_keys` (11 flagged; loose prefix shows 17 - IDs 10, 23, 26, 27, 28, 30 are short/test values not flagged)
 | id | service_name | key_name |
 |----|--------------|----------|
 | 4 | OpenRouter | OPENROUTER_API_KEY |
 | 7 | OpenAI | OPENAI_API_KEY |
 | 11 | Hugging Face | HUGGING_FACE_API_KEY |
+| 19 | groq | GROQ_API_KEY |
 | 20 | openrouter | OPENROUTER_API_KEY_BACKUP |
 | 22 | opencode | OPENCODE_ZEN_KEY_TECHGURU |
+| 25 | (empty) | GROQ_API_KEY |
 | 29 | (empty) | OPENCODE_API_KEY |
 | 32 | (empty) | GOOGLE_SPEECH_API_KEY |
 | 33 | opencode | OPENCODE_ZEN_KEY_TECHGURU |
@@ -125,9 +126,10 @@ Every `api_keys` row audited: `usage_count = 0`, `last_used_at = NULL` - the app
 1. **Rotate at the provider console**: OpenCode Zen (apsdreamhomes44@gmail.com + techguruabhay@gmail.com), OpenAI, OpenRouter, Groq, Anthropic, HuggingFace, Kimi/Zenmux (if they exist), GCP (`api_gemini_key`, `api_google_speech_key`).
    The live app keeps working - none of these rows feed any code path (all API reads go through `.env` / `service_configs`; live keys live there).
 2. **Re-enter the rotated values** through `/admin/service-configs` (stored `enc:v1:` + audit-redacted per Session 526), or into `.env` as env keys.
-3. **Delete the 19 stale rows** once rotation is confirmed (safety dump first):
-   `C:\xampp\mysql\bin\mysqldump.exe -u root apsdreamhome settings api_keys > backups\db\pre-token-delete.sql`
-   Then apply the DELETEs for the exact IDs above (10 settings + 9 api_keys). Do NOT delete before rotation is announced - the rows are the owner's only local copy of the keys. Also sweep the 13 loose-prefix test/short rows (settings: 423, 425, 427, 428, 436; api_keys: 10, 19, 23, 25, 26, 27, 28, 30) at the same time - they are not live tokens, just leftovers.
+3. **Delete the 22 stale rows** once rotation is confirmed, with the committed one-shot tool (safety dump taken automatically, single transaction, token-shape re-verified per row):
+   `php scripts/secret_purge_rotated.php --execute`
+   or, for the loose-prefix leftovers too: `php scripts/secret_purge_rotated.php --execute --include-loose`
+   Do NOT run this before rotation is announced - the rows are the owner's only local copy of the keys. Ten short/test-prefix rows remain outside both lists by design (all confirmed NOT token-shaped).
 4. **Verify**: `php scripts/secret_audit.php` -> `RESULT: OK`; `php testing/master_test_runner.php` -> 11/11.
 5. **`service_config_audit`** still holds 11 legacy plaintext rows (Exotel/Twilio/AWS, Addendum 2) - same rotation class applies; purging audit rows is a separate explicit owner decision.
 

@@ -22,6 +22,7 @@ $failures = [];
 $patterns = [
     'OpenCode Zen'    => '/^oc_sk_[A-Za-z0-9_-]{10,}/',
     'OpenAI / OpenRouter / Groq-like' => '/^sk-[A-Za-z0-9]{20,}/',
+    'Groq key'        => '/^gsk_[A-Za-z0-9]{20,}/',
     'Google API / Firebase' => '/^AIzaSy[A-Za-z0-9_-]{33,}/',
     'AWS access key'   => '/^AKIA[0-9A-Z]{16,}$/',
     'GitHub token'    => '/^ghp_[A-Za-z0-9]{30,}/',
