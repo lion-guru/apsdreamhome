@@ -25,6 +25,11 @@ spl_autoload_register(function ($class) {
     if (file_exists($file)) require_once $file;
 });
 
+// Load composer's autoloader as well so dependencies (PHPMailer, etc.) used
+// transitively by App\Services\* resolve cleanly.
+$autoload = __DIR__ . '/../vendor/autoload.php';
+if (is_file($autoload)) require_once $autoload;
+
 chdir(__DIR__ . '/..');
 
 $startTime = microtime(true);
