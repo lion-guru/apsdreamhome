@@ -151,10 +151,11 @@ $project_id = $project_id ?? 0;
             <div class="col-lg-6">
                 <div class="map-container">
                     <div id="projectMap" >
-                        <iframe src="https://maps.google.com/maps?q=<?php echo e($project['location']['lat']); ?>,<?php echo $project['location']['lng']; ?>&z=15&output=embed" 
-                                width="100%" 
-                                height="100%" 
-                                frameborder="0" 
+                        <iframe src="https://maps.google.com/maps?q=<?php echo e($project['location']['lat']); ?>,<?php echo $project['location']['lng']; ?>&z=15&output=embed"
+                                title="Project location map"
+                                width="100%"
+                                height="100%"
+                                frameborder="0"
                                 allowfullscreen>
                         </iframe>
                     </div>
@@ -230,8 +231,9 @@ $project_id = $project_id ?? 0;
                             <div class="col-lg-6">
                                 <div class="video-card animate-fade-up">
                                     <div class="video-container">
-                                        <iframe src="<?php echo htmlspecialchars($video['url'] ?? ''); ?>" 
-                                                frameborder="0" 
+                                        <iframe src="<?php echo htmlspecialchars($video['url'] ?? ''); ?>"
+                                                title="Project video"
+                                                frameborder="0"
                                                 allowfullscreen
                                                 class="video-iframe">
                                         </iframe>
@@ -331,7 +333,7 @@ $project_id = $project_id ?? 0;
         <div class="modal-content bg-dark">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100"></iframe>
+                <iframe id="modalVideo" src="" frameborder="0" allowfullscreen class="w-100" title="Project video"></iframe>
             </div>
         </div>
     </div>
