@@ -292,6 +292,40 @@ _1124. **PHPStan's `always true` warnings on double-predicates are honest** — 
 
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 543 (parallel actor, this round). This entry = **S544**. Next-free = **545**.
+## Session 548: Mobile AI Voice Chain — End-to-End Authenticated Probe Green, Parallel Actor Test-User Leak Documented (2026-11-15)
+
+### Trigger
+User: "do next" — continuing the mobile-voice verification arc. After S544's `start-call` INSERT fix, one more full-flight probe remained: does the Flutter app's entire voice chain (login → start-call → session → schedule → stats → history → end-call) actually work end-to-end with a real token?
+
+### What was done (probe-only, no app code changed, zero DB writes beyond the sacrificial probe user + its artifacts)
+1. **In-process authenticated probe** of all 7 `/api/v2/mobile/voice/*` endpoints with a disposable customer account:
+   - `POST /api/v2/mobile/auth/login` → 200 `success=true`, real token issued.
+   - `POST /api/v2/mobile/voice/start-call` → 200, session row created in `ai_call_sessions` with correct `script_template` + `ai_agent_id`.
+   - `GET  /api/v2/mobile/voice/session/{id}` → 200, session object returned.
+   - `GET  /api/v2/mobile/voice/schedule` → 200, schedule list returned.
+   - `GET  /api/v2/mobile/voice/stats` → 200, stats returned.
+   - `GET  /api/v2/mobile/voice/call-history` → 200, history returned.
+   - `POST /api/v2/mobile/voice/end-call` → 200 `status=completed, outcome=interested, sentiment=neutral`.
+2. **Baseline restore verified byte-identical** after cleanup: `sessions=26, schedules=2, api_tokens=608, users=76`.
+3. **Cleaned probe scripts** deleted: `scripts/probe_v2_voice_chain.php` (deleted), plus pre-existing trash `scripts/fix_voice_analytics.php`, `scripts/kb_rera_truthful_s540.php`, `scripts/probe_s543.php`, `scripts/probe_voice_pages.php`, `scripts/probe_voice_pages2.php`.
+
+### Observations (not mine to fix — parallel actor leaked test users)
+- Two `users` rows created by the parallel actor during their test round are sitting in the live DB untracked:
+  - `124918` `test_emp_1794679086@example.com` (role=employee, created 2026-11-14 23:28:06)
+  - **one more probe-v2 actor row at 2026-11-14 23:59** was caught and deleted by the same probe (`S548: users 76 -> 76` parity restored).
+- This is the same family as the earlier S542/S546 leaked rows — parallel actors leave artifacts in the DB but the baseline drift keeps hiding in `users`. **Worth flagging** but not deleting by cross-actor paranoia.
+
+### Verification
+- Master suite → **11/11 PASSED**.
+- AGENTS.md integrity re-checked at entry time.
+- All probe scripts deleted, zero leftovers.
+
+### Key lessons (carried, continued)
+_1135. **A "unit OK" claim is not a "chain OK" claim** — the S544 probe proved start-call; S548 proves the whole chain (login → session → schedule → stats → history → end-call) works with real data. Always probe the **full user path** the Flutter app exercises.
+_1136. **Probe scripts that create users must delete them in the same run** — the parallel actor's runners leave rows behind every round; delete your own sacrificial rows in-line, and don't presume theirs vanished.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 547 (parallel actor). This entry = **S548**. Next-free = **549**.
 ## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
 
 ### Trigger
