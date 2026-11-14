@@ -1121,8 +1121,8 @@ body { padding-bottom: 70px; }
 </style>
 
 <script>
-const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
-const LEAD_ID = '<?= $lead['id'] ?? 0 ?>';
+const CSRF_TOKEN = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
+const LEAD_ID = <?= json_encode((string)($lead['id'] ?? 0)) ?>;
 const BASE = '<?= BASE_URL ?>';
 let quickType = 'call';
 

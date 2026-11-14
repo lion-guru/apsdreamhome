@@ -184,7 +184,7 @@ function addActionChips(actions, container) {
     actions.forEach(a => {
         const chip = document.createElement('a');
         chip.className = 'ai-action-chip';
-        chip.href = '<?= $base ?>' + a.url;
+        chip.href = <?= json_encode((string)($base ?? '')) ?> + a.url;
         chip.textContent = a.label;
         chipDiv.appendChild(chip);
     });

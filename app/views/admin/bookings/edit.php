@@ -287,7 +287,7 @@ $active_page = 'bookings';
             };
 
             const statusInfo = statusMessages[newStatus];
-            if (statusInfo && newStatus !== '<?= $booking['status'] ?>') {
+            if (statusInfo && newStatus !== <?= json_encode((string)($booking['status'] ?? '')) ?>) {
                 newStatusText.textContent = statusInfo.text;
                 statusEffects.innerHTML = statusInfo.effects.map(effect => `<li>${effect}</li>`).join('');
                 statusWarning.classList.remove('d-none');

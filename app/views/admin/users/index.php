@@ -524,8 +524,8 @@ $perPage = $per_page ?? 20;
 <?php endif; ?>
 
 <script>
-const BASE_URL = '<?= BASE_URL ?>';
-const CSRF = '<?= $csrf ?>';
+const BASE_URL = <?= json_encode(BASE_URL) ?>;
+const CSRF = <?= json_encode((string)($csrf ?? '')) ?>;
 
 // Sort icons - determine current sort column from URL
 document.addEventListener('DOMContentLoaded', function() {

@@ -222,8 +222,8 @@ $progress = $progress ?? [];
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function updateItemStatus(itemId, newStatus) {
-    const csrfToken = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
-    const employeeId = '<?= $_SESSION['employee_id'] ?? '' ?>';
+    const csrfToken = <?= json_encode((string)(htmlspecialchars($_SESSION['csrf_token'] ?? '') ?? '')) ?>;
+    const employeeId = <?= json_encode((string)($_SESSION['employee_id'] ?? '' ?? '')) ?>;
     
     const formData = new FormData();
     formData.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>');

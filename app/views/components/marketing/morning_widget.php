@@ -27,7 +27,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 async function morningPostWidget(btn) {
     const el = document.getElementById('morningWidgetResult');
-    const base = '<?= $base ?>';
+    const base = <?= json_encode((string)($base ?? '')) ?>;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Bana rahe hain...';
     el.innerHTML = '';

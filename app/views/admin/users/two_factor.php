@@ -134,8 +134,8 @@
 </div>
 
 <script>
-const BASE_URL = '<?= BASE_URL ?>';
-const CSRF = '<?= $csrf ?>';
+const BASE_URL = <?= json_encode((string)(BASE_URL ?? '')) ?>;
+const CSRF = <?= json_encode((string)($csrf ?? '')) ?>;
 const USER_ID = <?= $user['id'] ?>;
 
 function toggle2FA(action) {

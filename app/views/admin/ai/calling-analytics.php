@@ -130,7 +130,7 @@ if (labels.length > 0) {
 }
 
 const respLabels = ['Interested', 'Not Interested', 'Completed', 'Failed'];
-const respData = [<?= $totals['interested'] ?>, <?= $totals['not_interested'] ?>, <?= $totals['completed'] ?>, <?= $totals['failed'] ?>];
+const respData = [<?= (int)($totals['interested'] ?? 0) ?>, <?= (int)($totals['not_interested'] ?? 0) ?>, <?= (int)($totals['completed'] ?? 0) ?>, <?= (int)($totals['failed'] ?? 0) ?>];
 const respColors = ['#16a34a', '#dc2626', '#3b82f6', '#f59e0b'];
 if (document.getElementById('responseChart')) {
     new Chart(document.getElementById('responseChart'), {

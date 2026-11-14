@@ -294,8 +294,8 @@ function filterItems(status) {
 }
 
 function updateItemStatus(itemId, newStatus) {
-    const csrfToken = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
-    const employeeId = '<?= $employee['id'] ?>';
+    const csrfToken = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
+    const employeeId = <?= json_encode((string)($employee['id'] ?? 0)) ?>;
     
     const formData = new FormData();
     formData.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>');

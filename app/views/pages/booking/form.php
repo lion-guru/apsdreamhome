@@ -410,9 +410,9 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
 
 <script>
 (function() {
-    const BASE = '<?= $baseUrl ?>';
+    const BASE = <?= json_encode((string)($baseUrl ?? '')) ?>;
     const PLOT_ID = <?= (int)$plot['id'] ?>;
-    const CSRF = '<?= htmlspecialchars((string)$csrfToken) ?>';
+    const CSRF = <?= json_encode((string)(htmlspecialchars((string)$csrfToken) ?? '')) ?>;
     let lockInterval = null;
     let lockExpiresAt = null;
 

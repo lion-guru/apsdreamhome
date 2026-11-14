@@ -267,7 +267,7 @@ $val = function(string $key, $default = 0) use ($e) {
 
 <script>
 (function () {
-    var BASE_URL = '<?= $base ?>';
+    var BASE_URL = <?= json_encode((string)($base ?? '')) ?>;
     var calcTimer = null;
 
     function getFormData() {

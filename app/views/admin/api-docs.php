@@ -229,8 +229,8 @@ $groupCount = count($groups);
 <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
 
 <script>
-    const BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/') ?>';
-    let currentVersion = '<?= $activeVersion ?>';
+    const BASE_URL = <?= json_encode(defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/')) ?>;
+    let currentVersion = <?= json_encode((string)($activeVersion ?? 'v2')) ?>;
     let swaggerUiInstance = null;
 
     function loadSwagger(specUrl) {

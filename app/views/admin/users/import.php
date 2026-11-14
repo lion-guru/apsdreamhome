@@ -135,8 +135,8 @@
 </div>
 
 <script>
-const BASE_URL = '<?= BASE_URL ?>';
-const CSRF = '<?= $csrf ?>';
+const BASE_URL = <?= json_encode(BASE_URL) ?>;
+const CSRF = <?= json_encode((string)($csrf ?? '')) ?>;
 
 document.getElementById('importForm').addEventListener('submit', async function(e) {
     e.preventDefault();

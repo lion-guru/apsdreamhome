@@ -113,8 +113,8 @@
 </div>
 
 <script>
-const BASE_URL = '<?= BASE_URL ?>';
-const CSRF = '<?= $csrf ?>';
+const BASE_URL = <?= json_encode((string)(BASE_URL ?? '')) ?>;
+const CSRF = <?= json_encode((string)($csrf ?? '')) ?>;
 
 function revokeSession(sessionId, btn) {
     if (!confirm('Revoke this session? User will be logged out from this device.')) return;

@@ -312,7 +312,7 @@ function showPropertyInterestModal(btn) {
     const id = btn.dataset.id;
     const name = btn.dataset.name;
     if (!id) return;
-    const phone = '<?= $phoneRaw ?>';
-    window.open('https://wa.me/<?= $phoneRaw ?>?text=' + encodeURIComponent('Hi, I am interested in renting: ' + name + ' (ID: ' + id + ')'), '_blank');
+    const phone = <?= json_encode(preg_replace('/[^0-9]/', '', (string)($phoneRaw ?? ''))) ?>;
+    window.open('https://wa.me/<?= preg_replace('/[^0-9]/', '', (string)($phoneRaw ?? '')) ?>?text=' + encodeURIComponent('Hi, I am interested in renting: ' + name + ' (ID: ' + id + ')'), '_blank');
 }
 </script>

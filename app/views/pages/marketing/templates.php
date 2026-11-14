@@ -73,7 +73,7 @@ $categories = ['festival' => 'Festival', 'offer' => 'Offer', 'launch' => 'Launch
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 (function() {
-    const base = '<?= $base ?>';
+    const base = <?= json_encode((string)($base ?? '')) ?>;
     let modal = null;
 
     window.openCustomize = function(slug, name) {

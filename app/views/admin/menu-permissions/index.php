@@ -276,8 +276,8 @@ $roleBadgeColors = [
 
 <script>
 // Global variables
-const BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '' ?>';
-const CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+const BASE_URL = <?= json_encode(defined('BASE_URL') ? BASE_URL : '') ?>;
+const CSRF_TOKEN = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
 
 // Toast notification system
 function showToast(message, type = 'success') {

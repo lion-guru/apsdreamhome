@@ -354,7 +354,7 @@ $base = BASE_URL ?? '/apsdreamhome';
 <script>
 const bookingNumber = <?= json_encode($booking['booking_number'] ?? '') ?>;
 const bookingId = <?= json_encode($booking['id'] ?? 0) ?>;
-const baseUrl = '<?= $base ?>';
+const baseUrl = <?= json_encode((string)($base ?? '')) ?>;
 
 document.addEventListener('DOMContentLoaded', function() {
     // EMI Preview

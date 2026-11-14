@@ -269,8 +269,8 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
 
 <script>
 (function() {
-  const BASE = '<?= $base ?>';
-  const CSRF = '<?= $csrfToken ?>';
+  const BASE = <?= json_encode((string)($base ?? '')) ?>;
+  const CSRF = <?= json_encode((string)($csrfToken ?? '')) ?>;
   let allCollapsed = false;
 
   // —€—€ Drag and Drop —€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€—€
