@@ -504,7 +504,7 @@ $categories = [
 
                             <div class="col-md-12 mb-2">
                                 <span class="category-badge cat-<?php echo e($qa['category']); ?>">
-                                    <?php echo $categories[$qa['category']] ?? $qa['category']; ?>
+                                    <?php echo htmlspecialchars($categories[$qa['category']] ?? $qa['category'], ENT_QUOTES, 'UTF-8'); ?>
                                 </span>
                                 <?php if ($qa['usage_count'] > 0): ?>
                                     <span class="badge bg-success ms-2">
@@ -647,7 +647,7 @@ $categories = [
                     <ul class="list-group">
                         <?php foreach ($analytics['categories'] as $cat => $count): ?>
                             <li class="list-group-item d-flex justify-content-between">
-                                <span><?php echo $categories[$cat] ?? $cat; ?></span>
+                                <span><?php echo htmlspecialchars($categories[$cat] ?? $cat, ENT_QUOTES, 'UTF-8'); ?></span>
                                 <span class="badge bg-info"><?php echo e($count); ?> Q&A</span>
                             </li>
                         <?php endforeach; ?>

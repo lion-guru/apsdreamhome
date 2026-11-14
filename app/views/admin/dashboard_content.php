@@ -191,7 +191,7 @@ $team_stats = $team_stats ?? [];
             </div>
             <div class="stat-content">
                 <div class="stat-label">Current Rank</div>
-                <div class="stat-value"><?php echo $mlm_stats['current_rank'] ?? 'Associate'; ?></div>
+                <div class="stat-value"><?php echo htmlspecialchars($mlm_stats['current_rank'] ?? 'Associate', ENT_QUOTES, 'UTF-8'); ?></div>
             </div>
         </div>
     </div>
@@ -254,12 +254,12 @@ $team_stats = $team_stats ?? [];
                         <div class="d-flex align-items-center">
                             <div class="me-3">
                                 <div class="rounded-circle bg-light d-flex align-items-center justify-content-center">
-                                    <i class="fas fa-<?php echo $activity['icon'] ?? 'circle'; ?> text-muted"></i>
+                                    <i class="fas fa-<?php echo htmlspecialchars($activity['icon'] ?? 'circle', ENT_QUOTES, 'UTF-8'); ?> text-muted"></i>
                                 </div>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="fw-medium"><?php echo $activity['title'] ?? 'Activity'; ?></div>
-                                <small class="text-muted"><?php echo $activity['description'] ?? ''; ?></small>
+                                <div class="fw-medium"><?php echo htmlspecialchars($activity['title'] ?? 'Activity', ENT_QUOTES, 'UTF-8'); ?></div>
+                                <small class="text-muted"><?php echo htmlspecialchars($activity['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></small>
                             </div>
                             <small class="text-muted"><?php echo timeAgo($activity['created_at'] ?? date('Y-m-d H:i:s')); ?></small>
                         </div>

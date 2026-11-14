@@ -129,7 +129,7 @@ $active = $active ?? 0;
                                     <td><?php echo htmlspecialchars($dev['email'] ?? ''); ?></td>
                                     <td>
                                         <code class="text-muted"><?php echo substr($dev['api_key'] ?? '', 0, 16) . '...'; ?></code>
-                                        <button class="btn btn-sm btn-link p-0 ms-1" onclick="copyToClipboard('<?php echo $dev['api_key'] ?? ''; ?>')" title="Copy full key">
+                                        <button class="btn btn-sm btn-link p-0 ms-1" onclick="copyToClipboard('<?php echo htmlspecialchars($dev['api_key'] ?? '', ENT_QUOTES); ?>')" title="Copy full key">
                                             <i class="fas fa-copy text-muted"></i>
                                         </button>
                                     </td>

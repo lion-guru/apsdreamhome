@@ -14,7 +14,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                 <i class="fas fa-arrow-left me-2"></i>Back to Banking
             </a>
             <?php if (($transaction['reconciliation_status'] ?? '') !== 'reconciled'): ?>
-                <button class="btn btn-success" onclick="reconcileTransaction(<?php echo $transaction['id'] ?? 0; ?>)">
+                <button class="btn btn-success" onclick="reconcileTransaction(<?php echo (int)($transaction['id'] ?? 0); ?>)">
                     <i class="fas fa-check-double me-2"></i>Reconcile
                 </button>
             <?php endif; ?>

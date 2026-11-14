@@ -1874,11 +1874,25 @@ class UserController extends AdminController
                 'user_email' => $user['email']
             ]);
 
-            // TODO: Send email with temp password (integrate with notification service)
+            // Send email with temp password (best-effort, never blocks reset)
+            $emailSent = false;
+            try {
+                $emailService = new \App\Services\Communication\EmailService();
+                $subject = 'APS Dream Home — Temporary Password';
+                $bodyHtml = '<p>Dear ' . htmlspecialchars($user['name'] ?? 'User') . ',</p>'
+                    . '<p>Your password has been reset by an administrator. Your temporary password is:</p>'
+                    . '<p style="font-size:18px;font-weight:bold;letter-spacing:2px;">' . htmlspecialchars($tempPass) . '</p>'
+                    . '<p>You must change this password on your next login.</p>'
+                    . '<p>If you did not request this change, please contact support immediately.</p>';
+                $emailSent = $emailService->send($user['email'], $subject, $bodyHtml);
+            } catch (\Throwable $e) {
+                error_log('forcePasswordReset: email send failed: ' . $e->getMessage());
+            }
 
             return $this->jsonResponse([
                 'success' => true,
                 'message' => "Password reset. Temporary password: {$tempPass} (user must change on next login)"
+                    . ($emailSent ? ' An email has been sent.' : ' (email delivery failed)')
             ]);
         } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
