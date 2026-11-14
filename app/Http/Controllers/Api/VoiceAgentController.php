@@ -49,7 +49,8 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             if (!$userId) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
             }
-            $leadId = $_POST['lead_id'] ?? null;
+            $leadIdRaw = $_POST['lead_id'] ?? null;
+            $leadId = (is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== '') ? (int)$leadIdRaw : (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
             $phone = preg_replace('/[^0-9+\-\s()]/', '', $_POST['phone'] ?? '');
             $agentType = in_array(($_POST['agent_type'] ?? ''), ['followup', 'cold_call', 'qualification']) ? $_POST['agent_type'] : 'followup';
             $scriptCode = \App\Core\Security::sanitize($_POST['script_code'] ?? 'default');
@@ -127,7 +128,8 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             }
             $sessionId = \App\Core\Security::sanitize($_POST['session_id'] ?? '');
             $transcript = \App\Core\Security::sanitize($_POST['transcript'] ?? '');
-            $leadId = $_POST['lead_id'] ?? null;
+            $leadIdRaw = $_POST['lead_id'] ?? null;
+            $leadId = (is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== '') ? (int)$leadIdRaw : (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
 
             if (!$sessionId || !$transcript) {
                 return $this->jsonResponse(['success' => false, 'error' => 'session_id and transcript are required'], 400);
@@ -367,7 +369,8 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             if (!$userId) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
             }
-            $leadId = $_POST['lead_id'] ?? null;
+            $leadIdRaw = $_POST['lead_id'] ?? null;
+            $leadId = (is_string($leadIdRaw) && ctype_digit($leadIdRaw) && $leadIdRaw !== '') ? (int)$leadIdRaw : (is_numeric($leadIdRaw) ? (int)$leadIdRaw : null);
             $phone = preg_replace('/[^0-9+\-\s()]/', '', $_POST['phone'] ?? '');
             $agentType = in_array(($_POST['agent_type'] ?? ''), ['followup', 'cold_call', 'qualification']) ? $_POST['agent_type'] : 'followup';
             $scheduledDate = \App\Core\Security::sanitize($_POST['scheduled_date'] ?? date('Y-m-d', strtotime('+1 day')));

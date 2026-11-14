@@ -620,14 +620,24 @@ $router->post('/api/notification', 'Api\NotificationController@create');
 
 
 // Payment Gateway API Routes
-$router->post('/api/payment/phonepe/initiate', 'Api\PaymentGatewayController@initiatePhonePe');
+$router->post('/api/payment/phonepe/initiate', 'Api\PaymentGatewayController@initiatePhonePe')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 $router->get('/api/payment/phonepe/verify/{transactionId}', 'Api\PaymentGatewayController@verifyPhonePe');
 $router->post('/api/payment/phonepe/webhook', 'Api\PaymentGatewayController@phonePeWebhook');
-$router->post('/api/payment/gpay/initiate', 'Api\PaymentGatewayController@initiateGPay');
-$router->post('/api/payment/upi/qrcode', 'Api\PaymentGatewayController@generateQRCode');
+$router->post('/api/payment/gpay/initiate', 'Api\PaymentGatewayController@initiateGPay')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/payment/upi/qrcode', 'Api\PaymentGatewayController@generateQRCode')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 $router->post('/api/payment/upi/callback', 'Api\PaymentGatewayController@upiCallback');
-$router->get('/api/payment/status/{orderId}', 'Api\PaymentGatewayController@getStatus');
-$router->get('/api/payment/methods', 'Api\PaymentGatewayController@getPaymentMethods');
+$router->get('/api/payment/status/{orderId}', 'Api\PaymentGatewayController@getStatus')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/payment/methods', 'Api\PaymentGatewayController@getPaymentMethods')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 
 // AI Assistant API Routes
 $router->post('/api/assistant/chat', 'App\\Http\\Controllers\\AIAssistantController@chat');
@@ -721,15 +731,29 @@ $router->get('/api/whatsapp-templates/preview/{id}', 'App\\Http\\Controllers\\Wh
 
 // Referral API Routes
 $router->get('/api/v2/verify-referral', 'Api\ReferralController@verify');
-$router->get('/api/referral/dashboard', 'Api\ReferralController@dashboard');
-$router->get('/api/referral/stats', 'Api\ReferralController@stats');
-$router->get('/api/referral/list', 'Api\ReferralController@index');
-$router->post('/api/referral/track', 'Api\MobileMLMApiController@trackReferral');
+$router->get('/api/referral/dashboard', 'Api\ReferralController@dashboard')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/referral/stats', 'Api\ReferralController@stats')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/referral/list', 'Api\ReferralController@index')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/referral/track', 'Api\MobileMLMApiController@trackReferral')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 
 // Attendance API Routes (geo-fenced to office)
-$router->post('/api/attendance/punch-in', 'Api\MobileMLMApiController@punchIn');
-$router->post('/api/attendance/punch-out', 'Api\MobileMLMApiController@punchOut');
-$router->get('/api/attendance/status', 'Api\MobileMLMApiController@attendanceStatus');
+$router->post('/api/attendance/punch-in', 'Api\MobileMLMApiController@punchIn')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/attendance/punch-out', 'Api\MobileMLMApiController@punchOut')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/attendance/status', 'Api\MobileMLMApiController@attendanceStatus')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 
 // MLM API Routes
 $router->get('/api/mlm/analytics', 'App\\Http\\Controllers\\MLMController@getAnalytics');
@@ -773,16 +797,36 @@ $router->get('/api/search/popular', 'Api\SearchController@getPopularSearches');
 $router->post('/api/search/clear-cache', 'Api\SearchController@clearCache');
 
 // Voice Agent API Routes
-$router->post('/api/voice-agent/start-call', 'App\Http\Controllers\Api\VoiceAgentController@startCall');
-$router->post('/api/voice-agent/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse');
-$router->get('/api/voice-agent/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession');
-$router->post('/api/voice-agent/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall');
-$router->get('/api/voice-agent/schedule', 'App\Http\Controllers\Api\VoiceAgentController@getSchedule');
-$router->post('/api/voice-agent/schedule', 'App\Http\Controllers\Api\VoiceAgentController@scheduleCall');
-$router->get('/api/voice-agent/extracted-leads', 'App\Http\Controllers\Api\VoiceAgentController@getExtractedLeads');
-$router->post('/api/voice-agent/extracted-leads/convert/{id}', 'App\Http\Controllers\Api\VoiceAgentController@convertExtractedLead');
-$router->get('/api/voice-agent/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats');
-$router->get('/api/voice-agent/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory');
+$router->post('/api/voice-agent/start-call', 'App\Http\Controllers\Api\VoiceAgentController@startCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/voice-agent/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/voice-agent/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/voice-agent/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/voice-agent/schedule', 'App\Http\Controllers\Api\VoiceAgentController@getSchedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/voice-agent/schedule', 'App\Http\Controllers\Api\VoiceAgentController@scheduleCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/voice-agent/extracted-leads', 'App\Http\Controllers\Api\VoiceAgentController@getExtractedLeads')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/voice-agent/extracted-leads/convert/{id}', 'App\Http\Controllers\Api\VoiceAgentController@convertExtractedLead')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/voice-agent/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/voice-agent/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 
 // AI Agent API Routes (Mobile App)
 $router->get('/api/v2/mobile/ai-agent/providers', 'App\Http\Controllers\Api\AIAgentApiController@providers');
@@ -803,32 +847,80 @@ $router->get('/api/v2/mobile/chat/history', 'App\Http\Controllers\Front\LiveChat
 $router->get('/api/v2/mobile/chat/widget', 'App\Http\Controllers\Front\LiveChatWidgetController@widget');
 
 // Auto-Dialer API (call scheduling, bulk messaging)
-$router->post('/api/v2/mobile/auto-dialer/schedule', 'App\Http\Controllers\Api\AutoDialerController@schedule');
-$router->post('/api/v2/mobile/auto-dialer/bulk-schedule', 'App\Http\Controllers\Api\AutoDialerController@bulkSchedule');
-$router->get('/api/v2/mobile/auto-dialer/schedule', 'App\Http\Controllers\Api\AutoDialerController@getSchedule');
-$router->post('/api/v2/mobile/auto-dialer/cancel/{id}', 'App\Http\Controllers\Api\AutoDialerController@cancel');
-$router->post('/api/v2/mobile/auto-dialer/reschedule/{id}', 'App\Http\Controllers\Api\AutoDialerController@reschedule');
-$router->get('/api/v2/mobile/auto-dialer/stats', 'App\Http\Controllers\Api\AutoDialerController@stats');
-$router->get('/api/v2/mobile/auto-dialer/history', 'App\Http\Controllers\Api\AutoDialerController@history');
-$router->post('/api/v2/mobile/auto-dialer/process', 'App\Http\Controllers\Api\AutoDialerController@processQueue');
-$router->post('/api/v2/mobile/auto-dialer/send-sms', 'App\Http\Controllers\Api\AutoDialerController@sendSms');
-$router->post('/api/v2/mobile/auto-dialer/send-whatsapp', 'App\Http\Controllers\Api\AutoDialerController@sendWhatsApp');
-$router->post('/api/v2/mobile/auto-dialer/bulk-sms', 'App\Http\Controllers\Api\AutoDialerController@bulkSms');
-$router->post('/api/v2/mobile/auto-dialer/bulk-whatsapp', 'App\Http\Controllers\Api\AutoDialerController@bulkWhatsApp');
-$router->post('/api/v2/mobile/auto-dialer/ai-schedule', 'App\Http\Controllers\Api\AutoDialerController@aiSchedule');
-$router->post('/api/v2/mobile/calls/log', 'App\Http\Controllers\Api\AutoDialerController@logCall');
-$router->get('/api/v2/mobile/calls/stats', 'App\Http\Controllers\Api\AutoDialerController@callStats');
-$router->post('/api/v2/mobile/voice-chat', 'App\Http\Controllers\Api\AutoDialerController@voiceChat');
+$router->post('/api/v2/mobile/auto-dialer/schedule', 'App\Http\Controllers\Api\AutoDialerController@schedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/bulk-schedule', 'App\Http\Controllers\Api\AutoDialerController@bulkSchedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/auto-dialer/schedule', 'App\Http\Controllers\Api\AutoDialerController@getSchedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/cancel/{id}', 'App\Http\Controllers\Api\AutoDialerController@cancel')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/reschedule/{id}', 'App\Http\Controllers\Api\AutoDialerController@reschedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/auto-dialer/stats', 'App\Http\Controllers\Api\AutoDialerController@stats')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/auto-dialer/history', 'App\Http\Controllers\Api\AutoDialerController@history')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/process', 'App\Http\Controllers\Api\AutoDialerController@processQueue')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/send-sms', 'App\Http\Controllers\Api\AutoDialerController@sendSms')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/send-whatsapp', 'App\Http\Controllers\Api\AutoDialerController@sendWhatsApp')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/bulk-sms', 'App\Http\Controllers\Api\AutoDialerController@bulkSms')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/bulk-whatsapp', 'App\Http\Controllers\Api\AutoDialerController@bulkWhatsApp')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/auto-dialer/ai-schedule', 'App\Http\Controllers\Api\AutoDialerController@aiSchedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/calls/log', 'App\Http\Controllers\Api\AutoDialerController@logCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/calls/stats', 'App\Http\Controllers\Api\AutoDialerController@callStats')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/voice-chat', 'App\Http\Controllers\Api\AutoDialerController@voiceChat')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 
 // Voice Agent API (Mobile App) - aliases for existing /api/voice-agent/* routes
-$router->post('/api/v2/mobile/voice/start-call', 'App\Http\Controllers\Api\VoiceAgentController@startCall');
-$router->post('/api/v2/mobile/voice/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse');
-$router->get('/api/v2/mobile/voice/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession');
-$router->post('/api/v2/mobile/voice/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall');
-$router->get('/api/v2/mobile/voice/schedule', 'App\Http\Controllers\Api\VoiceAgentController@getSchedule');
-$router->post('/api/v2/mobile/voice/schedule', 'App\Http\Controllers\Api\VoiceAgentController@scheduleCall');
-$router->get('/api/v2/mobile/voice/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats');
-$router->get('/api/v2/mobile/voice/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory');
+$router->post('/api/v2/mobile/voice/start-call', 'App\Http\Controllers\Api\VoiceAgentController@startCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/voice/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/voice/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/voice/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/voice/schedule', 'App\Http\Controllers\Api\VoiceAgentController@getSchedule')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/v2/mobile/voice/schedule', 'App\Http\Controllers\Api\VoiceAgentController@scheduleCall')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/voice/stats', 'App\Http\Controllers\Api\VoiceAgentController@getStats')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/v2/mobile/voice/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 
 // Voice Assistant API (Mobile App)
 $router->post('/api/v2/mobile/voice-assistant/query', 'App\Http\Controllers\Api\VoiceAssistantController@query');
