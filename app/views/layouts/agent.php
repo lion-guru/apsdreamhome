@@ -210,6 +210,6 @@ $GLOBALS['_html_doc_started'] = true;
         });
     </script>
     <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
-    <?php include __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
+    <!-- duplicate English chatbot removed — smart_chatbot.php is the single assistant (S528-fix) -->
 </body>
 </html>

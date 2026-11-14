@@ -104,6 +104,27 @@ class SmartAIController extends BaseController
             $sessionId = $this->request->request->get('session_id') ?? $this->request->query->get('session_id') ?? session_id();
             $language = $this->request->request->get('language') ?? $this->request->query->get('language') ?? $this->detectLanguage($message);
 
+            // Raw-body fallback: browser widgets may POST a JSON {messages:[...]}
+            // shape (mobile-style) that the request bag only holds under the
+            // 'messages' key — resolve it to the same single user prompt here.
+            if ($message === '') {
+                $rawInput = json_decode((string)file_get_contents('php://input'), true);
+                if (is_array($rawInput)) {
+                    foreach (array_reverse($rawInput['messages'] ?? []) as $m) {
+                        if (!empty($m['role']) && $m['role'] === 'user' && !empty($m['content'])) {
+                            $message = trim((string)$m['content']);
+                            break;
+                        }
+                    }
+                    if ($message === '' && isset($rawInput['message'])) {
+                        $message = trim((string)$rawInput['message']);
+                    }
+                    if (!empty($rawInput['session_id'])) {
+                        $sessionId = trim((string)$rawInput['session_id']);
+                    }
+                }
+            }
+
             if (empty($message)) {
                 echo json_encode(['error' => 'Kuch to likhiye! / Please type something!']);
                 exit;
@@ -128,6 +149,7 @@ class SmartAIController extends BaseController
                 echo json_encode([
                     'success' => true,
                     'response' => $engineResult['response'],
+                    'message' => $engineResult['response'],
                     'listings' => $flowListings,
                     'session_id' => $sessionId,
                     'user_context' => $userContext['role'],
@@ -282,6 +304,7 @@ class SmartAIController extends BaseController
         echo json_encode([
             'success' => true,
             'response' => $response,
+            'message' => $response, // alias for JS consumers expecting data.message (ai-chatbot-widget.js)
             'listings' => $listings,
             'session_id' => $sessionId,
             'user_context' => $userContext['role'],
@@ -796,6 +819,37 @@ EOT;
         $prompt = "CURRENT USER CONTEXT:\n";
         $prompt .= "Role: " . ucfirst($userContext['role']) . "\n";
         $prompt .= "Name: " . $userContext['name'] . "\n";
+
+        // ADMIN HELP MODE — the session user is an authorized APS admin, not a
+        // customer. Prime the model to navigate the admin panel instead of
+        // refusing (the base SECURITY RULES were making it redirect to the
+        // office phone for ordinary "where is X?" questions).
+        $adminRoles = ['admin', 'super_admin', 'manager', 'hr_admin', 'ceo', 'cfo', 'coo', 'cto', 'director', 'chro', 'cmo', 'cro'];
+        if (in_array(strtolower((string)($userContext['role'] ?? '')), $adminRoles, true)) {
+            $prompt .= "\nADMIN HELP MODE - THIS USER IS AN AUTHORIZED APS DREAM HOME ADMIN, NOT A CUSTOMER.\n";
+            $prompt .= "Your job in this session: practical, concise help navigating the ADMIN PANEL. Give the URL of the real page to open. Never redirect such questions to the office phone.\n";
+            $prompt .= "VERIFIED ADMIN PAGES (answer with the URL):\n";
+            $prompt .= "- /admin/erp — ERP overview: modules, KPIs, quick actions\n";
+            $prompt .= "- /admin/users — list/add/edit users, roles, permissions, extra menu grants\n";
+            $prompt .= "- /admin/leads — lead management, assignment & follow-ups\n";
+            $prompt .= "- /admin/plots — plots inventory; /admin/plots/development — plot development tracker\n";
+            $prompt .= "- /admin/properties — property listings and marketplace\n";
+            $prompt .= "- /admin/payments — payment collections and ledger\n";
+            $prompt .= "- /admin/sales/bookings — booking approvals and lifecycle\n";
+            $prompt .= "- /admin/reports , /admin/reports/receivables-aging — reports & aging\n";
+            $prompt .= "- /admin/documents — document management\n";
+            $prompt .= "- /admin/gst , /admin/gst-invoices — GST compliance and invoices\n";
+            $prompt .= "- /admin/marketing-campaigns — marketing campaigns\n";
+            $prompt .= "- /admin/feature-flags — runtime feature toggles\n";
+            $prompt .= "- /admin/service-configs — API credentials and system configs\n";
+            $prompt .= "- /admin/settings/smtp — SMTP email setup; /admin/finance/cash-drawer — cash closing\n";
+            $prompt .= "- /admin/notifications — system notifications\n";
+            $prompt .= "- /admin/scheduled-reports — recurring report emails\n";
+            $prompt .= "- /admin/recurring-journal-entries — recurring accounting entries\n";
+            $prompt .= "- /admin/multi-currency — currencies and FX rates\n";
+            $prompt .= "- /admin/ai/executive-assistant — 22-role RBAC agentic assistant (deeper automation)\n";
+            $prompt .= "FORMAT: start with the one page to open, name the action, then one extra tip. No SQL, no table names, no other users' private data — the SECURITY RULES still apply to raw data extraction and PII.\n";
+        }
 
         if ($userContext['role'] === 'associate') {
             $prompt .= "Network Size: " . ($userContext['data']['network_size'] ?? 0) . "\n";

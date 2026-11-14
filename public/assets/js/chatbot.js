@@ -176,7 +176,7 @@ function getCsrfToken() {
 
     showTyping();
 
-    var apiUrl = window.chatbotApiUrl || '/api/ai/chat';
+    var apiUrl = window.chatbotApiUrl || '/api/smart-ai/chat';
 
     fetch(apiUrl, {
       method: 'POST',

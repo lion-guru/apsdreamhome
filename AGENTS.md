@@ -7895,3 +7895,41 @@ Headings highest = 527; this entry = S528. Next-free = **529**.
 - Credentials rotation sweep at all providers (still not done) — every previously committed credential is in git history forever.
 - Decide on the S524 migration window (parked encrypted-secret encryption, needs safety dump + `APS_ALLOW_LIVE_ENCRYPT=1`).
 - Announce when Lighthouse/axe has been run on prod; mobile verdict depends on it.
+
+## Session 529: Web AI Chatbots Were 401ing for Every Browser User — One Admin-Aware Session Endpoint Now Serves All Web Widgets + Duplicate English Chatbot Removed (2026-11-14)
+
+### Trigger
+User pasted the admin chat widget transcript: "Sorry, kuch problem ho gayi. Please try again! 📢" on every message ("How to manage users?", "Show me admin dashboard overview") and said "fix karo". Screenshot also showed TWO floating chat buttons stacked over each other (SmartAI English RBAC clone + APS AI Assistant).
+
+### Root cause (verified by curl, not assumed)
+- Every web/browser chat widget POSTed to `/api/ai/chat`. `routes/web.php` registered that path to `App\Http\Controllers\SmartAIController@chat`, but the `require_once __DIR__ . '/api.php'` at the BOTTOM of web.php re-registered the SAME path AFTER it — and `Router::addRoute()` is last-wins. api.php's registration attaches `App\Http\Middleware\ApiAuthMiddleware` (Bearer token required).
+- Live probe confirmed: POST with a valid session cookie -> HTTP 401 `{"success":false,"error":"Unauthorized access. Valid API token required."}` for ALL THREE payload shapes (form `message=`, JSON `{message}`, JSON `{messages:[...]}`).
+- `Api\AIChatbotController@chat` (Bearer/JSON mobile contract) is therefore unreachable from browser sessions BY DESIGN — web widgets are not mobile clients. Mobile's `/api/ai/chat` contract was deliberately kept untouched.
+- Even had it dispatched to SmartAIController, widget #2's raw-body shape (`{messages:[...]}`) would have yielded "Kuch to likhiye!" and its `data.message` read would have found nothing — two independent blockers, both fixed.
+
+### Fix
+1. **New session-scoped web endpoint** `POST /api/smart-ai/chat` -> `SmartAIController@chat` (the session-aware RBAC brain; no Bearer middleware required).
+2. Removed the dead/shadowed web.php `/api/ai/chat` registration and replaced it with a comment explaining ownership (web=`/api/smart-ai/chat`, `/api/ai/chat` stays owned by api.php for Bearer clients). Mobile path UNCHANGED and still 401s web sessions exactly as before — no security regression, no mobile breakage.
+3. `SmartAIController@chat` now: (a) resolves the user prompt from a raw-body `{messages:[...]}` fallback when `$this->request->request->get('message')` is empty (resolves ORDER correctly, OVERWRITES session_id before use); (b) aliases `message => response` in both success echo branches (the English widget reads `data.message`, SmartAI historically emitted only `response`).
+4. All web consumers repointed `/api/ai/chat` -> `/api/smart-ai/chat`: `components/smart_chatbot.php`, `components/ai_chatbot_widget.php`, `components/ai_chatbot_widget.js` (fallback), `pages/ai_assistant.php`, `layouts/chat_widget.php`, `partials/_chatbot_icons.php`, `public/assets/js/chatbot.js`. Mobile Flutter references intentionally NOT changed.
+5. **ADMIN HELP MODE in `buildContextPrompt()`**: base system prompt's SECURITY RULES ("NEVER reveal internal operations; redirect to office phone") made the LLM refuse ordinary admin questions. New admin branch primes a practical panel-navigator persona (~20 admin URLs verified live this session: /admin/erp, /users, /leads, /properties, /plots, /plots/development, /payments, /sales/bookings, /reports, /reports/receivables-aging, /documents, /gst, /gst-invoices, /marketing-campaigns, /feature-flags, /service-configs, /settings/smtp, /finance/cash-drawer, /notifications, /scheduled-reports, /recurring-journal-entries, /multi-currency, /ai/executive-assistant). SECURITY RULES still apply (no SQL/PII); only the "redirect to phone" UX anti-pattern is removed for session-authenticated admins.
+6. Admin-aware greeting in smart_chatbot.php (admin sees admin prompt, customers keep Hinglish buy/EMI copy).
+7. Duplicate/weaker English chatbot (`ai_chatbot_widget.php`, same corner/purpose) removed from the 4 portal layouts that double-included both (admin, customer, associate, agent) — ONE assistant per page. Files kept on disk; revert = one include line.
+
+### Verification (live, admin session via `?test_login=1`, zero DB writes)
+- Form POST -> `{"success":true,"response":".../admin/users...","model":"free_ai:groq","user_context":"admin"}`
+- JSON POST ({message}) -> same shape. JSON POST (mobile-style {messages:[...]}) -> same shape with BOTH `response` and `message` keys pointing at `/admin/reports/receivables-aging`.
+- `/api/ai/chat` (mobile contract) -> STILL 401 for web session (unchanged).
+- Admin-aware answers: "Where do I set up SMTP email?" -> `/admin/settings/smtp` + test-email tip; "How to manage users?" -> `/admin/users` + Add-User role tip; "Show me admin dashboard overview" -> `/admin/erp` + Quick Actions tip — NO phone-redirect deflections.
+- `GET /admin/erp` renders with `aps-chatbot-widget` x1 (duplication gone).
+- **phpstan** [OK] No errors. **Master suite** 11/11 PASSED (18.76s). **php -l** clean x6; booleans clean; **EGRESS-check** `Select-String '/api/ai/chat\b' app/ views+public JS` shows ZERO web references (mobile repo only).
+- Commit NOT made (uncommitted this round — AGENTS.md session entry only); push would need user/other-session ordering since the same worktree carries large unstaged second-actor work.
+
+### Key lessons
+_977. **Router registration ORDER is load-bearing** — `require_once __DIR__ . '/api.php'` at the bottom of web.php re-registers same-method+same-path routes; last-wins buried the SmartAI session handler under api.php's Bearer gate. Before adding a session endpoint to web.php, grep the same path in every included routes file; order decides which handler runs.
+_978. **`data.message` vs `data.response` is a silent widget-API fork** — two widgets on one page, one reads `message`, one reads `response`. Any shared JSON endpoint should emit BOTH aliases (or the consumers should be unified). A green server and a red widget is not a server problem.
+_979. **PHONE-REDIRECT IS AN ANTI-PATTERN, not security** — the system prompt's "redirect to office phone" deflection was the only way the LLM knew how to handle admin questions; the fix is not deleting the SECURITY RULES but explicitly allowing navigation-help for authenticated admins with a curated allowlist of real URLs.
+_980. **Duplicate assistants are a failure mode** — two floating chat buttons on every page looks broken and fragments adoption. One RBAC-aware assistant, one endpoint, one contract.
+
+### AGENTS.md numbering (Rule 4)
+Headings highest = 528; this entry = S529. Next-free = **530**.

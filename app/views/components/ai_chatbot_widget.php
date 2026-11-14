@@ -5,7 +5,7 @@
  */
 
 $config = [
-    'apiBaseUrl' => BASE_URL . '/api/ai/chat',
+    'apiBaseUrl' => BASE_URL . '/api/smart-ai/chat',
     'position' => 'bottom-right',
     'primaryColor' => '#0B194C',
     'secondaryColor' => '#F58220',

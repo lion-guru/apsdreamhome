@@ -443,7 +443,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         document.getElementById('cwSendBtn').disabled = true;
         cwShowTyping();
 
-        fetch('<?= BASE_URL ?>/api/ai/chat', {
+        fetch('<?= BASE_URL ?>/api/smart-ai/chat', {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
             body: JSON.stringify({message: msg, session_id: cwSession, role: cwUserRole, user_id: window.NOTIFY_USER && window.NOTIFY_USER.id ? window.NOTIFY_USER.id : ''})

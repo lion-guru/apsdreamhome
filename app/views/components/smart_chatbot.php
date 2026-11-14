@@ -68,6 +68,15 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 </div>
                 <div class="message-content">
                     <p>👍 Namaste <?php echo htmlspecialchars($userName ?? ''); ?>! <br><br>
+                        <?php if ($userRole === 'admin'): ?>
+                        Main APS AI hoon, aapka admin panel assistant! 🛠️<br><br>
+                        💬 Aap mujhse pooch sakte hain:<br>
+                        💬 Admin panel navigation (ERP / Users / Reports)<br>
+                        💬 Kaun sa page kahan hai (payments, GST, leads)<br>
+                        💬 Reports &amp; analytics kahan milega<br>
+                        💬 Feature flags / service configs<br><br>
+                        Kya main aapki madad kar sakta hoon? 😊</p>
+                        <?php else: ?>
                         Main APS AI hoon, aapka smart real estate assistant! 🏠<br><br>
                         💬 Aap mujhse pooch sakte hain:<br>
                         💬 Property buy/sell/rent<br>
@@ -75,6 +84,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                         💬 Home loan info<br>
                         💬 Project details<br><br>
                         Kya main aapki madad kar sakta hoon? 😊</p>
+                        <?php endif; ?>
                     <span class="message-time"><?php echo date('h:i A'); ?></span>
                 </div>
             </div>
@@ -490,7 +500,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
 </style>
 
 <script>
-    const CHAT_API_URL = '<?php echo BASE_URL; ?>/api/ai/chat';
+    const CHAT_API_URL = '<?php echo BASE_URL; ?>/api/smart-ai/chat';
     let sessionId = '<?php echo session_id(); ?>';
 
     function toggleChatbot() {

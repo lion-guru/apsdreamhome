@@ -2320,7 +2320,11 @@ $router->post('/admin/test-ai-api', 'App\\Http\\Controllers\\AIController@testAP
 // Gemini AI API (canonical routes â€” also in api.php; web.php removed to avoid duplicates)
 
 // Smart AI Chatbot (RBAC-enabled, Human-like)
-$router->post('/api/ai/chat', 'App\\Http\\Controllers\\SmartAIController@chat');
+// NOTE (S528-fix): /api/ai/chat is owned by routes/api.php with Bearer middleware
+// (mobile contract, JSON {messages:[...]}) and last-wins in the router — any web.php
+// registration of the same path never served web/session users. Use the dedicated
+// /api/smart-ai/chat endpoint for browser chat widgets.
+$router->post('/api/smart-ai/chat', 'App\\Http\\Controllers\\SmartAIController@chat');
 $router->get('/api/ai/history', 'App\\Http\\Controllers\\SmartAIController@history');
 $router->post('/api/ai/feedback', 'App\\Http\\Controllers\\SmartAIController@feedback');
 $router->get('/api/ai/stats', 'App\\Http\\Controllers\\SmartAIController@stats');

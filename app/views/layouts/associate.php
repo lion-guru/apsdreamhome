@@ -915,6 +915,6 @@ $GLOBALS['_html_doc_started'] = true;
     <script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>
     
     <?php include_once __DIR__ . '/../components/smart_chatbot.php'; ?>
-    <?php include_once __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
+    <!-- duplicate English chatbot removed — smart_chatbot.php is the single assistant (S528-fix) -->
 </body>
 </html>

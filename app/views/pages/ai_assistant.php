@@ -128,7 +128,7 @@
         sendBtn.disabled = true;
         var typingEl = appendTyping();
 
-        fetch(BASE_URL + '/api/ai/chat', {
+        fetch(BASE_URL + '/api/smart-ai/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             body: JSON.stringify({ message: message, session_id: sessionId })

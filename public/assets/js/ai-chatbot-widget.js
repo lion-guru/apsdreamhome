@@ -9,7 +9,7 @@
 
     // Configuration defaults
     const DEFAULTS = {
-        apiBaseUrl: '/api/ai/chat',
+        apiBaseUrl: '/api/smart-ai/chat',
         position: 'bottom-right',
         primaryColor: '#0B194C',
         secondaryColor: '#F58220',

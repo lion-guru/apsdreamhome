@@ -909,7 +909,7 @@ $GLOBALS['_html_doc_started'] = true;
         </script>
         <!-- Customer & Portal Component Library JS -->
         <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
-    <?php include __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
+    <!-- duplicate English chatbot removed — smart_chatbot.php is the single assistant (S528-fix) -->
     <script defer src="<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/js/customer-pages.js"></script>
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function toggleDarkMode() {

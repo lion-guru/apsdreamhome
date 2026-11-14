@@ -18,7 +18,7 @@
 </a>
 
 <script>
-window.chatbotApiUrl = '<?= defined('BASE_URL') ? BASE_URL : '' ?>/api/ai/chat';
+window.chatbotApiUrl = '<?= defined('BASE_URL') ? BASE_URL : '' ?>/api/smart-ai/chat';
 window.chatbotUserContext = {
     role: '<?= isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest')) ?>',
     userId: '<?= $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? '' ?>',
