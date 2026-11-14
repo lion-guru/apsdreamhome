@@ -102,9 +102,9 @@ $content = ob_start();
                         <div class="mb-2 p-2 <?= $m['sender'] === 'user' ? 'bg-light' : 'bg-info text-white' ?>">
                             <div><strong><?= $m['sender'] === 'user' ? 'User' : 'Bot' ?>:</strong> <?= htmlspecialchars(substr($m['message'], 0, 100)) ?></div>
                             <?php if ($m['detected_intent']): ?>
-                                <small>Intent: <code><?= $m['detected_intent'] ?></code> (conf: <?= round($m['confidence'] * 100) ?>%)</small>
+                                <small>Intent: <code><?= htmlspecialchars($m['detected_intent'], ENT_QUOTES, 'UTF-8') ?></code> (conf: <?= round($m['confidence'] * 100) ?>%)</small>
                             <?php endif; ?>
-                            <div class="text-end"><small><?= $m['created_at'] ?></small></div>
+                            <div class="text-end"><small><?= htmlspecialchars($m['created_at'], ENT_QUOTES, 'UTF-8') ?></small></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -154,7 +154,7 @@ $content = ob_start();
                                     <td><strong><?= $s['score'] ?></strong>/100</td>
                                     <td>
                                         <span class="badge bg-<?= match($s['grade']) { 'A' => 'success', 'B' => 'info', 'C' => 'warning', default => 'secondary' } ?>">
-                                            <?= $s['grade'] ?>
+                                            <?= htmlspecialchars($s['grade'], ENT_QUOTES, 'UTF-8') ?>
                                         </span>
                                     </td>
                                     <td><small><?= htmlspecialchars($s['predicted_action'] ?? '-') ?></small></td>
@@ -179,11 +179,11 @@ $content = ob_start();
                         <tbody>
                             <?php foreach ($priceModels as $m): ?>
                                 <tr>
-                                    <td><?= $m['property_type'] ?></td>
-                                    <td><?= $m['location_id'] ?? 'All' ?></td>
+                                    <td><?= htmlspecialchars($m['property_type'], ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><?= htmlspecialchars($m['location_id'] ?? 'All', ENT_QUOTES, 'UTF-8') ?></td>
                                     <td><?= round($m['r_squared'], 3) ?></td>
                                     <td><?= $m['sample_size'] ?></td>
-                                    <td><?= $m['trained_at'] ?></td>
+                                    <td><?= htmlspecialchars($m['trained_at'], ENT_QUOTES, 'UTF-8') ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
