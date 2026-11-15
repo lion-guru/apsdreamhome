@@ -118,11 +118,17 @@ class EmailSettingsController extends AdminController
         $settings = $this->getSettings();
         $stats = $this->getEmailStats();
         $logs = $this->getRecentLogs();
-        
+        $smtpHealth = $this->getSmtpHealth();
+
         $base = BASE_URL;
         include __DIR__ . '/../../../views/admin/settings/email.php';
     }
     
+    private function getSmtpHealth(): array
+    {
+        return \App\Services\SmtpHealthService::report();
+    }
+
     /**
      * Save email settings
      */

@@ -81,6 +81,17 @@ $tabs = [
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($smtpHealth['count']) && ($active_tab ?? '') === 'email'): ?>
+    <div class="alert alert-danger border-danger shadow-sm d-flex align-items-start gap-2 mb-3" role="alert">
+        <i class="fas fa-triangle-exclamation fa-lg mt-1"></i>
+        <div>
+            <div class="fw-bold">SMTP आज <?= (int)$smtpHealth['count'] ?> बार fail हुआ<?= !empty($smtpHealth['last_time']) ? ' (latest <code>' . htmlspecialchars($smtpHealth['last_time'], ENT_QUOTES) . '</code>)' : '' ?></div>
+            <div class="small">Welcome email, password-reset OTP, EMI reminders, inquiry alerts — सब affected हैं। यहाँ इस form में SMTP values भरने से भी PHPMailer उन्हें use नहीं करता; sending हमेशा <code>.env</code> के <code>SMTP_PASS</code> से होती है।
+                पक्का fix: <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a> पर fresh 16-char app password बनाकर server पर <code>.env</code> में <code>SMTP_PASS=</code> में paste करें, फिर नीचे <strong>Send Test</strong> से verify करें।</div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Tabs -->
     <ul class="nav nav-tabs mb-4" role="tablist">
         <?php foreach ($tabs as $tabId => $tabInfo): ?>

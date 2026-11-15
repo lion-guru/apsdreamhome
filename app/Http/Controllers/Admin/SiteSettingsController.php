@@ -19,11 +19,13 @@ class SiteSettingsController extends AdminController
         $tab = $_GET['tab'] ?? 'general';
 
         $settings = $this->service->getSection('settings');
+        $smtpHealth = \App\Services\SmtpHealthService::report();
 
         $this->render('admin/site-settings/settings', [
             'page_title' => 'Site Settings',
             'active_tab' => $tab,
             'settings' => $settings,
+            'smtpHealth' => $smtpHealth,
             'success' => $_SESSION['site_settings_success'] ?? null,
             'error' => $_SESSION['site_settings_error'] ?? null,
         ]);
