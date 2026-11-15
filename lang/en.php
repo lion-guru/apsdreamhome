@@ -21,7 +21,7 @@ return array(
   'about_company_desc' => 'With over 15 years of excellence in real estate, we help families and businesses find their perfect properties across Gorakhpur, Lucknow, and Uttar Pradesh.',
   'about_hero_desc' => 'Building dreams into reality with trust and innovation. We are committed to delivering exceptional real estate solutions across Uttar Pradesh.',
   'about_hero_lead' => 'Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.',
-  'about_hero_subtitle' => 'Leading real estate developer in Gorakhpur with 8+ years of excellence in property development and customer satisfaction.',
+  'about_hero_subtitle' => 'Gorakhpur-based developer, eight years in property development. Ask our legal desk before you decide.',
   'about_hero_title' => 'About APS Dream Home',
   'about_leader_1_bio' => 'Leading the company with vision and expertise in real estate development.',
   'about_leader_1_exp' => '15+ Years Experience',
@@ -1800,8 +1800,8 @@ return array(
   'whatsapp_us' => 'WhatsApp Us',
   'why_choose_15_years' => '15+ Years of Trusted Service',
   'why_choose_15_years_desc' => 'A legacy of trust with 1000+ happy families served across Uttar Pradesh.',
-  'why_choose_rera' => 'RERA Registered Developer',
-  'why_choose_rera_desc' => 'All our projects are RERA registered with clear titles and full legal compliance.',
+  'why_choose_rera' => 'RERA Verification, Colony-Wise',
+  'why_choose_rera_desc' => 'Colony-wise RERA status verified at up-rera.in or via our legal desk (+91 70074 44842). Ask for the colony certificate before you sign.',
   'why_choose_support' => '24/7 Customer Support',
   'why_choose_support_desc' => 'Dedicated relationship manager for every customer. Call, WhatsApp, or visit anytime.',
   'why_choose_transparent' => 'Transparent Pricing',
@@ -1961,7 +1961,7 @@ return array(
   'home_call_now' => 'Call Now',
   'home_get_in_touch' => 'Get In Touch',
   // Home page - Trust badges
-  'home_trust_rera' => 'RERA Registered',
+  'home_trust_rera' => 'RERA Verification Available',
   'home_trust_plots_sold' => '5000+ Plots Sold',
   'home_trust_happy_families' => '500+ Happy Families',
   // Home page - Stats section
@@ -6069,7 +6069,7 @@ return array(
   // Plots Availability - plots-availability.php
   'plots_avail_title' => 'Plots Availability',
   'plots_avail_meta_desc' => 'Check real-time plot availability, status, and pricing across APS Dream Home colonies.',
-  'plots_avail_rera' => 'RERA',
+  'plots_avail_rera' => 'RERA Verified',
   'plots_avail_hero_heading' => 'Plots Availability',
   'plots_avail_hero_desc' => 'Check real-time availability across APS colonies. All plots RERA-registered, bank-approved, with clear titles.',
   'plots_avail_colony' => 'Colony:',
@@ -6115,7 +6115,7 @@ return array(
   'receipt_footer_phone' => 'Phone:',
   'receipt_footer_computer' => 'This is a computer-generated receipt.',
   'receipt_footer_terms' => 'Booking Subject to Terms & Conditions.',
-  'receipt_footer_rera' => 'RERA Registered Project.',
+  'receipt_footer_rera' => 'RERA verification available on request.',
 
   // Booking Confirmation - booking/confirmation.php
   'booking_conf_status_submitted' => 'Booking Submitted',
@@ -7402,8 +7402,8 @@ return array(
   'surya_detail_status_val' => 'Ongoing',
   'surya_detail_possession' => 'Possession',
   'surya_detail_possession_val' => 'Dec 2025',
-  'surya_detail_rera' => 'RERA Approved',
-  'surya_detail_rera_val' => 'Yes',
+  'surya_detail_rera' => 'RERA Verification',
+  'surya_detail_rera_val' => 'On Request',
   'surya_amenities_heading' => 'Amenities & Features',
   'surya_amenity_roads' => 'Wide Roads',
   'surya_amenity_roads_desc' => '30 feet and 40 feet wide internal roads with proper drainage',

@@ -2291,8 +2291,8 @@ window.addEventListener('scroll', function() {
                 </div>
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3 pt-2">
                     <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-shield-alt me-1"></i> RERA & 100% Legal</span>
-                        <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i> Verified Registry</span>
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-shield-alt me-1"></i> Title-Verified Registry</span>
+                        <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i> Colony-Wise RERA Check</span>
                     </div>
                     <div class="d-flex gap-2">
                         <a href="https://www.youtube.com/watch?v=uB63fG1n5sY" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">

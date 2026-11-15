@@ -525,7 +525,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
                     <h3 class="fs-5">Plot Selling</h3>
-                    <p>Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. RERA registered with clear titles.</p>
+                    <p>Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Colony-wise RERA verification is available on request — ask for the certificate.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
             </div>
@@ -1098,9 +1098,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const SERVICES = {
         'plot-selling': {
             title: 'Plot Selling',
-            subtitle: 'RERA-registered plots with clear titles',
+            subtitle: 'Colony-wise RERA verification with clear titles',
             icon: 'fas fa-map-marked-alt',
-            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Every plot comes with clear legal title, RERA registration, and transparent pricing — so you invest with complete peace of mind.',
+            desc: 'Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. Title copies cleared with every sale; colony-wise RERA verification available by request; transparent pricing so you invest with confidence.',
             steps: [
                 'Browse available plots & colonies on our listings',
                 'Shortlist by location, budget & plot size',

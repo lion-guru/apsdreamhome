@@ -1797,8 +1797,8 @@ return array(
   'whatsapp_us' => 'व्हाट्सएप करें',
   'why_choose_15_years' => '15+ वर्षों की भरोसेमंद सेवा',
   'why_choose_15_years_desc' => 'उत्तर प्रदेश में 1000+ खुश परिवारों की सेवा के साथ भरोसे की विरासत।',
-  'why_choose_rera' => 'RERA पंजीकृत डेवलपर',
-  'why_choose_rera_desc' => 'हमारे सभी प्रोजेक्ट्स RERA पंजीकृत हैं, स्पष्ट टाइटल और पूर्ण लीगल अनुपालन के साथ।',
+  'why_choose_rera' => 'RERA वैरिफिकेशन प्रत्येक कॉलोनी के लिए',
+  'why_choose_rera_desc' => 'हर कॉलोनी की RERA स्थिति up-rera.in या कानूनी डेस्क (+91 70074 44842) पर सत्यापित होती है। खरीदने से पहले प्रमाणपत्र पूछें।',
   'why_choose_support' => '24/7 ग्राहक सहायता',
   'why_choose_support_desc' => 'हर ग्राहक के लिए समर्पित रिलेशनशिप मैनेजर। कभी भी कॉल, व्हाट्सएप या विज़िट करें।',
   'why_choose_transparent' => 'पारदर्शी मूल्य निर्धारण',
@@ -1958,7 +1958,7 @@ return array(
   'home_call_now' => 'अभी कॉल करें',
   'home_get_in_touch' => 'संपर्क करें',
   // Home page - Trust badges
-  'home_trust_rera' => 'RERA पंजीकृत',
+  'home_trust_rera' => 'RERA वैरिफिकेशन उपलब्ध',
   'home_trust_plots_sold' => '5000+ प्लॉट बिके',
   'home_trust_happy_families' => '500+ खुश परिवार',
   // Home page - Stats section
@@ -6052,7 +6052,7 @@ return array(
     // प्लॉट उपलब्धता - plots-availability.php
     'plots_avail_title' => 'प्लॉट उपलब्धता',
     'plots_avail_meta_desc' => 'APS Dream Home कॉलोनियों में वास्तविक समय की प्लॉट उपलब्धता, स्थिति और मूल्य निर्धारण देखें।',
-    'plots_avail_rera' => 'आरईआरए',
+    'plots_avail_rera' => 'RERA सत्यापित',
     'plots_avail_hero_heading' => 'प्लॉट उपलब्धता',
     'plots_avail_hero_desc' => 'APS कॉलोनियों में वास्तविक समय की उपलब्धता देखें। सभी प्लॉट्स आरईआरए-पंजीकृत, बैंक-अनुमोदित, स्पष्ट शीर्षक के साथ।',
     'plots_avail_colony' => 'कॉलोनी:',
@@ -6098,7 +6098,7 @@ return array(
     'receipt_footer_phone' => 'फ़ोन:',
     'receipt_footer_computer' => 'यह एक कंप्यूटर-जनित रसीद है।',
     'receipt_footer_terms' => 'बुकिंग शर्तों और नियमों के अधीन।',
-    'receipt_footer_rera' => 'आरईआरए पंजीकृत प्रोजेक्ट।',
+    'receipt_footer_rera' => 'RERA सत्यापन अनुरोध पर उपलब्ध।',
 
     // बुकिंग पुष्टि - booking/confirmation.php
     'booking_conf_status_submitted' => 'बुकिंग सबमिट की गई',
@@ -7375,8 +7375,8 @@ return array(
   'surya_detail_status_val' => 'चल रहा है',
   'surya_detail_possession' => 'कब्ज़ा',
   'surya_detail_possession_val' => 'दिसंबर 2025',
-  'surya_detail_rera' => 'RERA अनुमोदित',
-  'surya_detail_rera_val' => 'हाँ',
+  'surya_detail_rera' => 'RERA वैरिफिकेशन',
+  'surya_detail_rera_val' => 'Sअनुरोध पर',
   'surya_amenities_heading' => 'सुविधाएँ और विशेषताएँ',
   'surya_amenity_roads' => 'चौड़ी सड़कें',
   'surya_amenity_roads_desc' => '30 फीट और 40 फीट चौड़ी आंतरिक सड़कें उचित जल निकासी के साथ',
