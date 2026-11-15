@@ -537,8 +537,8 @@ $router->get('/api/v2/mobile/site-visits/my-visits', 'Api\MobileTownshipApiContr
 // ============================================================
 // MOBILE API V2 — Township Operations & Utilities (read-only monitoring)
 // ============================================================
-$router->get('/api/v2/mobile/township/operations', 'Api\MobileTownshipOpsApiController@getOperations');
-$router->get('/api/v2/mobile/township/operations/{type}', 'Api\MobileTownshipOpsApiController@getUtilityDetail');
+$router->get('/api/v2/mobile/township/operations', 'Api\MobileTownshipOpsApiController@getOperations')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/township/operations/{type}', 'Api\MobileTownshipOpsApiController@getUtilityDetail')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 $router->get('/api/v2/mobile/township/colonies/{id}/utilities', 'Api\MobileTownshipOpsApiController@getColonyUtilities');
 $router->get('/api/v2/mobile/solar/requests', 'Api\MobileTownshipOpsApiController@getSolarRequests');
 
@@ -584,8 +584,8 @@ $router->get('/api/v2/mobile/notification-preferences', 'Api\MobileFeatureEndpoi
 $router->post('/api/v2/mobile/notification-preferences/save', 'Api\MobileFeatureEndpointsController@saveNotificationPreferences');
 
 // Daily Cash Drawer & Safe Closing Desk
-$router->get('/api/v2/mobile/cash-drawer/today', 'Api\MobileFeatureEndpointsController@getCashDrawerToday');
-$router->post('/api/v2/mobile/cash-drawer/close', 'Api\MobileFeatureEndpointsController@submitCashDrawerClosing');
+$router->get('/api/v2/mobile/cash-drawer/today', 'Api\MobileFeatureEndpointsController@getCashDrawerToday')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/cash-drawer/close', 'Api\MobileFeatureEndpointsController@submitCashDrawerClosing')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 
 // Property Auctions & Live Bidding Desk
 $router->get('/api/v2/mobile/auctions', 'Api\MobileFeatureEndpointsController@getAuctions');
@@ -1304,13 +1304,13 @@ $router->post('/api/v2/mobile/user/preferences', 'Api\MobileUserApiController@up
 $router->post('/api/v2/mobile/user/account/delete', 'Api\MobileUserApiController@deleteAccount')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // --- Admin Analytics ---
-$router->get('/api/v2/mobile/admin/dashboard-stats', 'Api\AdminMobileController@dashboardStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/admin/sales-trend', 'Api\AdminMobileController@salesTrend')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/admin/top-associates', 'Api\AdminMobileController@topAssociates')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/admin/colony-performance', 'Api\AdminMobileController@colonyPerformance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/admin/emi-collection', 'Api\AdminMobileController@emiCollection')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/admin/lead-conversion', 'Api\AdminMobileController@leadConversion')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/admin/daily-sales', 'Api\AdminMobileController@dailySales')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/admin/dashboard-stats', 'Api\AdminMobileController@dashboardStats')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/admin/sales-trend', 'Api\AdminMobileController@salesTrend')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/admin/top-associates', 'Api\AdminMobileController@topAssociates')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/admin/colony-performance', 'Api\AdminMobileController@colonyPerformance')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/admin/emi-collection', 'Api\AdminMobileController@emiCollection')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/admin/lead-conversion', 'Api\AdminMobileController@leadConversion')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/admin/daily-sales', 'Api\AdminMobileController@dailySales')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 
 // --- Authentication (firebase login) ---
 $router->post('/api/v2/mobile/auth/firebase-login', 'Api\MobileAuthApiController@firebaseLogin');
@@ -1551,23 +1551,23 @@ $router->post('/api/v2/mobile/construction/materials/usage', 'Api\ConstructionAp
 // ============================================================
 // 360° INTERLINKING API
 // ============================================================
-$router->get('/api/v2/admin/360-degree/dashboard', 'Api\ThreeSixtyDegreeApiController@dashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/360-degree/customer', 'Api\ThreeSixtyDegreeApiController@customer')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/360-degree/associate', 'Api\ThreeSixtyDegreeApiController@associate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/360-degree/plot', 'Api\ThreeSixtyDegreeApiController@plot')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/360-degree/booking', 'Api\ThreeSixtyDegreeApiController@booking')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/360-degree/colony', 'Api\ThreeSixtyDegreeApiController@colony')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/360-degree/dashboard', 'Api\ThreeSixtyDegreeApiController@dashboard')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/360-degree/customer', 'Api\ThreeSixtyDegreeApiController@customer')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/360-degree/associate', 'Api\ThreeSixtyDegreeApiController@associate')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/360-degree/plot', 'Api\ThreeSixtyDegreeApiController@plot')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/360-degree/booking', 'Api\ThreeSixtyDegreeApiController@booking')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/360-degree/colony', 'Api\ThreeSixtyDegreeApiController@colony')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 
 // ============================================================
 // QUERY ANALYZER API
 // ============================================================
-$router->get('/api/v2/admin/query-analyzer/slow-queries', 'Api\QueryAnalyzerController@slowQueries')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/query-analyzer/table-stats', 'Api\QueryAnalyzerController@tableStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/query-analyzer/index-stats', 'Api\QueryAnalyzerController@indexStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/query-analyzer/missing-indexes', 'Api\QueryAnalyzerController@missingIndexes')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/admin/query-analyzer/processes', 'Api\QueryAnalyzerController@processList')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/admin/query-analyzer/kill/{id}', 'Api\QueryAnalyzerController@killProcess')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/admin/query-analyzer/explain', 'Api\QueryAnalyzerController@explainQuery')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/admin/query-analyzer/slow-queries', 'Api\QueryAnalyzerController@slowQueries')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/query-analyzer/table-stats', 'Api\QueryAnalyzerController@tableStats')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/query-analyzer/index-stats', 'Api\QueryAnalyzerController@indexStats')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/query-analyzer/missing-indexes', 'Api\QueryAnalyzerController@missingIndexes')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/admin/query-analyzer/processes', 'Api\QueryAnalyzerController@processList')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/admin/query-analyzer/kill/{id}', 'Api\QueryAnalyzerController@killProcess')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/admin/query-analyzer/explain', 'Api\QueryAnalyzerController@explainQuery')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 
 // ============================================================
 // LEGAL KIT API (Mobile — download legal kit ZIP)
@@ -1592,28 +1592,28 @@ $router->post('/api/v2/mobile/commission-recalculations/bulk-request', 'Api\Comm
 // ============================================================
 // COLONY PIPELINE MOBILE API
 // ============================================================
-$router->get('/api/v2/mobile/colony-pipeline/dashboard', 'Api\MobileAdminApiController@colonyPipelineDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/detail/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/layout/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineLayout')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/generate-plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineGeneratePlots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/save-layout/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineSaveLayout')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/delete-plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineDeletePlots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricing')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/calculate-pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineCalculatePricing')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/apply-pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineApplyPricing')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/costs/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineCosts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/costs/store/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineStoreCost')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePlots')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/plots/stats/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePlotsStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/save/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineSavePricingPlan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/activate/{colonyId}/{planId}', 'Api\MobileAdminApiController@colonyPipelineActivatePricingPlan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/apply/{colonyId}/{planId}', 'Api\MobileAdminApiController@colonyPipelineApplyPricingPlan')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/pricing-plan/history/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanHistory')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/pricing-plan/applications/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanApplications')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/dashboard', 'Api\MobileAdminApiController@colonyPipelineDashboard')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/detail/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineDetail')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/layout/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineLayout')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/generate-plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineGeneratePlots')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/save-layout/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineSaveLayout')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/delete-plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineDeletePlots')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricing')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/calculate-pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineCalculatePricing')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/apply-pricing/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineApplyPricing')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/costs/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineCosts')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/costs/store/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineStoreCost')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/plots/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePlots')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/plots/stats/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePlotsStats')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/save/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineSavePricingPlan')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/activate/{colonyId}/{planId}', 'Api\MobileAdminApiController@colonyPipelineActivatePricingPlan')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->post('/api/v2/mobile/colony-pipeline/pricing-plan/apply/{colonyId}/{planId}', 'Api\MobileAdminApiController@colonyPipelineApplyPricingPlan')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/pricing-plan/history/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanHistory')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/pricing-plan/applications/{colonyId}', 'Api\MobileAdminApiController@colonyPipelinePricingPlanApplications')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMap')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
+$router->get('/api/v2/mobile/colony-pipeline/map/geojson/{colonyId}', 'Api\MobileAdminApiController@colonyPipelineMapGeoJson')->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 
 // --- Marketplace Mobile API ---
 $router->get('/api/v2/mobile/marketplace/saved-properties', 'Api\MobileUserApiController@getSavedProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
