@@ -496,10 +496,24 @@ class GeminiApiController extends BaseController
     {
         try {
             $db = \App\Core\Database\Database::getInstance();
+            // ai_conversations.user_id references users(id) — a stale session may
+            // carry a deleted account's id; never insert an orphan (FK 1452).
+            $rawUid = $_SESSION['user_id'] ?? null;
+            $validUid = null;
+            if (is_numeric($rawUid) && (int)$rawUid > 0) {
+                try {
+                    $exists = $db->fetch("SELECT id FROM users WHERE id = ?", [(int)$rawUid]);
+                    if (!empty($exists)) {
+                        $validUid = (int)$rawUid;
+                    }
+                } catch (\Throwable $ignore) {
+                    $validUid = null;
+                }
+            }
             $db->execute(
-                "INSERT INTO ai_conversations (session_id, user_id, user_role, message, response, created_at) 
+                "INSERT INTO ai_conversations (session_id, user_id, user_role, message, response, created_at)
                  VALUES (?, ?, ?, ?, ?, NOW())",
-                [$sessionId, $_SESSION['user_id'] ?? null, $_SESSION['role'] ?? 'guest', $message, $response]
+                [$sessionId, $validUid, $_SESSION['role'] ?? 'guest', $message, $response]
             );
         } catch (\Throwable $e) {
             // Table might not exist, ignore error

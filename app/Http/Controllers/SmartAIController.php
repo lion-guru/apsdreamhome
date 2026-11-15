@@ -1084,9 +1084,19 @@ EOT;
     private function saveConversation($sessionId, $message, $response, $userContext)
     {
         try {
+            // ai_conversations.user_id references users(id) — a stale session may
+            // carry a deleted account's id; never insert an orphan (FK 1452).
+            $userId = null;
+            $ctxId = $userContext['id'] ?? null;
+            if (is_numeric($ctxId) && (int)$ctxId > 0) {
+                $exists = $this->db->fetch("SELECT id FROM users WHERE id = ?", [(int)$ctxId]);
+                if (!empty($exists)) {
+                    $userId = (int)$ctxId;
+                }
+            }
             $this->db->query(
                 "INSERT INTO ai_conversations (session_id, user_id, user_role, message, response, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-                [$sessionId, $userContext['id'], $userContext['role'], $message, $response]
+                [$sessionId, $userId, $userContext['role'], $message, $response]
             );
         } catch (\Throwable $e) {
             error_log("Conversation save error: " . $e->getMessage());
