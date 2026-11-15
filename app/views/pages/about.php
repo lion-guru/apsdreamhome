@@ -450,7 +450,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     Experience the <span style="background: linear-gradient(135deg, #2dd4bf, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">APS Difference</span>
                 </h2>
                 <p class="text-light opacity-75 mb-4" style="line-height: 1.8;">
-                    Watch our official brand story and discover how APS Dream Homes Private Limited has delivered over 200+ plots with 100% legal registry across Gorakhpur, Lucknow, and Kushinagar.
+                    Watch our official brand story and discover how APS Dream Homes Private Limited has delivered over 200+ plots with colony-wise RERA verification available across Gorakhpur, Lucknow, and Kushinagar.
                 </p>
                 <div class="d-flex flex-column gap-3 mb-4">
                     <div class="d-flex align-items-center gap-3">

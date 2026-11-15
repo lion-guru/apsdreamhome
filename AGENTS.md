@@ -10167,3 +10167,124 @@ _1251. **Atomicity at the WRITE site, not the caller** — any caller of `setEmb
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 587 (parallel actor, Mobile Backend-Truth Audit). This entry = **S588**. Next-free = **589**.
 
+
+## Session 589: Committed & Pushed — RAG Keyword Fallback + Silent Self-Healing + Honesty Guardrails (Commit 655080588, 40 files, 1288 insertions) (2026-11-15)
+
+### Trigger
+User: "thik hai comit push kar ke do next aur kaam karo apne suggestion se" — commit & push confirmed, then continue.
+
+### What was committed (scoped `git add`, 40 files, +1288/−218)
+- `app/services/AI/RAGService.php` — keyword fallback + degraded-preference branch (S574)
+- `app/Http/Controllers/Api/SystemController.php` — `/api/ai/health` endpoint
+- `app/views/layouts/chat_widget.php` — `cwOfflineAnswer` corpus + health boot + path-skip
+- `scripts/cron_ai_health.php` — writes `ai_health.degraded` flag
+- `database/migrations/seed_ai_health_config_s582.php` — idempotent seed
+- `routes/api.php` — `/api/ai/health` route
+- `app/services/AI/RAGService.php` — coverage metric (S561)
+- `app/views/admin/rag/index.php` — Search coverage card + alert
+- `app/Http/Controllers/Admin/SmartAIController.php` — customer honesty guardrails (S576)
+- Plus parallel-actor work absorbed in the same tree (S571-S576 lineage, S582-S588)
+
+### Verification
+- Pre-commit hook: all 40 PHP files passed `php -l` syntax check
+- Push auto-applied, `ls-remote origin HEAD` = `65508058833d67b33c84e63189eb808c0407837c` — exact match
+- `main...origin/main` in sync (no ahead/behind)
+- Master suite 11/11 PASSED (verified post-commit)
+
+### Honest notes
+- This commit is the **first commit of my S545–S589 lineage** that actually landed on `origin/main` — all prior work (S545-S557) was committed by parallel actors' whole-tree sweeps and absorbed my files byte-identically (S544/S548 verified).
+- 4 scratch scripts (`scripts/.quota_probe.php`, `scripts/append559.php`, `scripts/append562.php`, `scripts/append569.php`, `scripts/append571.php`, `scripts/append573.php`, `scripts/append582.php`, `scripts/append585.php`, `scripts/append587.php`, `scripts/append588.php`) + `public/opcache_flush.php` + `storage/logs/otp_log.txt` deliberately left untracked — ephemeral probe artifacts, not work product.
+- No new app code this round; the commit message documents the full S545-S588 lineage honestly.
+
+### Key lessons (carried, continued)
+_1252. **Stage with lowercase pathspecs — always** — `git add app/Services/...` silently stages nothing on this repo's mixed-case worktree; use `app/services/...`. Verified by S196 lesson, re-bitten and re-fixed this round (lesson _508).
+_1253. **A pre-commit hook that lints 40 files is the only honest gate** — every PHP file passed; the hook's "No live env files staged" check is what kept `.env` out of the commit.
+_1254. **Pushing a big commit after a long uncommitted stretch is relief, not achievement** — the real work was the 15 verification rounds (S545-S588) that proved each change; the commit is just the bookkeeping.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 588 (parallel actor). This entry = **S589**. Next-free = **590**.
+
+## Session 590: RAG Admin Desk Gets Live Probe-Before-Save — Switch Provider With Zero Blindness (2026-11-15)
+
+### Trigger
+User: "do next aur kaam karo apne suggestion se" — after the S588 probe-guarded `setEmbeddingModel()`, the admin desk needed to see the answer before clicking Save.
+
+### What was built
+- **`RAGAdminController::testProvider()`** — POST `/admin/rag/test-provider` with `{model}`, CSRF-validated, calls `probeModel()`. Returns `{success, model, ok, reason}`. Mirrors the exact classification `setEmbeddingModel()` uses to refuse persisting a dead switch.
+- **`routes/gap_builds.php`** — `$router->post('/admin/rag/test-provider', …)` registered.
+- **Admin RAG desk `/admin/rag` updated**:
+  - New **Test probe** button next to Save — instant pass/fail with reason ("Provider answered" / "Provider not reachable: HTTP 402").
+  - OpenRouter added to the model dropdown (`openrouter-text-embedding-3-small`, 1536-dim).
+  - Provider-fallback copy corrected to **Gemini → OpenRouter → HuggingFace → placeholder**.
+  - Script bug repair: the first edit accidentally replaced the start of the existing `ragReembedBtn` listener with the new test handler — restored both listeners (JS syntax clean).
+
+### Verification (live HTTP, real CSRF)
+- Page HTTP 200, 847,381 bytes; needles `Test probe` / `ragTestBtn` / `ragProbeResult` / `openrouter-text-embedding-3-small` / `Gemini &rarr;` all present.
+- POST `/admin/rag/test-provider` `{model: 'gemini-embedding-001'}` → `{"success":true,"ok":true,"reason":"provider answered"}`.
+- Same probe, `model: 'hf-all-MiniLM-L6-v2'` → `{"success":false,"ok":false,"reason":"HTTP 402"}` — honest.
+- Same probe, `model: 'openrouter-text-embedding-3-small'` → `{"success":true,"ok":true,"reason":"provider answered"}`.
+- **Master suite → 11/11 PASSED** (110.25s) · **phpstan [OK] No errors**.
+- php -l clean on controller + view · `flutter analyze` untouched by this round (no Dart edits).
+
+### Commit
+- `92fe358b9` — `feat(rag): probe-before-save on the embedding provider switch - live pass/fail preview on admin desk (S589)` — 3 files, +48/−1, pre-commit hook passed, pushed to `origin/main`.
+
+### Key lessons (carried, continued)
+_1254. **If the server refuses to persist a bad state, the UI should let the admin see the refusal before clicking Save** — the probe guard made the button false-safe; exposing it makes it honest.
+_1255. **A listener that starts with `addEventListener('click', …)` is not a reusable preamble** — replacing the first line of it silently orphans the body; the added `Test probe` block needed its own end-of-file probe before restoring.
+_1256. **CSRF extraction does not match the `hidden` input pattern** — pages set `const CSRF = "…"` in inline JS, not a `<input name="csrf_token">`; grep `const CSRF = "` on 200-render pages.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 589 (parallel actor, Committed & pushed RAG Silent Self-Healing + Honesty Guardrails). This entry = **S590**. Next-free = **591**.
+
+
+## Session 589: Final Verification Sweep — Public Widget Degraded Path Probed Both Branches, All 13 Intents Present In Served HTML, Master 11/11, Nothing Committed (2026-11-15)
+
+### Trigger
+User: "do next" — one final honesty pass before declaring the AI lane complete.
+
+### Verified (live, both branches)
+- `GET /api/ai/health` with `degraded=1` → `{"available":false,"degraded":true,"checked_at":"..."}`
+- `GET /api/ai/health` with `degraded=0` → `{"available":true,"degraded":false,"checked_at":"..."}`
+- Public home page (`/`) HTTP 200 · 329,408 bytes:
+  - `cwOfflineAnswer` present (4 references)
+  - `cwAIHealth` boot present
+  - all 13 intents present (loan, pricing, visit, refund, registry, RERA, colonies, booking, EMI, greeting, contact, fallback)
+  - 0 literal `<?=` in served HTML
+- Flag restored to `0` (healthy) at end of probe; verified restored value via endpoint.
+- **Master suite → 11/11 PASSED** (exit 0).
+- Temp probe scripts deleted same turn.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 588 (S588 parallel actor). This entry = **S589**. Next-free = **590**.
+
+
+
+## Session 591: Mobile Admin Panel Deep Sweep + Cold-Start Role Restore Fixed — 6 Quick-Action Tiles Verified, 6 Crash/Contract Bugs Fixed, Emulator Green, Phone Offline (2026-11-15)
+
+### Trigger
+User: "do next" — continuation of the admin panel sweep on the emulator after the notification round.
+
+### What the sweep found & fixed (all verified live on emulator, fresh builds)
+1. **Plots quick-action crashed: `type 'String' is not a subtype of type 'num?' in type cast`** — `Total Value` fold and `_buildPlotCard` cast `area_sqft`/`total_price` (DECIMAL columns, returned as strings) straight `as num?`. Fixed with tolerant `is num`/`double.tryParse` — **same class as the My-Team int/double fix (S580)** — renders live colony rows (Braj Radha Nagri 40 plots, Raghunath 262, Suryoday 250).
+2. **Admin cold-start landed on public Home with no in-app path to the admin panel** — root-caused to `database_helper.saveUser()` storing `'role': user['rank'] ?? user['role']` — it stored the user's **rank** (`senior_associate`) as `role`, and the restore mapper never returned `role` at all → `(role ?? rank) == 'admin'` false → `isAdmin` false → splash `defaultRouteForRole` = `/home`. Fixed both directions: save prefers `user['role']`, restore emits `role` AND `rank`. Cold-restart after fix lands **directly on the admin dashboard**; login path unchanged.
+3. **CRM quick-action crashed: `type 'List<dynamic>' is not a subtype of type 'Map<dynamic, dynamic>?' in type cast`** — server `crm/pipeline` returns flat `{success, board:[{stage:{slug,name,...}, leads:[...]}]}`; page cast `board as Map` and read `pipeline['stages']` (never existed). Rewrote `_loadData()` parser: `by_status` List → stats map; `board` List → `_stages` (status=slug, label=name, sortOrder) + `_pipelineBoard` (slug → List<CRMLead>). Also `CRMDashboardStats` built manually with real keys (total_leads, by_status new/contacted/qualified/closed_won/closed_lost) — all fields now real. `getMyTasks` silently dropped flat `res['tasks']` payloads → falls back to top-level key. **Verified**: CRM renders pipeline tab with real 979-lead Kanban and per-stage counts.
+4. **Admin had no in-app entry to the admin panel** — added an admin-only "Admin Panel" first tile (`/admin`, `admin_panel_settings` icon) to the Staff Portal's `_PartnerToolsSection` in `ProfilePage`. Staff only; rank display otherwise unchanged.
+5. **Public guest Home showed "Featured Colonies — No Colonies Available"** — the page loaded `/blog` as "featured colonies" (empty for guests). Rewired `_loadFeaturedData()` to `api.get('/colonies')` (public endpoint, 6 live colonies). Yellow-underline link styling was working; the data source was simply wrong.
+6. **Admin rank display "senior_associate" is the seed data's real value** — not a code bug; flagged for owner content review.
+
+### Verification
+- `flutter analyze --no-fatal-infos` → **No issues found!** (multiple rounds; final after all fixes)
+- Build + emulator reinstall ×4 (fresh `pm clear` each round + live UI tests): cold-restart → admin dashboard OK · admin login path unchanged OK · notifications page with its Test Notification rows renders cleanly OK · Colonies OK · Plots OK · Bookings OK · CRM OK (real data) · Users OK · Marketing OK · every tile tapped through.
+- **Master suite → 11/11 PASSED** (71.83s, run after all fixes) · **no PHP files changed this round**.
+- Phone (`10BCBG21MD000S4`) disconnected from USB mid-session; latest fixes installed on emulator only. Owner must reconnect USB and run the install for the device.
+- **Nothing committed this round**; all changes stay uncommitted in the worktree per the standing rule.
+
+### Key lessons
+_1257. **Local-DB roundtrip direction breaks "works on first login, breaks on relaunch" silently** — `saveUser()` writing `rank` into the `role` slot and `getCurrentUser()` omitting `role` made `(role ?? rank) == 'admin'` provably false forever after any cold restart. Roundtrip tests must assert BOTH column symmetric reads/writes.
+_1258. **A codebase-wide `as num?` pattern is one trap repeated** — every DECIMAL-from-PDO string may throw at read. The fix is at each read site (`is num`/`tryParse`); flipping PDO off stringify would demand 300+ call-sites re-audited — risk containment chosen deliberately.
+_1259. **"Works" must mean the cold-start path specifically** — admin cold-start was broken for the entire dev cycle and only surfaced when I force-stopped + relaunched; `install -r` + warm resume masks it because the process is never re-evaluated.
+_1260. **An admin panel unreachable from any in-app surface is a panel guests can only see with the URL** — Profile "Staff Portal" is the organic entry point; one admin-only tile finishes the loop.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 590 (parallel actor, RAG Admin Desk). This entry = **S591**. Next-free = **592**.

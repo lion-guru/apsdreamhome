@@ -60,7 +60,7 @@
                                 <div class="bg-success text-white p-2 rounded-circle me-3">
                                     <i class="fas fa-check"></i>
                                 </div>
-                                <h3 class="fs-4 fw-bold mb-0">RERA Registered</h3>
+                                <h3 class="fs-4 fw-bold mb-0">RERA Verification Available</h3>
                             </div>
                         </div>
                     </div>

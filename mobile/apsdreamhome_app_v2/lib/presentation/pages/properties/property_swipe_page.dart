@@ -74,7 +74,10 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
               _properties = colonies.asMap().entries.map((e) {
                 final i = e.key;
                 final c = e.value;
-                final price = (c['starting_price'] as num?)?.toDouble() ?? 0;
+                final priceRaw = c['starting_price'];
+                final price = priceRaw is num
+                    ? priceRaw.toDouble()
+                    : (double.tryParse('$priceRaw') ?? 0);
                 final total = c['total_plots'] ?? 0;
                 final available = c['available_plots'] ?? 0;
                 final district = c['district_name'] ?? 'UP';
@@ -87,7 +90,7 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
                   'price': _formatPrice(price),
                   'size': '$total plots ($available available)',
                   'type': 'Residential',
-                  'badge': featured ? '🏆 Featured' : '🏗️ New Colony',
+                  'badge': featured ? 'FEATURED' : 'NEW COLONY',
                   'color': _gradients[i % _gradients.length],
                   'icon': _icons[i % _icons.length],
                 };
@@ -159,19 +162,24 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
   Future<void> _writeInterestLead(Map<String, dynamic> prop) async {
     try {
       final user = ref.read(currentUserProvider);
-      final name = user?.name ?? 'Swipe Lead';
       final phone = user?.phone ?? '';
+      // Only authenticated buyers with a contact number generate a lead -
+      // anonymous swipes would pollute the CRM with nameless rows.
+      if (user == null || phone.trim().isEmpty) {
+        return;
+      }
+      final name = user.name;
       final colonyId = prop['id'];
       await ApiService().post(
-        '/leads/create',
+        '/crm/leads',
         data: {
           'name': name,
           'phone': phone,
           'source': 'mobile_swipe',
-          'colony_id': colonyId,
-          'colony_name': prop['title'],
-          'interest_level': 'warm',
-          'notes': 'Swipe right — interested in ${prop['title']} (mobile_swipe)',
+          'property_interest': prop['title'] ?? 'Colony',
+          'location_preference': prop['location'] ?? 'UP',
+          'tags': 'mobile_swipe,colony:$colonyId',
+          'notes': 'Swipe right - interested in ${prop['title']} (mobile_swipe)',
         },
       );
     } catch (_) {

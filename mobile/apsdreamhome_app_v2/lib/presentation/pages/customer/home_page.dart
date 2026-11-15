@@ -916,6 +916,12 @@ class _HomePageState extends ConsumerState<HomePage>
   Widget _buildToolsSection(BuildContext context) {
     final tools = [
       const _ToolItem(
+        Icons.style_rounded,
+        'Discover',
+        '/swipe',
+        AppTheme.pink,
+      ),
+      const _ToolItem(
         Icons.directions_car_rounded,
         'Site Visit',
         '/book-site-visit',

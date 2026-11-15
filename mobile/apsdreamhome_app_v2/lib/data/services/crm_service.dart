@@ -148,7 +148,8 @@ class CRMService {
   Future<List<CRMTask>> getMyTasks({String status = 'pending'}) async {
     try {
       final res = await _api.get('/crm/tasks', queryParameters: {'status': status});
-      final list = res['data']?['tasks'] as List? ?? [];
+      final data = res['data'];
+      final list = ((data is Map ? data['tasks'] : null) ?? res['tasks']) as List? ?? [];
       return list.map((j) => CRMTask.fromJson(j as Map<String, dynamic>)).toList();
     } catch (e, st) {
       AppLogger.error('CRM tasks error', e, st);

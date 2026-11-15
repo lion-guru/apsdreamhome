@@ -28,12 +28,13 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
   Future<void> _loadFeaturedData() async {
     try {
       final api = ApiService();
-      final response = await api.get('/blog', queryParameters: {'limit': 10, 'page': 1});
+      final response = await api.get('/colonies');
       if (mounted) {
         setState(() {
           if (response['success'] == true && response['data'] is List) {
             _featuredColonies = (response['data'] as List)
-                .map((e) => Map<String, dynamic>.from(e as Map<dynamic, dynamic>))
+                .whereType<Map<dynamic, dynamic>>()
+                .map(Map<String, dynamic>.from)
                 .toList();
           } else {
             _featuredColonies = [];

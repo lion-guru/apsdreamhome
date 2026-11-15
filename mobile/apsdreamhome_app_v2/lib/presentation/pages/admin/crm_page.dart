@@ -54,18 +54,56 @@ class _CRMPageState extends ConsumerState<CRMPage>
       final pipeline = await _crm.getPipeline();
       final tasks = await _crm.getMyTasks();
       setState(() {
-        final statsData = dashboard['stats'];
-        _stats = CRMDashboardStats.fromJson((statsData is Map<String, dynamic>) ? statsData : dashboard);
-        _stages = (pipeline['stages'] as List?)
-            ?.map((j) => CRMPipelineStage.fromJson(j as Map<String, dynamic>))
-            .toList() ?? [];
-        final board = pipeline['board'] as Map<String, dynamic>?;
-        _pipelineBoard = {};
-        board?.forEach((key, val) {
-          _pipelineBoard[key] = (val as List?)
-              ?.map((j) => CRMLead.fromJson(j as Map<String, dynamic>))
-              .toList() ?? [];
-        });
+        final statsMap = Map<String, dynamic>.from(
+          (dashboard['stats'] is Map ? dashboard['stats'] : dashboard) as Map,
+        );
+        final byStatus = <String, int>{};
+        for (final e in (statsMap['by_status'] as List? ?? const [])) {
+          if (e is Map) {
+            byStatus[(e['status'] ?? '').toString()] = CRMLead.parseInt(e['cnt']);
+          }
+        }
+        _stats = CRMDashboardStats(
+          totalLeads: CRMLead.parseInt(statsMap['total_leads']),
+          newLeads: byStatus['new'] ?? 0,
+          contactedLeads: byStatus['contacted'] ?? 0,
+          qualifiedLeads: byStatus['qualified'] ?? 0,
+          wonLeads: byStatus['closed_won'] ?? 0,
+          lostLeads: byStatus['closed_lost'] ?? 0,
+          pendingTasks: CRMLead.parseInt(statsMap['pending_tasks']),
+          overdueTasks: CRMLead.parseInt(statsMap['overdue_tasks']),
+          conversionRate: (statsMap['conversion_rate'] is num)
+              ? (statsMap['conversion_rate'] as num).toDouble()
+              : double.tryParse(statsMap['conversion_rate']?.toString() ?? '') ?? 0,
+          bySource: {
+            for (final e in (statsMap['by_source'] as List? ?? const []))
+            if (e is Map && e['source'] != null)
+              (e['source']).toString(): CRMLead.parseInt(e['cnt']),
+          },
+        );
+        final stagesList = <CRMPipelineStage>[];
+        final boardBoard = <String, List<CRMLead>>{};
+        var idx = 0;
+        for (final entry in (pipeline['board'] as List? ?? const [])) {
+          if (entry is Map && entry['stage'] is Map) {
+            final stage = Map<String, dynamic>.from(entry['stage'] as Map);
+            final leads = (entry['leads'] as List? ?? const [])
+                .whereType<Map<dynamic, dynamic>>()
+                .map((j) => CRMLead.fromJson(Map<String, dynamic>.from(j)))
+                .toList();
+            final slug = stage['slug']?.toString() ?? 'new';
+            stagesList.add(CRMPipelineStage(
+              status: slug,
+              label: stage['name']?.toString() ?? slug,
+              count: leads.length,
+              sortOrder: idx,
+            ));
+            boardBoard[slug] = leads;
+            idx++;
+          }
+        }
+        _stages = stagesList;
+        _pipelineBoard = boardBoard;
         _tasks = (tasks as List?)
             ?.map((j) => CRMTask.fromJson(j as Map<String, dynamic>))
             .toList() ?? [];
