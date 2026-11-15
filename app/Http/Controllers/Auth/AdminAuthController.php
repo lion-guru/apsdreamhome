@@ -34,11 +34,7 @@ class AdminAuthController extends BaseController
             }
         }
 
-        // DEBUG
-        error_log("adminLogin called, test_login=" . ($_GET['test_login'] ?? 'NOT SET') . ", APP_ENV=" . APP_ENV . ", admin_id=" . ($_SESSION['admin_id'] ?? 'NOT SET') . ", session_id=" . session_id() . ", cookie_params=" . json_encode(session_get_cookie_params()));
-
         if (isset($_GET['test_login']) && (APP_ENV === 'development' || APP_ENV === 'testing')) {
-            error_log("test_login branch entered, mode=" . $_GET['test_login']);
             $db = Database::getInstance();
             $admin = null;
             $loginMode = $_GET['test_login'];
@@ -70,8 +66,6 @@ class AdminAuthController extends BaseController
                 }
             }
             
-            error_log("test_login: admin found=" . ($admin ? $admin['email'] . ' role=' . $admin['role'] : 'NONE'));
-
             $_SESSION['user_id'] = $admin['id'];
             $_SESSION['role'] = $admin['role'] ?? 'admin';
             $_SESSION['user_email'] = $admin['email'] ?? '';
@@ -123,9 +117,7 @@ class AdminAuthController extends BaseController
             // S409 Role-wise landing: executive roles apne dashboard par land karen
             $roleLanding = ['ceo'=>'/admin/dashboard/ceo','cfo'=>'/admin/dashboard/cfo','cto'=>'/admin/dashboard/cto','coo'=>'/admin/dashboard/coo','cmo'=>'/admin/dashboard/cmo','chro'=>'/admin/dashboard/hr','sales_director'=>'/admin/dashboard/sales','finance_director'=>'/admin/dashboard/finance','hr_director'=>'/admin/dashboard/hr','it_manager'=>'/admin/dashboard/it','sales_manager'=>'/admin/dashboard/sales','hr_manager'=>'/admin/dashboard/hr','marketing_director'=>'/admin/dashboard/marketing','marketing_manager'=>'/admin/dashboard/marketing','finance_manager'=>'/admin/dashboard/finance'];
             $landing = $roleLanding[$admin['role'] ?? 'admin'] ?? '/admin/erp';
-            error_log("test_login: role=" . ($admin['role'] ?? 'admin') . " redirecting to " . BASE_URL . $landing);
             header('Location: ' . BASE_URL . $landing);
-            error_log("test_login: after header call");
             exit;
         }
 
