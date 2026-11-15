@@ -113,7 +113,7 @@ class ContentCreationAgent extends BaseAgent
         $bodySections[] = "## Key Factors to Consider\n\n"
             . "When exploring {$topic} options, keep these factors in mind:\n"
             . "- **Location & Connectivity** — Proximity to schools, hospitals, markets\n"
-            . "- **Legal Documentation** — RERA approval, clear title, NOCs\n"
+            . "- **Legal Documentation** — Colony-wise RERA verification available, clear title, NOCs\n"
             . "- **Payment Plans** — EMI options, construction-linked, down payment\n"
             . "- **Developer Reputation** — Track record, delivery timeline, quality";
 
@@ -147,14 +147,14 @@ class ContentCreationAgent extends BaseAgent
         $price = $data['price'] ?? 'Contact for price';
         $area = $data['area'] ?? '';
         $location = $data['location'] ?? 'Gorakhpur';
-        $features = $data['features'] ?? ['RERA Approved', 'Gated Community', '24/7 Security', 'Vastu Compliant'];
+        $features = $data['features'] ?? ['Registry Clear', 'Gated Community', '24/7 Security', 'Vastu Compliant'];
 
         $headline = "🏠 {$title} — Starting at {$price}";
         $highlights = "📍 {$location}" . ($area ? " | 📐 {$area}" : "");
 
         $description = "Explore this premium {$topic} in {$location}. "
             . "Offering world-class amenities and excellent connectivity. "
-            . "RERA approved with clear documentation. "
+            . "Clear bainama title and colony-wise RERA verification available on request. "
             . "Perfect for families looking for their dream home.";
 
         $featureList = implode(' | ', array_slice($features, 0, 6));
@@ -180,7 +180,7 @@ class ContentCreationAgent extends BaseAgent
         ];
 
         $hook = $hooks[array_rand($hooks)];
-        $value = "✅ RERA Approved\n✅ Flexible Payment Plans\n✅ Prime Location\n✅ Modern Amenities";
+        $value = "✅ Colony-wise RERA Verification\n✅ Flexible Payment Plans\n✅ Prime Location\n✅ Modern Amenities";
         $cta = "📞 Call: 7007444842\n🌐 Visit: apsdreamhome.com";
 
         $message = "{$hook}\n\n{$value}\n\n{$cta}";
@@ -202,7 +202,7 @@ class ContentCreationAgent extends BaseAgent
         $greeting = "Dear {$name},";
         $body = "We're excited to share some amazing {$topic} opportunities with you.\n\n"
               . "APS Dream Home has launched new projects in prime locations across Gorakhpur. "
-              . "With flexible payment plans, RERA-approved projects, and world-class amenities, "
+              . "With flexible payment plans, registry-clear titles, colony-wise RERA verification on request, and world-class amenities, "
               . "now is the perfect time to invest.\n\n"
               . "Key Highlights:\n"
               . "- Premium locations with excellent connectivity\n"
@@ -230,7 +230,7 @@ class ContentCreationAgent extends BaseAgent
         $greeting = "Namaste! 🙏";
         $message = "APS Dream Home presents premium {$topic}s in {$location}."
             . ($price ? " Starting at {$price}." : "")
-            . " RERA approved | Flexible EMI | Prime location.";
+            . " RERA Verify on Request | Flexible EMI | Prime location.";
         $link = "🌐 apsdreamhome.com";
         $cta = "📞 Reply or Call: 7007444842";
 

@@ -563,7 +563,7 @@ Language: Professional English with Hindi business terms where appropriate (e.g.
             ],
             'competitive_advantages' => [
                 'Verified land with clear titles (143 mutation)',
-                'RERA registered townships',
+                'Registry-clear titles with colony-wise RERA verification available',
                 'Integrated township infrastructure (STP, water, power, security)',
                 'Digital CRM with transparent booking',
                 'Solar-ready townships (PM Surya Ghar)',
