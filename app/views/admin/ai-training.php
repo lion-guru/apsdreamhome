@@ -7,6 +7,9 @@
 
 // Auth handled by controller (AdminAIController@training calls requireAdmin())
 // Data passed from AdminAIController::training()  knowledgeBase, analytics, categories
+// Note: the live ai_knowledge_base schema is RAG-oriented (title/content/source/tags/visibility).
+// The view keeps legacy display keys via controller aliases: question_pattern→title, answer→content,
+// category→source, usage_count→0 (no such column anymore).
 
 $db = \App\Core\Database\Database::getInstance();
 
@@ -26,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (!empty($questionPattern) && !empty($answer)) {
             try {
                 $db->execute(
-                    "INSERT INTO ai_knowledge_base 
-                     (category, question_pattern, answer, usage_count, effectiveness_score, created_at, updated_at) 
-                     VALUES (?, ?, ?, 0, 0.00, NOW(), NOW())",
-                    [$category, $questionPattern, $answer]
+                    "INSERT INTO ai_knowledge_base
+                     (title, content, source, tags, is_active, visibility, tenant_id, created_at, updated_at)
+                     VALUES (?, ?, ?, ?, 1, 'public', 1, NOW(), NOW())",
+                    [$questionPattern, $answer, $category, $keywords]
                 );
                 $success = 'New Q&A added successfully!';
 
@@ -57,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         try {
             $db->execute(
-                "UPDATE ai_knowledge_base 
-                 SET category = ?, question_pattern = ?, answer = ?, updated_at = NOW() 
+                "UPDATE ai_knowledge_base
+                 SET source = ?, title = ?, content = ?, updated_at = NOW()
                  WHERE id = ?",
                 [$category, $questionPattern, $answer, $id]
             );
@@ -94,10 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
                 try {
                     $db->execute(
-                        "INSERT INTO ai_knowledge_base 
-                         (category, question_pattern, answer, usage_count, effectiveness_score, created_at) 
-                         VALUES (?, ?, ?, 0, 0.00, NOW())",
-                        [$category, $question, $answer]
+                        "INSERT INTO ai_knowledge_base
+                         (title, content, source, tags, is_active, visibility, tenant_id, created_at, updated_at)
+                         VALUES (?, ?, ?, ?, 1, 'public', 1, NOW(), NOW())",
+                        [$question, $answer, $category, $keywords]
                     );
                     $added++;
                 } catch (\Throwable $e) {

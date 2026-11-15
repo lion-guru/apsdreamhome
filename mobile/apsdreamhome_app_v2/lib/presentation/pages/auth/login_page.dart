@@ -1074,6 +1074,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   pass: 'Aps@2026',
                   icon: Icons.shield_rounded,
                 ),
+                const SizedBox(width: 6),
+                _buildDemoChip(
+                  label: 'Employee',
+                  email: 'employee@apsdreamhome.com',
+                  pass: 'Aps@2026',
+                  icon: Icons.badge_rounded,
+                ),
               ],
             ),
           ),

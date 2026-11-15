@@ -120,7 +120,7 @@ $insights = $insights ?? [];
                             <td><a href="<?= BASE_URL ?>/admin/leads/<?= $lead['id'] ?>"><?= htmlspecialchars($lead['name'] ?? 'Unknown') ?></a></td>
                             <td><?= htmlspecialchars($lead['phone'] ?? '') ?></td>
                             <td><span class="badge bg-secondary"><?= ucfirst($lead['status'] ?? '') ?></span></td>
-                            <td><span class="badge bg-<?= ($lead['score'] ?? 0) >= 50 ? 'success' : (($lead['score'] ?? 0) >= 30 ? 'warning' : 'danger') ?>"><?= $lead['score'] ?? 0 ?></span></td>
+                            <td><span class="badge bg-<?= ($lead['lead_score'] ?? 0) >= 50 ? 'success' : (($lead['lead_score'] ?? 0) >= 30 ? 'warning' : 'danger') ?>"><?= $lead['lead_score'] ?? 0 ?></span></td>
                             <td><small class="text-muted"><?= date('d M Y', strtotime($lead['updated_at'] ?? 'now')) ?></small></td>
                             <td><span class="badge bg-danger"><?= $lead['days_stale'] ?>d</span></td>
                         </tr>

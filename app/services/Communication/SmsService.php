@@ -86,7 +86,10 @@ class SmsService
                 'tenant_id' => $tid,
                 'recipient' => $phone,
                 'message' => substr($message, 0, 500),
-                'priority' => $priority,
+                // `sms_queue` has NO priority column — older code here always wrote one,
+                // so every queued SMS 1054'd inside the catch and vanished from the queue.
+                // $priority is kept in the signature for callers; it could map to a
+                // scheduled_at adjustment in a future migration, never another column.
                 'status' => 'pending',
                 'attempts' => 0,
                 'provider' => $this->provider,

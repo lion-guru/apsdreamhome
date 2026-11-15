@@ -17,7 +17,7 @@
                 <div class="chat-container">
                     <div class="chat-messages p-4" id="chatMessages" >
                         <div class="message bot-message mb-3 p-3 rounded-4 bg-white shadow-sm">
-                            Namaste! 📢 Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! ðŸ'‡
+                            Namaste! 📢 Welcome to <strong>APS Dream Home</strong>! I'm your property assistant.\n\nHow can I help you today? Try these quick options below! 👇
                         </div>
                     </div>
                     
@@ -127,26 +127,15 @@ async function sendMessage() {
     document.getElementById('loading').style.display = 'block';
 
     try {
-        // Try Gemini-powered AI first
-        let response = await fetch('<?= BASE_URL ?>api/ai/chat', {
+        // Browser/public assistant — endpoint registered as /api/ai/chatbot (ChatbotAPIController@handleMessage).
+        // (Previously tried /api/ai/chat first — that's the Bearer mobile API and always 401'd web sessions.)
+        let response = await fetch('<?= BASE_URL ?>/api/ai/chatbot', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message })
         });
 
         let data = await response.json();
-        
-        // If Gemini failed, fall back to rule-based chatbot
-        if (!data.gemini) {
-            response = await fetch('<?= BASE_URL ?>api/ai/chatbot', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message })
-            });
-            data = await response.json();
-        }
 
         if (data.success || data.reply) {
             addMessage(data.reply || data.response, false);

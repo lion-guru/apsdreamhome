@@ -46,12 +46,12 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="faq-filter text-center">
-                    <a href="<?= BASE_URL ?>faq" class="btn <?= $current_category === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
+                    <a href="<?= BASE_URL ?>/faq" class="btn <?= $current_category === 'all' ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                         All Categories
                     </a>
                     <?php foreach ($categories as $cat): ?>
                         <?php $catName = is_object($cat) ? $cat->category : $cat['category']; ?>
-                        <a href="<?= BASE_URL ?>faq?category=<?= urlencode($catName) ?>"
+                        <a href="<?= BASE_URL ?>/faq?category=<?= urlencode($catName) ?>"
                             class="btn <?= $current_category === $catName ? 'btn-primary' : 'btn-outline-primary' ?> me-2 mb-2">
                             <?= htmlspecialchars(ucwords($catName)) ?>
                         </a>

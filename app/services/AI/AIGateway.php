@@ -325,7 +325,9 @@ class AIGateway
             };
 
             $prompt = $input['message'] ?? $input['text'] ?? $input['query'] ?? json_encode($input);
-            $system = match($purpose) {
+            // Honor a caller-supplied system prompt (ExecutiveAIService builds the role
+            // persona + KPIs + verified URLs there). Fall back to the generic default.
+            $system = $input['system_prompt'] ?? match($purpose) {
                 'qualify' => "Real estate lead qualify karo. Budget, urgency, interest level identify karo. JSON: {\"score\": 0-100, \"qualification\": \"hot|warm|cold\", \"next_action\": \"...\"}",
                 'match' => "Property matching. Find best plots for given requirements. JSON: {\"matches\": [{\"plot_id\": N, \"score\": 0-100, \"reason\": \"...\"}]}",
                 'analyze' => "Real estate market analysis. Trends, patterns, insights with specific numbers.",
@@ -373,7 +375,7 @@ class AIGateway
 
     private function buildPrompt(string $task, array $input, array $context): string
     {
-        $sys = "Tum APS Dream Home ka AI assistant ho. Real estate expert ho. Hindi aur English dono mein baat karte ho. Professional, helpful, friendly. Raghunath Nagri, Gorakhpur specialist.";
+        $sys = $input['system_prompt'] ?? "Tum APS Dream Home ka AI assistant ho. Real estate expert ho. Hindi aur English dono mein baat karte ho. Professional, helpful, friendly. Raghunath Nagri, Gorakhpur specialist.";
 
         switch ($task) {
             case 'qualify_lead':

@@ -448,21 +448,25 @@ class GeminiApiController extends BaseController
     }
 
     /**
-     * Get answer from AI Knowledge Base
+     * Get answer from AI Knowledge Base (live schema: title/content/tags/visibility)
      */
     private function getAnswerFromKnowledgeBase(string $message): ?string
     {
         try {
             $db = \App\Core\Database\Database::getInstance();
 
-            // Search for matching patterns in knowledge base (all entries are active by default)
+            // Live corpus is RAG-oriented (title/content/tags) — the retired question_pattern/answer
+            // columns 1054'd on every call. Public documents only; no usage counter column exists
+            // today so we don't fabricate one.
             $patterns = $db->fetchAll(
-                "SELECT question_pattern, answer FROM ai_knowledge_base"
+                "SELECT title, content, tags FROM ai_knowledge_base
+                 WHERE is_active = 1 AND visibility = 'public'
+                 ORDER BY id DESC"
             );
 
             foreach ($patterns as $row) {
-                $pattern = strtolower($row['question_pattern']);
-                // Check if message contains the pattern keywords
+                $pattern = strtolower(trim((string)($row['title'] ?? '')));
+                if ($pattern === '') continue;
                 $keywords = explode(' ', $pattern);
                 $matchCount = 0;
 
@@ -474,25 +478,14 @@ class GeminiApiController extends BaseController
 
                 // If at least 2 keywords match or 50% match
                 if ($matchCount >= 2 || ($matchCount > 0 && count($keywords) <= 2)) {
-                    // Update usage count
-                    try {
-                        $db->execute(
-                            "UPDATE ai_knowledge_base SET usage_count = usage_count + 1 WHERE question_pattern = ?",
-                            [$row['question_pattern']]
-                        );
-                    } catch (\Throwable $e) {
-                        // Ignore update errors
-                                error_log("GeminiApiController.php: " . $e->getMessage());
-                    }
-                    return $row['answer'];
+                    return $row['content'];
                 }
             }
 
             return null;
         } catch (\Throwable $e) {
-            // Table might not exist
+            error_log("GeminiApiController.php: " . $e->getMessage());
             return null;
-                    error_log("GeminiApiController.php: " . $e->getMessage());
         }
     }
 

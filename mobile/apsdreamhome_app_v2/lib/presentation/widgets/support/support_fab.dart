@@ -115,10 +115,26 @@ class _SupportFABState extends State<SupportFAB>
       _ActionData(Icons.chat_rounded, 'WhatsApp', const Color(0xFF25D366),
           () async {
         _toggle();
-        final uri = Uri.parse(
-          'https://wa.me/91${AppConstants.supportPhone}?text=Hi%20APS%20Dream%20Home%2C%20I%20need%20help',
-        );
-        if (await canLaunchUrl(uri)) await launchUrl(uri);
+        const phone = '91${AppConstants.supportPhone}';
+        final text = Uri.encodeComponent(
+            'Hi APS Dream Home, I need help');
+        // Prefer the native scheme (declared in AndroidManifest <queries>),
+        // fall back to the wa.me https link if WhatsApp handles it directly.
+        final waApp = Uri.parse('whatsapp://send?phone=$phone&text=$text');
+        final waWeb = Uri.parse('https://wa.me/$phone?text=$text');
+        try {
+          if (await canLaunchUrl(waApp)) {
+            await launchUrl(waApp, mode: LaunchMode.externalApplication);
+            return;
+          }
+          if (await canLaunchUrl(waWeb)) {
+            await launchUrl(waWeb, mode: LaunchMode.externalApplication);
+          }
+        } catch (_) {
+          if (await canLaunchUrl(waWeb)) {
+            await launchUrl(waWeb, mode: LaunchMode.externalApplication);
+          }
+        }
       }),
       _ActionData(Icons.support_agent_rounded, 'Live Chat',
           const Color(0xFF1A237E), () {

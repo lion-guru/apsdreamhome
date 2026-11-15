@@ -159,6 +159,9 @@ $GLOBALS['_html_doc_started'] = true;
                 <a href="<?= BASE_URL ?>/agent/dashboard" class="btn-icon" title="Notifications">
                     <i class="fas fa-bell"></i>
                 </a>
+                <a href="<?= BASE_URL ?>/agent/ai-coach" class="btn-icon" title="AI Coach" aria-label="AI Coach" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-color:transparent;">
+                    <i class="fas fa-robot"></i>
+                </a>
                 <a href="<?= BASE_URL ?>/agent/leads" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>

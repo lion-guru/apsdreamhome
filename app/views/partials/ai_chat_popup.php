@@ -12,7 +12,7 @@ $base = $base ?? BASE_URL;
     <div id="ai-popup-chat" class="ai-popup-chat" style="display: none;">
         <div class="ai-popup-header">
             <div class="d-flex align-items-center">
-                <span class="ai-popup-avatar me-2">ðŸ¤–</span>
+                <span class="ai-popup-avatar me-2">🤖</span>
                 <div>
                     <h2  class="fs-6 fw-semibold mb-0 text-white">APS AI Helper</h2>
                     <small class="text-white-50">Online</small>
@@ -29,7 +29,7 @@ $base = $base ?? BASE_URL;
         </div>
         <div id="ai-popup-messages" class="ai-popup-messages">
             <div class="text-center py-4 px-3">
-                <div class="mb-2"><span >ðŸ'‹</span></div>
+                <div class="mb-2"><span >👋</span></div>
                 <p class="mb-1 small fw-bold">Namaste! Main APS Dream Home ki AI hoon.</p>
                 <p class="text-muted small mb-0">Aapki kya madad kar sakta hoon?</p>
             </div>

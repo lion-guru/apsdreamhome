@@ -2,8 +2,8 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0"><i class="fas fa-list me-2"></i>All Scheduled Calls (<?= $total ?>)</h4>
     <div>
-        <a href="<?= BASE_URL ?>admin/voice-scheduler/schedule" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Schedule</a>
-        <a href="<?= BASE_URL ?>admin/voice-scheduler" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+        <a href="<?= BASE_URL ?>/admin/voice-scheduler/schedule" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Schedule</a>
+        <a href="<?= BASE_URL ?>/admin/voice-scheduler" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
     </div>
 </div>
 
@@ -42,7 +42,7 @@
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-sm btn-outline-primary" aria-label="Search"><i class="fas fa-search"></i></button>
-                <a href="<?= BASE_URL ?>admin/voice-scheduler/calls" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times"></i></a>
+                <a href="<?= BASE_URL ?>/admin/voice-scheduler/calls" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times"></i></a>
             </div>
         </form>
     </div>
@@ -61,7 +61,7 @@
                 <tbody>
                 <?php foreach ($calls as $c): ?>
                     <tr>
-                        <td><a href="<?= BASE_URL ?>admin/voice-scheduler/calls/<?= $c['id'] ?>">#<?= $c['id'] ?></a></td>
+                        <td><a href="<?= BASE_URL ?>/admin/voice-scheduler/calls/<?= $c['id'] ?>">#<?= $c['id'] ?></a></td>
                         <td><?= htmlspecialchars($c['lead_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($c['phone'] ?: ($c['lead_phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= date('d M Y', strtotime($c['scheduled_date'] ?? '')) ?><br><small class="text-muted"><?= date('h:i A', strtotime($c['scheduled_time'] ?? '')) ?></small></td>
@@ -78,7 +78,7 @@
                         </td>
                         <td><?= (int)($c['attempt_count'] ?? 0) ?>/<?= (int)($c['max_attempts'] ?? 3) ?></td>
                         <td>
-                            <a href="<?= BASE_URL ?>admin/voice-scheduler/calls/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+                            <a href="<?= BASE_URL ?>/admin/voice-scheduler/calls/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

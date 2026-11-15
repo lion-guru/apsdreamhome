@@ -13,8 +13,8 @@ $smtp = $smtp ?? [
 <div class="container-fluid py-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/settings">Settings</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/settings">Settings</a></li>
             <li class="breadcrumb-item active">SMTP Email Settings</li>
         </ol>
     </nav>
@@ -36,7 +36,7 @@ $smtp = $smtp ?? [
         </p>
     </div>
 
-    <form method="post" action="<?= BASE_URL ?>admin/settings/smtp-save">
+    <form method="post" action="<?= BASE_URL ?>/admin/settings/smtp-save">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <?= \App\Helpers\SecurityHelper::csrfField() ?>
         <div class="row g-4">
@@ -113,7 +113,7 @@ $smtp = $smtp ?? [
                         <button type="button" class="btn btn-outline-secondary w-100 mb-3" onclick="testSmtpConnection()">
                             <i class="fas fa-vial me-2"></i>Test Connection
                         </button>
-                        <a href="<?= BASE_URL ?>admin/settings/email" class="btn btn-outline-info w-100">
+                        <a href="<?= BASE_URL ?>/admin/settings/email" class="btn btn-outline-info w-100">
                             <i class="fas fa-envelope me-2"></i>Advanced Email Settings
                         </a>
                     </div>

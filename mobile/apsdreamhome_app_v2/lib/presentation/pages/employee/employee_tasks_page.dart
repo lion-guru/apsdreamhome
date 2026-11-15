@@ -145,7 +145,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
                         children: [
                           Icon(Icons.error_outline, size: 48, color: AppTheme.errorColor.withValues(alpha: 0.5)),
                           const SizedBox(height: 12),
-                          Text(_error!, style: TextStyle(fontFamily: 'Inter', color: AppTheme.errorColor), textAlign: TextAlign.center),
+                          Text(_error!, style: const TextStyle(fontFamily: 'Inter', color: AppTheme.errorColor), textAlign: TextAlign.center),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
                             onPressed: _load,

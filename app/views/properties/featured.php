@@ -228,7 +228,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
 
 <script>
     function contactOwner(propertyId) {
-        window.location.href = '<?= BASE_URL ?>support?ref=property_' + propertyId;
+        window.location.href = '<?= BASE_URL ?>/support?ref=property_' + propertyId;
     }
 </script>
 

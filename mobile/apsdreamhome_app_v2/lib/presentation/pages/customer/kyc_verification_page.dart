@@ -361,7 +361,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'KYC Verification',
           style: TextStyle(fontFamily: 'Poppins', 
             fontWeight: FontWeight.w600,
@@ -442,9 +442,9 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
               const SizedBox(width: 16),
               Text(
                 '${(_progressAnimation.value * 100).toInt()}%',
-                style: TextStyle(fontFamily: 'Poppins', 
+                style: const TextStyle(fontFamily: 'Poppins', 
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2E7D32),
+                  color: Color(0xFF2E7D32),
                 ),
               ),
             ],
@@ -613,7 +613,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'PAN Verification',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
@@ -670,7 +670,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Aadhaar Verification',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
@@ -724,7 +724,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         children: [
           Text(
             'Upload ${isPan ? 'PAN' : 'Aadhaar'} Document',
-            style: TextStyle(fontFamily: 'Poppins', 
+            style: const TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -842,7 +842,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Selfie Capture',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
@@ -954,7 +954,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Video KYC',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
@@ -992,7 +992,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                   if (_isRecording) ...[
                     Text(
                       'Recording... $_recordingDuration/30s',
-                      style: TextStyle(fontFamily: 'Poppins', 
+                      style: const TextStyle(fontFamily: 'Poppins', 
                         color: Colors.red,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1048,7 +1048,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Video recorded successfully',
                     style: TextStyle(fontFamily: 'Poppins', 
                       color: Colors.green,

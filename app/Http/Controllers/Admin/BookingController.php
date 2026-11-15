@@ -178,8 +178,8 @@ class BookingController extends AdminController
             }
 
             $stmt = $this->db->prepare(
-                "INSERT INTO plot_bookings (customer_id, associate_id, plot_id, booking_amount, total_plot_value, booking_date, status, notes, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, NOW())"
+                "INSERT INTO plot_bookings (customer_id, associate_id, plot_id, booking_amount, total_plot_value, booking_date, status, lead_id, notes, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, NOW())"
             );
             $stmt->execute([
                 $customerId,
@@ -188,6 +188,7 @@ class BookingController extends AdminController
                 $data['booking_amount'] ?? $data['total_plot_value'] ?? 0,
                 $data['total_plot_value'] ?? 0,
                 $data['booking_date'] ?? date('Y-m-d'),
+                !empty($data['lead_id']) ? (int)$data['lead_id'] : null,
                 $data['notes'] ?? ''
             ]);
             $bookingId = (int)$this->db->lastInsertId();

@@ -36,6 +36,7 @@ import '../../presentation/pages/customer/user_network_page.dart';
 // Property
 import '../../presentation/pages/property/property_marketplace_page.dart';
 import '../../presentation/pages/property/property_detail_page.dart';
+import '../../presentation/pages/customer/owner_property_detail_page.dart';
 import '../../presentation/pages/property/property_gallery_page.dart';
 
 // Splash
@@ -320,7 +321,7 @@ GoRouter createRouter() {
     redirect: (context, state) {
       final authUser = AuthBridge.instance.currentUser.value;
       final isAuthenticated = authUser != null;
-      final uri = state.uri.toString();
+      final uri = state.uri.path; // path only - query strings must not break route classification
 
       // Auth pages
       final isLoginPage = uri == '/login';
@@ -844,6 +845,26 @@ isDisclaimer ||
 
 
       // ─── Customer Detail Routes (full-screen, with slide-up transition) ───
+      // Direct-from-owner verified listing detail
+      GoRoute(
+        path: '/owner-property/:listingId',
+        pageBuilder: (context, state) {
+          final id = int.tryParse(state.pathParameters['listingId'] ?? '') ?? 0;
+          return CustomTransitionPage<void>(
+            child: OwnerPropertyDetailPage(listingId: id),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    ),
+                    child: child,
+                  );
+                },
+          );
+        },
+      ),
       GoRoute(
         path: '/property-detail/:propertyId',
         pageBuilder: (context, state) {

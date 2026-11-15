@@ -157,7 +157,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         function exportReport(campaignId) {
             var btn = event.target.closest('button');
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
-            fetch('<?= BASE_URL ?>admin/campaigns/' + campaignId + '/analytics', { headers: { 'Accept': 'application/json' } })
+            fetch('<?= BASE_URL ?>/admin/campaigns/' + campaignId + '/analytics', { headers: { 'Accept': 'application/json' } })
             .then(function(r) { return r.text(); })
             .then(function(data) {
                 var blob = new Blob([data], { type: 'text/csv' });
@@ -168,7 +168,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 btn.disabled = false; btn.innerHTML = '<i class="fas fa-download me-2"></i>Export';
             })
             .catch(function() {
-                window.open('<?= BASE_URL ?>admin/campaigns/' + campaignId + '/analytics', '_blank');
+                window.open('<?= BASE_URL ?>/admin/campaigns/' + campaignId + '/analytics', '_blank');
                 btn.disabled = false; btn.innerHTML = '<i class="fas fa-download me-2"></i>Export';
             });
         }

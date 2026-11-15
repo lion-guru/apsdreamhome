@@ -68,7 +68,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 </div>
                 <div class="message-content">
                     <p>👍 Namaste <?php echo htmlspecialchars($userName ?? ''); ?>! <br><br>
-                        <?php if ($userRole === 'admin'): ?>
+                        <?php if ($userRole === 'admin' || $userRole === 'super_admin'): ?>
                         Main APS AI hoon, aapka admin panel assistant! 🛠️<br><br>
                         💬 Aap mujhse pooch sakte hain:<br>
                         💬 Admin panel navigation (ERP / Users / Reports)<br>
@@ -76,11 +76,19 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                         💬 Reports &amp; analytics kahan milega<br>
                         💬 Feature flags / service configs<br><br>
                         Kya main aapki madad kar sakta hoon? 😊</p>
+                        <?php elseif ($userRole === 'employee'): ?>
+                        Main APS AI hoon, aapka productivity coach! 📌<br><br>
+                        💬 Aap mujhse pooch sakte hain:<br>
+                        💬 My priority tasks today<br>
+                        💬 Attendance &amp; leave<br>
+                        💬 Call follow-up scripts<br>
+                        💬 Reports &amp; escalation<br><br>
+                        Kya main aapki madad kar sakta hoon? 😊</p>
                         <?php else: ?>
                         Main APS AI hoon, aapka smart real estate assistant! 🏠<br><br>
                         💬 Aap mujhse pooch sakte hain:<br>
                         💬 Property buy/sell/rent<br>
-                        💬 Prices & locations<br>
+                        💬 Prices &amp; locations<br>
                         💬 Home loan info<br>
                         💬 Project details<br><br>
                         Kya main aapki madad kar sakta hoon? 😊</p>
@@ -106,6 +114,11 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 <button onclick="sendQuickMessage('Show my bookings')">Bookings</button>
                 <button onclick="sendQuickMessage('Show my leads')">Leads</button>
                 <button onclick="sendQuickMessage('Property prices?')">Pricing</button>
+            <?php elseif ($userRole === 'employee'): ?>
+                <button onclick="sendQuickMessage('My priority tasks today')">My Tasks</button>
+                <button onclick="sendQuickMessage('Which page for leave request?')">Leave</button>
+                <button onclick="sendQuickMessage('Show me my attendance')">Attendance</button>
+                <button onclick="sendQuickMessage('Help me write a call follow-up SMS')">Follow-up</button>
             <?php elseif ($userRole === 'customer'): ?>
                 <button onclick="sendQuickMessage('My bookings')">My Bookings</button>
                 <button onclick="sendQuickMessage('Pay EMI')">Pay EMI</button>

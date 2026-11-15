@@ -21,13 +21,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>ðŸš¨ Admin Notification</h2>
+            <h2>🚨 Admin Notification</h2>
             <p><?= htmlspecialchars($notification_type ?? 'System') ?> - Action Required</p>
         </div>
 
         <div class="content">
             <div class="notification-card priority-high">
-                <h3>ðŸ"‹ Notification Details</h3>
+                <h3>📋 Notification Details</h3>
                 <p><strong>Type:</strong> <?= htmlspecialchars($notification_type ?? 'System') ?></p>
                 <p><strong>Message:</strong> <?= htmlspecialchars($notification_message ?? '') ?></p>
                 <p><strong>Timestamp:</strong> <?= date('Y-m-d H:i:s') ?></p>

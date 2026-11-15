@@ -974,11 +974,11 @@ function timeAgo($dt) {
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Type *</label>
                             <select aria-label="Type" class="form-select" name="type" required>
-                                <option value="call">ðŸ“ž Phone Call</option>
-                                <option value="email">ðŸ“§ Email</option>
-                                <option value="whatsapp">ðŸ’¬ WhatsApp</option>
-                                <option value="meeting">ðŸ¤� Meeting</option>
-                                <option value="note">ðŸ“� Note</option>
+                                <option value="call">📞 Phone Call</option>
+                                <option value="email">📧 Email</option>
+                                <option value="whatsapp">💬 WhatsApp</option>
+                                <option value="meeting">🤝 Meeting</option>
+                                <option value="note">📝 Note</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -1065,9 +1065,9 @@ function timeAgo($dt) {
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Priority</label>
                             <select aria-label="Priority" class="form-select" name="priority">
-                                <option value="low">ðŸŸ¢ Low</option>
-                                <option value="medium" selected>ðŸŸ¡ Medium</option>
-                                <option value="high">ðŸ”´ High</option>
+                                <option value="low">🟢 Low</option>
+                                <option value="medium" selected>🟡 Medium</option>
+                                <option value="high">🔴 High</option>
                             </select>
                         </div>
                         <div class="col-md-6">

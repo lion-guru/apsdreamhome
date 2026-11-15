@@ -1,7 +1,7 @@
 <?php $agents = $agents ?? []; $scripts = $scripts ?? []; $leads = $leads ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Schedule a Call</h4>
-    <a href="<?= BASE_URL ?>admin/voice-scheduler" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+    <a href="<?= BASE_URL ?>/admin/voice-scheduler" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
 </div>
 
 <div class="row">
@@ -9,7 +9,7 @@
         <div class="card shadow-sm">
             <div class="card-header aps-cp-card-header"><i class="fas fa-phone-alt me-2"></i>New Call Schedule</div>
             <div class="card-body aps-cp-card-body">
-                <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/store">
+                <form method="post" action="<?= BASE_URL ?>/admin/voice-scheduler/store">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label">Select Lead <span class="text-danger">*</span></label>
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Schedule Call</button>
-                    <a href="<?= BASE_URL ?>admin/voice-scheduler" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="<?= BASE_URL ?>/admin/voice-scheduler" class="btn btn-outline-secondary">Cancel</a>
                 </form>
             </div>
         </div>

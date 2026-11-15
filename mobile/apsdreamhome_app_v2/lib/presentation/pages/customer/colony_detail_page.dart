@@ -346,8 +346,10 @@ class ColonyDetailPage extends ConsumerWidget {
                         const SizedBox(height: 8),
                         Center(
                           child: TextButton.icon(
-                            onPressed: () =>
-                                context.push('/plots?colonyId=$colonyId'),
+                            onPressed: () => context.push(
+                              '/colony-plots/$colonyId',
+                              extra: {'colonyName': colony.name},
+                            ),
                             icon: const Icon(Icons.grid_view),
                             label: const Text('View Plot Grid'),
                           ),
@@ -614,7 +616,10 @@ class ColonyDetailPage extends ConsumerWidget {
                     height: 50,
                     child: ElevatedButton.icon(
                       onPressed: colony.availablePlots > 0
-                          ? () => context.push('/plots?colonyId=$colonyId')
+                          ? () => context.push(
+                              '/colony-plots/$colonyId',
+                              extra: {'colonyName': colony.name},
+                            )
                           : null,
                       icon: const Icon(Icons.grid_view),
                       label: Text(

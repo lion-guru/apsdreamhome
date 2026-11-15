@@ -141,7 +141,7 @@
         loading.style.display = 'block';
         sendBtn.disabled = true;
 
-        fetch('<?= BASE_URL ?>api/ai/chatbot', {
+        fetch('<?= BASE_URL ?>/api/ai/chatbot', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin',

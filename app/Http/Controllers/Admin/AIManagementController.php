@@ -7,6 +7,13 @@ use App\Http\Controllers\Admin\AdminController;
 class AIManagementController extends AdminController
 {
     use \App\Traits\TenantAwareTrait;
+    public function index()
+    {
+        $this->requireAdmin();
+        $this->data['page_title'] = 'AI Management';
+        $this->render('admin/ai-management/index');
+    }
+
     public function integrations()
     {
         $this->requireAdmin();

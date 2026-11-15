@@ -22,7 +22,7 @@ $user_role = $this->getUserRole() ?? 'customer';
         <!-- Chat Header -->
         <div class="ai-chat-header">
             <div class="ai-chat-info">
-                <div class="ai-chat-avatar">ðŸ¤–</div>
+                <div class="ai-chat-avatar">🤖</div>
                 <div class="ai-chat-details">
                     <h4>APS AI Assistant</h4>
                     <p id="ai-status-text">Ready to help</p>
@@ -522,7 +522,7 @@ function showLeadCaptureNotification(leadData) {
         max-width: 300px;
     `;
     notification.innerHTML = `
-        <strong>ðŸŽ¯ Lead Captured!</strong><br>
+        <strong>🎯 Lead Captured!</strong><br>
         ${leadData.name ? 'Name: ' + leadData.name + '<br>' : ''}
         ${leadData.phone ? 'Phone: ' + leadData.phone + '<br>' : ''}
         <small>Saved to database</small>

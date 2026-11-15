@@ -75,19 +75,20 @@ class _PostPropertyPageState extends ConsumerState<PostPropertyPage> {
     try {
       final api = ref.read(apiServiceProvider);
       final result = await api.post(
-        'properties/submit',
+        '/properties/owner-listings',
         data: {
-          'title': _titleController.text.trim(),
+          'name': _titleController.text.trim(),
           'description': _descriptionController.text.trim(),
-          'price': _priceController.text.trim(),
-          'property_type': _propertyType,
-          'listing_type': _listingType,
+          'price': double.tryParse(_priceController.text.trim()) ?? 0,
+          'property_type': _propertyType.toLowerCase(),
+          'listing_type': _listingType.toLowerCase(),
           'location': _locationController.text.trim(),
-          'area_sqft': _areaController.text.trim(),
-          'bedrooms': _bedroomsController.text.trim(),
-          'bathrooms': _bathroomsController.text.trim(),
-          'furnishing': _furnishing,
-          'images': [],
+          'address': _locationController.text.trim(),
+          'area_sqft': int.tryParse(_areaController.text.trim()) ?? 0,
+          'bedrooms': int.tryParse(_bedroomsController.text.trim()) ?? 0,
+          'bathrooms': int.tryParse(_bathroomsController.text.trim()) ?? 0,
+          'furnished': _furnishing.toLowerCase().replaceAll('-', '_'),
+          'year_built': 0,
         },
       );
 

@@ -35,7 +35,8 @@ class _CustomerShellState extends State<CustomerShell> {
   ];
 
   void _syncIndexFromRoute() {
-    final location = GoRouterState.of(context).uri.toString();
+    // Match on the path only - query strings (e.g. /plots?colonyId=3) must not break tab sync
+    final location = GoRouterState.of(context).uri.path;
     for (var i = 0; i < _tabs.length; i++) {
       if (location == _tabs[i] || location.startsWith('${_tabs[i]}/')) {
         if (_currentIndex != i) {

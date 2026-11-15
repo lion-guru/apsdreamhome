@@ -126,20 +126,25 @@ class RAGService
 
     /**
      * Add a document to the knowledge base
-     * @param array $data ['title', 'content', 'source', 'tags', 'metadata']
+     * @param array $data ['title', 'content', 'source', 'tags', 'metadata', 'visibility']
      * @return int document ID
      */
     public function addDocument(array $data): int
     {
         $tid = $this->tenantId();
+        $visibility = $data['visibility'] ?? 'admin';
+        if (!in_array($visibility, ['public', 'staff', 'admin'], true)) {
+            $visibility = 'admin';
+        }
 
-        $columns = ['title', 'content', 'source', 'tags', 'metadata', 'tenant_id', 'created_at', 'updated_at'];
+        $columns = ['title', 'content', 'source', 'tags', 'metadata', 'visibility', 'tenant_id', 'created_at', 'updated_at'];
         $values = [
             $data['title'] ?? '',
             $data['content'] ?? '',
             $data['source'] ?? 'manual',
             json_encode($data['tags'] ?? []),
             json_encode($data['metadata'] ?? []),
+            $visibility,
             $tid > 1 ? $tid : 1,
             date('Y-m-d H:i:s'),
             date('Y-m-d H:i:s'),
@@ -220,53 +225,77 @@ class RAGService
     }
 
     /**
-     * Chunk text with overlap
+     * Chunk text with overlap — ALL offsets use multibyte-safe functions.
+     * Byte-level substr() would slice a multibyte character in half and corrupt
+     * the UTF-8 sequence (\x80\x94… → "Incorrect string value" on INSERT).
      */
     private function chunkText(string $text, int $chunkSize = 1000, int $overlap = 200): array
     {
         $text = trim($text);
-        if (strlen($text) <= $chunkSize) return [$text];
+        $len = mb_strlen($text, 'UTF-8');
+        if ($len <= $chunkSize) return [$text];
 
         $chunks = [];
         $start = 0;
 
-        while ($start < strlen($text)) {
-            $end = min($start + $chunkSize, strlen($text));
+        while ($start < $len) {
+            $end = min($start + $chunkSize, $len);
 
             // Try to break at sentence boundary
-            if ($end < strlen($text)) {
-                $lastPeriod = strrpos(substr($text, $start, $chunkSize), '.');
-                $lastNewline = strrpos(substr($text, $start, $chunkSize), "\n");
-                $breakPoint = max($lastPeriod, $lastNewline);
+            if ($end < $len) {
+                $window = mb_substr($text, $start, $chunkSize, 'UTF-8');
+                $lastPeriod = mb_strrpos($window, '.', 0, 'UTF-8');
+                $lastNewline = mb_strrpos($window, "\n", 0, 'UTF-8');
+                if ($lastPeriod === false && $lastNewline === false) {
+                    // nothing helpful — break on whitespace as a fallback
+                    $breakPoint = mb_strrpos($window, ' ', 0, 'UTF-8');
+                } else {
+                    $breakPoint = max($lastPeriod === false ? -1 : $lastPeriod, $lastNewline === false ? -1 : $lastNewline);
+                }
                 if ($breakPoint !== false && $breakPoint > $chunkSize * 0.5) {
                     $end = $start + $breakPoint + 1;
                 }
             }
 
-            $chunks[] = trim(substr($text, $start, $end - $start));
-            $start = $end - $overlap;
-            if ($start >= strlen($text)) break;
+            // Guarantee progress — $end must always advance past the previous start.
+            if ($end <= $start) {
+                $end = min($start + $chunkSize, $len);
+            }
+
+            $chunks[] = trim(mb_substr($text, $start, $end - $start, 'UTF-8'));
+
+            $nextStart = $end - $overlap;
+            $start = max($nextStart, $start + 1);
+            if ($start >= $len) break;
         }
 
-        return array_filter($chunks, fn($c) => strlen(trim($c)) > 50);
+        return array_filter($chunks, fn($c) => mb_strlen(trim($c), 'UTF-8') > 50);
     }
 
     /**
      * Search knowledge base for relevant chunks
      * @param string $query
      * @param int $limit
+     * @param string $visibility 'public'|'staff'|'admin' — RBAC scope. Public visitors/staff
+     *                            must never retrieve internal admin documents; admins see all.
      * @return array of matching chunks with scores
      */
-    public function search(string $query, int $limit = 5): array
+    public function search(string $query, int $limit = 5, string $visibility = 'admin'): array
     {
         $tid = $this->tenantId();
 
-        // Get all chunks for this tenant
+        $visSql = match ($visibility) {
+            'public' => "AND kb.visibility = 'public'",
+            'staff'  => "AND kb.visibility IN ('public','staff')",
+            default  => '', // admin/super_admin — no restriction
+        };
+
+        // Get all chunks for this tenant + visibility scope
         $chunks = $this->db->fetchAll(
-            "SELECT kc.*, kb.title as doc_title, kb.source
+            "SELECT kc.*, kb.title as doc_title, kb.source, kb.visibility
              FROM ai_knowledge_chunks kc
              JOIN ai_knowledge_base kb ON kc.knowledge_base_id = kb.id
-             WHERE kb.tenant_id = " . ($tid > 1 ? $tid : 1) . " AND kb.is_active = 1",
+             WHERE kb.tenant_id = " . ($tid > 1 ? $tid : 1) . " AND kb.is_active = 1 " . $visSql,
             []
         ) ?: [];
 
@@ -314,11 +343,166 @@ class RAGService
             }
         }
 
-        // Convert back to array and sort by score
-        $results = array_values($results);
+        // Sort by score
         usort($results, fn($a, $b) => $b['score'] <=> $a['score']);
 
         return array_slice($results, 0, $limit);
+    }
+
+    /**
+     * Agentic Q&A entry point — retrieves relevant knowledge-base chunks (RBAC-scoped)
+     * and a matching live colony (if any colony is named), then asks a free AI engine
+     * to compose a grounded answer. Never fabricates: if nothing is retrieved and no
+     * colony matches, returns success=false so callers can fall through to the next layer.
+     *
+     * @param string $query    User's question
+     * @param int    $userId   Authenticated user id (0 = guest) — used only for logging
+     * @param string $visibility 'public'|'staff'|'admin' — passed through to search()
+     * @return array {
+     *   success, answer, confidence, sources: [{type,title,score}], session_id
+     * }
+     */
+    public function answer(string $query, int $userId = 0, string $visibility = 'admin'): array
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return ['success' => false, 'answer' => '', 'confidence' => 0.0, 'sources' => [], 'session_id' => $userId ? 'u' . $userId : 'guest'];
+        }
+
+        $chunks = $this->search($query, 4, $visibility);
+        $colony = null;
+        try {
+            $colony = $this->findRelevantColony($query);
+        } catch (\Throwable $e) {
+            error_log('RAGService::answer colony lookup failed: ' . $e->getMessage());
+        }
+
+        $sources = [];
+        $contextBlocks = [];
+        foreach ($chunks as $c) {
+            $sources[] = [
+                'type' => 'kb',
+                'title' => 'Knowledge Base: ' . (string)($c['doc_title'] ?? ''),
+                'score' => (float)($c['score'] ?? 0),
+            ];
+            $contextBlocks[] = "[KB — " . (string)($c['doc_title'] ?? 'doc') . "]\n" . mb_substr((string)($c['text'] ?? ''), 0, 800);
+        }
+        if ($colony !== null) {
+            $sources[] = [
+                'type' => 'colony',
+                'title' => 'Colony: ' . $colony['name'],
+                'score' => 0.95,
+            ];
+            $contextBlocks[] = "[Live colony data]\n" . $colony['context_text'];
+        }
+
+        if (empty($contextBlocks)) {
+            return [
+                'success' => false,
+                'answer' => '',
+                'confidence' => 0.0,
+                'sources' => [],
+                'session_id' => $userId ? 'u' . $userId : 'guest',
+            ];
+        }
+
+        $context = implode("\n\n", $contextBlocks);
+        $prompt = "You are the APS Dream Home AI assistant (RAG grounded). Answer the user's question using ONLY the context below. "
+            . "Reply in Hinglish. If the answer is not in the context, say you don't know and suggest contacting the official office.\n\n"
+            . "CONTEXT:\n" . $context . "\n\nUSER QUESTION:\n" . $query . "\n\nANSWER:";
+
+        try {
+            $aiResp = $this->freeEngines->generate($prompt, ['max_tokens' => 450, 'temperature' => 0.4], 'chat');
+            $text = trim((string)($aiResp['text'] ?? ''));
+        } catch (\Throwable $e) {
+            error_log('RAGService::answer AI call failed: ' . $e->getMessage());
+            $text = '';
+        }
+
+        if ($text === '') {
+            // Degrade to a clean, sourced summary instead of silence.
+            $text = "I found these relevant documents in the APS knowledge base:\n\n";
+            foreach ($sources as $s) {
+                $text .= "• " . $s['title'] . "\n";
+            }
+            $text .= "\nFor the full details, please contact us at +91 92771 21112.";
+        }
+
+        return [
+            'success' => true,
+            'answer' => $text,
+            'confidence' => $colony !== null ? 0.85 : 0.65,
+            'sources' => $sources,
+            'session_id' => $userId ? 'u' . $userId : 'guest',
+        ];
+    }
+
+    /**
+     * Find a colony referenced by name in the query and return its live snapshot.
+     */
+    private function findRelevantColony(string $query): ?array
+    {
+        $q = mb_strtolower($query);
+        $colonies = [
+            'suryoday colony' => ['key' => 'suryoday', 'name' => 'Suryoday Colony'],
+            'suryoday heights' => ['key' => 'suryoday', 'name' => 'Suryoday Heights'],
+            'raghunath' => ['key' => 'raghunath', 'name' => 'Raghunath Nagri'],
+            'braj radha' => ['key' => 'braj', 'name' => 'Braj Radha Nagri'],
+            'budh bihar' => ['key' => 'budh', 'name' => 'Budh Bihar Colony'],
+            'budha city' => ['key' => 'budh', 'name' => 'Budha City Kushinagar'],
+            'motiram' => ['key' => 'motiram', 'name' => 'Motiram Township'],
+            'lakhewsari' => ['key' => 'lakeview', 'name' => 'Lakeview Residency'],
+            'lakeview' => ['key' => 'lakeview', 'name' => 'Lakeview Residency'],
+        ];
+        $match = null;
+        foreach ($colonies as $needle => $meta) {
+            if (str_contains($q, $needle)) { $match = $meta; break; }
+        }
+        if ($match === null) {
+            return null;
+        }
+
+        try {
+            $row = $this->db->fetch(
+                "SELECT id, name, status, total_plots, available_plots, total_area_acres, starting_price, city, state, rera_number
+                 FROM colonies
+                 WHERE LOWER(name) LIKE ? OR LOWER(slug) LIKE ?
+                 LIMIT 1",
+                ['%' . str_replace(' ', '%', $match['key']) . '%', '%' . str_replace(' ', '%', $match['key']) . '%']
+            );
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        if (!$row) {
+            return null;
+        }
+
+        $plotSummary = '';
+        try {
+            $p = $this->db->fetchAll(
+                "SELECT status, COUNT(*) n FROM plots WHERE colony_id = ? GROUP BY status",
+                [(int)$row['id']]
+            );
+            $parts = [];
+            foreach ($p as $r) {
+                $parts[] = ($r['n'] ?? 0) . ' ' . ($r['status'] ?? '');
+            }
+            $plotSummary = "Plot inventory: " . implode(', ', $parts);
+        } catch (\Throwable $e) {
+            $plotSummary = 'Plot inventory unavailable';
+        }
+
+        $context = "- Colony: " . ($row['name'] ?? $match['name']) . "\n"
+            . "- Status: " . ($row['status'] ?? 'active') . "\n"
+            . "- Location: " . trim(($row['city'] ?? '') . ', ' . ($row['state'] ?? 'Uttar Pradesh'), ", ") . "\n"
+            . "- RERA number: " . ($row['rera_number'] ?? 'Not registered/available') . "\n"
+            . "- Total plots: " . ($row['total_plots'] ?? 'N/A') . "\n"
+            . "- Available plots: " . ($row['available_plots'] ?? 'N/A') . "\n"
+            . "- Starting price/sqft: ₹" . number_format((float)($row['starting_price'] ?? 0), 2) . "\n"
+            . "- " . $plotSummary;
+
+        return ['name' => (string)($row['name'] ?? $match['name']), 'context_text' => $context];
     }
 
     /**
@@ -341,6 +525,35 @@ class RAGService
         if ($normA == 0 || $normB == 0) return 0.0;
 
         return $dotProduct / (sqrt($normA) * sqrt($normB));
+    }
+
+    /**
+     * RAG engine health stats (documents, chunks, providers)
+     */
+    public function getStats(): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $docs = (int)($this->db->fetch("SELECT COUNT(*) AS c FROM ai_knowledge_base WHERE tenant_id = " . ($tid > 1 ? $tid : 1))['c'] ?? 0);
+            $chunks = (int)($this->db->fetch("SELECT COUNT(*) AS c FROM ai_knowledge_chunks WHERE tenant_id = " . ($tid > 1 ? $tid : 1))['c'] ?? 0);
+            $degraded = 0;
+            try {
+                $rows = $this->db->fetchAll("SELECT embedding FROM ai_knowledge_chunks LIMIT 50") ?: [];
+                foreach ($rows as $r) {
+                    $dec = json_decode((string)($r['embedding'] ?? ''), true);
+                    if ((string)($dec['model'] ?? '') === self::MODEL_HASH) $degraded++;
+                }
+            } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            $docs = 0; $chunks = 0; $degraded = 0;
+        }
+
+        return [
+            'documents' => $docs,
+            'chunks' => $chunks,
+            'degraded_sample' => $degraded,
+            'active_provider' => $this->lastProvider,
+        ];
     }
 
     /**
@@ -652,15 +865,26 @@ class RAGService
 
         // Stored chunk composition.
         $stored = [];
+        $dims = [];
+        $totalChunks = 0;
+        $onDim = 0;
         try {
             $rows = $this->db->fetchAll("SELECT embedding FROM ai_knowledge_chunks") ?: [];
             foreach ($rows as $r) {
                 $dec = json_decode((string) ($r['embedding'] ?? ''), true);
                 $m = (string) ($dec['model'] ?? 'unknown');
                 $stored[$m] = ($stored[$m] ?? 0) + 1;
+                $v = $dec['vector'] ?? null;
+                $d = is_array($v) ? count($v) : 0;
+                $dims[$d] = ($dims[$d] ?? 0) + 1;
+                $totalChunks++;
+                if ($d === $probeDim) { $onDim++; }
             }
         } catch (\Throwable $e) {
             $stored = [];
+            $dims = [];
+            $totalChunks = 0;
+            $onDim = 0;
         }
 
         return [
@@ -676,6 +900,10 @@ class RAGService
             'stored_models' => $stored,
             'stale_chunks' => ($stored[self::MODEL_HASH] ?? 0),
             'total_chunks' => array_sum($stored),
+            'stored_dimensions' => $dims,
+            'corpus_dim_checked' => $totalChunks,
+            'corpus_dim_searchable' => $onDim,
+            'corpus_dim_coverage_pct' => $totalChunks > 0 ? round(($onDim / $totalChunks) * 100, 1) : 0.0,
         ];
     }
 

@@ -3,14 +3,14 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-plus"></i> Add Plot</h2>
-                <a href="<?= BASE_URL ?>admin/plots" class="btn btn-secondary">
+                <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
             
             <div class="card aps-cp-card">
                 <div class="card-body aps-cp-card-body">
-                    <form method="POST" action="<?= BASE_URL ?>admin/plots" id="plotForm">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/plots" id="plotForm">
                         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
                         <ul class="nav nav-tabs mb-3" id="plotTabs">
                             <li class="nav-item"><a class="nav-link active" href="#basic" data-bs-toggle="tab">Basic Info</a></li>
@@ -252,7 +252,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="<?= BASE_URL ?>admin/plots" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

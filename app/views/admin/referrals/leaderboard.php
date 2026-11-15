@@ -21,7 +21,7 @@ $current_period = $current_period ?? 'all';
     <div class="row mb-4">
         <div class="col-md-4 offset-md-4">
             <div class="card border-0 shadow-sm text-center py-4">
-                <div >ðŸ‘‘</div>
+                <div >👑</div>
                 <h5 class="mb-1"><?= htmlspecialchars($leaderboard[0]['name'] ?? '') ?></h5>
                 <div class="text-muted small mb-2"><?= $leaderboard[0]['referral_count'] ?? 0 ?> referrals</div>
                 <span class="badge">
@@ -33,7 +33,7 @@ $current_period = $current_period ?? 'all';
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div >ðŸ¥ˆ</div>
+                <div >🥈</div>
                 <h6 class="mb-1"><?= htmlspecialchars($leaderboard[1]['name'] ?? '') ?></h6>
                 <div class="text-muted small"><?= $leaderboard[1]['referral_count'] ?? 0 ?> referrals</div>
                 <span class="badge mt-1"><?= ucfirst($leaderboard[1]['tier'] ?? 'silver') ?></span>
@@ -41,7 +41,7 @@ $current_period = $current_period ?? 'all';
         </div>
         <div class="col-md-4 offset-md-4">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div >ðŸ¥‰</div>
+                <div >🥉</div>
                 <h6 class="mb-1"><?= htmlspecialchars($leaderboard[2]['name'] ?? '') ?></h6>
                 <div class="text-muted small"><?= $leaderboard[2]['referral_count'] ?? 0 ?> referrals</div>
                 <span class="badge mt-1"><?= ucfirst($leaderboard[2]['tier'] ?? 'bronze') ?></span>
@@ -75,7 +75,7 @@ $current_period = $current_period ?? 'all';
                             <td class="text-center">
                                 <?php if (($entry['rank'] ?? 0) <= 3): ?>
                                 <span >
-                                    <?= $entry['rank'] == 1 ? 'ðŸ¥‡' : ($entry['rank'] == 2 ? 'ðŸ¥ˆ' : 'ðŸ¥‰') ?>
+                                    <?= $entry['rank'] == 1 ? '🥇' : ($entry['rank'] == 2 ? '🥈' : '🥉') ?>
                                 </span>
                                 <?php else: ?>
                                 <strong>#<?= $entry['rank'] ?></strong>

@@ -1,7 +1,7 @@
 <?php $scripts = $scripts ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Call Scripts</h4>
-    <a href="<?= BASE_URL ?>admin/ai-calling/training" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Script</a>
+    <a href="<?= BASE_URL ?>/admin/ai-calling/training" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Script</a>
 </div>
 <div class="card aps-cp-card">
     <div class="card-body p-0">
@@ -31,8 +31,8 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="<?= BASE_URL ?>admin/ai-calling/training" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
-                                    <form method="post" action="<?= BASE_URL ?>admin/ai-calling/training/save-script" class="d-inline">
+                                    <a href="<?= BASE_URL ?>/admin/ai-calling/training" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <form method="post" action="<?= BASE_URL ?>/admin/ai-calling/training/save-script" class="d-inline">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="hidden" name="script_id" value="<?= (int)($s['id'] ?? 0) ?>">
                                         <input type="hidden" name="is_active" value="<?= $active ? 0 : 1 ?>">
@@ -40,7 +40,7 @@
                                             <i class="fas fa-<?= $active ? 'pause' : 'play' ?>"></i>
                                         </button>
                                     </form>
-                                    <a href="<?= BASE_URL ?>admin/ai-calling/training" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/ai-calling/training" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

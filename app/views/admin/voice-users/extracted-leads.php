@@ -60,7 +60,7 @@
 function csrfToken() { return '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>'; }
 function verifyLead(id) {
     showLoader();
-    fetch('<?= BASE_URL ?>admin/voice-users/ajax/convert-lead', {
+    fetch('<?= BASE_URL ?>/admin/voice-users/ajax/convert-lead', {
         method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'csrf_token=' + encodeURIComponent(csrfToken()) + '&extracted_id=' + id
     }).then(r => r.json()).then(d => {
@@ -78,7 +78,7 @@ function convertAllVerified() {
     var done = 0;
     ids.forEach(function(id) {
         showLoader();
-        fetch('<?= BASE_URL ?>admin/voice-users/ajax/convert-lead', {
+        fetch('<?= BASE_URL ?>/admin/voice-users/ajax/convert-lead', {
             method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'csrf_token=' + encodeURIComponent(csrfToken()) + '&extracted_id=' + id
         }).then(function(r) { return r.json(); }).then(function() { done++; if (done === ids.length) location.reload(); ).finally(() => hideLoader());
@@ -88,7 +88,7 @@ function viewLeadTimeline(id) {
     document.getElementById('leadTimelineBody').innerHTML = '<div class="text-center py-3"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
     new bootstrap.Modal(document.getElementById('leadTimelineModal')).show();
     showLoader();
-    fetch('<?= BASE_URL ?>admin/voice-users/ajax/lead-timeline/' + id).then(r => r.json()).then(d => {
+    fetch('<?= BASE_URL ?>/admin/voice-users/ajax/lead-timeline/' + id).then(r => r.json()).then(d => {
         if (d.success && d.data && d.data.length) {
             var html = '<ul class="list-group">';
             d.data.forEach(function(item) { html += '<li class="list-group-item"><strong>' + (item.action || '') + '</strong> <small class="text-muted">' + (item.created_at || '') + '</small><br>' + (item.details || item.notes || '') + '</li>'; ).finally(() => hideLoader());

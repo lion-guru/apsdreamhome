@@ -398,27 +398,27 @@ if (!function_exists('cm_getProjectStatusClass')) {
     }
 
     function manageTeam() {
-        window.location.href = '<?= BASE_URL ?>admin/team';
+        window.location.href = '<?= BASE_URL ?>/admin/team';
     }
 
     function viewReports() {
-        window.location.href = '<?= BASE_URL ?>admin/reports';
+        window.location.href = '<?= BASE_URL ?>/admin/reports';
     }
 
     function assignProjects() {
-        window.location.href = '<?= BASE_URL ?>admin/properties/assign';
+        window.location.href = '<?= BASE_URL ?>/admin/properties/assign';
     }
 
     function scheduleMeeting() {
-        window.location.href = '<?= BASE_URL ?>admin/visits';
+        window.location.href = '<?= BASE_URL ?>/admin/visits';
     }
 
     function viewFullTeam() {
-        window.location.href = '<?= BASE_URL ?>admin/team';
+        window.location.href = '<?= BASE_URL ?>/admin/team';
     }
 
     function viewAllProjects() {
-        window.location.href = '<?= BASE_URL ?>admin/properties';
+        window.location.href = '<?= BASE_URL ?>/admin/properties';
     }
 
     // Auto-refresh dashboard every 30 seconds

@@ -35,6 +35,17 @@ $stored = $health['stored_models'] ?? [];
     </div>
     <?php endif; ?>
 
+    <?php if (($health['corpus_dim_coverage_pct'] ?? 100) < 100): ?>
+    <div class="alert alert-danger">
+        <i class="fas fa-search-minus me-2"></i>
+        <strong>Search unreachable for <?= htmlspecialchars(number_format(100 - (float)($health['corpus_dim_coverage_pct'] ?? 0), 1)) ?>% of the corpus.</strong>
+        Only <code><?= (int)($health['corpus_dim_searchable'] ?? 0) ?> of <?= (int)($health['corpus_dim_checked'] ?? 0) ?> chunks</code>
+        match the query embedding's dimension (<?= (int)($health['probe_dimension'] ?? 0) ?>-dim).
+        Chunks stored at other dimensions are silently skipped by search — wait for the provider quota reset and
+        re-embed the tail chunks, or restore from <code>backups/db/ai_knowledge_chunks_pre_reindex_s555.sql</code>.
+    </div>
+    <?php endif; ?>
+
     <?php if ($stale > 0): ?>
     <div class="alert alert-warning">
         <i class="fas fa-sync-alt me-2"></i>
@@ -63,6 +74,19 @@ $stored = $health['stored_models'] ?? [];
                 <div class="text-muted small">Vector dimension</div>
                 <div class="h5 mb-0"><?= (int)($health['probe_dimension'] ?? 0) ?><span class="fs-6 text-muted">-dim</span></div>
                 <div class="small text-muted"><?= htmlspecialchars($health['configured_model'] ?? '') ?></div>
+            </div></div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100"><div class="card-body">
+                <div class="text-muted small">Search coverage</div>
+                <div class="h5 mb-0">
+                    <?php if (($health['corpus_dim_coverage_pct'] ?? 100) >= 100): ?>
+                        <span class="text-success">100%</span>
+                    <?php else: ?>
+                        <span class="text-danger"><?= htmlspecialchars(number_format((float)($health['corpus_dim_coverage_pct'] ?? 0), 1)) ?>%</span>
+                    <?php endif; ?>
+                </div>
+                <div class="small text-muted">chunks match query dimension</div>
             </div></div>
         </div>
         <div class="col-md-3">

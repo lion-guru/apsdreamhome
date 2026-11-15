@@ -1,7 +1,7 @@
 <?php $roles = $roles ?? ['manager', 'agent', 'staff', 'viewer']; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Add CRM User</h4>
-    <a href="<?= BASE_URL ?>admin/crm/users" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+    <a href="<?= BASE_URL ?>/admin/crm/users" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
 </div>
 <div class="card aps-cp-card">
     <div class="card-body aps-cp-card-body">
@@ -43,7 +43,7 @@
             </div>
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Create User</button>
-                <a href="<?= BASE_URL ?>admin/crm/users" class="btn btn-secondary">Cancel</a>
+                <a href="<?= BASE_URL ?>/admin/crm/users" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

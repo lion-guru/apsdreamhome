@@ -126,8 +126,8 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                                 <label class="form-label"><?= __('visit_type_label', [], 'Visit Type') ?></label>
                                 <select aria-label="Visit type" class="form-select" name="visit_type">
                                     <option value="site_visit">🏠 <?= __('visit_type_site', [], 'Site Visit (in-person)') ?></option>
-                                    <option value="virtual_tour">ðŸ'» <?= __('visit_type_virtual', [], 'Virtual Tour (video)') ?></option>
-                                    <option value="office_meeting">🏠¢ <?= __('visit_type_office', [], 'Office Meeting') ?></option>
+                                    <option value="virtual_tour">💻 <?= __('visit_type_virtual', [], 'Virtual Tour (video)') ?></option>
+                                    <option value="office_meeting">🏢 <?= __('visit_type_office', [], 'Office Meeting') ?></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -225,7 +225,7 @@ function validateForm() {
     document.getElementById('submitBtn').disabled = !(hasDate && hasTime);
 }
 document.querySelector('select[name="visit_type"]').addEventListener('change', function() {
-    const labels = { site_visit: '🏠 Site Visit', virtual_tour: 'ðŸ'» Virtual Tour', office_meeting: '🏠¢ Office Meeting' };
+    const labels = { site_visit: '🏠 Site Visit', virtual_tour: '💻 Virtual Tour', office_meeting: '🏢 Office Meeting' };
     document.getElementById('summaryType').textContent = labels[this.value] || this.value;
 });
 </script>

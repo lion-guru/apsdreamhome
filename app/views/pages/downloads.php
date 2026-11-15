@@ -40,9 +40,9 @@
             <div class="row mb-4">
                 <div class="col-12 text-center">
                     <div class="btn-group flex-wrap" role="group">
-                        <a href="<?= BASE_URL ?>downloads" class="btn btn-outline-primary <?= (!isset($_GET['category']) || Security::sanitize($_GET['category']) == 'all') ? 'active' : '' ?>"><?= __('filter_all') ?></a>
+                        <a href="<?= BASE_URL ?>/downloads" class="btn btn-outline-primary <?= (!isset($_GET['category']) || Security::sanitize($_GET['category']) == 'all') ? 'active' : '' ?>"><?= __('filter_all') ?></a>
                         <?php foreach ($categories as $cat): ?>
-                            <a href="<?= BASE_URL ?>downloads?category=<?= urlencode($cat) ?>" class="btn btn-outline-primary <?= (isset($_GET['category']) && Security::sanitize($_GET['category']) == $cat) ? 'active' : '' ?>">
+                            <a href="<?= BASE_URL ?>/downloads?category=<?= urlencode($cat) ?>" class="btn btn-outline-primary <?= (isset($_GET['category']) && Security::sanitize($_GET['category']) == $cat) ? 'active' : '' ?>">
                                 <?= htmlspecialchars(ucfirst($cat ?? '')) ?>
                             </a>
                         <?php endforeach; ?>

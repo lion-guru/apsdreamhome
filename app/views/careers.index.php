@@ -11,7 +11,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-filter me-2"></i>Filter</h2></div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="get" action="<?= BASE_URL ?>careers">
+                    <form method="get" action="<?= BASE_URL ?>/careers">
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label small">Department</label>
@@ -58,7 +58,7 @@
                             <p class="card-text small text-muted"><?= htmlspecialchars(mb_substr($j['description'] ?? '', 0, 120)) ?>...</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted"><i class="far fa-clock me-1"></i>Posted: <?= htmlspecialchars($j['created_at'] ?? 'N/A') ?></small>
-                                <a href="<?= BASE_URL ?>careers/details/<?= (int)($j['id'] ?? 0) ?>" class="btn btn-outline-primary btn-sm">Apply Now <i class="fas fa-arrow-right ms-1"></i></a>
+                                <a href="<?= BASE_URL ?>/careers/details/<?= (int)($j['id'] ?? 0) ?>" class="btn btn-outline-primary btn-sm">Apply Now <i class="fas fa-arrow-right ms-1"></i></a>
                             </div>
                         </div>
                     </div>

@@ -32,7 +32,7 @@ class AdminAIController extends AdminController
             error_log("AdminAIController::training() DB error: " . $e->getMessage());
         }
 
-        // Knowledge base data for training view
+        // Knowledge base data for training view (live RAG schema: title/content/source/tags/visibility)
         $knowledgeBase = [];
         $analytics = [
             'total_qa' => 0,
@@ -43,23 +43,25 @@ class AdminAIController extends AdminController
         ];
 
         try {
+            // Preserve the view's expected keys (question_pattern/answer/category/usage_count) via aliases.
             $knowledgeBase = $this->db->fetchAll(
-                "SELECT * FROM ai_knowledge_base ORDER BY category, usage_count DESC, created_at DESC"
+                "SELECT id, title AS question_pattern, content AS answer, source AS category, 0 AS usage_count, created_at
+                 FROM ai_knowledge_base
+                 ORDER BY created_at DESC"
             ) ?: [];
         } catch (\Throwable $e) {
-        // Table might not exist
-        error_log($e->getMessage());
+            error_log($e->getMessage());
         }
 
         try {
-            $cats = $this->db->fetchAll("SELECT category, COUNT(*) as count FROM ai_knowledge_base GROUP BY category");
+            $cats = $this->db->fetchAll("SELECT source AS category, COUNT(*) as count FROM ai_knowledge_base GROUP BY source");
             foreach ($cats as $cat) {
                 $analytics['categories'][$cat['category']] = $cat['count'];
             }
             $analytics['total_qa'] = count($knowledgeBase);
             $analytics['most_used'] = $this->db->fetchAll(
-                "SELECT question_pattern, usage_count FROM ai_knowledge_base 
-                 WHERE usage_count > 0 ORDER BY usage_count DESC LIMIT 5"
+                "SELECT title AS question_pattern, 0 AS usage_count FROM ai_knowledge_base
+                 ORDER BY id DESC LIMIT 5"
             ) ?: [];
             $today = $this->db->fetch("SELECT COUNT(*) as count FROM ai_conversations WHERE DATE(created_at) = CURDATE()");
             $analytics['conversations_today'] = $today['count'] ?? 0;

@@ -60,6 +60,92 @@ class PropertyListingService {
     }
   }
 
+  /// Get direct-from-owner verified listings (public feed, no company filter)
+  Future<List<PropertyListing>> getOwnerListings({
+    String? type,
+    String? purpose, // sell, rent, lease
+    String? location,
+    int page = 1,
+    int limit = 20,
+  }) async {
+    try {
+      final params = <String, dynamic>{'page': page, 'limit': limit};
+      if (type != null && type != 'all') params['property_type'] = type;
+      if (purpose != null && purpose != 'all') params['listing_type'] = purpose;
+      if (location != null && location.isNotEmpty) params['location'] = location;
+
+      final response = await _api.get(
+        '/properties/owner-listings',
+        queryParameters: params,
+      );
+
+      final data = response['data'];
+      final List<dynamic> list;
+      if (data is Map && data.containsKey('properties')) {
+        list = (data['properties'] as List<dynamic>?) ?? [];
+      } else {
+        list = [];
+      }
+      return list.map((json) {
+        final m = json as Map<String, dynamic>;
+        return PropertyListing.fromJson({
+          ...m,
+          'location': m['location'] ?? m['city'] ?? m['address'] ?? '',
+          'area': m['area'] ?? m['area_sqft'],
+          'owner_name': m['owner_name'] ?? 'Owner',
+          'owner_type': 'owner',
+          'is_verified': true,
+        });
+      }).toList();
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching owner listings', e, stackTrace);
+      return [];
+    }
+  }
+
+  /// Get one owner listing's full detail (verified/approved only)
+  Future<PropertyListing?> getOwnerListing(int id) async {
+    try {
+      final response = await _api.get('/properties/owner-listing/$id');
+      final data = response['data'];
+      if (data != null) {
+        final m = data as Map<String, dynamic>;
+        return PropertyListing.fromJson({
+          ...m,
+          'location': m['location'] ?? m['city'] ?? m['address'] ?? '',
+          'area': m['area'] ?? m['area_sqft'],
+          'owner_name': m['owner_name'] ?? 'Owner',
+          'owner_type': 'owner',
+          'is_verified': true,
+        });
+      }
+      return null;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error fetching owner listing $id', e, stackTrace);
+      return null;
+    }
+  }
+
+  /// Submit an inquiry on either a company listing or an owner listing.
+  /// listingType='user' routes to the owner marketplace branch.
+  Future<Map<String, dynamic>> submitPropertyInquiry({
+    required int propertyId,
+    required String name,
+    required String phone,
+    String message = '',
+    String? listingType,
+    int? listingId,
+  }) async {
+    return _api.post('/properties/inquiry', data: {
+      'property_id': propertyId,
+      'listing_type': listingType == 'user' ? 'user' : 'company',
+      'listing_id': listingType == 'user' ? (listingId ?? propertyId) : propertyId,
+      'name': name,
+      'phone': phone,
+      'message': message,
+    });
+  }
+
   /// Get property by ID
   Future<PropertyListing?> getPropertyById(String id) async {
     try {
@@ -133,6 +219,14 @@ class PropertyListing {
   final bool isFeatured;
   final bool isUrgent;
   final int? siteId;
+  /// 'company' (default) or 'user' (owner marketplace)
+  final String source;
+  final String? listingType;
+  final String? furnished;
+  final int? yearBuilt;
+  final String? maskedPhone;
+  final int? bedrooms;
+  final int? bathrooms;
 
   const PropertyListing({
     required this.id,
@@ -159,6 +253,13 @@ class PropertyListing {
     this.isFeatured = false,
     this.isUrgent = false,
     this.siteId,
+    this.source = 'company',
+    this.listingType,
+    this.furnished,
+    this.yearBuilt,
+    this.maskedPhone,
+    this.bedrooms,
+    this.bathrooms,
   });
 
   List<Map<String, dynamic>> get badges {
@@ -196,7 +297,9 @@ class PropertyListing {
         fallback: 'sell',
       ),
       price: _parseDouble(json['price']),
-      area: json['area'] != null ? _parseDouble(json['area']) : null,
+      area: json['area'] != null
+          ? _parseDouble(json['area'])
+          : (json['area_sqft'] != null ? _parseDouble(json['area_sqft']) : null),
       location: _parseString(json['location'] ?? json['address']),
       city: json['city']?.toString(),
       state: json['state']?.toString(),
@@ -227,9 +330,20 @@ class PropertyListing {
       inquiries: _parseInt(json['inquiries']),
       createdAt: _parseString(json['created_at']),
       isPremium: json['is_premium'] == true || json['is_premium'] == 1,
-      isFeatured: json['is_featured'] == true || json['is_featured'] == 1,
+      isFeatured:
+          json['is_featured'] == true ||
+          json['is_featured'] == 1 ||
+          json['featured'] == true ||
+          json['featured'] == 1,
       isUrgent: json['is_urgent'] == true || json['is_urgent'] == 1,
       siteId: json['site_id'] != null ? _parseInt(json['site_id']) : null,
+      source: (json['source'] ?? 'company').toString(),
+      listingType: json['listing_type']?.toString(),
+      furnished: json['furnished']?.toString(),
+      yearBuilt: json['year_built'] != null ? _parseInt(json['year_built']) : null,
+      maskedPhone: json['masked_phone']?.toString(),
+      bedrooms: json['bedrooms'] != null ? _parseInt(json['bedrooms']) : null,
+      bathrooms: json['bathrooms'] != null ? _parseInt(json['bathrooms']) : null,
     );
   }
 

@@ -454,10 +454,10 @@
                 <h2 class="cta-title">Ready to Start Earning?</h2>
                 <p class="cta-subtitle">Join APS Dream Homes MLM program and start building your real estate empire today</p>
                 <div class="cta-actions">
-                    <a href="<?= BASE_URL ?>register-mlm" class="btn btn-warning btn-lg me-3">
+                    <a href="<?= BASE_URL ?>/register-mlm" class="btn btn-warning btn-lg me-3">
                         <i class="fas fa-rocket me-2"></i>Join Now - Free
                     </a>
-                    <a href="<?= BASE_URL ?>mlm-opportunity" class="btn btn-outline-light btn-lg">
+                    <a href="<?= BASE_URL ?>/mlm-opportunity" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-info-circle me-2"></i>Learn More
                     </a>
                 </div>

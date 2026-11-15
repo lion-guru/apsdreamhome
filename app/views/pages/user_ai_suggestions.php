@@ -72,7 +72,7 @@ document.getElementById('aiSuggestionForm').addEventListener('submit', function(
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><?= __('user_ai_suggestions_analyzing', 'Analyzing...') ?>';
 
-    fetch('<?= BASE_URL ?>api/ai/suggestions', {
+    fetch('<?= BASE_URL ?>/api/ai/suggestions', {
         method: 'POST',
         body: formData
     })

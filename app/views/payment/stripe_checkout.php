@@ -28,6 +28,6 @@ document.getElementById('submit-btn').addEventListener('click', async function()
     this.disabled = true; this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
     const {error, paymentIntent} = await stripe.confirmCardPayment('<?= h($client_secret ?? $clientSecret ?? '') ?>');
     if (error) { document.getElementById('card-errors').textContent = error.message; this.disabled = false; this.innerHTML = '<i class="fas fa-lock me-2"></i>Pay with Stripe'; }
-    else { window.location.href = '<?= BASE_URL ?>payment/success?gateway=stripe&payment_id=' + paymentIntent.id + '&order_id=<?= h($order_id ?? '') ?>'; }
+    else { window.location.href = '<?= BASE_URL ?>/payment/success?gateway=stripe&payment_id=' + paymentIntent.id + '&order_id=<?= h($order_id ?? '') ?>'; }
 });
 </script>

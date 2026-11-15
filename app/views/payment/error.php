@@ -9,9 +9,9 @@
                     <p class="text-muted mb-4"><?= h($errorMessage) ?></p>
                     <div class="d-flex justify-content-center gap-3">
                         <a href="javascript:history.back()" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Go Back</a>
-                        <a href="<?= BASE_URL ?>payment/gateway-selection" class="btn btn-primary"><i class="fas fa-redo me-1"></i>Try Again</a>
+                        <a href="<?= BASE_URL ?>/payment/gateway-selection" class="btn btn-primary"><i class="fas fa-redo me-1"></i>Try Again</a>
                     </div>
-                    <p class="mt-4 small text-muted">Need help? <a href="<?= BASE_URL ?>contact">Contact Support</a></p>
+                    <p class="mt-4 small text-muted">Need help? <a href="<?= BASE_URL ?>/contact">Contact Support</a></p>
                 </div>
             </div>
         </div>

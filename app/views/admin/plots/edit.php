@@ -4,7 +4,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-edit"></i> Edit Plot: <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h2>
                 <div>
-                    <a href="<?= BASE_URL ?>admin/plots" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Plots
                     </a>
                 </div>
@@ -246,7 +246,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="<?= BASE_URL ?>admin/plots" class="btn btn-secondary">Cancel</a>
+                            <a href="<?= BASE_URL ?>/admin/plots" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Plot</button>
                         </div>
                     </form>

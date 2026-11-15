@@ -50,7 +50,7 @@ ob_start();
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-light">
                         <h3 class="fs-5 fw-bold text-primary mb-3">Quick Inquiry</h3>
-                        <form action="<?= BASE_URL ?>contact" method="POST">
+                        <form action="<?= BASE_URL ?>/contact" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <input type="hidden" name="subject" value="Inquiry about Ram Nagri">
                             <div class="mb-3">

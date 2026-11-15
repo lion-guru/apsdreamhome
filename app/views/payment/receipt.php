@@ -25,7 +25,7 @@
                         <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> यदि यह भुगतान प्लॉट बुकिंग/टोकन राशि का है, तो यह राशि पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है।
                     </div>
                     <div class="text-center mt-4">
-                        <a href="<?= BASE_URL ?>payment/history" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to History</a>
+                        <a href="<?= BASE_URL ?>/payment/history" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to History</a>
                     </div>
                 </div>
             </div>

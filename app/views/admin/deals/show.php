@@ -1,7 +1,7 @@
 <?php $deal = $deal ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Deal Details</h4>
-    <a href="<?= BASE_URL ?>admin/deals" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back to Deals</a>
+    <a href="<?= BASE_URL ?>/admin/deals" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back to Deals</a>
 </div>
 <div class="row">
     <div class="col-md-8">
@@ -89,7 +89,7 @@
 
 <div class="modal fade" id="moveStageModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header"><h5 class="modal-title">Move to Next Stage</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form method="post" action="<?= BASE_URL ?>admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage">
+    <form method="post" action="<?= BASE_URL ?>/admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="modal-body">
             <div class="mb-3">
@@ -115,7 +115,7 @@ function markDealStatus(status) {
     });
     var form = document.createElement('form');
     form.method = 'POST';
-    form.action = '<?= BASE_URL ?>admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage';
+    form.action = '<?= BASE_URL ?>/admin/deals/<?= (int)($deal['id'] ?? 0) ?>/stage';
     var csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>';
     var stage = document.createElement('input'); stage.type = 'hidden'; stage.name = 'stage'; stage.value = status;
     form.appendChild(csrf); form.appendChild(stage);

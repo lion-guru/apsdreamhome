@@ -5,9 +5,9 @@
  */
 $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 $role = $role ?? 'admin';
-$roleTitle = $roleTitle ?? 'Executive';
-$userName = $userName ?? 'User';
-$focusAreas = $focusAreas ?? [];
+$roleTitle = $role_title ?? 'Executive';   // render() extracts $role_title
+$userName = $user_name ?? 'User';          // render() extracts $user_name
+$focusAreas = $focus_areas ?? [];          // render() extracts $focus_areas
 ?>
 <style>
     .ai-assistant-container { display: flex; height: calc(100vh - 120px); gap: 16px; }
@@ -95,11 +95,11 @@ $focusAreas = $focusAreas ?? [];
         
         <div class="ai-quick-queries">
             <h4>Quick Queries</h4>
-            <button class="quick-query-btn" onclick="sendQuickQuery('What are my top priorities today?')">ðŸŽ¯ Today's Priorities</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('Give me a quick performance summary')">ðŸ“Š Performance Summary</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('What actions should I take this week?')">📅 This Week Actions</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('Show me any alerts or issues')">ðŸš¨ Alerts & Issues</button>
-            <button class="quick-query-btn" onclick="sendQuickQuery('Compare this month vs last month')">ðŸ“ˆ Month Comparison</button>
+            <button class="quick-query-btn" onclick="eaSendQuickQuery('What are my top priorities today?')">🎯 Today's Priorities</button>
+            <button class="quick-query-btn" onclick="eaSendQuickQuery('Give me a quick performance summary')">📊 Performance Summary</button>
+            <button class="quick-query-btn" onclick="eaSendQuickQuery('What actions should I take this week?')">📅 This Week Actions</button>
+            <button class="quick-query-btn" onclick="eaSendQuickQuery('Show me any alerts or issues')">🚨 Alerts & Issues</button>
+            <button class="quick-query-btn" onclick="eaSendQuickQuery('Compare this month vs last month')">📈 Month Comparison</button>
         </div>
     </div>
     
@@ -115,7 +115,7 @@ $focusAreas = $focusAreas ?? [];
         
         <div class="ai-chat-messages" id="chatMessages">
             <div class="welcome-message">
-                <div class="icon">ðŸ¤–</div>
+                <div class="icon">🤖</div>
                 <h2>Namaste, <?= htmlspecialchars($userName ?? '') ?>!</h2>
                 <p>Main aapka <?= htmlspecialchars($roleTitle ?? '') ?> AI assistant hoon. Ask me anything about your department, KPIs, or business decisions.</p>
             </div>
@@ -128,7 +128,7 @@ $focusAreas = $focusAreas ?? [];
         
         <div class="ai-chat-input">
             <textarea aria-label="Chat input" id="chatInput" rows="1" placeholder="Type your message... (Enter to send, Shift+Enter for new line)"></textarea>
-            <button class="ai-send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Add"><i class="fas fa-paper-plane"></i></button>
+            <button class="ai-send-btn" id="sendBtn" onclick="eaSendMessage()" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
@@ -152,7 +152,7 @@ chatInput.addEventListener('input', function() {
 chatInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        sendMessage();
+        eaSendMessage();
     }
 });
 
@@ -164,7 +164,7 @@ function removeWelcome() {
     }
 }
 
-function addMessage(text, type, engine) {
+function eaAddMessage(text, type, engine) {
     removeWelcome();
     const div = document.createElement('div');
     div.className = 'ai-message ' + type;
@@ -177,7 +177,7 @@ function addMessage(text, type, engine) {
     return div;
 }
 
-function addActionChips(actions, container) {
+function eaAddActionChips(actions, container) {
     if (!actions || actions.length === 0) return;
     const chipDiv = document.createElement('div');
     chipDiv.className = 'ai-chat-actions';
@@ -191,7 +191,7 @@ function addActionChips(actions, container) {
     container.after(chipDiv);
 }
 
-async function sendMessage() {
+async function eaSendMessage() {
     const msg = chatInput.value.trim();
     if (!msg) return;
     
@@ -199,7 +199,7 @@ async function sendMessage() {
     chatInput.style.height = 'auto';
     sendBtn.disabled = true;
     
-    addMessage(msg, 'user');
+    eaAddMessage(msg, 'user');
     typingIndicator.classList.add('active');
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
@@ -215,31 +215,31 @@ async function sendMessage() {
         typingIndicator.classList.remove('active');
         
         if (data.success) {
-            const msgEl = addMessage(data.response, 'assistant', data.engine);
+            const msgEl = eaAddMessage(data.response, 'assistant', data.engine);
             if (data.suggested_actions) {
-                addActionChips(data.suggested_actions, msgEl);
+                eaAddActionChips(data.suggested_actions, msgEl);
             }
             if (data.quick_data) {
-                updateKPIs(data.quick_data);
+                eaUpdateKPIs(data.quick_data);
             }
         } else {
-            addMessage('Sorry, kuch gadbad ho gayi. Please try again.', 'assistant');
+            eaAddMessage('Sorry, kuch gadbad ho gayi. Please try again.', 'assistant');
         }
     } catch (err) {
         typingIndicator.classList.remove('active');
-        addMessage('Network error. Please check your connection.', 'assistant');
+        eaAddMessage('Network error. Please check your connection.', 'assistant');
     }
     
     sendBtn.disabled = false;
     chatInput.focus();
 }
 
-function sendQuickQuery(query) {
+function eaSendQuickQuery(query) {
     chatInput.value = query;
-    sendMessage();
+    eaSendMessage();
 }
 
-function updateKPIs(kpis) {
+function eaUpdateKPIs(kpis) {
     if (!kpis || Object.keys(kpis).length === 0) return;
     kpiGrid.innerHTML = '';
     const keys = Object.keys(kpis).slice(0, 6); // Max 6 KPIs
@@ -249,7 +249,7 @@ function updateKPIs(kpis) {
 }
 
 // Load KPIs on page load
-async function loadInitialKPIs() {
+async function eaLoadInitialKPIs() {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
         const res = await fetch('<?= $base ?>/admin/ai/executive-assistant/chat', {
@@ -259,11 +259,11 @@ async function loadInitialKPIs() {
         });
         const data = await res.json();
         if (data.success && data.quick_data) {
-            updateKPIs(data.quick_data);
+            eaUpdateKPIs(data.quick_data);
         }
     } catch (e) { console.error("Error:", e); }
 }
 
-loadInitialKPIs();
+eaLoadInitialKPIs();
 chatInput.focus();
 </script>

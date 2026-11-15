@@ -178,6 +178,9 @@ use App\Services\PortalMenuService;
             </div>
             <div class="header-actions">
                 <div id="notification-bell-placeholder"></div>
+                <a href="<?= BASE_URL ?>/user/ai-assistant" class="btn-icon" title="AI Assistant" aria-label="AI Assistant" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border-color:transparent;">
+                    <i class="fas fa-robot"></i>
+                </a>
                 <a href="<?= BASE_URL ?>/user/messages" class="btn-icon" title="Messages">
                     <i class="fas fa-envelope"></i>
                 </a>

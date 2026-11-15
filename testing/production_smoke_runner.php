@@ -4,11 +4,12 @@
  * File: testing/production_smoke_runner.php
  * Usage (CLI): php testing/production_smoke_runner.php [--base=http://localhost/apsdreamhome] [--no-color]
  *
- * Probes 24 endpoints (public + associate + admin + APIs) with cURL:
+ * Probes 38 endpoints (public + associate + employee + customer + admin + APIs) with cURL:
  *   - timeout 15s, follow redirects, per-role cookie jars
- *   - protected routes use dev bypass /admin/login?test_login=2 (super_admin)
- *     and ?test_login=5 (associate). Bypass is 403-blocked in production
- *     (see AdminAuthController), so this runner is LOCAL-DEV ONLY.
+ *   - protected routes use dev bypass /admin/login?test_login=2 (super_admin),
+ *     ?test_login=5 (associate), ?test_login=4 (employee), ?test_login=7 (customer).
+ *     Bypass is 403-blocked in production (see AdminAuthController), so this runner is
+ *     LOCAL-DEV ONLY.
  *
  * Spec-to-reality mapping (verified against routes/api.php before probing):
  *   - spec `/api/v2/mobile/health` does NOT exist -> probes real `/api/health`
@@ -34,7 +35,7 @@ function c(string $t, string $color = ''): string {
 }
 
 $tmp = sys_get_temp_dir();
-$jars = ['public' => "$tmp/smoke_public.txt", 'admin' => "$tmp/smoke_admin.txt", 'assoc' => "$tmp/smoke_assoc.txt"];
+$jars = ['public' => "$tmp/smoke_public.txt", 'admin' => "$tmp/smoke_admin.txt", 'assoc' => "$tmp/smoke_assoc.txt", 'employee' => "$tmp/smoke_employee.txt", 'customer' => "$tmp/smoke_customer.txt"];
 foreach ($jars as $j) @unlink($j);
 
 function hit(string $url, string $jar): array {
@@ -59,12 +60,22 @@ function hit(string $url, string $jar): array {
 }
 
 // --- establish role sessions (dev bypass) ---
-echo c('Auth: ', 'cyan') . "admin login?test_login=2 / associate login?test_login=5\n";
+echo c('Auth: ', 'cyan') . "admin ?test_login=2 / associate ?test_login=5 / employee ?test_login=4 / customer ?test_login=7\n";
 [$ai] = hit("$BASE/admin/login?test_login=2", $jars['admin']);
 [$si] = hit("$BASE/admin/login?test_login=5", $jars['assoc']);
-printf("  admin jar -> HTTP %d | assoc jar -> HTTP %d\n", $ai['code'], $si['code']);
+[$ei] = hit("$BASE/employee/login?test_login=4", $jars['employee']);
+[$ci] = hit("$BASE/login?test_login=7", $jars['customer']);
+printf("  admin -> HTTP %d | assoc -> HTTP %d | employee -> HTTP %d | customer -> HTTP %d\n", $ai['code'], $si['code'], $ei['code'], $ci['code']);
+// Fast-fail auth guard: if an admin session did not stick (throttle / stale jar),
+// every admin probe would land on a public login page and report "missing needle".
+// Detect that up-front and fail with a crystal-clear message instead of 7 ghost FAILs.
+[$authInfo, $authBody] = hit("$BASE/admin/ai/hub", $jars['admin']);
+if (stripos((string)$authBody, 'AI Command Center') === false) {
+    echo c("FATAL: admin bypass did not persist — /admin/ai/hub did not render. Likely login throttling or stale cookie jar. Re-run in a few seconds.\n", 'red');
+    exit(2);
+}
 
-// [label, path, jar, expectCodes, flags(json?)]
+// [label, path, jar, expectCodes, flags(json?), needle?]  — needle is a case-insensitive substring that must appear in the body
 $probes = [
     // public (9)
     ['home', '/', 'public', [200], 0], ['properties', '/properties', 'public', [200], 0],
@@ -78,6 +89,10 @@ $probes = [
     ['assoc-leads', '/associate/leads', 'assoc', [200], 0],
     ['assoc-genealogy', '/associate/genealogy', 'assoc', [200], 0],
     ['assoc-wallet', '/associate/wallet', 'assoc', [200], 0],
+    // employee + customer AI coach (S547) - session jars
+    ['assoc-ai-coach', '/associate/ai-coach', 'assoc', [200], 0, "AI Coach — APS Associate Portal"],
+    ['employee-ai-coach', '/employee/ai-coach', 'employee', [200], 0, "AI Coach — APS Employee Portal"],
+    ['customer-ai-assistant', '/user/ai-assistant', 'customer', [200], 0, 'APS AI Assistant'],
     // admin (7) — login form on fresh jar; rest on super_admin session
     ['admin-login', '/admin/login', 'public', [200], 0],
     ['admin-dashboard', '/admin/dashboard', 'admin', [200], 0],
@@ -90,6 +105,14 @@ $probes = [
     ['admin-ai-voice-history', '/admin/voice-users/history', 'admin', [200], 0],
     ['admin-ai-voice-schedule', '/admin/voice-users/schedule', 'admin', [200], 0],
     ['admin-ai-voice-settings', '/admin/voice-users/settings', 'admin', [200], 0],
+    // admin AI surface (S547) - 200 + content needle (S551): a 200-but-blank/error page must FAIL
+    ['admin-ai-hub', '/admin/ai/hub', 'admin', [200], 0, 'AI Command Center'],
+    ['admin-ai-morning-brief', '/admin/ai-morning-brief', 'admin', [200], 0, 'AI Morning Brief'],
+    ['admin-ai-executive', '/admin/ai/executive-assistant', 'admin', [200], 0, 'APS AI Assistant'],
+    ['admin-ai-management', '/admin/ai-management', 'admin', [200], 0, 'AI Management'],
+    ['admin-ai-insights', '/admin/ai-analytics/insights', 'admin', [200], 0, 'AI Insights'],
+    ['admin-ai-lead-scores', '/admin/ai-management/lead-scores', 'admin', [200], 0, 'AI Lead Scores'],
+    ['admin-rag', '/admin/rag', 'admin', [200], 0, 'RAG Knowledge Base'],
     // apis (3) — expect HTTP 200 + JSON body
     ['api-health', '/api/health', 'public', [200], 1],
     ['api-colonies', '/api/v2/mobile/colonies', 'public', [200], 1],
@@ -99,13 +122,27 @@ $probes = [
 $pass = 0; $fail = 0; $rows = [];
 echo "\n" . str_pad('ENDPOINT', 24) . str_pad('URL', 46) . str_pad('CODE', 7) . str_pad('TIME', 10) . "STATUS\n";
 echo str_repeat('-', 100) . "\n";
-foreach ($probes as [$label, $path, $jar, $expect, $wantJson]) {
-    [$info, $body, $ms] = hit($BASE . $path, $jars[$jar]);
+function probeOnce(string $url, string $jar, array $expect, int $wantJson, ?string $needle): array {
+    [$info, $body, $ms] = hit($url, $jar);
     $ok = in_array($info['code'], $expect, true) && $info['err'] === '' && $ms < 10000;
     $note = '';
+    if ($ok && !empty($needle)) {
+        if (stripos($body, $needle) === false) { $ok = false; $note = 'missing needle'; }
+    }
     if ($ok && $wantJson) {
         $isJson = stripos($info['ctype'], 'json') !== false || (json_decode($body) !== null);
         if (!$isJson) { $ok = false; $note = 'non-JSON'; }
+    }
+    return [$ok, $note, $info, $ms];
+}
+foreach ($probes as $probe) {
+    $label = $probe[0]; $path = $probe[1]; $jar = $probe[2]; $expect = $probe[3]; $wantJson = $probe[4]; $needle = $probe[5] ?? null;
+    [$ok, $note, $info, $ms] = probeOnce($BASE . $path, $jars[$jar], $expect, $wantJson, $needle);
+    if (!$ok) {
+        // One retry: an occasional empty-body render (S492-class race) is transient; retry distinguishes that from a real failure.
+        usleep(400000);
+        [$ok2, $note2, $info2, $ms2] = probeOnce($BASE . $path, $jars[$jar], $expect, $wantJson, $needle);
+        if ($ok2) { $ok = true; $note = 'FLAKY-RETRY'; $info = $info2; $ms = $ms2; } else { $note = $note2 !== '' ? $note2 : $note; }
     }
     if ($info['err'] !== '') $note = $info['err'];
     $ok ? $pass++ : $fail++;

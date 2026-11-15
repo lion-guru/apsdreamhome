@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('message', message);
             formData.append('whatsapp_message', '1');
 
-            fetch('<?= BASE_URL ?>whatsapp-webhook', { method: 'POST', body: formData })
+            fetch('<?= BASE_URL ?>/whatsapp-webhook', { method: 'POST', body: formData })
             .then(response => response.json())
             .then(data => {
                 typingIndicator.style.display = 'none';

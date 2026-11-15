@@ -379,10 +379,33 @@ class MobileUserApiController extends BaseController
         $this->setCorsHeaders();
         try {
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+            $emiId = (int)($input['emi_id'] ?? 0);
+            if ($emiId > 0) {
+                // Mobile app submits a UTR reference for a specific canonical installment row.
+                $utr = trim((string)($input['utr_number'] ?? ''));
+                if (strlen($utr) < 6) {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'A valid UPI Reference / UTR number (minimum 6 characters) is required']);
+                    return;
+                }
+                $row = $this->recordUtrPayment($userId, $emiId, $utr);
+                if (!$row) {
+                    http_response_code(404);
+                    echo json_encode(['success' => false, 'error' => 'Installment not found for this account']);
+                    return;
+                }
+                echo json_encode(['success' => true, 'message' => 'UPI payment reference recorded. Our accounts team will verify shortly.', 'payment_id' => $row['receipt_id']]);
+                return;
+            }
             $bookingId = (int)($input['booking_id'] ?? 0);
             $amount = (float)($input['amount'] ?? 0);
-            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
-            if (!$userId || !$bookingId || $amount <= 0) {
+            if (!$bookingId || $amount <= 0) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'User ID, booking ID and valid amount are required']);
                 return;
@@ -391,6 +414,66 @@ class MobileUserApiController extends BaseController
             echo json_encode(['success' => true, 'message' => 'EMI payment processed', 'payment_id' => $result]);
         } catch (\Throwable $e) {
             $this->handleApiError($e, 'EMI Payment API error');
+        }
+    }
+
+    private function recordUtrPayment(int $userId, int $emiId, string $utr)
+    {
+        $stmt = $this->db->prepare("
+            SELECT s.id, s.booking_id, s.installment_no, s.amount, s.paid_amount, s.late_fee, s.accrued_penalty
+            FROM booking_payment_schedules s
+            JOIN plot_bookings pb ON pb.id = s.booking_id
+            WHERE s.id = ? AND pb.customer_id = ?
+        ");
+        $stmt->execute([$emiId, $userId]);
+        $s = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$s) {
+            return null;
+        }
+        $amountDue = max(0.0, ((float)$s['amount'] - (float)($s['paid_amount'] ?? 0))
+            + (float)($s['late_fee'] ?? 0) + (float)($s['accrued_penalty'] ?? 0));
+
+        try {
+            $this->db->beginTransaction();
+            $receiptNumber = 'APS-UPI-' . date('Ymd') . '-' . str_pad((string)mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $stmt = $this->db->prepare("
+                INSERT INTO booking_payment_receipts
+                    (booking_id, installment_id, receipt_number, amount, payment_mode,
+                     transaction_ref, status, receipt_date, created_at)
+                VALUES (?, ?, ?, ?, 'upi', ?, 'pending', NOW(), NOW())
+            ");
+            $stmt->execute([(int)$s['booking_id'], (int)$s['id'], $receiptNumber, $amountDue, $utr]);
+            $receiptId = (int)$this->db->lastInsertId();
+            $stmt = $this->db->prepare("
+                INSERT INTO payment_transactions
+                    (transaction_id, user_id, booking_id, amount, currency, payment_method,
+                     payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 'INR', 'upi', 'pending', ?, ?, NOW(), NOW())
+            ");
+            $stmt->execute([
+                $receiptNumber, $userId, (int)$s['booking_id'], $amountDue,
+                $utr,
+                json_encode([
+                    'channel'    => 'upi_utr_mobile',
+                    'utr_number' => $utr,
+                    'emi_schedule_id' => (int)$s['id'],
+                ]),
+            ]);
+            $stmt = $this->db->prepare("
+                UPDATE booking_payment_schedules
+                SET remarks = CONCAT(COALESCE(remarks, ''), ' [UPI UTR submitted: ', ?, ']'),
+                    updated_at = NOW()
+                WHERE id = ?
+            ");
+            $stmt->execute([$utr, (int)$s['id']]);
+            $this->db->commit();
+            return ['receipt_id' => $receiptId];
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('MobileUserApiController::recordUtrPayment failed: ' . $e->getMessage());
+            return null;
         }
     }
 
@@ -1050,18 +1133,41 @@ class MobileUserApiController extends BaseController
 
     private function getEmiScheduleData($userId, $bookingId = 0)
     {
+        // Canonical path: booking_payment_schedules joined to the user's own plot_bookings.
+        // Keeps shape compatible with the mobile app (id, booking_id, emi_number, due_date,
+        // amount, paid_amount, status, paid_date, property_title).
+        $stmt = $this->db->prepare(
+            "SELECT s.id, s.booking_id, s.installment_no AS emi_number, s.due_date, s.amount,
+                    COALESCE(s.paid_amount, 0) AS paid_amount, s.status, s.paid_date,
+                    p.plot_number AS property_title, 'plot_bookings' AS source
+             FROM booking_payment_schedules s
+             JOIN plot_bookings pb ON pb.id = s.booking_id
+             LEFT JOIN plots p ON p.id = pb.plot_id
+             LEFT JOIN colonies c ON c.id = p.colony_id
+             WHERE pb.customer_id = ?\n" .
+            ($bookingId > 0 ? "               AND s.booking_id = ?\n" : "") .
+            "ORDER BY s.due_date ASC"
+        );
+        if ($bookingId > 0) {
+            $stmt->execute([$userId, $bookingId]);
+        } else {
+            $stmt->execute([$userId]);
+        }
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($rows)) {
+            return $rows;
+        }
+        // Legacy fallback: old emi_schedule rows joined to legacy bookings table
         $bookSql = $bookingId > 0 ? " AND e.booking_id = ?" : "";
         $params = $bookingId > 0 ? [$userId, $bookingId] : [$userId];
-        $stmt = $this->db->prepare("
-            SELECT e.id, e.booking_id, e.due_date, e.amount, e.paid_amount, e.status, e.paid_date,
-                   b.booking_date,
-                   p.title as property_title
-            FROM emi_schedule e
-            LEFT JOIN bookings b ON e.booking_id = b.id
-            LEFT JOIN properties p ON b.property_id = p.id
-            WHERE b.customer_id = ?{$bookSql}
-            ORDER BY e.due_date ASC
-        ");
+        $stmt = $this->db->prepare(
+            "SELECT e.id, e.booking_id, e.emi_number, e.due_date, e.amount, e.paid_amount, e.status, e.paid_date,
+                    NULL as property_title, 'emi_schedule' AS source
+             FROM emi_schedule e
+             LEFT JOIN bookings b ON e.booking_id = b.id
+             WHERE b.customer_id = ?{$bookSql}
+             ORDER BY e.due_date ASC"
+        );
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -1351,11 +1457,17 @@ class MobileUserApiController extends BaseController
     public function getJobListings() {
         $this->setCorsHeaders();
         try {
-            $stmt = $this->db->query("SELECT id, title, department, location, employment_type, experience_required, salary_range, vacancies, description, requirements, created_at FROM careers WHERE status = 'open' ORDER BY created_at DESC");
+            // Columns are aligned to the canonical `careers` table: full table is
+            // (title, description, type, department, experience, location, salary_range, status, created_at).
+            // Older versions of this query referenced nonexistent columns and the catch silently returned []
+            // making the mobile Careers list permanently empty.
+            $stmt = $this->db->query("SELECT id, title, department, type AS employment_type, experience AS experience_required, salary_range, location, description, created_at FROM careers WHERE status = 'open' ORDER BY created_at DESC");
             $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $jobs]);
         } catch (\Throwable $e) {
-            echo json_encode(['success' => true, 'data' => []]);
+            http_response_code(500);
+            error_log('getJobListings failed: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Unable to fetch job listings']);
         }
     }
 
@@ -4296,6 +4408,213 @@ class MobileUserApiController extends BaseController
 
         // 0 = the caller is not an employee (e.g. a customer token).
         return 0;
+    }
+
+    /**
+     * Create a direct-from-owner listing (user_properties). The seller posts
+     * from the app; the listing stays hidden until an admin verifies it at
+     * /admin/user-properties. Flow: pending -> verified/approved | rejected.
+     */
+    public function createOwnerListing()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) { $this->jsonError('Unauthorized', 401); return; }
+
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+            $name = Security::sanitize(trim((string)($input['name'] ?? '')));
+            if ($name === '') { $this->jsonError('Listing title is required', 400); return; }
+
+            $price = (float)($input['price'] ?? 0);
+            if ($price <= 0) { $this->jsonError('A valid price is required', 400); return; }
+
+            $type = (string)($input['property_type'] ?? 'plot');
+            if (!in_array($type, ['plot', 'house', 'flat', 'shop', 'farmhouse', 'land', 'apartment', 'villa'], true)) $type = 'plot';
+            $listingType = (string)($input['listing_type'] ?? 'sell');
+            if (!in_array($listingType, ['sell', 'rent', 'lease'], true)) $listingType = 'sell';
+
+            $phone = preg_replace('/[^0-9+]/', '', (string)($input['phone'] ?? ''));
+            if ($phone === '') {
+                $s = $this->db->prepare("SELECT phone FROM users WHERE id = ? LIMIT 1");
+                $s->execute([$userId]);
+                $phone = preg_replace('/[^0-9+]/', '', (string)($s->fetchColumn() ?: ''));
+            }
+            if ($phone === '') $phone = '0000000000';
+
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare(
+                "INSERT INTO user_properties
+                 (tenant_id, user_id, posted_by, posted_by_type, name, phone, location, address,
+                  area_sqft, bedrooms, bathrooms, furnished, year_built, price,
+                  property_type, listing_type, description, status, image, created_at, updated_at)
+                 VALUES (?, ?, ?, 'owner', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'assets/images/placeholder/property.svg', NOW(), NOW())"
+            );
+            $stmt->execute([
+                $tid, $userId, $userId,
+                $name,
+                $phone,
+                Security::sanitize((string)($input['location'] ?? '')),
+                Security::sanitize((string)($input['address'] ?? '')),
+                (int)($input['area_sqft'] ?? 0),
+                (int)($input['bedrooms'] ?? 0),
+                (int)($input['bathrooms'] ?? 0),
+                Security::sanitize((string)($input['furnished'] ?? 'unfurnished')),
+                ($yb = (int)($input['year_built'] ?? 0)) > 0 ? $yb : null,
+                $price,
+                $type,
+                $listingType,
+                Security::sanitize((string)($input['description'] ?? '')),
+            ]);
+            $newId = (int)$this->db->lastInsertId();
+            echo json_encode([
+                'success' => true,
+                'message' => 'Property submitted for verification. It becomes visible to buyers once approved.',
+                'data' => ['id' => $newId],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[MobileUserApiController::createOwnerListing] ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to submit property']);
+        }
+    }
+
+    /**
+     * Public feed of direct-from-owner verified listings. Matches the shape
+     * the mobile marketplace consumes (company rows get the same keys plus
+     * source='company' vs 'user').
+     */
+    public function getOwnerListings()
+    {
+        $this->setCorsHeaders();
+        try {
+            $page = max(1, (int)($_GET['page'] ?? 1));
+            $limit = min(50, max(1, (int)($_GET['limit'] ?? 20)));
+            $offset = ($page - 1) * $limit;
+
+            $where = ["status IN ('verified','approved')"];
+            $params = [];
+            if (!empty($_GET['property_type']) && $_GET['property_type'] !== 'all') {
+                $where[] = 'property_type = ?'; $params[] = (string)$_GET['property_type'];
+            }
+            if (!empty($_GET['listing_type']) && $_GET['listing_type'] !== 'all') {
+                $where[] = 'listing_type = ?'; $params[] = (string)$_GET['listing_type'];
+            }
+            if (!empty($_GET['location'])) {
+                $where[] = '(location LIKE ? OR name LIKE ?)';
+                $params[] = '%' . $_GET['location'] . '%'; $params[] = '%' . $_GET['location'] . '%';
+            }
+            $whereSql = implode(' AND ', $where);
+
+            $count = $this->db->prepare("SELECT COUNT(*) FROM user_properties WHERE $whereSql");
+            $count->execute($params);
+            $total = (int)$count->fetchColumn();
+
+            $sql = "SELECT id, name AS title, price, area_sqft, bedrooms, bathrooms, furnished,
+                           year_built, property_type, listing_type, location, address, description,
+                           image AS main_image, is_featured, is_urgent, created_at
+                    FROM user_properties
+                    WHERE $whereSql
+                    ORDER BY is_featured DESC, created_at DESC
+                    LIMIT $limit OFFSET $offset";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $properties = array_map(fn($r) => $this->mapOwnerListing($r), $rows);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'properties' => $properties,
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $limit,
+                        'total_pages' => (int)ceil($total / $limit),
+                        'total_count' => $total,
+                    ],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[MobileUserApiController::getOwnerListings] ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to load listings']);
+        }
+    }
+
+    public function getOwnerListingDetail($id = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $listingId = (int)$id;
+            if ($listingId <= 0) { $this->jsonError('Invalid listing id', 400); return; }
+
+            $tid = $this->tenantId();
+            $sql = "SELECT id, name AS title, price, area_sqft, bedrooms, bathrooms, furnished,
+                           year_built, property_type, listing_type, location, address, description,
+                           image AS main_image, is_featured, is_urgent, created_at, phone, user_id
+                    FROM user_properties
+                    WHERE id = ? AND status IN ('verified','approved')";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$listingId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) { $this->jsonError('Listing not found or pending verification', 404); return; }
+
+            $row['masked_phone'] = $this->maskPhone((string)($row['phone'] ?? ''));
+            unset($row['phone'], $row['user_id']);
+
+            echo json_encode(['success' => true, 'data' => $this->mapOwnerListing($row)]);
+        } catch (\Throwable $e) {
+            error_log('[MobileUserApiController::getOwnerListingDetail] ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Failed to load listing']);
+        }
+    }
+
+    /** Map a user_properties row to the app's company-listing shape. */
+    private function mapOwnerListing(array $r): array
+    {
+        return [
+            'id' => (int)$r['id'],
+            'title' => (string)$r['title'],
+            'price' => (string)($r['price'] ?? '0'),
+            'city' => (string)($r['location'] ?? ''),
+            'state' => '',
+            'bedrooms' => (int)($r['bedrooms'] ?? 0),
+            'bathrooms' => (int)($r['bathrooms'] ?? 0),
+            'area_sqft' => (string)($r['area_sqft'] ?? '0'),
+            'featured' => (int)($r['is_featured'] ?? 0),
+            'created_at' => (string)($r['created_at'] ?? ''),
+            'property_type' => (string)($r['property_type'] ?? ''),
+            'main_image' => $this->absolutizeImg((string)($r['main_image'] ?? 'assets/images/placeholder/property.svg')),
+            // owner-listing extras
+            'source' => 'user',
+            'listing_type' => (string)($r['listing_type'] ?? 'sell'),
+            'furnished' => (string)($r['furnished'] ?? 'unfurnished'),
+            'year_built' => (int)($r['year_built'] ?? 0),
+            'description' => (string)($r['description'] ?? ''),
+            'address' => (string)($r['address'] ?? ''),
+            'is_urgent' => (int)($r['is_urgent'] ?? 0),
+            'masked_phone' => $r['masked_phone'] ?? null,
+        ];
+    }
+
+    private function absolutizeImg(string $url): string
+    {
+        if ($url === '') return '';
+        if (preg_match('#^https?://#i', $url)) return $url;
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $proto = $isHttps ? 'https' : 'http';
+        // Subpath prefix is fixed at /apsdreamhome (matches APP_URL default)
+        return $proto . '://' . $host . '/apsdreamhome/' . ltrim($url, '/');
+    }
+
+    private function maskPhone(string $phone): string
+    {
+        $digits = preg_replace('/\D/', '', $phone);
+        if (strlen($digits) < 4) return 'XXXX';
+        return substr($digits, 0, 2) . str_repeat('*', max(strlen($digits) - 4, 4)) . substr($digits, -2);
     }
 
     protected function jsonError(string $message, int $status = 400): void {

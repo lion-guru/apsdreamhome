@@ -57,7 +57,7 @@
                 <div class="col-lg-5">
                     <div class="card shadow-lg border-0 rounded-4 p-4 sticky-top">
                         <h3 class="fs-5 fw-bold mb-4">Interested?</h3>
-                        <form action="<?= BASE_URL ?>contact" method="POST">
+                        <form action="<?= BASE_URL ?>/contact" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <?= csrf_field() ?>
                             <input type="hidden" name="subject" value="Inquiry for Suryoday Colony">

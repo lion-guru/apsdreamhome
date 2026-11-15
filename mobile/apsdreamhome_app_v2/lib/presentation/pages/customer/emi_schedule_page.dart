@@ -51,7 +51,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('EMI Schedule - Booking #${widget.bookingId}'),
+        title: Text(widget.bookingId == null ? 'EMI Schedule' : 'EMI Schedule - Booking #${widget.bookingId}'),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
       ),

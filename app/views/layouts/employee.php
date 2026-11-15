@@ -180,6 +180,9 @@ $GLOBALS['_html_doc_started'] = true;
                         <i class="fas fa-bell"></i>
                     </a>
                 </div>
+                <a href="<?= BASE_URL ?>/employee/ai-coach" class="btn-icon" title="AI Coach" aria-label="AI Coach" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;">
+                    <i class="fas fa-robot"></i>
+                </a>
                 <a href="<?= BASE_URL ?>/employee/inquiries" class="btn-icon" title="Inquiries" aria-label="Inquiries">
                     <i class="fas fa-envelope"></i>
                 </a>

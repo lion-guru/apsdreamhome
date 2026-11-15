@@ -217,7 +217,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                       const SizedBox(height: 12),
                       Text(
                         _isPunchedIn ? 'Checked In' : 'Not Checked In',
-                        style: TextStyle(fontFamily: 'Outfit', 
+                        style: const TextStyle(fontFamily: 'Inter', 
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
                             color: Colors.white),
@@ -227,7 +227,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                         Text(
                           'In: ${_todayRecord!['punch_in_time'] ?? 'N/A'}',
                           style:
-                              TextStyle(fontFamily: 'Inter', color: Colors.white70),
+                              const TextStyle(fontFamily: 'Inter', color: Colors.white70),
                         ),
                       ],
                     ],
@@ -247,7 +247,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                           color: AppTheme.errorColor.withValues(alpha: 0.3)),
                     ),
                     child: Text(_error!,
-                        style: TextStyle(fontFamily: 'Inter', 
+                        style: const TextStyle(fontFamily: 'Inter', 
                             color: AppTheme.errorColor, fontSize: 13)),
                   ),
 
@@ -283,7 +283,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                             color: Colors.white)
                         : Text(
                             _isPunchedIn ? 'PUNCH OUT' : 'PUNCH IN',
-                            style: TextStyle(fontFamily: 'Outfit', 
+                            style: const TextStyle(fontFamily: 'Inter', 
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 1.2),
@@ -303,8 +303,8 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Office Location',
-                          style: TextStyle(fontFamily: 'Outfit', 
+                      const Text('Office Location',
+                          style: TextStyle(fontFamily: 'Inter', 
                               fontWeight: FontWeight.w600)),
                       const SizedBox(height: 4),
                       Text('Kunraghat Office, Gorakhpur',

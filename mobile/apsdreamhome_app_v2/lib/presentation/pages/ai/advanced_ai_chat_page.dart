@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/services/ai_agent_service.dart';
 import '../../../core/services/ai_employee_agent.dart';
 import '../../../presentation/providers/ai_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 /// Advanced AI Chat Page
 /// Features: Multi-role AI, Employee Mode, Decision Making
@@ -24,13 +25,60 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
   AIAgentRole _currentRole = AIAgentRole.customerSupport;
   bool _showEmployeeMode = false;
 
-  final List<AIAgentRole> _availableRoles = [
-    AIAgentRole.customerSupport,
-    AIAgentRole.salesAssistant,
-    AIAgentRole.propertyExpert,
-    AIAgentRole.investmentAdvisor,
-    AIAgentRole.managerAssistant,
-  ];
+  /// Roles each account type may pick. Customers/guests never see
+  /// sales/back-office personas; staff sees everything + Employee Mode.
+  List<AIAgentRole> get _allowedRoles {
+    final user = ref.watch(authProvider);
+    final role = (user?.role ?? user?.rank ?? '').toLowerCase();
+
+    final staffFullAccess = role == 'admin' ||
+        role == 'super_admin' ||
+        role == 'manager' ||
+        role == 'director' ||
+        role == 'hr';
+    if (staffFullAccess) {
+      return AIAgentRole.values; // full set
+    }
+
+    final businessRoles = [
+      'associate',
+      'agent',
+      'telecaller',
+      'employee',
+      'salary',
+      'salaried',
+    ];
+    if (businessRoles.any((r) => role.contains(r))) {
+      return [
+        AIAgentRole.customerSupport,
+        AIAgentRole.propertyExpert,
+        AIAgentRole.investmentAdvisor,
+        AIAgentRole.salesAssistant,
+        AIAgentRole.telecallerCoach,
+        AIAgentRole.documentAnalyzer,
+        AIAgentRole.leadScorer,
+      ];
+    }
+
+    // Customer / guest
+    return [
+      AIAgentRole.customerSupport,
+      AIAgentRole.propertyExpert,
+      AIAgentRole.investmentAdvisor,
+    ];
+  }
+
+  bool get _canUseEmployeeMode {
+    final user = ref.watch(authProvider);
+    final role = (user?.role ?? user?.rank ?? '').toLowerCase();
+    return role == 'admin' ||
+        role == 'super_admin' ||
+        role == 'manager' ||
+        role == 'director' ||
+        role == 'hr' ||
+        role == 'employee' ||
+        role == 'telecaller';
+  }
 
   final List<AIEmployeeTask> _quickTasks = [
     AIEmployeeTask.leadFollowUp,
@@ -42,6 +90,14 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
   @override
   void initState() {
     super.initState();
+    // Clamp initial role to what this account type is allowed to see.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final allowed = _allowedRoles;
+      if (allowed.isNotEmpty && !allowed.contains(_currentRole)) {
+        setState(() => _currentRole = allowed.first);
+        ref.read(aiProvider.notifier).switchRole(allowed.first);
+      }
+    });
     _currentRole = widget.initialRole ?? AIAgentRole.customerSupport;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(aiProvider.notifier).switchRole(_currentRole);
@@ -76,19 +132,20 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
         backgroundColor: const Color(0xFF0B194C),
         foregroundColor: Colors.white,
         actions: [
-          // Employee Mode Toggle
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _showEmployeeMode = !_showEmployeeMode;
-              });
-            },
-            icon: Icon(
-              _showEmployeeMode ? Icons.person : Icons.smart_toy,
-              color: _showEmployeeMode ? Colors.amber : Colors.white,
+          // Employee Mode Toggle - staff/partner accounts only
+          if (_canUseEmployeeMode)
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _showEmployeeMode = !_showEmployeeMode;
+                });
+              },
+              icon: Icon(
+                _showEmployeeMode ? Icons.person : Icons.smart_toy,
+                color: _showEmployeeMode ? Colors.amber : Colors.white,
+              ),
+              tooltip: _showEmployeeMode ? 'AI Mode' : 'Employee Mode',
             ),
-            tooltip: _showEmployeeMode ? 'AI Mode' : 'Employee Mode',
-          ),
           // Role Selector
           PopupMenuButton<AIAgentRole>(
             icon: const Icon(Icons.settings),
@@ -98,7 +155,7 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
               });
               ref.read(aiProvider.notifier).switchRole(role);
             },
-            itemBuilder: (context) => _availableRoles.map((role) {
+            itemBuilder: (context) => _allowedRoles.map((role) {
               return PopupMenuItem(
                 value: role,
                 child: Row(
@@ -119,8 +176,8 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
           if (aiState.agentStats.isNotEmpty)
             _buildAIStatsBar(aiState.agentStats),
 
-          // Employee Mode Panel
-          if (_showEmployeeMode) _buildEmployeeModePanel(),
+          // Employee Mode Panel - staff/partner accounts only
+          if (_showEmployeeMode && _canUseEmployeeMode) _buildEmployeeModePanel(),
 
           // Chat Messages
           Expanded(

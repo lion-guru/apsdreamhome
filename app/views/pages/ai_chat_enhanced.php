@@ -96,7 +96,7 @@ $base = $base ?? BASE_URL;
                         <div id="enhanced-chat-messages" class="chat-messages p-4">
                             <div class="text-center py-5" id="enhanced-welcome">
                                 <div class="mb-3">
-                                    <span class="display-1">ðŸ¤–</span>
+                                    <span class="display-1">🤖</span>
                                 </div>
                                 <h5><?= __('user_ai_chat_enhanced_welcome', 'Welcome,') ?> <?= htmlspecialchars($user_name ?? '') ?>!</h5>
                                 <p class="text-muted mb-3"><?= __('user_ai_chat_enhanced_welcome_sub', "I'm your enhanced AI assistant. Ask me anything about properties, leads, or reports.") ?></p>
@@ -205,7 +205,7 @@ function removeEnhancedTyping() {
 function clearEnhancedChat() {
     document.getElementById('enhanced-chat-messages').innerHTML = `
         <div class="text-center py-5">
-            <div class="mb-3"><span class="display-1">ðŸ¤–</span></div>
+            <div class="mb-3"><span class="display-1">🤖</span></div>
             <h5><?= __('user_ai_chat_enhanced_cleared', 'Chat cleared') ?></h5>
             <p class="text-muted"><?= __('user_ai_chat_enhanced_start_new', 'Start a new conversation') ?></p>
         </div>`;

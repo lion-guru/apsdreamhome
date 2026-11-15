@@ -1,7 +1,7 @@
 <?php $employees = $employees ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">HR Users</h4>
-    <a href="<?= BASE_URL ?>admin/hr/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Employee</a>
+    <a href="<?= BASE_URL ?>/admin/hr/users/create" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Employee</a>
 </div>
 <div class="card aps-cp-card">
     <div class="card-body p-0">
@@ -31,8 +31,8 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="<?= BASE_URL ?>admin/hr/users/<?= $e['id'] ?? 0 ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
-                                    <a href="<?= BASE_URL ?>admin/hr/users/edit/<?= $e['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users/<?= $e['id'] ?? 0 ?>" class="btn btn-sm btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
+                                    <a href="<?= BASE_URL ?>/admin/hr/users/edit/<?= $e['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

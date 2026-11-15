@@ -1,7 +1,7 @@
 <?php $call = $call ?? []; $session = $session ?? null; $extractedLead = $extractedLead ?? null; $callHistory = $callHistory ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0"><i class="fas fa-phone-volume me-2"></i>Call Detail #<?= htmlspecialchars($call['id'] ?? '', ENT_QUOTES, 'UTF-8') ?></h4>
-    <a href="<?= BASE_URL ?>admin/voice-scheduler/calls" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Calls</a>
+    <a href="<?= BASE_URL ?>/admin/voice-scheduler/calls" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to Calls</a>
 </div>
 
 <div class="row g-3">
@@ -34,7 +34,7 @@
                 </table>
                 <?php if ($call['status'] === 'pending'): ?>
                 <div class="mt-3">
-                    <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/process" class="d-inline">
+                    <form method="post" action="<?= BASE_URL ?>/admin/voice-scheduler/process" class="d-inline">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <input type="hidden" name="limit" value="1">
                         <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-play me-1"></i>Process Now</button>
@@ -105,7 +105,7 @@
                 <tbody>
                 <?php foreach ($callHistory as $h): ?>
                     <tr>
-                        <td><a href="<?= BASE_URL ?>admin/voice-scheduler/calls/<?= $h['id'] ?>">#<?= $h['id'] ?></a></td>
+                        <td><a href="<?= BASE_URL ?>/admin/voice-scheduler/calls/<?= $h['id'] ?>">#<?= $h['id'] ?></a></td>
                         <td><?= date('d M Y h:i A', strtotime($h['created_at'] ?? '')) ?></td>
                         <td><?= htmlspecialchars($h['agent_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
                         <td><span class="badge bg-<?= ($h['status'] ?? '') === 'completed' ? 'success' : 'warning' ?>"><?= $h['status'] ?? 'N/A' ?></span></td>
@@ -130,7 +130,7 @@
 <?php if ($call['status'] === 'pending'): ?>
 <div class="modal fade" id="rescheduleModal" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
-        <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/reschedule">
+        <form method="post" action="<?= BASE_URL ?>/admin/voice-scheduler/reschedule">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <input type="hidden" name="schedule_id" value="<?= $call['id'] ?>">
             <div class="modal-header"><h5 class="modal-title">Reschedule Call</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -148,7 +148,7 @@
 
 <div class="modal fade" id="cancelModal" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
-        <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/cancel">
+        <form method="post" action="<?= BASE_URL ?>/admin/voice-scheduler/cancel">
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
             <input type="hidden" name="schedule_id" value="<?= $call['id'] ?>">
             <div class="modal-header"><h5 class="modal-title">Cancel Call</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>

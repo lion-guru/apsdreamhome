@@ -135,7 +135,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
         children: [
           Text(
             '${_greeting()}, $name!',
-            style: TextStyle(fontFamily: 'Outfit', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontFamily: 'Inter', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
@@ -231,7 +231,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
                 const SizedBox(height: 8),
                 Text(
                   stat['value'] as String,
-                  style: TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.bold, color: color),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.bold, color: color),
                 ),
                 Text(
                   stat['label'] as String,
@@ -275,7 +275,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
               children: [
                 Text(
                   isPunchedIn ? (isPunchedOut ? 'Day Complete' : 'Clocked In') : 'Not Checked In',
-                  style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w600, fontSize: 13),
+                  style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13),
                 ),
                 if (att != null) ...[
                   const SizedBox(height: 2),
@@ -338,7 +338,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(title, style: const TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.bold)),
         TextButton(onPressed: onSeeAll, child: const Text('See All', style: TextStyle(fontSize: 12))),
       ],
     );
@@ -390,7 +390,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(a['title'] as String? ?? '', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13)),
+                  Text(a['title'] as String? ?? '', style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13)),
                   Text(a['subtitle'] as String? ?? '', style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: Colors.grey.shade500)),
                 ],
               ),

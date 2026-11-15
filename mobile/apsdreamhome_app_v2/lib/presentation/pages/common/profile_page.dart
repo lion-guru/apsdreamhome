@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/router/app_router.dart';
+import '../../../data/models/user_model.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -19,6 +20,18 @@ class ProfilePage extends ConsumerStatefulWidget {
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
+
+// Role gating helpers - customers must never see staff/partner-only tools
+bool _isPartnerOrStaff(User? user) =>
+    user != null &&
+    (user.isAgent ||
+        user.isAssociate ||
+        user.isEmployee ||
+        user.isTelecaller ||
+        user.isAdmin);
+
+bool _isStaffAccount(User? user) =>
+    user != null && (user.isAdmin || user.isEmployee || user.isTelecaller);
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   bool _isLoadingProfile = true;
@@ -393,9 +406,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     onStartKyc: () => context.push('/kyc-verification'),
                   ),
                   const SizedBox(height: 20),
-                  _AgentFeaturesSection(context: context),
-                  const SizedBox(height: 20),
-                  _RegistryPayoutSection(context: context),
+                  if (_isPartnerOrStaff(user)) ...[
+                    _PartnerToolsSection(context: context, user: user),
+                    const SizedBox(height: 20),
+                  ],
+                  _RegistryPayoutSection(context: context, user: user),
                   const SizedBox(height: 20),
                   _MoreFeaturesSection(context: context),
                   const SizedBox(height: 20),
@@ -1978,9 +1993,12 @@ class _ActionTile extends StatelessWidget {
 
 class _RegistryPayoutSection extends StatelessWidget {
   final BuildContext context;
-  const _RegistryPayoutSection({required this.context});
+  final User? user;
+  const _RegistryPayoutSection({required this.context, required this.user});
   @override
   Widget build(BuildContext context) {
+    final staff = _isStaffAccount(user);
+    final partner = _isPartnerOrStaff(user);
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1991,22 +2009,31 @@ class _RegistryPayoutSection extends StatelessWidget {
           const Divider(height: 20),
           _ActionTile(icon: Icons.assignment_turned_in_outlined, label: 'My Bookings & Registry', subtitle: 'Track allotment → possession (7 stages)', color: const Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/my-bookings')),
           _ActionTile(icon: Icons.receipt_long_rounded, label: 'Demand Letters', subtitle: 'EMIs due, overdue + pay link & PDF (new)', color: const Color(0xFFe11d48), onTap: () => GoRouter.of(context).push('/demand-letters')),
-          _ActionTile(icon: Icons.account_balance_wallet_outlined, label: 'Payout Batches', subtitle: 'Commission batches & bank exports (staff)', color: const Color(0xFF7c3aed), onTap: () => GoRouter.of(context).push('/admin/payout-batches')),
-          _ActionTile(icon: Icons.construction_rounded, label: 'Site Work Progress', subtitle: 'Roads/Drainage/Electricity % + photo', color: const Color(0xFFea580c), onTap: () => GoRouter.of(context).push('/admin/colony-progress')),
-          _ActionTile(icon: Icons.inventory_2_rounded, label: 'Material Stock', subtitle: 'Cement/Bricks/Steel + low-stock alert', color: const Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/admin/material-inventory')),
-          _ActionTile(icon: Icons.location_on_outlined, label: 'Site Visits', subtitle: 'Executive dispatch & colony pin', color: AppTheme.successColor, onTap: () => GoRouter.of(context).push('/agent/site-visits'), showDivider: false),
+          _ActionTile(icon: Icons.calendar_month_rounded, label: 'EMI Schedule', subtitle: 'Installments, due dates & online payment', color: const Color(0xFF0ea5e9), onTap: () => GoRouter.of(context).push('/emi-schedule')),
+          if (staff)
+            _ActionTile(icon: Icons.account_balance_wallet_outlined, label: 'Payout Batches', subtitle: 'Commission batches & bank exports (staff)', color: const Color(0xFF7c3aed), onTap: () => GoRouter.of(context).push('/admin/payout-batches')),
+          if (staff)
+            _ActionTile(icon: Icons.construction_rounded, label: 'Site Work Progress', subtitle: 'Roads/Drainage/Electricity % + photo', color: const Color(0xFFea580c), onTap: () => GoRouter.of(context).push('/admin/colony-progress')),
+          if (staff)
+            _ActionTile(icon: Icons.inventory_2_rounded, label: 'Material Stock', subtitle: 'Cement/Bricks/Steel + low-stock alert', color: const Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/admin/material-inventory')),
+          if (partner)
+            _ActionTile(icon: Icons.location_on_outlined, label: 'Site Visits', subtitle: 'Executive dispatch & colony pin', color: AppTheme.successColor, onTap: () => GoRouter.of(context).push('/agent/site-visits'), showDivider: false)
+          else
+            const SizedBox.shrink(),
         ]),
       ),
     );
   }
 }
 
-class _AgentFeaturesSection extends StatelessWidget {
+class _PartnerToolsSection extends StatelessWidget {
   final BuildContext context;
-  const _AgentFeaturesSection({required this.context});
+  final User? user;
+  const _PartnerToolsSection({required this.context, required this.user});
 
   @override
   Widget build(BuildContext context) {
+    final portalTitle = _isStaffAccount(user) ? 'Staff Portal' : 'Associate Portal';
     final items = [
       _FeatureItem(Icons.analytics_outlined, 'Analytics', '/agent/analytics', AppTheme.primaryColor),
       _FeatureItem(Icons.calendar_month_outlined, 'Bookings', '/agent/bookings', AppTheme.infoColor),
@@ -2025,11 +2052,11 @@ class _AgentFeaturesSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.badge_outlined, size: 20, color: AppTheme.primaryColor),
-                SizedBox(width: 8),
-                Text('Agent Portal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryLight)),
+                const Icon(Icons.badge_outlined, size: 20, color: AppTheme.primaryColor),
+                const SizedBox(width: 8),
+                Text(portalTitle, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryLight)),
               ],
             ),
             const SizedBox(height: 12),

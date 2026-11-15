@@ -9,7 +9,7 @@
                     <p class="text-muted mb-1"><?= __("auth_session_ended") ?></p>
                     <p class="text-muted small mb-4"><?= __("auth_thank_you_visit") ?></p>
                     <div class="d-flex justify-content-center gap-3">
-                        <a href="<?= BASE_URL ?>login" class="btn btn-primary"><i class="fas fa-sign-in-alt me-1"></i><?= __("auth_login_again") ?></a>
+                        <a href="<?= BASE_URL ?>/login" class="btn btn-primary"><i class="fas fa-sign-in-alt me-1"></i><?= __("auth_login_again") ?></a>
                         <a href="<?= BASE_URL ?>" class="btn btn-outline-secondary"><i class="fas fa-home me-1"></i><?= __("auth_go_home") ?></a>
                     </div>
                 </div>

@@ -31,7 +31,7 @@
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-check-circle fa-3x d-block mb-3 text-success"></i>No pending workflows!</td></tr>
                         <?php else: ?>
                             <?php foreach ($pendingWorkflows as $i => $w): ?>
-                            <tr><td class="ps-4"><?= $w['id'] ?? $i+1 ?></td><td><strong><?= $w['name'] ?></strong></td><td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $w['type'] ?? 'General' ?></span></td><td><?= $w['assigned_to_name'] ?? 'Unassigned' ?></td><td><span class="badge bg-<?= ($w['priority'] ?? 'medium') === 'high' ? 'danger' : (($w['priority'] ?? 'medium') === 'medium' ? 'warning' : 'info') ?>-subtle text-<?= ($w['priority'] ?? 'medium') === 'high' ? 'danger' : (($w['priority'] ?? 'medium') === 'medium' ? 'warning' : 'info') ?> rounded-pill px-3"><?= ucfirst($w['priority'] ?? 'Medium') ?></span></td><td class="<?= (strtotime($w['due_date'] ?? '2099-01-01') < time() && $w['due_date']) ? 'text-danger fw-bold' : '' ?>"><?= $w['due_date'] ? date('d M Y', strtotime($w['due_date'])) : '-' ?></td><td class="text-end pe-4"><button class="btn btn-sm btn-outline-success" onclick="approveWorkflow(<?= (int)($w['id'] ?? 0) ?>)"><i class="fas fa-check"></i></button> <a href="<?= BASE_URL ?>admin/workflows/<?= (int)($w['id'] ?? 0) ?>/steps" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a></td></tr>
+                            <tr><td class="ps-4"><?= $w['id'] ?? $i+1 ?></td><td><strong><?= $w['name'] ?></strong></td><td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?= $w['type'] ?? 'General' ?></span></td><td><?= $w['assigned_to_name'] ?? 'Unassigned' ?></td><td><span class="badge bg-<?= ($w['priority'] ?? 'medium') === 'high' ? 'danger' : (($w['priority'] ?? 'medium') === 'medium' ? 'warning' : 'info') ?>-subtle text-<?= ($w['priority'] ?? 'medium') === 'high' ? 'danger' : (($w['priority'] ?? 'medium') === 'medium' ? 'warning' : 'info') ?> rounded-pill px-3"><?= ucfirst($w['priority'] ?? 'Medium') ?></span></td><td class="<?= (strtotime($w['due_date'] ?? '2099-01-01') < time() && $w['due_date']) ? 'text-danger fw-bold' : '' ?>"><?= $w['due_date'] ? date('d M Y', strtotime($w['due_date'])) : '-' ?></td><td class="text-end pe-4"><button class="btn btn-sm btn-outline-success" onclick="approveWorkflow(<?= (int)($w['id'] ?? 0) ?>)"><i class="fas fa-check"></i></button> <a href="<?= BASE_URL ?>/admin/workflows/<?= (int)($w['id'] ?? 0) ?>/steps" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
@@ -48,7 +48,7 @@ function approveWorkflow(id) {
     });
     var form = document.createElement('form');
     form.method = 'POST';
-    form.action = '<?= BASE_URL ?>admin/workflows/action/' + id;
+    form.action = '<?= BASE_URL ?>/admin/workflows/action/' + id;
     var csrf = document.createElement('input'); csrf.type = 'hidden'; csrf.name = 'csrf_token'; csrf.value = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>';
     var action = document.createElement('input'); action.type = 'hidden'; action.name = 'action'; action.value = 'approve';
     var comments = document.createElement('input'); comments.type = 'hidden'; comments.name = 'comments'; comments.value = 'Approved from pending list';

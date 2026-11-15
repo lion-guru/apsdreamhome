@@ -21,8 +21,8 @@ class _VoiceCallPageState extends ConsumerState<VoiceCallPage> {
   bool _isSpeakerOn = false;
 
   final TextEditingController _phoneController = TextEditingController();
-  String _selectedProvider = 'exotel';
   String _callStatus = 'Idle';
+  String? _activeSessionId;
 
   @override
   void dispose() {
@@ -56,7 +56,10 @@ class _VoiceCallPageState extends ConsumerState<VoiceCallPage> {
       );
 
       if (mounted && response.data['success'] == true) {
-        setState(() => _callStatus = 'Connected');
+        setState(() {
+          _callStatus = 'Connected';
+          _activeSessionId = response.data['session_id'] as String?;
+        });
       } else {
         setState(() {
           _isInCall = false;
@@ -84,12 +87,32 @@ class _VoiceCallPageState extends ConsumerState<VoiceCallPage> {
     }
   }
 
-  void _endCall() {
+  Future<void> _endCall() async {
+    final sid = _activeSessionId;
+    _activeSessionId = null;
     setState(() {
       _isInCall = false;
       _callStatus = 'Ended';
       _isMuted = false;
     });
+
+    if (sid != null) {
+      try {
+        final api = ApiService();
+        await api.webDio.post(
+          '/voice-agent/end-call',
+          data: {
+            'session_id': sid,
+            'summary': '',
+            'sentiment': 'neutral',
+            'outcome': 'completed',
+          },
+        );
+      } catch (_) {
+        // User already saw the call end; server cleanup is best-effort.
+      }
+    }
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Call ended')),
@@ -242,26 +265,14 @@ class _VoiceCallPageState extends ConsumerState<VoiceCallPage> {
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        'Provider',
+                        'The Twilio/Exotel provider is selected dynamically from your Twilio connection. Configure credentials at /admin/service-configs',
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF0B194C)),
                       ),
                       const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        children: ['exotel', 'twilio', 'plivo', 'knowlarity']
-                            .map((p) => FilterChip(
-                                  label: Text(p.toUpperCase()),
-                                  selected: _selectedProvider == p,
-                                  onSelected: (v) =>
-                                      setState(() => _selectedProvider = p),
-                                  selectedColor: primaryColor,
-                                  checkmarkColor: Colors.white,
-                                ))
-                            .toList(),
-                      ),
+                      const SizedBox.shrink(),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,

@@ -31,7 +31,20 @@ class User {
     required this.updatedAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  // Server sends userId as an integer (DB primary key) and target as int 0/1.
+  // The generated parser casts userId to String, which throws on int input and
+  // surfaced to users as "Login failed: type 'int' is not a subtype of ...".
+  // Normalize first, then hand off to the generated parser.
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson({
+        ...json,
+        'userId': json['userId']?.toString(),
+        'target': (json['target'] as num? ?? 0).toDouble(),
+        'rank': json['rank']?.toString() ?? '',
+        'name': json['name']?.toString() ?? '',
+        'email': json['email']?.toString() ?? '',
+        'createdAt': json['createdAt']?.toString() ?? '',
+        'updatedAt': json['updatedAt']?.toString() ?? '',
+      });
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   User copyWith({

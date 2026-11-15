@@ -55,13 +55,14 @@ class AIAnalyticsController extends AdminController
     {
         $this->requireAdmin();
         $this->data['page_title'] = 'AI Insights';
+
         try {
             $db = $this->db;
 
             $this->data['totalLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads")->fetchColumn());
             $this->data['newLeadsWeek'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)")->fetchColumn());
-            $this->data['hotLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE score >= 70")->fetchColumn());
-            $this->data['coldLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE score < 30 AND score > 0")->fetchColumn());
+            $this->data['hotLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE lead_score >= 70")->fetchColumn());
+            $this->data['coldLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE lead_score < 30 AND lead_score > 0")->fetchColumn());
             $this->data['unassignedLeads'] = (int)($db->query("SELECT COUNT(*) FROM leads WHERE assigned_to IS NULL OR assigned_to = 0")->fetchColumn());
 
             $this->data['totalCalls'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions")->fetchColumn());

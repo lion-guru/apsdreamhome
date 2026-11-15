@@ -90,7 +90,9 @@ class AIAgentApiController extends BaseController
                 'user_id' => $userId,
             ], $context);
 
-            $response = $result['result'] ?? $result['response'] ?? $result['text'] ?? '';
+            $response = $this->responseTextFromGateway(
+                $result['result'] ?? $result['response'] ?? $result['text'] ?? ''
+            );
 
             if (empty($response)) {
                 // Fallback to SelfLearningAI
@@ -119,10 +121,28 @@ class AIAgentApiController extends BaseController
         } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => true,
-                'response' => $this->getFallbackResponse($_POST['message'] ?? ''),
+                'response' => $this->getFallbackResponse($message ?? ''),
                 'timestamp' => date('c'),
             ]);
         }
+    }
+
+    /**
+     * The AIGateway's chat pipeline returns its payload inside
+     * ['result' => ['text' => ..., 'parsed' => ...]] (an array). Passing that
+     * array into logAiInteraction(string ...) threw a TypeError, which the
+     * catch below swallowed into the canned fallback - so the AI answered
+     * with the generic 'Thank you for your message' line for everything.
+     * Normalize to a plain string here.
+     */
+    private function responseTextFromGateway($raw): string
+    {
+        if (is_string($raw)) return $raw;
+        if (!is_array($raw)) return '';
+        $text = $raw['text'] ?? $raw['response'] ?? $raw['message'] ?? '';
+        if (is_string($text) && $text !== '') return $text;
+        if (isset($raw['result'])) return $this->responseTextFromGateway($raw['result']);
+        return '';
     }
 
     /**

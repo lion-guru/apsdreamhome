@@ -10,6 +10,8 @@ $router->get('/employee/dashboard-overview', 'Employee\\EmployeeController@dashb
 
 // Employee Self-Service (HR features)
 $router->get('/employee/self-service', 'Employee\\EmployeeSelfServiceController@index');
+$router->get('/agent/ai-coach', 'Agent\\AiCoachController@index');
+$router->get('/employee/ai-coach', 'Employee\\AiCoachController@index');
 $router->get('/employee/self-service/training', 'Employee\\EmployeeSelfServiceController@training');
 $router->get('/employee/self-service/org-chart', 'Employee\\EmployeeSelfServiceController@orgChart');
 $router->get('/employee/self-service/org-chart/department', 'Employee\\EmployeeSelfServiceController@orgChartDepartment');

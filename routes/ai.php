@@ -18,6 +18,9 @@ $router->get('/admin/ai/executive-assistant', 'App\\Http\\Controllers\\Admin\\Ex
 $router->post('/admin/ai/executive-assistant/chat', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@chat');
 $router->post('/admin/ai/executive-assistant/execute', 'App\\Http\\Controllers\\Admin\\ExecutiveAIController@executeAction');
 
+// AI Command Center — RBAC-aware hub for every AI capability
+$router->get('/admin/ai/hub', 'App\\Http\\Controllers\\Admin\\AiHubController@index');
+
 // AI Content Generation
 $router->post('/ai/content/description', 'App\\Http\\Controllers\\AI\\AIContentController@generateDescription');
 $router->post('/ai/content/blog-draft', 'App\\Http\\Controllers\\AI\\AIContentController@generateBlogDraft');
@@ -80,6 +83,9 @@ $router->post('/admin/voice-agents/hangup-call', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/rag', 'App\\Http\\Controllers\\Admin\\RAGAdminController@index');
 $router->post('/admin/rag/set-model', 'App\\Http\\Controllers\\Admin\\RAGAdminController@setModel');
 $router->post('/admin/rag/reembed', 'App\\Http\\Controllers\\Admin\\RAGAdminController@reembed');
+
+// AI Morning Brief for Sales Director
+$router->get('/admin/ai-morning-brief', 'App\\Http\\Controllers\\Admin\\AiMorningBriefController@index');
 
 // AI Training
 $router->get('/admin/ai-training', 'App\\Http\\Controllers\\Admin\\AdminAIController@training');

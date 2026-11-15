@@ -1,8 +1,8 @@
 <?php $pageTitle = 'Financial Report'; ?>
 <?php $transactions = $transactions ?? []; $summary = $summary ?? ['total_income' => 0, 'total_expenses' => 0, 'net_profit' => 0, 'pending_payments' => 0]; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>reports/dashboard">Reports</a></li><li class="breadcrumb-item active">Financial Report</li></ol></nav>
-    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-rupee-sign me-2"></i>Financial Report</h4><a href="<?= BASE_URL ?>reports/generate?type=financial" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export</a></div>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/reports/dashboard">Reports</a></li><li class="breadcrumb-item active">Financial Report</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-rupee-sign me-2"></i>Financial Report</h4><a href="<?= BASE_URL ?>/reports/generate?type=financial" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export</a></div>
     <div class="row g-3 mb-4">
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Total Income</small><h4 class="text-success mb-0">₹<?= number_format($summary['total_income'] ?? 0) ?></h4></div></div></div>
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Total Expenses</small><h4 class="text-danger mb-0">₹<?= number_format($summary['total_expenses'] ?? 0) ?></h4></div></div></div>

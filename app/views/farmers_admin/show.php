@@ -1,15 +1,15 @@
 <?php $pageTitle = 'Farmer Details'; ?>
 <?php $farmer = $farmer ?? null; $land_holdings = $land_holdings ?? []; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>farmers/list">Farmers</a></li><li class="breadcrumb-item active">Farmer Details</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/farmers/list">Farmers</a></li><li class="breadcrumb-item active">Farmer Details</li></ol></nav>
     <?php if (!$farmer): ?>
-    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted">Farmer not found</h6><a href="<?= BASE_URL ?>farmers/list" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to List</a></div></div>
+    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted">Farmer not found</h6><a href="<?= BASE_URL ?>/farmers/list" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to List</a></div></div>
     <?php else: ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div><h4 class="mb-1"><?= htmlspecialchars($farmer['name'] ?? '-') ?></h4><small class="text-muted">Farmer since <?= date('d M Y', strtotime($farmer['created_at'] ?? 'now')) ?></small></div>
         <div class="d-flex gap-2">
-            <a href="<?= BASE_URL ?>farmers/<?= $farmer['id'] ?? 0 ?>/edit" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
-            <a href="<?= BASE_URL ?>farmers/list" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
+            <a href="<?= BASE_URL ?>/farmers/<?= $farmer['id'] ?? 0 ?>/edit" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+            <a href="<?= BASE_URL ?>/farmers/list" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
         </div>
     </div>
     <div class="row g-4">

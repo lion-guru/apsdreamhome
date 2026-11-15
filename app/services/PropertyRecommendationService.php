@@ -75,24 +75,34 @@ class PropertyRecommendationService
                     if (!empty($b['colony_id'])) $profile['preferred_colonies'][] = $b['colony_id'];
                     if (!empty($b['plot_type'])) $profile['property_types'][] = $b['plot_type'];
                 }
-                // user_activity_log table does not exist in this database —
-                // guard so profile building never fatals on it.
-                try {
-                    $viewed = $this->db->fetchAll("
-                        SELECT DISTINCT entity_id FROM user_activity_log 
-                        WHERE user_id = ? AND entity_type = 'plot' AND action = 'view'
-                        ORDER BY created_at DESC LIMIT 20
-                    ", [$userId]);
+                // user_activity_log in live DB is a stub (id/tenant_id/created_at/updated_at only):
+                // no user_id/entity_type/entity_id columns, zero writers. Probing the schema once
+                // keeps this free of guaranteed 1054 exceptions and log spam; the signal is
+                // honest-empty until a real view-tracking migration exists.
+                $cols = $this->db->fetchAll("DESCRIBE user_activity_log") ?: [];
+                $hasUsage = false;
+                foreach ($cols as $c) {
+                    if (($c['Field'] ?? '') === 'entity_id') { $hasUsage = true; break; }
+                }
+                if ($hasUsage) {
+                    $viewed = $this->db->fetchAll(
+                        "SELECT DISTINCT entity_id FROM user_activity_log
+                         WHERE user_id = ? AND entity_type = 'plot' AND action = 'view'
+                         ORDER BY created_at DESC LIMIT 20
+",
+                        [$userId]
+                    );
                     $profile['viewed_properties'] = array_column($viewed, 'entity_id');
-                } catch (\Throwable $e) {
-                    error_log('user_activity_log unavailable (table missing): ' . $e->getMessage());
+                } else {
+                    $profile['viewed_properties'] = [];
                 }
             }
         }
         // NOTE: lead_activities has no entity/type columns (real schema: activity_type,
         // description, old_value, new_value, metadata). Plot-view tracking from lead
         // activities is not recorded — viewed_properties for lead path stays empty.
-        // User path above uses user_activity_log which does have entity_type/entity_id.
+        // viewed_properties stay honest-empty: lead_activities has no entity columns, and
+        // user_activity_log is a stub with no writers — both are checked/guarded above.
         if (!empty($leadId)) {
             $activities = $this->db->fetchAll("
                 SELECT activity_type, old_value, new_value FROM lead_activities 

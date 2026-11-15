@@ -18,25 +18,22 @@ import 'presentation/widgets/auth_bridge_widget.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Suppress GoRouter + Riverpod InheritedModel assertion in debug mode.
-  // This is a known conflict: GoRouter uses InheritedModel<GoRouterState>,
-  // Riverpod uses InheritedWidget. When ref.watch() is called inside a
-  // GoRouter route widget, both systems try to update dependents simultaneously.
-  // In release mode assertions are stripped, so this only affects debug builds.
+  // Suppress ONLY the known-harmless GoRouter + Riverpod InheritedModel assertion
+  // (Riverpod InheritedWidget vs GoRouter InheritedModel conflict; in release
+  // mode assertions are stripped, so this only affects debug builds).
+  // All other errors — including Navigator assertions like the duplicate page
+  // key '!keyReservation.contains(key)' — must stay loud.
   final originalOnError = FlutterError.onError;
   FlutterError.onError = (details) {
     final msg = details.exception.toString();
-    if (msg.contains('_dependents.isEmpty') || msg.contains('is not true')) {
+    if (msg.contains('_dependents.isEmpty')) {
       return;
     }
     originalOnError?.call(details);
   };
-  // Prevent red screen for this known assertion in debug builds
+  // Never hide any error widget behind a shrink — it made a whole class of
+  // push failures invisible. Debug builds keep the full error surface.
   ErrorWidget.builder = (FlutterErrorDetails details) {
-    final msg = details.exception.toString();
-    if (msg.contains('_dependents.isEmpty') || msg.contains('is not true')) {
-      return const SizedBox.shrink();
-    }
     return ErrorWidget(details.exception);
   };
 

@@ -13,7 +13,6 @@ import '../../../data/services/property_listing_service.dart';
 import '../../../data/models/colony_model.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
 import '../../widgets/app_widgets.dart';
-import '../../widgets/ai/floating_ai_button.dart';
 import '../../widgets/support/support_fab.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/shimmer_skeletons.dart';
@@ -155,8 +154,6 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
         ),
-        // AI Assistant Button (above support FAB, positioned to avoid overlap)
-        const Positioned(bottom: 160, right: 12, child: FloatingAIButton(isMini: true)),
         // WhatsApp-style Support FAB
         const Positioned(bottom: 16, right: 8, child: SupportFAB()),
       ],

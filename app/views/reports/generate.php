@@ -1,13 +1,13 @@
 <?php $pageTitle = 'Generate Report'; ?>
 <?php $reportTypes = $reportTypes ?? ['sales' => 'Sales Report', 'properties' => 'Properties Report', 'financial' => 'Financial Report', 'user_activity' => 'User Activity Report', 'associate' => 'Associate Report', 'customer' => 'Customer Report']; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>reports/dashboard">Reports</a></li><li class="breadcrumb-item active">Generate Report</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/reports/dashboard">Reports</a></li><li class="breadcrumb-item active">Generate Report</li></ol></nav>
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Generate New Report</h5></div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="post" action="<?= BASE_URL ?>reports/generate">
+                    <form method="post" action="<?= BASE_URL ?>/reports/generate">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Report Type <span class="text-danger">*</span></label>

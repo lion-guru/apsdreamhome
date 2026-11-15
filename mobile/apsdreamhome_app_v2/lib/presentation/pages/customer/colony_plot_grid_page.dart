@@ -40,7 +40,7 @@ class _ColonyPlotGridPageState extends ConsumerState<ColonyPlotGridPage> {
       appBar: AppBar(
         title: Text(
           widget.colonyName,
-          style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w600),
+          style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600),
         ),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
@@ -120,7 +120,7 @@ class _ColonyPlotGridPageState extends ConsumerState<ColonyPlotGridPage> {
         ),
         const SizedBox(width: 4),
         Text(label,
-            style: TextStyle(fontFamily: 'Inter', 
+            style: const TextStyle(fontFamily: 'Inter', 
                 fontSize: 11, fontWeight: FontWeight.w500)),
       ],
     );
@@ -128,7 +128,7 @@ class _ColonyPlotGridPageState extends ConsumerState<ColonyPlotGridPage> {
 
   Widget _buildPlotGrid(List<PlotModel> plots) {
     if (plots.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'No plots found',
           style: TextStyle(fontFamily: 'Inter', fontSize: 16, color: Colors.grey),
@@ -312,7 +312,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
                 children: [
                   Text(
                     'Plot ${plot.plotNumber}',
-                    style: TextStyle(fontFamily: 'Outfit', 
+                    style: const TextStyle(fontFamily: 'Inter', 
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.primaryColor,
@@ -456,9 +456,9 @@ class PlotDetailBottomSheet extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Book Plot',
-                          style: TextStyle(fontFamily: 'Outfit', 
+                          style: TextStyle(fontFamily: 'Inter', 
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),

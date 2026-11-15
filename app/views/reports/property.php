@@ -1,11 +1,11 @@
 <?php $pageTitle = 'Property Detail Report'; ?>
 <?php $property = $property ?? null; $history = $history ?? []; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>reports/dashboard">Reports</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>reports/properties">Properties</a></li><li class="breadcrumb-item active">Property Detail</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/reports/dashboard">Reports</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/reports/properties">Properties</a></li><li class="breadcrumb-item active">Property Detail</li></ol></nav>
     <?php if (!$property): ?>
-    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted">Property not found</h6><a href="<?= BASE_URL ?>reports/properties" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a></div></div>
+    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted">Property not found</h6><a href="<?= BASE_URL ?>/reports/properties" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a></div></div>
     <?php else: ?>
-    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><?= htmlspecialchars($property['name'] ?? $property['title'] ?? 'Property Report') ?></h4><a href="<?= BASE_URL ?>reports/generate?type=property&id=<?= $property['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export PDF</a></div>
+    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><?= htmlspecialchars($property['name'] ?? $property['title'] ?? 'Property Report') ?></h4><a href="<?= BASE_URL ?>/reports/generate?type=property&id=<?= $property['id'] ?? 0 ?>" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export PDF</a></div>
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Basic Info</h2></div>

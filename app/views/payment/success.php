@@ -253,11 +253,11 @@
                 <i class="fas fa-home"></i>
                 Back to Home
             </a>
-            <a href="<?= BASE_URL ?>dashboard" class="btn-custom btn-secondary-custom">
+            <a href="<?= BASE_URL ?>/dashboard" class="btn-custom btn-secondary-custom">
                 <i class="fas fa-tachometer-alt"></i>
                 My Dashboard
             </a>
-            <a href="<?= BASE_URL ?>properties" class="btn-custom btn-secondary-custom">
+            <a href="<?= BASE_URL ?>/properties" class="btn-custom btn-secondary-custom">
                 <i class="fas fa-building"></i>
                 Browse Properties
             </a>
@@ -321,7 +321,7 @@
         setTimeout(() => {
             const autoRedirect = confirm('Would you like to view your dashboard?');
             if (autoRedirect) {
-                window.location.href = '<?= BASE_URL ?>dashboard';
+                window.location.href = '<?= BASE_URL ?>/dashboard';
             }
         }, 15000);
     </script>

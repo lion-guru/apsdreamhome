@@ -9,6 +9,11 @@
     Options -Indexes
     DirectoryIndex index.php index.html
 
+    # The app's BASE_URL keeps an /apsdreamhome/ subpath prefix (APP_URL=http://localhost/apsdreamhome).
+    # This vhost's DocumentRoot IS this public/ folder, so /apsdreamhome/<path> would resolve
+    # to public/apsdreamhome/<path> (nonexistent) — strip the prefix so assets/api resolve.
+    RewriteRule ^apsdreamhome/(.*)$ /$1 [L]
+
     # If the requested file is a real file (CSS, JS, image, etc.), serve it as-is
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]

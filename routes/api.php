@@ -518,6 +518,7 @@ $router->get('/api/v2/mobile/marketplace/premium', 'Api\MobilePropertyApiControl
 
 // Public property browsing (no auth required)
 $router->get('/api/v2/mobile/properties/browse', 'Api\MobilePropertyApiController@properties');
+$router->get('/api/v2/mobile/properties/{id}', 'Api\MobilePropertyApiController@propertyDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/plots/all', 'Api\MobilePropertyApiController@getAllPlots');
 
 // Property detail + search under /api/v2/mobile/ prefix
@@ -1194,6 +1195,7 @@ $router->get('/api/v2/mobile/about', 'Api\MobileUserApiController@getAboutInfo')
 // MOBILE API V2 — Careers / Jobs (public + auth for apply)
 // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
 $router->get('/api/v2/mobile/careers', 'Api\MobileUserApiController@getJobListings');
+$router->get('/api/v2/mobile/careers/jobs', 'Api\MobileUserApiController@getJobListings');
 $router->post('/api/v2/mobile/careers/apply', 'Api\MobileUserApiController@submitJobApplication')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/careers/{id}', 'Api\MobileUserApiController@getJobDetail');
 

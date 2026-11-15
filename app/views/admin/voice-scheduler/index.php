@@ -2,8 +2,8 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0"><i class="fas fa-phone-alt me-2"></i>Voice Call Scheduler</h4>
     <div>
-        <a href="<?= BASE_URL ?>admin/voice-scheduler/schedule" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Schedule Call</a>
-        <a href="<?= BASE_URL ?>admin/voice-scheduler/analytics" class="btn btn-info btn-sm text-white"><i class="fas fa-chart-bar me-1"></i>Analytics</a>
+        <a href="<?= BASE_URL ?>/admin/voice-scheduler/schedule" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Schedule Call</a>
+        <a href="<?= BASE_URL ?>/admin/voice-scheduler/analytics" class="btn btn-info btn-sm text-white"><i class="fas fa-chart-bar me-1"></i>Analytics</a>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-clock me-2"></i>Pending Calls / Queue</span>
-                <form method="post" action="<?= BASE_URL ?>admin/voice-scheduler/process" class="d-inline">
+                <form method="post" action="<?= BASE_URL ?>/admin/voice-scheduler/process" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-play me-1"></i>Process Queue</button>
                 </form>
@@ -77,7 +77,7 @@
                                 <td><?= date('d M Y', strtotime($c['scheduled_date'] ?? '')) ?><br><small class="text-muted"><?= date('h:i A', strtotime($c['scheduled_time'] ?? '')) ?></small></td>
                                 <td><?= htmlspecialchars($c['agent_name'] ?? 'Unassigned', ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><span class="badge bg-<?= $c['priority'] === 'urgent' ? 'danger' : ($c['priority'] === 'high' ? 'warning' : 'secondary') ?>"><?= $c['priority'] ?? 'medium' ?></span></td>
-                                <td><a href="<?= BASE_URL ?>admin/voice-scheduler/calls/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                                <td><a href="<?= BASE_URL ?>/admin/voice-scheduler/calls/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>

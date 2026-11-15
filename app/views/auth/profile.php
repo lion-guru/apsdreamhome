@@ -1,9 +1,9 @@
 <?php $pageTitle = __('auth_my_profile'); ?>
 <?php $user = $user ?? []; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home"></i> Home</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>user/dashboard"><?= __('dashboard') ?></a></li><li class="breadcrumb-item active"><?= __('auth_my_profile') ?></li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home"></i> Home</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/user/dashboard"><?= __('dashboard') ?></a></li><li class="breadcrumb-item active"><?= __('auth_my_profile') ?></li></ol></nav>
     <?php if (empty($user)): ?>
-    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted"><?= __('auth_user_not_found') ?></h6><p class="text-muted small"><?= __('auth_user_not_found_desc') ?></p><a href="<?= BASE_URL ?>login" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt me-1"></i><?= __('login') ?></a></div></div>
+    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted"><?= __('auth_user_not_found') ?></h6><p class="text-muted small"><?= __('auth_user_not_found_desc') ?></p><a href="<?= BASE_URL ?>/login" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt me-1"></i><?= __('login') ?></a></div></div>
     <?php else: ?>
     <div class="row g-4">
         <div class="col-lg-4">
@@ -20,7 +20,7 @@
                     <p class="text-muted small mb-1"><i class="fas fa-envelope me-1"></i><?= htmlspecialchars($user['email'] ?? '-') ?></p>
                     <p class="text-muted small mb-0"><i class="fas fa-phone me-1"></i><?= htmlspecialchars($user['phone'] ?? '-') ?></p>
                     <hr>
-                    <a href="<?= BASE_URL ?>user/dashboard" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-tachometer-alt me-1"></i><?= __('dashboard') ?></a>
+                    <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-tachometer-alt me-1"></i><?= __('dashboard') ?></a>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-edit me-2"></i><?= __('auth_edit_profile') ?></h2></div>
                 <div class="card-body aps-cp-card-body">
-                    <form method="post" action="<?= BASE_URL ?>user/profile">
+                    <form method="post" action="<?= BASE_URL ?>/user/profile">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label"><?= __('register_label_name') ?></label>

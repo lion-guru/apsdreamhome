@@ -60,6 +60,33 @@ class MobileAuthApiController extends BaseController
         }
     }
 
+    /**
+     * Generate a unique per-user referral code: APS<last 5 digits of user id>
+     * padded, with a collision-proof retry (generated codes stay in the same
+     * namespace the web uses: 'APS' + digits).
+     */
+    private function generateReferralCode(\PDO $pdo, int $userId): string
+    {
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $candidate = 'APS' . str_pad((string) $userId, 5, '0', STR_PAD_LEFT);
+            // On collision, append a random digit suffix instead of looping
+            // on the same candidate forever.
+            if ($attempt > 0) {
+                $candidate .= (string) random_int(10, 99);
+            }
+            $check = $pdo->prepare("SELECT COUNT(*) FROM users WHERE referral_code = ?");
+            $check->execute([$candidate]);
+            if ((int) $check->fetchColumn() === 0) {
+                $check = $pdo->prepare("SELECT COUNT(*) FROM associate_profiles WHERE referral_code = ?");
+                $check->execute([$candidate]);
+                if ((int) $check->fetchColumn() === 0) {
+                    return $candidate;
+                }
+            }
+        }
+        throw new \RuntimeException('Unable to generate a unique referral code');
+    }
+
     public function register()
     {
         $this->setCorsHeaders();
@@ -69,7 +96,11 @@ class MobileAuthApiController extends BaseController
         $email = trim($data['email'] ?? '');
         $phone = preg_replace('/[^0-9+\-\s()]/', '', trim($data['phone'] ?? ''));
         $password = $data['password'] ?? '';
-        $role = in_array(($data['role'] ?? ''), ['customer', 'agent', 'employee']) ? $data['role'] : 'customer';
+        // The public app offers Customer and Associate self-registration
+        // (see register_page.dart role cards). The allow-list used to drop
+        // 'associate' silently to 'customer', so every mobile associate signup
+        // became a customer account with no MLM path.
+        $role = in_array(($data['role'] ?? ''), ['customer', 'agent', 'employee', 'associate'], true) ? (string) $data['role'] : 'customer';
 
         if ($name === '' || $email === '' || $password === '') {
             return $this->jsonError('Name, email and password are required', 400);
@@ -106,9 +137,51 @@ class MobileAuthApiController extends BaseController
             if (!empty($insertExtra)) { $cols .= ", tenant_id"; $vals .= ", ?"; $uParams[] = $insertExtra['tenant_id']; }
             $stmt = $pdo->prepare("INSERT INTO users ($cols) VALUES ($vals)");
             $stmt->execute($uParams);
-            $userId = $pdo->lastInsertId();
+            $userId = (int) $pdo->lastInsertId();
 
             $this->tenantTrackUsage('users');
+
+            // Referral attribution: honor an app-supplied sponsor code so the
+            // marketing loop (share apps -> install -> register with code)
+            // actually credits the referrer. Previously the payload arrived
+            // and was silently dropped.
+            $referralParam = trim((string)($data['referral_code'] ?? $data['parent_referral_code'] ?? ''));
+            $sponsorId = null;
+            if ($referralParam !== '') {
+                $sponsorStmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
+                $sponsorStmt->execute([$referralParam]);
+                $sponsorId = (int) ($sponsorStmt->fetchColumn() ?: 0) ?: null;
+            }
+
+            $ownCode = null;
+            try {
+                $ownCode = $this->generateReferralCode($pdo, $userId);
+            } catch (\Throwable $codeError) {
+                error_log('MobileAuth register: referral code generation failed: ' . $codeError->getMessage());
+            }
+
+            if ($ownCode !== null) {
+                $pdo->prepare("UPDATE users SET referral_code = ?, referred_by = ? WHERE id = ?")
+                    ->execute([$ownCode, $sponsorId, $userId]);
+            } elseif ($sponsorId !== null) {
+                $pdo->prepare("UPDATE users SET referred_by = ? WHERE id = ?")
+                    ->execute([$sponsorId, $userId]);
+            }
+
+            // Associates get the MLM enrollment row the moment they sign up.
+            // associate_profiles.user_id is UNIQUE; creation is idempotent.
+            if ($role === 'associate') {
+                try {
+                    $apStmt = $pdo->prepare(
+                        "INSERT INTO associate_profiles (user_id, tenant_id, level, status, referral_code, sponsor_id)
+                         VALUES (?, 1, 'associate', 'active', ?, ?)
+                         ON DUPLICATE KEY UPDATE referral_code = VALUES(referral_code), sponsor_id = VALUES(sponsor_id)"
+                    );
+                    $apStmt->execute([$userId, $ownCode, $sponsorId]);
+                } catch (\Throwable $apError) {
+                    error_log('MobileAuth register: associate_profiles row failed: ' . $apError->getMessage());
+                }
+            }
 
             $result = $this->apiAuthService->login($email, $password);
 

@@ -81,6 +81,15 @@ class MobilePropertyApiController extends BaseController
                 $total_count = $this->getUpdatedPropertiesCount($last_sync, $filters);
             } else {
                 $properties = $this->getPropertiesWithFilters($filters, $limit, $offset);
+            if (is_array($properties)) {
+                foreach ($properties as &$p) {
+                    if (!empty($p['main_image']) && !preg_match('#^https?://#i', (string) $p['main_image'])) {
+                        $g_host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+                        $g_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+                        $p['main_image'] = ($g_https ? 'https' : 'http') . '://' . $g_host . '/apsdreamhome/' . ltrim((string) $p['main_image'], '/');
+                    }
+                }
+            }
                 $total_count = $this->getPropertiesCount($filters);
             }
 
@@ -327,7 +336,7 @@ class MobilePropertyApiController extends BaseController
     {
         try {
             if (!$this->db) return [];
-            $stmt = $this->db->prepare("SELECT * FROM property_features WHERE property_id = :propertyId ORDER BY feature_category, feature_name");
+            $stmt = $this->db->prepare("SELECT * FROM property_features WHERE property_id = :propertyId ORDER BY feature_type, feature_name");
             $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -1701,6 +1710,54 @@ class MobilePropertyApiController extends BaseController
         $name = trim($input['name'] ?? '');
         $phone = trim($input['phone'] ?? '');
         $message = trim($input['message'] ?? '');
+        // Owner-marketplace listings ride the same endpoint. 'company' = the
+        // properties table (default, backwards compatible); 'user' = a
+        // user_properties verified listing.
+        $listingType = (string)($input['listing_type'] ?? 'company') === 'user' ? 'user' : 'company';
+        $listingId = (int)($input['listing_id'] ?? $propertyId);
+
+        if ($listingType === 'user') {
+            if (!$listingId || !$name || !$phone) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Missing required fields']);
+                return;
+            }
+            $listing = $this->db->query(
+                "SELECT id, name, user_id FROM user_properties WHERE id = ? AND status IN ('verified','approved')",
+                [$listingId]
+            )->fetch();
+            if (!$listing) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Listing not found or pending verification']);
+                return;
+            }
+            $apiUserId2 = (int)($GLOBALS['api_user_id'] ?? 0) ?: null;
+            $this->db->query(
+                "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id, listing_type, listing_id, user_id) VALUES (NULL, ?, ?, ?, 1, 'user', ?, ?)",
+                [$name, $phone, $message, $listingId, $apiUserId2]
+            );
+            $inquiryId = $this->db->query("SELECT LAST_INSERT_ID() as id")->fetch()['id'];
+            // Notify the seller (best effort)
+            try {
+                $pushService = new \App\Services\Communication\PushNotificationService();
+                $pushService->sendToUser(
+                    (int)$listing['user_id'],
+                    [
+                        'title' => 'New Property Inquiry',
+                        'body' => "{$name} inquired about your listing: {$listing['name']}",
+                        'data' => [
+                            'type' => 'user_property_inquiry',
+                            'inquiry_id' => (string)$inquiryId,
+                            'listing_id' => (string)$listingId,
+                        ],
+                    ]
+                );
+            } catch (\Throwable $e) {
+                error_log('submitPropertyInquiry(user) push: ' . $e->getMessage());
+            }
+            echo json_encode(['success' => true, 'message' => 'Inquiry sent to the seller.', 'data' => ['inquiry_id' => (int)$inquiryId]]);
+            return;
+        }
 
         if (!$propertyId || !$name || !$phone) {
             http_response_code(400);
@@ -1723,8 +1780,8 @@ class MobilePropertyApiController extends BaseController
         }
 
         $this->db->query(
-            "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id) VALUES (?, ?, ?, ?, 1)",
-            [$propertyId, $name, $phone, $message]
+            "INSERT INTO property_inquiries (property_id, name, phone, message, tenant_id, listing_type, listing_id, user_id) VALUES (?, ?, ?, ?, 1, 'company', ?, ?)",
+            [$propertyId, $name, $phone, $message, $propertyId, (int)($GLOBALS['api_user_id'] ?? 0)]
         );
 
         $inquiryId = $this->db->query("SELECT LAST_INSERT_ID() as id")->fetch()['id'];

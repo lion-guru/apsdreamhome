@@ -1,8 +1,8 @@
 <?php $pageTitle = 'Properties Report'; ?>
 <?php $propertiesData = $propertiesData ?? []; $summary = $summary ?? ['total' => 0, 'available' => 0, 'sold' => 0, 'pending' => 0]; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>reports/dashboard">Reports</a></li><li class="breadcrumb-item active">Properties Report</li></ol></nav>
-    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-building me-2"></i>Properties Report</h4><a href="<?= BASE_URL ?>reports/generate?type=properties" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export</a></div>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/reports/dashboard">Reports</a></li><li class="breadcrumb-item active">Properties Report</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-building me-2"></i>Properties Report</h4><a href="<?= BASE_URL ?>/reports/generate?type=properties" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export</a></div>
     <div class="row g-3 mb-4">
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Total Properties</small><h4 class="mb-0"><?= number_format($summary['total'] ?? 0) ?></h4></div></div></div>
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Available</small><h4 class="text-success mb-0"><?= number_format($summary['available'] ?? 0) ?></h4></div></div></div>

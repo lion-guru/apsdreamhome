@@ -231,10 +231,16 @@ class SmartAIController extends BaseController
         // listings are redundant here - getPropertyListings() attaches them as cards below,
         // and accepting them would hijack analytical questions (EMI, commission, etc.)
         // because retrieval relevance is hardcoded per source type.
+        // RBAC: guests/customers get only 'public' docs, staff also 'staff', admins get all.
+        $ragVisibility = in_array($userContext['role'] ?? 'guest', ['admin', 'super_admin'], true)
+            ? 'admin'
+            : (in_array($userContext['role'] ?? 'guest', ['employee', 'telecaller', 'manager', 'hr_admin', 'backoffice_staff'], true)
+                ? 'staff'
+                : 'public');
         if ($response === null) {
             try {
                 $rag = new RAGService();
-                $ragResult = $rag->answer($message, $userContext['id']);
+                $ragResult = $rag->answer($message, $userContext['id'] ?? 0, $ragVisibility);
                 $ragHasProse = false;
                 foreach (($ragResult['sources'] ?? []) as $src) {
                     if (stripos((string)$src, 'Knowledge Base:') === 0 || stripos((string)$src, 'Colony:') === 0) {
@@ -416,10 +422,22 @@ class SmartAIController extends BaseController
             $context['name'] = $_SESSION['employee_name'] ?? 'Employee';
             $context['id'] = $_SESSION['employee_id'];
         } elseif (isset($_SESSION['user_id'])) {
-            $context['role'] = 'customer';
-            $context['name'] = $_SESSION['user_name'] ?? 'Customer';
-            $context['id'] = $_SESSION['user_id'];
-            $context['data'] = $this->getCustomerData($context['id']);
+            // Preserve the actual role name, not just 'customer' — associates and
+            // agents sign in via /associate/login & /agent/login and only set
+            // user_id + role, never *_id. Treating everything as customer made
+            // the AI answer with customer tone to a sales associate.
+            $sessionRole = $_SESSION['role'] ?? '';
+            $agentLike = ['associate', 'agent', 'employee', 'telecaller'];
+            if (in_array($sessionRole, $agentLike, true)) {
+                $context['role'] = $sessionRole;
+                $context['name'] = $_SESSION['user_name'] ?? ucfirst($sessionRole);
+                $context['id'] = $_SESSION['user_id'];
+            } else {
+                $context['role'] = 'customer';
+                $context['name'] = $_SESSION['user_name'] ?? 'Customer';
+                $context['id'] = $_SESSION['user_id'];
+                $context['data'] = $this->getCustomerData($context['id']);
+            }
         }
 
         return $context;
@@ -735,35 +753,157 @@ class SmartAIController extends BaseController
     /**
      * Detect and perform actions
      */
+    /**
+     * Detect if the user wants to do something actionable and perform it.
+     *
+     * Recognises intents such as:
+     *   "site visit in Suryoday Colony"           → creates a site_visits row
+     *   "mai interested hoon" / "mujhe book karna hai" → creates a lead (when phone provided)
+     *   "emi kitni hogi"                          → answers EMI dynamically (₹ amount)
+     *   "kab aana hai" / "doosre roz"              → confirms next-day morning slot
+     *
+     * Never throws — any failure returns a soft "kuch aur poochhein" message so the
+     * chat never crashes. Never leaks internal data.
+     */
     private function detectAndPerformAction($message, $userContext)
     {
         $msg = strtolower($message);
         $result = ['performed' => false, 'message' => ''];
 
-        // Auto-create lead if user shows buying intent
-        if (($userContext['role'] === 'customer' || $userContext['role'] === 'guest') &&
-            (strpos($msg, 'interested') !== false || strpos($msg, 'book') !== false || strpos($msg, 'buy') !== false)
-        ) {
+        // Helper: colonies recognised for routing to listings
+        $colonies = $this->detectColony($message);
 
+        // 1. SITE VISIT BOOKING (highest value intent)
+        //    Match: "site visit", "visit book", "aao ke dekhlo", "dekhne jaana hai", "aaj/come tomorrow", "free site"
+        $wantsVisit = (
+            strpos($msg, 'site visit') !== false ||
+            strpos($msg, 'visit book') !== false ||
+            strpos($msg, 'visit schedule') !== false ||
+            strpos($msg, 'dekhne jaana') !== false ||
+            strpos($msg, 'dekhlo') !== false ||
+            strpos($msg, 'dekhaun') !== false ||
+            strpos($msg, 'kal aana') !== false ||
+            strpos($msg, 'tomorrow') !== false ||
+            strpos($msg, 'book a visit') !== false
+        );
+
+        if ($wantsVisit && $colonies !== null) {
+            if ($userContext['id']) {
+                try {
+                    $tomorrow = date('Y-m-d', strtotime('+1 day'));
+                    $visitTime = '11:00:00';
+                    $row = [
+                        'tenant_id' => 1,
+                        'colony_id' => $colonies['id'],
+                        'user_id' => $userContext['id'],
+                        'visitor_name' => $userContext['name'] ?? 'Customer',
+                        'visit_type' => 'site_visit',
+                        'pickup_required' => 1,
+                        'pickup_location' => 'Pickup from customer home address',
+                        'visit_date' => $tomorrow,
+                        'visit_time' => $visitTime,
+                        'duration_minutes' => 60,
+                        'status' => 'pending_confirmation',
+                        'notes' => 'Auto-booked via APS AI Assistant. Customer expressed interest in: ' . $colonies['name'],
+                        'created_at' => date('Y-m-d H:i:s'),
+                    ];
+                    $this->db->query(
+                        "INSERT INTO site_visits (tenant_id, colony_id, user_id, visitor_name, visit_type, pickup_required, pickup_location, visit_date, visit_time, duration_minutes, status, notes, created_at)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+                        [$row['tenant_id'], $row['colony_id'], $row['user_id'], $row['visitor_name'], $row['visit_type'], $row['pickup_required'], $row['pickup_location'], $row['visit_date'], $row['visit_time'], $row['duration_minutes'], $row['status'], $row['notes']]
+                    );
+
+                    $result['performed'] = true;
+                    $result['message'] = "Perfect! Main aapki **{$colonies['name']}** ki site visit book kar diya hoon — kal ({$this->indianDate($tomorrow)}) subah 11 baje. Humari team aapse 2 ghante ke andar call karke confirm karegi. \n\n*Koi bhi sawaal ho to batayein! 😊*";
+                } catch (\Throwable $e) {
+                    error_log("AI site visit booking error: " . $e->getMessage());
+                    // Do not claim a booking happened; just offer help
+                    $result['message'] = "Main aapki site visit book karna chahta tha lekin abhi system me thoda hiccup aa gaya. Please dusre tools me ya call karke confirm kar lijiye — **+91 92771 21112** pe. Sorry 🙏";
+                    return $result;
+                }
+            } else {
+                $result['message'] = "Site visit book karne ke liye pehle [Login](/login) karein — ya fir aap humari team ko **+91 92771 21112** pe call karein, wasey direct book kar denge! 📞";
+            }
+            return $result;
+        }
+
+        // 2. LEAD CAPTURE (interested / buying intent + phone number)
+        $buyingIntent = (
+            strpos($msg, 'interested') !== false ||
+            strpos($msg, 'book') !== false ||
+            strpos($msg, 'buy') !== false ||
+            strpos($msg, 'kharid') !== false ||
+            strpos($msg, 'plot lena') !== false ||
+            strpos($msg, 'book karna hai') !== false ||
+            strpos($msg, 'sabse best deal') !== false ||
+            strpos($msg, 'price') !== false // no phone yet, but intent helpful
+        );
+        if ($buyingIntent && $userContext['id'] && $userContext['role'] !== 'associate' && $userContext['role'] !== 'employee') {
             // Extract phone number if present
             preg_match('/\d{10}/', $message, $matches);
             $phone = $matches[0] ?? null;
 
-            if ($phone && $userContext['id']) {
+            if ($phone) {
                 try {
+                    $colonyName = $colonies ? $colonies['name'] : 'general inquiry';
                     $this->db->query(
-                        "INSERT INTO leads (assigned_to, name, phone, source, status, created_at) VALUES (?, ?, ?, 'ai_chatbot', 'new', NOW())",
-                        [$userContext['id'], $userContext['name'], $phone]
+                        "INSERT INTO leads (assigned_to, name, phone, source, status, created_at, notes)
+                         VALUES (?, ?, ?, 'ai_chatbot', 'new', NOW(), ?)",
+                        [$userContext['id'], $userContext['name'], $phone, 'AI Assistant picked up buying signal. Interested in: ' . $colonyName]
                     );
                     $result['performed'] = true;
-                    $result['message'] = "Aapki lead humare team ko bhej di gayi hai! Aapko 24 ghante mein call karenge.";
+                    // Don't notify — Chat UI may show the message below
+                    $result['message'] = "Aapki lead humare sales team ko bhej di gayi hai! 24 ghante ke andar aapko call aayega. \n\n*Agar aapke pas koi specific colony ya budget hai to batayein.* 😊";
+                    return $result;
                 } catch (\Throwable $e) {
-                    error_log("Lead creation error: " . $e->getMessage());
+                    error_log("AI lead creation error: " . $e->getMessage());
                 }
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Detect the first colony name present in the message.
+     * Returns the colony row (id, name) or null.
+     */
+    private function detectColony(string $message): ?array
+    {
+        $keywords = [
+            'suryoday'    => ['name' => 'Suryoday Colony',     'kw' => ['suryoday']],
+            'raghunath'   => ['name' => 'Raghunath Nagri',     'kw' => ['raghunath']],
+            'braj'        => ['name' => 'Braj Radha Nagri',     'kw' => ['braj radha', 'braj']],
+            'budh bihar'  => ['name' => 'Budh Bihar Colony',    'kw' => ['budh bihar', 'budbihar']],
+            'motiram'     => ['name' => 'Motiram Township',     'kw' => ['motiram']],
+            'lakeview'    => ['name' => 'Lakeview Residency',   'kw' => ['lakeview']],
+            'budha city'  => ['name' => 'Budha City Kushinagar','kw' => ['budha city', 'kushinagar']],
+        ];
+        $low = strtolower($message);
+        foreach ($keywords as $key => $meta) {
+            foreach ($meta['kw'] as $needle) {
+                if (strpos($low, $needle) !== false) {
+                    try {
+                        $row = $this->db->fetch("SELECT id FROM colonies WHERE LOWER(name) LIKE ? LIMIT 1", ['%' . $meta['name'] . '%']);
+                        if ($row) return ['id' => (int)$row['id'], 'name' => $meta['name']];
+                    } catch (\Throwable $e) {}
+                    return ['id' => 1, 'name' => $meta['name']]; // Fallback id 1 — Suryoday default
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Format a date as an Indian-style human-readable phrase.
+     */
+    private function indianDate(string $isoYmd): string
+    {
+        $ts = strtotime($isoYmd);
+        if (!$ts) return $isoYmd;
+        $days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        $months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        return date('d ', $ts) . $months[(int)date('n', $ts) - 1] . ', ' . $days[(int)date('w', $ts)];
     }
 
     /**
@@ -849,6 +989,42 @@ EOT;
             $prompt .= "- /admin/multi-currency — currencies and FX rates\n";
             $prompt .= "- /admin/ai/executive-assistant — 22-role RBAC agentic assistant (deeper automation)\n";
             $prompt .= "FORMAT: start with the one page to open, name the action, then one extra tip. No SQL, no table names, no other users' private data — the SECURITY RULES still apply to raw data extraction and PII.\n";
+        }
+
+        if ($userContext['role'] === 'customer') {
+            $prompt .= "\nCUSTOMER HELP MODE — THIS USER IS A HOME BUYER, NOT A STAFF MEMBER.\n";
+            $prompt .= "Your job: help a real prospective plot buyer. Focus on PLOT SELECTION, EMI, SITE VISITS, AND RERA. Walk them to the best colony for their budget.\n";
+            $prompt .= "DO NOT tell them about /admin pages, lead scoring, commission systems, or internal sales training.\n";
+            $prompt .= "Colonies to recommend (all solid RERA-registered):\n";
+            $prompt .= "- Suryoday Colony (Gorakhpur, 40km radius residential, family-friendly, ₹12-25L per plot)\n";
+            $prompt .= "- Raghunath Nagri (Motiram Road, Gorakhpur — premium colony, ₹15-40L)\n";
+            $prompt .= "- Braj Radha Nagri (Gorakhpur's top colony, ₹18-40L)\n";
+            $prompt .= "- Budh Bihar Colony (Kushinagar/Gorakhpur, ₹10-18L, budget-friendly)\n";
+            $prompt .= "- Budha City Kushinagar (Kushinagar township, ₹15-30L, near Buddha Stupa)\n";
+            $prompt .= "- Lakeview Residency (Motiram Road, Gorakhpur — mid-range)\n";
+            $prompt .= "\nEMI facts to mention:\n";
+            $prompt .= "- 20% down, balance in 12-month EMI; EMI = balance/(months)\n";
+            $prompt .= "- Instant site visit booking available (free taxi pickup from home)\n";
+            $prompt .= "- RERA registration is mandatory in UP — ask to see the certificate\n\n";
+            $prompt .= "Prefer CONCRETE recommendations. Ask their budget, then name 2 colonies, then describe the plot size and price per sqft. Keep the tone warm, helpful, and Hinglish.\n";
+        }
+
+        if ($userContext['role'] === 'associate') {
+            $prompt .= "\nASSOCIATE HELP MODE — THIS USER IS A FIELD SALES ASSOCIATE (NOT AN ADMIN).\n";
+            $prompt .= "Your job: help a field associate close plots. Give scripts, objection responses, lead-handling tips.\n";
+            $prompt .= "Motivate them — remind them the best associates close 3-4 plots a month.\n";
+            $prompt .= "Suggest concrete actions: 'Reach out to the 3 hot leads first…' 'Schedule a site visit with the warm lead…'\n";
+            $prompt .= "Always ask for next steps: who they're calling, what objection they're facing, which colony.\n";
+            $prompt .= "DO NOT tell them about /admin pages they cannot use. They only see /associate/* pages.\n";
+            $prompt .= "Remind them: commission slabs are rank-based; references pay ₹500 activation bonus; direct sale is commission-per-close; override applies to their downline.\n";
+            $prompt .= "Keep the tone Hinglish, motivational, and practical.\n";
+        }
+
+        if ($userContext['role'] === 'employee' || $userContext['role'] === 'telecaller' || $userContext['role'] === 'backoffice_staff') {
+            $prompt .= "\nEMPLOYEE / TELECALLER HELP MODE — THIS USER IS AN APS BACK-OFFICE STAFF MEMBER, NOT AN ADMIN.\n";
+            $prompt .= "Your job: coach them on their actual job — daily calls list, follow-up quality, email and SMS hygiene, backoffice productivity.\n";
+            $prompt .= "Suggest concrete actions: 'Prioritize P0 leads before 11 AM' 'Log every call with the outcome code' 'Draft the follow-up SMS in <= 160 chars'\n";
+            $prompt .= "Keep the tone supportive, practical, and Hinglish. No admin-only pages.\n";
         }
 
         if ($userContext['role'] === 'associate') {

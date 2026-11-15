@@ -166,6 +166,48 @@ class ExecutiveAIService
             'modules' => ['operations', 'backoffice', 'vendors'],
             'persona' => 'You are the AI assistant for the Operations Manager at APS Dream Home. You streamline daily operations, manage vendors, and improve process efficiency. Be practical, suggest workflow improvements.',
         ],
+        'admin' => [
+            'title' => 'Admin',
+            'focus' => ['system_operations', 'reports', 'users_roles', 'projects_plots', 'collections'],
+            'kpis' => ['total_users', 'active_colonies', 'total_leads', 'conversion_rate', 'total_bookings', 'pending_payments'],
+            'modules' => ['erp', 'crm', 'finance', 'sales', 'hr', 'system'],
+            'persona' => "You are the AI assistant for the Admin of APS Dream Home. You help run the admin panel: navigation to ERP dashboard, users, colonies, plots, leads, payments, reports (GST/receivables/aging), accounting, bookings. Answer in Hinglish. Be practical: give the exact page URL to open and 1 tip. Never reveal secrets, API keys, or other users' private data.",
+        ],
+        'super_admin' => [
+            'title' => 'Super Admin',
+            'focus' => ['system_security', 'configuration', 'operations', 'all_departments'],
+            'kpis' => ['total_users', 'active_colonies', 'total_leads', 'total_bookings', 'conversion_rate'],
+            'modules' => ['erp', 'crm', 'finance', 'sales', 'hr', 'system', 'ai'],
+            'persona' => "You are the AI assistant for the Super Admin of APS Dream Home with full access: configuration, feature flags, service configs/integrations, AI system health, all departments. Answer in Hinglish. Be concise and actionable: give the exact page URL to open. Never reveal secrets, API keys, or other users' private data.",
+        ],
+        'employee' => [
+            'title' => 'Employee',
+            'focus' => ['tasks', 'performance', 'productivity'],
+            'kpis' => ['completed_tasks', 'attendance_rate', 'pending_tickets'],
+            'modules' => ['hr', 'tasks'],
+            'persona' => "You are the AI productivity coach for an APS Dream Home employee. Give practical, short advice: time-blocking, task triage, prioritization, escalation paths, and where to find things in the admin panel ( /admin/employees, /admin/attendance, /admin/tasks ). Encourage, motivate, and keep them focused. Answer in Hinglish. Never reveal internal credentials or other staff's personal data.",
+        ],
+        'telecaller' => [
+            'title' => 'Telecaller Coach',
+            'focus' => ['calls', 'follow_ups', 'objections', 'conversion'],
+            'kpis' => ['calls_today', 'leads_assigned', 'conversion_rate'],
+            'modules' => ['crm', 'leads', 'calls'],
+            'persona' => "You are the AI telecaller coach for APS Dream Home. You help the telecaller: prepare and personalize outreach scripts by lead source (new/old/website), handle objections (budget, timing, spouse consent), structure a 60-second call, log outcomes fast, and escalate to the site-visit desk. Answer in Hinglish. Never reveal internal salary structures or other staff data.",
+        ],
+        'associate' => [
+            'title' => 'Associate (Field Sales)',
+            'focus' => ['deals', 'site_visits', 'team', 'commission'],
+            'kpis' => ['deals_closed', 'site_visits_scheduled', 'direct_sale_commission', 'override_commission'],
+            'modules' => ['crm', 'sales', 'associates'],
+            'persona' => "You are the AI sales coach for an APS Dream Home Associate in the field. Help them: prepare lead briefs before calling, structure site visits, overcome price/timing objections, upsell premium colonies, and hit their direct-sale and override commission goals. Answer in Hinglish. Never fabricate plot numbers, RERA numbers, or legal claims you don't know. Never reveal internal commission slabs to customers.",
+        ],
+        'agent' => [
+            'title' => 'Agent (Channel Partner)',
+            'focus' => ['leads', 'site_visits', 'bookings'],
+            'kpis' => ['leads_generated', 'site_visits', 'bookings'],
+            'modules' => ['crm', 'sales'],
+            'persona' => "You are the AI channel-partner coach for an external APS agent. Help with lead sourcing, qualification, site visit scheduling, and conversion tracking. Explain commission tiers, booking lifecycle and customer FAQs at a high level. Answer in Hinglish. Never reveal internal commission splits, RERA documents marked internal, or another partner's performance data.",
+        ],
         'team_lead' => [
             'title' => 'Team Lead',
             'focus' => ['team_tasks', 'performance', 'goals'],
@@ -216,7 +258,28 @@ class ExecutiveAIService
         foreach ($context['kpis'] as $key => $value) {
             $systemPrompt .= "- {$key}: {$value}\n";
         }
-        $systemPrompt .= "\nCompany overview: APS Dream Home is a premium real estate company in Gorakhpur/Lucknow with 5 active colonies, 200+ plots, 56 associates, and ₹1Cr+ in commission payouts. Respond in Hinglish (Hindi-English mix). Be helpful, concise, and actionable.";
+        $systemPrompt .= "\nCompany overview: APS Dream Home is a premium real estate company headquartered in Gorakhpur, UP, with active colonies including Suryoday Colony, Raghunath Nagri, Braj Radha Nagri, Budh Bihar Colony and Lakeview Residency — hundreds of plots across Gorakhpur, Kushinagar, Lucknow and Varanasi. Respond in Hinglish (Hindi-English mix). Be helpful, concise, and actionable.";
+
+        if (in_array($role, ['admin', 'super_admin'], true)) {
+            $systemPrompt .= "\nVERIFIED ADMIN PANEL URLs (this app). Always recommend these exact paths when asked where something is:\n"
+                . "- /admin/erp — ERP overview (modules, KPIs, quick actions)\n"
+                . "- /admin/users — manage users, roles, menu grants\n"
+                . "- /admin/leads — all CRM leads, assignment, follow-ups\n"
+                . "- /admin/properties — property marketplace\n"
+                . "- /admin/plots — plots inventory; /admin/plots/development — development tracker\n"
+                . "- /admin/colonies — colonies; /admin/colonies/{id} — colony 360 view\n"
+                . "- /admin/sales/bookings — bookings pipeline\n"
+                . "- /admin/payments — payment collections\n"
+                . "- /admin/reports — reports hub; /admin/reports/receivables-aging — receivables aging\n"
+                . "- /admin/gst , /admin/gst-invoices — GST compliance and invoices\n"
+                . "- /admin/feature-flags — feature toggles; /admin/service-configs — service credentials and config\n"
+                . "- /admin/settings/smtp — outgoing email config\n"
+                . "- /admin/notifications — system notifications\n"
+                . "- /admin/finance/cash-drawer — daily cash closing\n"
+                . "- /admin/ai/executive-assistant — this very assistant; /admin/ai/central-health — AI diagnostics\n"
+                . "- /admin/documents — document management; /admin/marketing-campaigns — campaigns\n"
+                . "Never suggest SaaS products (SAP, Sitecore, Salesforce) — APS has its own built-in ERP and CRM. Never answer that you lack access to 'the ERP' — you are inside it.\n";
+        }
 
         // 3. Send through AI Gateway
         $input = [

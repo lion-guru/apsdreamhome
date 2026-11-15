@@ -1,8 +1,8 @@
 <?php $pageTitle = 'User Activity Report'; ?>
 <?php $activities = $activities ?? []; $summary = $summary ?? ['total_users' => 0, 'active_today' => 0, 'new_this_month' => 0, 'total_logins' => 0]; ?>
 <div class="container-fluid py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>reports/dashboard">Reports</a></li><li class="breadcrumb-item active">User Activity</li></ol></nav>
-    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-users me-2"></i>User Activity Report</h4><a href="<?= BASE_URL ?>reports/generate?type=user_activity" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export</a></div>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/reports/dashboard">Reports</a></li><li class="breadcrumb-item active">User Activity</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-users me-2"></i>User Activity Report</h4><a href="<?= BASE_URL ?>/reports/generate?type=user_activity" class="btn btn-primary btn-sm"><i class="fas fa-download me-1"></i>Export</a></div>
     <div class="row g-3 mb-4">
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Total Users</small><h4 class="text-primary mb-0"><?= number_format($summary['total_users'] ?? 0) ?></h4></div></div></div>
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Active Today</small><h4 class="text-success mb-0"><?= number_format($summary['active_today'] ?? 0) ?></h4></div></div></div>

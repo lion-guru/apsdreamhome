@@ -14,7 +14,7 @@ $investments = $investments ?? [];
                 <h2 class="h3 mb-0"><i class="fas fa-chart-line me-2 text-primary"></i><?= __('user_inv2_title', null, 'My Investments') ?></h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>user/dashboard"><?= __('user_inv2_dashboard', null, 'Dashboard') ?></a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/user/dashboard"><?= __('user_inv2_dashboard', null, 'Dashboard') ?></a></li>
                         <li class="breadcrumb-item active"><?= __('user_inv2_investments', null, 'Investments') ?></li>
                     </ol>
                 </nav>

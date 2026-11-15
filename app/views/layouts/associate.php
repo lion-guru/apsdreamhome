@@ -594,6 +594,9 @@ $GLOBALS['_html_doc_started'] = true;
                     <i class="fas fa-bell"></i>
                     <span class="badge" style="display:none;">0</span>
                 </button>
+                <a href="<?= BASE_URL ?>/associate/ai-coach" class="btn-icon" title="AI Coach" aria-label="AI Coach" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-color:transparent;">
+                    <i class="fas fa-robot"></i>
+                </a>
                 <a href="<?= BASE_URL ?>/associate/my-customers" class="btn-icon" title="My Customers & Contacts" aria-label="My Customers">
                     <i class="fas fa-address-book"></i>
                 </a>

@@ -42,6 +42,7 @@ class _PropertyMarketplacePageState
 
   // --- Data ---
   List<PropertyListing> _properties = [];
+  List<PropertyListing> _ownerListings = [];
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasMore = true;
@@ -68,7 +69,22 @@ class _PropertyMarketplacePageState
   void initState() {
     super.initState();
     _fetchProperties();
+    _fetchOwnerListings();
     _scrollController.addListener(_onScroll);
+  }
+
+  Future<void> _fetchOwnerListings() async {
+    try {
+      final service = ref.read(propertyListingServiceProvider);
+      final list = await service.getOwnerListings(
+        purpose: _selectedPurpose == 'all' ? null : _selectedPurpose,
+        page: 1,
+        limit: 10,
+      );
+      if (mounted) setState(() => _ownerListings = list);
+    } catch (_) {
+      // Owner strip is best-effort; keep it hidden on error
+    }
   }
 
   @override
@@ -189,6 +205,7 @@ class _PropertyMarketplacePageState
   Future<void> _onRefresh() async {
     _currentPage = 1;
     _hasMore = true;
+    await _fetchOwnerListings();
     if (_searchController.text.trim().length >= 2) {
       await _searchProperties(_searchController.text);
     } else {
@@ -489,10 +506,178 @@ class _PropertyMarketplacePageState
                       ),
               ),
               if (compareCount > 0) _buildCompareBar(compareCount),
+              if (_ownerListings.isNotEmpty) _buildOwnerListingStrip(),
             ],
           ),
         );
       },
+    );
+  }
+
+  /// Direct-from-owner verified listings - buyers see these instead of
+  /// broker-filled company plates only. Horizontal scroll strip pinned to
+  /// the bottom, above the compare bar.
+  Widget _buildOwnerListingStrip() {
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.fromLTRB(12, 8, 0, 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF7ED),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Icon(
+                  Icons.person_pin_circle_outlined,
+                  size: 16,
+                  color: Color(0xFFEA580C),
+                ),
+              ),
+              const SizedBox(width: 6),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Direct from Owner',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFFEA580C),
+                      ),
+                    ),
+                    Text(
+                      'Verified owner listings - no broker angle',
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: Text(
+                  'swipe →',
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Expanded(
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              itemCount: _ownerListings.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
+              itemBuilder: (context, i) => _buildOwnerListingCard(_ownerListings[i]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOwnerListingCard(PropertyListing p) {
+    return InkWell(
+      onTap: () => context.push('/owner-property/${p.id}'),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 190,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFFDF8),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFFDE68A)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEA580C),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'OWNER LISTING',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                if (p.isUrgent)
+                  const Text(
+                    'URGENT',
+                    style: TextStyle(
+                      color: Color(0xFFE11D48),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: Text(
+                p.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF0B194C),
+                ),
+              ),
+            ),
+            Text(
+              '₹ ${p.formattedPrice}',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0B194C),
+              ),
+            ),
+            const SizedBox(height: 3),
+            Row(
+              children: [
+                if ((p.area ?? 0) > 0) ...[
+                  const Icon(Icons.straighten_outlined, size: 12, color: Colors.grey),
+                  const SizedBox(width: 3),
+                  Text(
+                    p.formattedArea,
+                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  ),
+                ],
+                const Spacer(),
+                Text(
+                  (p.furnished ?? 'unfurnished').toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 8.5,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

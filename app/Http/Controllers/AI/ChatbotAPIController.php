@@ -28,7 +28,7 @@ class ChatbotAPIController extends BaseController
         try {
             $input = json_decode(file_get_contents('php://input'), true);
             $message = trim($input['message'] ?? '');
-            
+
             if (empty($message)) {
                 echo json_encode([
                     'success' => false,
@@ -37,16 +37,23 @@ class ChatbotAPIController extends BaseController
                 return;
             }
 
-            $response = $this->chatbotService->processMessage($message);
+            $sessionId = $_SESSION['chatbot_session_id'] ?? (session_id() ?: 'web_' . uniqid());
+            $_SESSION['chatbot_session_id'] = $sessionId;
+            $userId = $_SESSION['user_id'] ?? ($_SESSION['admin_id'] ?? null);
+            $response = $this->chatbotService->processMessage($message, [
+                'session_id' => $sessionId,
+                'user_id' => $userId ?? 0,
+                'role' => $_SESSION['role'] ?? ($_SESSION['admin_role'] ?? ($userId ? 'customer' : 'guest')),
+            ]);
 
-            $userId = $_SESSION['user_id'] ?? ($_SESSION['admin_id'] ?? 'guest');
             $this->chatbotService->saveConversation($userId, $message, $response);
 
             echo json_encode([
-                'success' => true,
-                'reply' => $response['reply'],
-                'quick_replies' => $response['quick_replies'],
-                'intent' => $response['intent']
+                'success' => $response['success'] ?? true,
+                'reply' => $response['response'] ?? $response['reply'] ?? '',
+                'quick_replies' => $response['suggestions'] ?? $response['quick_replies'] ?? [],
+                'intent' => $response['intent'] ?? 'general',
+                'provider' => $response['provider'] ?? null,
             ]);
         } catch (\Throwable $e) {
             error_log("Chatbot error: " . $e->getMessage());

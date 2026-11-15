@@ -67,7 +67,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'KYC Status',
           style: TextStyle(fontFamily: 'Poppins', 
             fontWeight: FontWeight.w600,
@@ -293,7 +293,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Verification Steps',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
@@ -354,7 +354,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                   color: Colors.green[100],
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
+                child: const Text(
                   'Done',
                   style: TextStyle(fontFamily: 'Poppins', 
                     fontSize: 12,
@@ -398,7 +398,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'KYC Details',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
@@ -441,7 +441,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
           Expanded(
             child: Text(
               value,
-              style: TextStyle(fontFamily: 'Poppins', 
+              style: const TextStyle(fontFamily: 'Poppins', 
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
@@ -508,7 +508,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Activity Timeline',
             style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
@@ -562,7 +562,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                 children: [
                   Text(
                     title,
-                    style: TextStyle(fontFamily: 'Poppins', 
+                    style: const TextStyle(fontFamily: 'Poppins', 
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,

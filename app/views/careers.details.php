@@ -1,9 +1,9 @@
 <?php $pageTitle = 'Job Details'; ?>
 <?php $job = $job ?? null; ?>
 <div class="container py-4">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home"></i> Home</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>careers">Careers</a></li><li class="breadcrumb-item active">Job Details</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>"><i class="fas fa-home"></i> Home</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/careers">Careers</a></li><li class="breadcrumb-item active">Job Details</li></ol></nav>
     <?php if (!$job): ?>
-    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted">Job posting not found</h6><a href="<?= BASE_URL ?>careers" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Browse Jobs</a></div></div>
+    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5"><i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i><h6 class="text-muted">Job posting not found</h6><a href="<?= BASE_URL ?>/careers" class="btn btn-primary btn-sm"><i class="fas fa-arrow-left me-1"></i>Browse Jobs</a></div></div>
     <?php else: ?>
     <div class="row g-4">
         <div class="col-lg-8">
@@ -48,7 +48,7 @@
                     <?php if (!empty($job['application_url'])): ?>
                     <a href="<?= htmlspecialchars($job['application_url'] ?? '') ?>" target="_blank" class="btn btn-primary w-100"><i class="fas fa-external-link-alt me-1"></i>Apply Externally</a>
                     <?php else: ?>
-                    <form method="post" action="<?= BASE_URL ?>careers/apply/<?= (int)($job['id'] ?? 0) ?>" enctype="multipart/form-data">
+                    <form method="post" action="<?= BASE_URL ?>/careers/apply/<?= (int)($job['id'] ?? 0) ?>" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><input aria-label="Name" type="text" class="form-control form-control-sm" name="name" placeholder="Your Name" required></div>
                         <div class="mb-2"><input aria-label="Email" type="email" class="form-control form-control-sm" name="email" placeholder="Your Email" required></div>

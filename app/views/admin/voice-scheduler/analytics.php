@@ -1,7 +1,7 @@
 <?php $stats = $stats ?? []; $callsByAgent = $callsByAgent ?? []; $callsOverTime = $callsOverTime ?? []; $agents = $agents ?? []; $leadSources = $leadSources ?? []; ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Call Analytics</h4>
-    <a href="<?= BASE_URL ?>admin/voice-scheduler" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
+    <a href="<?= BASE_URL ?>/admin/voice-scheduler" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Dashboard</a>
 </div>
 
 <div class="row g-3 mb-4">

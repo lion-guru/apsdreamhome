@@ -325,6 +325,9 @@ $rankNumber = (int)($user_rank ?? (!empty($gamify['rank']) && $gamify['rank'] > 
             </div>
             <div class="emp-card-body">
                 <div class="d-grid gap-2">
+                    <a href="<?= BASE_URL ?>/employee/ai-coach" class="emp-action-btn emp-quick justify-content-center" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border-color:transparent;color:#fff;">
+                        <i class="fas fa-robot"></i> AI Coach
+                    </a>
                     <a href="<?= BASE_URL ?>/employee/tasks" class="emp-action-btn emp-quick justify-content-center">
                         <i class="fas fa-clipboard-list"></i> My Tasks
                     </a>

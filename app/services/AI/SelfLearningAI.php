@@ -176,8 +176,11 @@ class SelfLearningAI
     private function matchLearnedPatterns(string $text): ?array
     {
         try {
+            // NOTE: ai_intent_patterns has hit_count / success_count but NO fail_count.
+            // Failures are derived as hit_count - success_count so the query executes
+            // and the confidence weighting below still behaves.
             $patterns = $this->db->fetchAll(
-                "SELECT pattern_text, intent_name as intent, confidence, success_count, fail_count
+                "SELECT pattern_text, intent_name as intent, confidence, success_count, hit_count
                  FROM ai_intent_patterns
                  WHERE is_active = 1 AND source = 'learned'
                  ORDER BY success_count DESC
@@ -196,9 +199,12 @@ class SelfLearningAI
                 $union = count(array_unique(array_merge($patternWords, $textWords)));
                 $similarity = $union > 0 ? $intersection / $union : 0;
 
-                // Weight by success rate
-                $total = ($pattern['success_count'] ?? 0) + ($pattern['fail_count'] ?? 0);
-                $successRate = $total > 0 ? ($pattern['success_count'] ?? 0) / $total : 0.5;
+                // Weight by success rate — derive failures from hits minus successes
+                $hits = (int)($pattern['hit_count'] ?? 0);
+                $success = (int)($pattern['success_count'] ?? 0);
+                $derivedFails = max(0, $hits - $success);
+                $total = $success + $derivedFails;
+                $successRate = $total > 0 ? $success / $total : 0.5;
                 $score = ($similarity * 0.7) + ($successRate * 0.3);
 
                 if ($score > $bestScore && $score >= self::LOW_CONFIDENCE) {
@@ -499,22 +505,26 @@ class SelfLearningAI
     }
 
     /**
-     * Get response from knowledge base
+     * Get response from knowledge base (live schema: title/content/tags/visibility)
      */
     private function getKnowledgeBaseResponse(string $intent, array $entities): ?array
     {
         try {
+            // Legacy query targeted retired columns (answer/category/confidence). The live
+            // ai_knowledge_base is the RAG corpus (title/content/tags). Public visibility only —
+            // this is the customer-facing assistant path.
             $kb = $this->db->fetch(
-                "SELECT answer, category FROM ai_knowledge_base
-                 WHERE category = ? AND is_active = 1
-                 ORDER BY confidence DESC
+                "SELECT title, content FROM ai_knowledge_base
+                 WHERE is_active = 1 AND visibility = 'public'
+                   AND (tags LIKE ? OR title LIKE ?)
+                 ORDER BY id DESC
                  LIMIT 1",
-                [$intent]
+                ["%{$intent}%", "%{$intent}%"]
             );
 
             if ($kb) {
                 return [
-                    'text' => $kb['answer'],
+                    'text' => $kb['content'],
                     'confidence' => 0.85,
                     'actions' => [],
                     'suggestions' => $this->getFollowUpSuggestions($intent)
