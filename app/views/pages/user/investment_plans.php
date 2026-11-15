@@ -130,7 +130,7 @@ ob_start();
             <button class="aps-cp-modal-close" onclick="closeInvestModal()">&times;</button>
         </div>
         <form id="investForm" class="aps-cp-form" data-ajax="true" action="<?= BASE_URL ?>/user/investment-plans/invest" method="POST">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\App\Core\Security\CsrfProtection::getToken() ?? ($_SESSION['csrf_token'] ?? '')) ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\App\Core\Security\CSRF::getToken()) ?>">
             <input type="hidden" name="plan_id" id="investPlanId" value="">
             <div class="aps-cp-modal-body">
                 <div class="aps-cp-form-section">
