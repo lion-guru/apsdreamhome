@@ -157,14 +157,24 @@ class EMIAutoPaymentService
      * @param float  $amount
      * @return array{success: bool, payment_id: ?string, status: string, error: ?string}
      */
-    public function captureMandatePayment(string $subscriptionId, float $amount): array
+    /**
+     * Process SINGLE mandate payment (real capture path for EMI auto-debit).
+     * $installment is optional but REQUIRED to make the payment settleable:
+     * it lets us persist a `payment_orders` row so the Razorpay webhook can
+     * reconcile this EMI when the capture arrives.
+     *
+     * @param string     $subscriptionId
+     * @param float      $amount
+     * @param array|null $installment  Installment context (booking_id, installment_no …)
+     */
+    public function captureMandatePayment(string $subscriptionId, float $amount, ?array $installment = null): array
     {
         if (!$subscriptionId || $amount <= 0) {
             return ['success' => false, 'payment_id' => null, 'status' => 'invalid', 'error' => 'Invalid subscription ID or amount'];
         }
 
         try {
-            // Razorpay subscriptions don't have a direct "capture" endpoint —
+            // Razorpay subscriptions don't have a direct "capture" endpoint -
             // auto-debit is triggered by the subscription itself on renewal.
             // For manual trigger, we create an order + authorize via the mandate.
             // In test mode, simulate a successful capture.
@@ -188,17 +198,41 @@ class EMIAutoPaymentService
                 return ['success' => false, 'payment_id' => null, 'status' => 'order_failed', 'error' => $orderResult['error']];
             }
 
+            $orderId = $orderResult['data']['id'] ?? null;
+
+            // Persist a payment_orders row so the webhook can settle this EMI.
+            if ($installment && is_array($installment) && $orderId) {
+                try {
+                    $tid = $this->tenantId();
+                    $insSql = "INSERT INTO payment_orders (tenant_id, order_id, gateway, booking_id, user_id, customer_name, amount, currency, status, description, notes, receipt, created_at)
+                               VALUES (?, ?, 'razorpay', ?, ?, ?, ?, 'INR', 'created', ?, ?, ?, NOW())";
+                    $this->db->prepare($insSql)->execute([
+                        $tid > 1 ? $tid : 1,
+                        $orderId,
+                        (int)($installment['booking_id'] ?? 0),
+                        (int)($installment['customer_id'] ?? 0),
+                        (string)($installment['customer_name'] ?? ''),
+                        (float)$amount,
+                        'EMI auto-debit — booking ' . ($installment['booking_id'] ?? ''),
+                        json_encode(['auto_debit' => 1, 'subscription_id' => $subscriptionId, 'installment_no' => $installment['installment_no'] ?? null, 'installment_id' => $installment['id'] ?? null]),
+                        'EMI_' . $subscriptionId,
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('captureMandatePayment: payment_orders insert failed: ' . $e->getMessage());
+                }
+            }
+
             // The actual mandate debit happens via Razorpay's subscription engine.
             // We log the order for tracking; the webhook handles status updates.
             $this->logPaymentAttempt(null, 'auto_debit_order', [
                 'subscription_id' => $subscriptionId,
-                'order_id'        => $orderResult['data']['id'] ?? null,
+                'order_id'        => $orderId,
                 'amount'          => $amount,
             ]);
 
             return [
                 'success'    => true,
-                'payment_id' => $orderResult['data']['id'] ?? null,
+                'payment_id' => $orderId,
                 'status'     => 'order_created',
                 'error'      => null,
             ];
@@ -526,9 +560,13 @@ class EMIAutoPaymentService
         }
 
         // Attempt auto-debit
-        $captureResult = $this->captureMandatePayment($installment['subscription_id'], (float)$installment['amount']);
+        $captureResult = $this->captureMandatePayment($installment['subscription_id'], (float)$installment['amount'], $installment);
 
-        if ($captureResult['success']) {
+        // MONEY GATE: only a captured/paid status settles the installment.
+        // Razorpay orders (status=order_created) are NOT money moved — the
+        // webhook must confirm capture before the EMI is marked paid.
+        $paidStatuses = ['captured', 'paid', 'authorized', 'completed'];
+        if ($captureResult['success'] && in_array(strtolower((string)($captureResult['status'] ?? '')), $paidStatuses, true)) {
             // Mark installment as paid
             $this->db->prepare(
                 "UPDATE booking_payment_schedules SET status = 'paid', paid_amount = amount, paid_date = CURDATE(), updated_at = NOW() WHERE id = ?" . $this->tenantSql()
@@ -541,6 +579,19 @@ class EMIAutoPaymentService
 
             return array_merge($base, [
                 'status'     => 'processed',
+                'payment_id' => $captureResult['payment_id'],
+            ]);
+        } elseif ($captureResult['success']) {
+            // Razorpay order created — payment NOT yet captured.
+            // Webhook must confirm before the EMI is marked paid.
+            $this->logPaymentAttempt((int)$installment['id'], 'order_created', array_merge($base, [
+                'order_id' => $captureResult['payment_id'],
+                'razorpay_status' => $captureResult['status'] ?? 'order_created',
+            ]));
+
+            return array_merge($base, [
+                'status'     => 'processing',
+                'order_id'   => $captureResult['payment_id'],
                 'payment_id' => $captureResult['payment_id'],
             ]);
         } else {

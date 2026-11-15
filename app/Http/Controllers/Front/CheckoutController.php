@@ -240,23 +240,19 @@ try {
 
 try {
             $db = Database::getInstance()->getConnection();
-            list($tSql, $tParams) = $this->tenantWhere();
-            $insCols = "gateway, event_type, event_id, payload, signature, signature_verified, processed, ip_address";
-            $insVals = "?, ?, ?, ?, ?, ?, 0, ?";
-            $insParams = [
-                $event,
-                $payload['account_id'] ?? null,
-                $rawBody,
-                $signature,
-                $valid ? 1 : 0,
-                $_SERVER['REMOTE_ADDR'] ?? null,
-            ];
-            if (!empty($this->tenantInsertData())) {
-                $insCols .= ", tenant_id";
-                $insVals .= ", ?";
-                $insParams[] = $this->tenantInsertData()['tenant_id'];
+            // Live schema columns: gateway, event_type, payload, status, tenant_id.
+            // NB: earlier phantom columns (event_id, signature, processed, ip_address)
+            // never existed; the whole webhook log insert was silently swallowed.
+            $tid = 1;
+            $tins = $this->tenantInsertData();
+            if (!empty($tins) && isset($tins['tenant_id']) && (int)$tins['tenant_id'] > 0) {
+                $tid = (int)$tins['tenant_id'];
             }
+            $insCols = "gateway, event_type, payload, status, tenant_id";
+            $insVals = "?, ?, ?, ?, ?";
+            $insParams = ['razorpay', $event, $rawBody, 'received', $tid];
             $db->prepare("INSERT INTO payment_webhook_logs ($insCols) VALUES ($insVals)")->execute($insParams);
+            $webhookLogId = (int)$db->lastInsertId();
         } catch (\Throwable $e) {
             error_log('webhook log failed: ' . $e->getMessage());
         }
@@ -270,17 +266,23 @@ try {
         try {
             $this->processWebhookEvent($event, $payload);
             $db = Database::getInstance()->getConnection();
-            list($tSql, $tParams) = $this->tenantWhere();
-            $db->prepare("UPDATE payment_webhook_logs SET processed = 1 WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x) $tSql")
-               ->execute(array_merge([$event], $tParams));
+            if (!empty($webhookLogId)) {
+                $db->prepare("UPDATE payment_webhook_logs SET status = 'processed' WHERE id = ?")
+                   ->execute([(int)$webhookLogId]);
+            }
         } catch (\Throwable $e) {
             error_log('webhook processing failed: ' . $e->getMessage());
             try {
                 $db = Database::getInstance()->getConnection();
-                list($tSql, $tParams) = $this->tenantWhere();
-                $db->prepare("UPDATE payment_webhook_logs SET processing_error = ? WHERE event_type = ? AND created_at = (SELECT MAX(created_at) FROM (SELECT created_at FROM payment_webhook_logs) AS x) $tSql")
-                   ->execute(array_merge([$e->getMessage(), $event], $tParams));
+                if (!empty($webhookLogId)) {
+                    $db->prepare("UPDATE payment_webhook_logs SET status = 'failed' WHERE id = ?")
+                       ->execute([(int)$webhookLogId]);
+                }
             } catch (\Throwable $e2) { error_log("CheckoutController::" . __FUNCTION__ . " query failed: " . $e2->getMessage()); }
+            // Razorpay retries on 5xx - return an error so the event is not lost.
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Webhook processing failed', 'event' => $event]);
+            return;
         }
 
         http_response_code(200);
@@ -335,6 +337,34 @@ try {
                     if ($bookingId) {
                         $db->prepare("UPDATE bookings SET payment_status = 'paid' WHERE id = ? $tSql")
                            ->execute(array_merge([$bookingId], $tParams));
+                    }
+
+                    // Settle the EMI installment for EMI auto-debit orders (notes set by captureMandatePayment).
+                    $notes = $payment['notes'] ?? null;
+                    if (is_array($notes) && !empty($notes['auto_debit']) && !empty($notes['installment_id'])) {
+                        $iid = (int)$notes['installment_id'];
+                        $uniqueWhere = $tSql ?: '';
+                        $updParams = [];
+                        if ($tSql && str_starts_with($tSql, ' AND')) {
+                            // tenant filter already uses tenant_id on booking_payment_schedules
+                            $updParams = $tParams;
+                        }
+                        $upd = $db->prepare("UPDATE booking_payment_schedules SET status = 'paid', paid_amount = amount, paid_date = CURDATE(), updated_at = NOW()
+                            WHERE id = ? AND status IN ('pending','upcoming')" . $uniqueWhere);
+                        $upd->execute(array_merge([$iid], $updParams));
+                        if ($upd && $upd->rowCount() === 1) {
+                            $amt = (float)(($payment['amount'] ?? 0) / 100);
+                            $stmt2 = $db->prepare("SELECT booking_id FROM booking_payment_schedules WHERE id = ? $tSql");
+                            $stmt2->execute(array_merge([$iid], $updParams));
+                            $booking = (int)($stmt2->fetchColumn() ?: 0);
+                            if ($booking > 0) {
+                                $tid = $this->tenantInsertData();
+                                $insTid = $tid && isset($tid['tenant_id']) && (int)$tid['tenant_id'] > 0 ? (int)$tid['tenant_id'] : 1;
+                                $db->prepare("INSERT INTO booking_payment_receipts (tenant_id, booking_id, installment_id, receipt_number, receipt_date, amount, payment_mode, transaction_ref, collected_by, status, notes, created_at)
+                                    VALUES (?, ?, ?, ?, CURDATE(), ?, 'bank_transfer', ?, NULL, 'cleared', ?, NOW())")
+                                    ->execute([$insTid, $booking, $iid, 'APS-EMI-' . $iid, $amt, 'RP-' . ($payment['id'] ?? ''), 'EMI auto-debit settled via Razorpay order ' . ($payment['order_id'] ?? '')]);
+                            }
+                        }
                     }
                 }
                 break;
