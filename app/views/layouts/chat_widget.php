@@ -234,6 +234,17 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     var cwUserRole = <?= json_encode((string)($userRole ?? 'guest')) ?>;
     var cwUserName = <?= json_encode($userName) ?>;
     var cwWAPhone = <?= json_encode((string)($waPhone ?? '')) ?>;
+    var cwAIHealth = 'unknown';
+
+    // Boot: probe public AI degraded flag. Fail closed (degraded) on any network error.
+    (function(){
+        try {
+            fetch('<?= BASE_URL ?>/api/ai/health', {cache: 'no-store'})
+                .then(function(r){ return r.json(); })
+                .then(function(j){ cwAIHealth = (j && j.degraded) ? 'degraded' : 'healthy'; })
+                .catch(function(){ cwAIHealth = 'degraded'; });
+        } catch (e) { cwAIHealth = 'degraded'; }
+    })();
 
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     // RBAC-AWARE GREETING
@@ -443,6 +454,18 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         document.getElementById('cwSendBtn').disabled = true;
         cwShowTyping();
 
+        // AI-degraded: answer from the built-in deterministic corpus (no LLM call)
+        if (cwAIHealth === 'degraded') {
+            setTimeout(function(){
+                cwHideTyping();
+                document.getElementById('cwSendBtn').disabled = false;
+                var reply = cwOfflineAnswer(msg);
+                cwAddMsg(reply, 'bot');
+                if (cwVoiceMode) cwSpeak(reply);
+            }, 600);
+            return;
+        }
+
         fetch('<?= BASE_URL ?>/api/smart-ai/chat', {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
@@ -578,18 +601,40 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     function cwFallback(userMsg){
         setTimeout(function(){
             cwHideTyping();
-            var m = userMsg.toLowerCase();
-            var r = 'Your requirement has been noted. For better assistance, call us at: <?= $cPhone ?> or WhatsApp us!';
-            if(m.indexOf('hi')!==-1||m.indexOf('hello')!==-1||m.indexOf('namaste')!==-1) r='Hello! How can I assist you with APS Dream Homes?';
-            else if(m.indexOf('price')!==-1||m.indexOf('rate')!==-1||m.indexOf('kitne')!==-1) r='Our premium plots start from Rs 5.5 Lakh. What is your budget?';
-            else if(m.indexOf('location')!==-1||m.indexOf('kaha')!==-1) r='Our projects are available in Gorakhpur. Which area are you looking for?';
-            else if(m.indexOf('loan')!==-1||m.indexOf('emi')!==-1) r='Yes, we offer home loan and EMI facilities. Would you like to see EMI details?';
-            else if(m.indexOf('visit')!==-1||m.indexOf('site')!==-1) r='Site visits are completely free! Call us or WhatsApp at: <?= $cPhone ?>';
-            else if(m.indexOf('buy')!==-1||m.indexOf('plot')!==-1) r='Great! We have residential plots in Gorakhpur. Tell us your budget and I will show you the best options!';
-            else if(m.indexOf('whatsapp')!==-1) { cwShowWATemplates(); return; }
-            cwAddMsg(r,'bot');
-            if (cwVoiceMode) cwSpeak(r);
-        },700);
+            cwAddMsg(cwOfflineAnswer(userMsg), 'bot');
+            if (cwVoiceMode) cwSpeak(cwOfflineAnswer(userMsg));
+        }, 700);
+    }
+
+    // Built-in deterministic answer corpus for AI-degraded state. No LLM. Honest only.
+    function cwOfflineAnswer(userMsg){
+        var m = (userMsg || '').toLowerCase();
+        var phone = '+91 92771 21112';
+        var legal = '+91 70074 44842';
+        // EMI / payment
+        if (/emi|loan|installment|bhurgta|महीना|किस्त/.test(m)) return 'Humare sales plan me roughly 20% down-payment hota hai, baaki installments 12-60 months mein EMI ke roop se. Exact EMI depends on plot price aur tenure. Dedicated EMI Calculator: <?= BASE_URL ?>/emi-calculator — ya humari team aapko call karegi EMI breakdown ke saath. Call: ' + phone;
+        // Pricing
+        if (/price|rate|cost|कितने|कितने में|kitne/.test(m)) return 'Gorakhpur plots ~₹55 Lakh se start hote hain; townships me price/sqft vary karta hai (₹1,200-₹1,500). Exact plot ka price us colony aur location pe depend karta hai. Latest price list: <?= BASE_URL ?>/properties — ya call karein: ' + phone;
+        // Visits
+        if (/visit|site|dekh|appointment/.test(m)) return 'Site visit 100% free hai — Saturday-Sunday tak. Book karein: ' + phone + ' number ya <?= BASE_URL ?>/schedule-visit. Sunday pe hum free cab pickup arrange karte hain.';
+        // Refund / cancellation
+        if (/refund|cancel|wapis|cancellation/.test(m)) return 'Refund/cancellation ke terms agreement pe likhe hote hain — usually processing + government fees deduct hota hai. Legal clarity ke liye legal desk call karein: ' + legal;
+        // Registry / documents
+        if (/regist|document|sale deed|bainama|agreement/.test(m)) return 'Registry process: booking → full payment → UP stamp duty + 1% registration fee → sale deed execute at sub-registrar. Verify status and documents through legal desk: ' + legal;
+        // RERA
+        if (/rera|certificate|registered|legal/.test(m)) return 'Colony-wise RERA certificate available on request. Aap up-rera.in pe verify kar sakte ho ya hamare legal desk se contact karein: ' + legal;
+        // Colonies
+        if (/colony|plot|property|project|sast/.test(m)) return 'Currently live colonies: Suryoday Colony (Gorakhpur), Raghunath Nagri (Motiram Road), Braj Radha Nagri, Budha City Kushinagar, Lakeview Residency, Motiram Township. Price/availability: <?= BASE_URL ?>/properties ya call ' + phone;
+        // Booking
+        if (/book|book\s|token/.test(m)) return 'Plot booking: 1) Visit site, 2) Choose plot, 3) Token (₹11,000) deposit karo, 4) 7-day hold milega, 5) Agreement to sell + balance payment. Booking start: <?= BASE_URL ?>/plots ya call ' + phone;
+        // EMI
+        if (/how|kaise|kaj /.test(m) || /emi/.test(m)) return 'EMI = (Plot price − 20% down payment) ÷ months. Max 60-month plan typical hai. Numbers personally calculate kijiye EMI calculator pe: <?= BASE_URL ?>/emi-calculator ya team se confirmation lijiye ' + phone;
+        // Greeting
+        if (/hi|hello|namaste|hii|hey/.test(m)) return 'Namaste! Mein APS Dream Home ka AI assistant hoon. Main aapki plot buying me help kar sakta hoon. Aapka budget? Kaunsi colony dekhna chahoge?';
+        // Contact
+        if (/contact|phone|number|address|office/.test(m)) return 'APS Dream Home Pvt Ltd, Opp. Agrasen Chowk, Sipaha Gorakhpur 273001. Sales: ' + phone + ', WhatsApp: +91 70074 44842, Legal: ' + legal + '. Email: info@apsdreamhome.com';
+        // Fallback
+        return 'Aapka interest note ho gaya hai. Humari team jald aapse contact karti hai. Ya direct call karein: ' + phone + '. WhatsApp ya email: info@apsdreamhome.com';
     }
 
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�

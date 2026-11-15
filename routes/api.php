@@ -606,6 +606,7 @@ $router->get('/api/v2/mobile/rentals', 'Api\MobileFeatureEndpointsController@get
 $router->post('/api/v2/mobile/rentals/post', 'Api\MobileFeatureEndpointsController@postRental');
 
 $router->get('/api/health', 'Api\SystemController@health');
+$router->get('/api/ai/health', 'Api\SystemController@aiHealth');
 $router->get('/api/properties', 'Api\PropertyController@index');
 $router->post('/api/contact', 'Api\ApiEnquiryController@store');
 $router->post('/api/newsletter', 'Api\NewsletterController@subscribe');

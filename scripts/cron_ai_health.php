@@ -32,18 +32,23 @@ try {
     
     echo "AI Engines: $healthyEngines/" . count($status) . " healthy\n";
     
-    // Check AIChatbotService
+    // Check AIChatbotService — status() returns provider map; need >=1 available provider
     $chatbot = new AIChatbotService();
     $chatStatus = $chatbot->getStatus();
-    if (!($chatStatus['available'] ?? false)) {
-        $issues[] = "AIChatbotService unavailable: " . ($chatStatus['error'] ?? 'unknown');
+    $availableProviders = 0;
+    foreach ($chatStatus as $provider => $state) {
+        if (is_array($state) && (!empty($state['available']))) { $availableProviders++; }
+    }
+    if ($availableProviders === 0) {
+        $issues[] = "AIChatbotService: no available provider";
     }
     
-    // Check ExecutiveAIService
-    $execAI = new ExecutiveAIService();
-    $execStatus = $execAI->getHealth();
-    if (!($execStatus['healthy'] ?? false)) {
-        $issues[] = "ExecutiveAIService unhealthy: " . ($execStatus['error'] ?? 'unknown');
+    // Check ExecutiveAIService — healthCheck() returns ['status' => HEALTHY|..., ...]
+    $execAI = \App\Services\AI\ExecutiveAIService::getInstance();
+    $execStatus = $execAI->healthCheck();
+    $execOk = (($execStatus['status'] ?? '') === 'HEALTHY');
+    if (!$execOk) {
+        $issues[] = "ExecutiveAIService unhealthy: " . json_encode($execStatus);
     }
     
     // Check database connectivity
@@ -75,6 +80,23 @@ try {
         }
     } else {
         echo "✅ All systems healthy\n";
+    }
+
+    // Write AI-degraded flag: healthy when at least one production-relevant engine is available
+    // (optional/non-deployed engines like ollama, xai, deepseek, together, cohere are ignored).
+    try {
+        $topEngines = ['groq', 'opencode_zen', 'gemini', 'openrouter', 'huggingface'];
+        $topHealthy = 0;
+        foreach ($topEngines as $t) {
+            if (is_array($status[$t] ?? null) && !empty($status[$t]['available'])) { $topHealthy++; }
+        }
+        $degraded = ($topHealthy >= 1) ? '0' : '1';
+        $pdo2 = Database::getInstance()->getConnection();
+        $upd = $pdo2->prepare("UPDATE service_configs SET config_value = ?, updated_at = NOW() WHERE service_name = 'ai_health' AND config_key = 'degraded'");
+        $upd->execute([$degraded]);
+        echo "AI health flag -> degraded=$degraded (top=$topHealthy)\n";
+    } catch (Throwable $e) {
+        echo "WARN: could not write ai_health flag: " . $e->getMessage() . "\n";
     }
     
 } catch (\Throwable $e) {
