@@ -146,7 +146,7 @@ class MobileMLMApiController extends BaseController
     private function getMlmPayoutHistory($userId)
     {
         try {
-            $stmt = $this->db->prepare("SELECT id, amount, level, payment_method, status, processed_at, created_at FROM mlm_payouts WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+            $stmt = $this->db->prepare("SELECT id, gross_amount AS amount, NULL AS level, payment_mode AS payment_method, status, paid_date AS processed_at, created_at FROM mlm_payouts WHERE associate_user_id = ? ORDER BY created_at DESC LIMIT 50");
             $stmt->execute([$userId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
@@ -165,15 +165,15 @@ class MobileMLMApiController extends BaseController
                 'recent_incentives' => [],
             ];
 
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND level = 'incentive'");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(gross_amount), 0) FROM mlm_payouts WHERE associate_user_id = ?");
             $stmt->execute([$userId]);
             $incentives['total_incentives'] = (float)$stmt->fetchColumn();
 
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND level = 'incentive' AND status = 'paid'");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(gross_amount), 0) FROM mlm_payouts WHERE associate_user_id = ? AND status = 'paid'");
             $stmt->execute([$userId]);
             $incentives['paid_incentives'] = (float)$stmt->fetchColumn();
 
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM mlm_payouts WHERE user_id = ? AND level = 'incentive' AND status = 'pending'");
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(gross_amount), 0) FROM mlm_payouts WHERE associate_user_id = ? AND status = 'pending'");
             $stmt->execute([$userId]);
             $incentives['pending_incentives'] = (float)$stmt->fetchColumn();
 
@@ -615,7 +615,7 @@ class MobileMLMApiController extends BaseController
 
         try {
             // Check if user has enough pending balance
-            $check = $this->db->fetchOne("SELECT SUM(amount) FROM mlm_commission_ledger WHERE user_id = ? AND status = 'pending'", [$userId]);
+            $check = $this->db->fetchOne("SELECT SUM(amount) FROM mlm_commission_ledger WHERE beneficiary_user_id = ? AND status = 'pending'", [$userId]);
             $pending = $check[0] ?? 0;
 
             if ($amount > $pending) {
