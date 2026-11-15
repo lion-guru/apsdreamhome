@@ -257,28 +257,6 @@ class MobileMLMApiController extends BaseController
         }
     }
 
-    public function getGlobalPayoutHistory()
-    {
-        try {
-            $stmt = $this->db->query("SELECT id, gross_amount, status, payment_mode, created_at FROM mlm_payouts ORDER BY created_at DESC LIMIT 50");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {
-            error_log("[MobileMLMApiController] getGlobalPayoutHistory error: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    public function getPayoutHistory()
-    {
-        $this->setCorsHeaders();
-        try {
-            $history = $this->getGlobalPayoutHistory();
-            echo json_encode(['success' => true, 'data' => $history]);
-        } catch (\Throwable $e) {
-            $this->handleApiError($e, 'Payout History API error');
-        }
-    }
-
     public function getGenealogy()
     {
         $this->setCorsHeaders();
