@@ -119,7 +119,7 @@ class _CustomerPassbookPageState extends ConsumerState<CustomerPassbookPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(color: const Color(0xFFD4AF37).withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12)),
-                      child: const Text('RERA Verified', style: TextStyle(color: Color(0xFF8B6B10), fontSize: 11, fontWeight: FontWeight.w600)),
+                      child: const Text('Verification On Request', style: TextStyle(color: Color(0xFF8B6B10), fontSize: 11, fontWeight: FontWeight.w600)),
                     )
                   ],
                 ),

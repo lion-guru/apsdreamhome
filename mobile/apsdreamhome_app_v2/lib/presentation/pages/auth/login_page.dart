@@ -276,7 +276,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Icon(Icons.verified_rounded, size: 14, color: AppTheme.accentColor),
               SizedBox(width: 6),
               Text(
-                'RERA APPROVED TOWNSHIPS • GORAKHPUR',
+                'GORAKHPUR TOWNSHIPS • ASK US FOR RERA STATUS',
                 style: TextStyle(
                   color: AppTheme.primaryColor,
                   fontSize: 10,

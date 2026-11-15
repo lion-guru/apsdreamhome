@@ -246,7 +246,7 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
                       Icon(Icons.verified, size: 12, color: Color(0xFFE5A93C)),
                       SizedBox(width: 4),
                       Text(
-                        'RERA & 143 MUTATION APPROVED',
+                        'RERA & 143 VERIFICATION ON REQUEST',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 9,
