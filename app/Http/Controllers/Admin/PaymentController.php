@@ -543,93 +543,62 @@ class PaymentController extends AdminController
     }
 
     /**
-     * Get all payments for export
+     * Canonical export query. The legacy path read booking_payments (2 seed rows,
+     * May–Jun 2026) and LEFT-joined NULL fields, so every month since June
+     * exported zero rows, and an empty month downloaded as a 0-byte file.
+     *
+     * Reads the live `payments` ledger (the same one the EMI/wallet money paths
+     * use) and LEFT-joins through plot_bookings → plots → colonies for a
+     * meaningful row (plot number, colony, customer). Column output is flat and
+     * stable, suitable for fputcsv.
      */
+    private function fetchPaymentsForExport(?string $statusIn, string $startDate, string $endDate): array
+    {
+        try {
+            $where = ["p.payment_date BETWEEN ? AND ?"];
+            $params = [$startDate, $endDate];
+            if ($statusIn !== null) {
+                $where[] = "p.status IN (" . $statusIn . ")";
+            }
+            $sql = "SELECT p.id AS payment_id, p.transaction_id, p.reference_id, b.booking_number,
+                           plots.plot_number, col.name AS colony_name,
+                           u.name AS customer_name, u.email AS customer_email,
+                           p.payment_type, p.gateway, p.amount, p.total_amount, p.status,
+                           p.payment_date, p.notes
+                    FROM payments p
+                    LEFT JOIN plot_bookings b ON p.plot_booking_id = b.id
+                    LEFT JOIN plots ON plots.id = b.plot_id
+                    LEFT JOIN colonies col ON col.id = plots.colony_id
+                    LEFT JOIN users u ON u.id = b.customer_id OR u.id = p.customer_id
+                    WHERE " . implode(' AND ', $where) . "
+                    ORDER BY p.payment_date DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll() ?: [];
+        } catch (\Throwable $e) {
+            $this->loggingService->error("Fetch payments export query error: " . $e->getMessage());
+            return [];
+        }
+    }
+
     private function getAllPayments(string $startDate, string $endDate): array
     {
-        try {
-            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
-                           pr.title as property_title
-                    FROM booking_payments p
-                    LEFT JOIN bookings b ON p.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.payment_date BETWEEN ? AND ?
-                    ORDER BY p.payment_date DESC";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
-            return $stmt->fetchAll() ?: [];
-        } catch (\Throwable $e) {
-            $this->loggingService->error("Get All Payments error: " . $e->getMessage());
-            return [];
-        }
+        return $this->fetchPaymentsForExport(null, $startDate, $endDate);
     }
 
-    /**
-     * Get completed payments for export
-     */
     private function getCompletedPayments(string $startDate, string $endDate): array
     {
-        try {
-            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
-                           pr.title as property_title
-                    FROM booking_payments p
-                    LEFT JOIN bookings b ON p.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE p.payment_date BETWEEN ? AND ?
-                    ORDER BY p.payment_date DESC";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
-            return $stmt->fetchAll() ?: [];
-        } catch (\Throwable $e) {
-            $this->loggingService->error("Get Completed Payments error: " . $e->getMessage());
-            return [];
-        }
+        return $this->fetchPaymentsForExport("'completed'", $startDate, $endDate);
     }
 
-    /**
-     * Get pending payments for export
-     */
     private function getPendingPayments(string $startDate, string $endDate): array
     {
-        try {
-            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
-                           pr.title as property_title
-                    FROM booking_payments p
-                    LEFT JOIN bookings b ON p.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE 1=0";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
-            return $stmt->fetchAll() ?: [];
-        } catch (\Throwable $e) {
-            $this->loggingService->error("Get Pending Payments error: " . $e->getMessage());
-            return [];
-        }
+        return $this->fetchPaymentsForExport("'pending','processing'", $startDate, $endDate);
     }
 
-    /**
-     * Get refunded payments for export
-     */
     private function getRefundedPayments(string $startDate, string $endDate): array
     {
-        try {
-            $sql = "SELECT p.*, b.booking_number, c.name as customer_name, c.email as customer_email,
-                           pr.title as property_title
-                    FROM booking_payments p
-                    LEFT JOIN bookings b ON p.booking_id = b.id
-                    LEFT JOIN users c ON b.customer_id = c.id
-                    LEFT JOIN properties pr ON b.property_id = pr.id
-                    WHERE 1=0";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$startDate, $endDate]);
-            return $stmt->fetchAll() ?: [];
-        } catch (\Throwable $e) {
-            $this->loggingService->error("Get Refunded Payments error: " . $e->getMessage());
-            return [];
-        }
+        return $this->fetchPaymentsForExport("'refunded','partial_refund'", $startDate, $endDate);
     }
 
     /**
@@ -652,6 +621,9 @@ class PaymentController extends AdminController
             foreach ($data as $row) {
                 fputcsv($output, $row);
             }
+        } else {
+            // Never emit a 0-byte file - header-only CSV is honest and identifiable.
+            fputcsv($output, ['payment_id', 'transaction_id', 'reference_id', 'booking_number', 'plot_number', 'colony_name', 'customer_name', 'customer_email', 'payment_type', 'gateway', 'amount', 'total_amount', 'status', 'payment_date', 'notes']);
         }
 
         fclose($output);
