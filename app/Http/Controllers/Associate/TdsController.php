@@ -120,9 +120,9 @@ class TdsController extends BaseController
         $tan = '—';
         try {
             $db = \App\Core\Database\Database::getInstance();
-            $row = $db->fetchOne("SELECT value FROM service_configs WHERE `key` IN ('company_tan','tan','deductor_tan') LIMIT 1");
-            if (!empty($row['value'])) {
-                $tan = (string)$row['value'];
+            $row = $db->fetchOne("SELECT config_value FROM service_configs WHERE config_key IN ('company_tan','tan','deductor_tan') LIMIT 1");
+            if (!empty($row['config_value'])) {
+                $tan = (string)$row['config_value'];
             }
         } catch (\Throwable $e) { /* fallback dash */ }
         $this->render('associate/tds_certificate', array_merge([
