@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-vector-square fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="5000" data-suffix="+">5,000+</div>
+                            <div class="stat-number" data-target="<?= (int)($hero_stats_view['plots_sold'] ?? 0) ?>" data-suffix="+"><?= (int)($hero_stats_view['plots_sold'] ?? 0) ?>+</div>
                             <div class="stat-label"><?= __('home_stat_plots_sold') ?></div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-home fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="500" data-suffix="+">500+</div>
+                            <div class="stat-number" data-target="<?= (int)($hero_stats_view['happy_families'] ?? 0) ?>" data-suffix="+"><?= (int)($hero_stats_view['happy_families'] ?? 0) ?>+</div>
                             <div class="stat-label"><?= __('home_stat_happy_families') ?></div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-city fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="4" data-suffix="">4</div>
+                            <div class="stat-number" data-target="<?= (int)($hero_stats_view['colonies_delivered'] ?? 0) ?>" data-suffix=""><?= (int)($hero_stats_view['colonies_delivered'] ?? 0) ?></div>
                             <div class="stat-label"><?= __('home_stat_colonies_delivered') ?></div>
                         </div>
                     </div>
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="stats-icon-wrap">
                                 <i class="fas fa-calendar-alt fa-lg"></i>
                             </div>
-                            <div class="stat-number" data-target="4" data-suffix="+">4+</div>
+                            <div class="stat-number" data-target="<?= (int)($hero_stats_view['years_trust'] ?? 0) ?>" data-suffix="+"><?= (int)($hero_stats_view['years_trust'] ?? 0) ?>+</div>
                             <div class="stat-label"><?= __('home_stat_years_trust') ?></div>
                         </div>
                     </div>

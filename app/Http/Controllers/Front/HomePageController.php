@@ -48,8 +48,27 @@ class HomePageController extends BaseController
     // Core Pages
     public function home()
     {
-        // Get hero statistics from DB settings with fallback
+        // Hero trust stats: live DB first; CMS override (site content section)
+        // wins if explicitly configured. Never fabricate - if the DB is empty the
+        // honest zero shows.
         $scStats = \App\Services\SiteContentService::getInstance()->getSection('settings');
+        try {
+            $db = $this->db;
+            $plotCount = (int)($db->fetch("SELECT COUNT(*) AS c FROM plots WHERE status IN ('booked','sold','registered')")['c'] ?? 0);
+            $colonyCount = (int)($db->fetch("SELECT COUNT(*) AS c FROM colonies WHERE is_active = 1")['c'] ?? 0);
+            $buyerCount = (int)($db->fetch("SELECT COUNT(DISTINCT customer_id) AS c FROM plot_bookings")['c'] ?? 0);
+            $yearsTrust = max(1, (int)date('Y') - 2019);
+        } catch (\Throwable $e) {
+            error_log('home hero stats: ' . $e->getMessage());
+            $plotCount = $colonyCount = $buyerCount = 0;
+            $yearsTrust = max(1, (int)date('Y') - 2019);
+        }
+        $hero_stats_view = [
+            'plots_sold' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_plots_booked_value'] ?? (string)$plotCount) ?: $plotCount,
+            'happy_families' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_families_sold_value'] ?? (string)$buyerCount) ?: $buyerCount,
+            'colonies_delivered' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_colonies_value'] ?? (string)$colonyCount) ?: $colonyCount,
+            'years_trust' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_years_sold_value'] ?? (string)$yearsTrust) ?: $yearsTrust,
+        ];
         $hero_stats = [
             'years_experience' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_experience_value'] ?? '15') ?: 15,
             'projects_completed' => (int) preg_replace('/[^0-9]/', '', $scStats['stat_projects_value'] ?? '50') ?: 50,
@@ -138,6 +157,7 @@ class HomePageController extends BaseController
             'page_title' => 'APS Dream Home - Find Your Dream Property',
             'page_description' => 'Discover premium residential and commercial properties across India. Verified listings, transparent pricing, and expert guidance.',
             'hero_stats' => $hero_stats,
+            'hero_stats_view' => $hero_stats_view,
             'featured_properties' => $featured_properties,
             'latest_blog_posts' => $latest_blog_posts,
             'hero_properties' => $hero_properties,
