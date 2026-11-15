@@ -126,15 +126,38 @@ $base = BASE_URL;
 
             <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem">
                 <?php if ($isActivated): ?>
-                    <button class="btn-action btn-primary" onclick="location.href='<?= $base ?>/user/referrals'">
+                    <?php $role = $_SESSION['role'] ?? 'customer'; ?>
+                    <?php if ($role === 'associate'): ?>
+                    <button class="btn-action btn-primary" onclick="location.href='<?= $base ?>/associate/referral'">
                         <i class="fas fa-share-alt me-2"></i>Refer & Earn
                     </button>
-                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/user/wallet-transactions'">
+                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/associate/wallet/transactions'">
                         <i class="fas fa-history me-2"></i>Transactions
                     </button>
-                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/user/emi-pay'">
+                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/associate/emi-tracker'">
                         <i class="fas fa-credit-card me-2"></i>Pay EMI
                     </button>
+                    <?php elseif ($role === 'agent'): ?>
+                    <button class="btn-action btn-primary" onclick="location.href='<?= $base ?>/agent/dashboard'">
+                        <i class="fas fa-share-alt me-2"></i>Refer & Earn
+                    </button>
+                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/agent/wallet'">
+                        <i class="fas fa-history me-2"></i>Transactions
+                    </button>
+                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/agent/dashboard'">
+                        <i class="fas fa-credit-card me-2"></i>Pay EMI
+                    </button>
+                    <?php else: ?>
+                    <button class="btn-action btn-primary" onclick="location.href='<?= $base ?>/user/referral'">
+                        <i class="fas fa-share-alt me-2"></i>Refer & Earn
+                    </button>
+                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/user/transactions'">
+                        <i class="fas fa-history me-2"></i>Transactions
+                    </button>
+                    <button class="btn-action btn-outline" onclick="location.href='<?= $base ?>/user/installments'">
+                        <i class="fas fa-credit-card me-2"></i>Pay EMI
+                    </button>
+                    <?php endif; ?>
                 <?php else: ?>
                     <a href="<?= $base ?>/auth/wallet/packages" class="btn-action btn-primary">
                         <i class="fas fa-rocket me-2"></i>Activate Wallet
