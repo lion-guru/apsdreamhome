@@ -46,7 +46,7 @@ class GSTNApiService
     private static function getDbConfig(): array
     {
         try {
-            return ServiceConfigService::getApiConfig('gstn');
+            return ServiceConfigService::getInstance()->getApiConfig('gstn');
         } catch (\Throwable $e) {
             return [];
         }

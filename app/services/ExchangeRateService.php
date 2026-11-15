@@ -48,7 +48,7 @@ class ExchangeRateService
     private static function dbGet(string $service, string $key, mixed $default = null): mixed
     {
         try {
-            return ServiceConfigService::get($service, $key, $default);
+            return ServiceConfigService::getInstance()->get($service, $key, $default);
         } catch (\Throwable $e) {
             return $default;
         }

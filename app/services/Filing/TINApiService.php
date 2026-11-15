@@ -44,7 +44,7 @@ class TINApiService
     private static function getDbConfig(): array
     {
         try {
-            return ServiceConfigService::getApiConfig('tin');
+            return ServiceConfigService::getInstance()->getApiConfig('tin');
         } catch (\Throwable $e) {
             return [];
         }

@@ -49,7 +49,7 @@ class LeegalityService
     private static function configValue(string $key, mixed $default): mixed
     {
         try {
-            return ServiceConfigService::get('leegality', $key, $default);
+            return ServiceConfigService::getInstance()->get('leegality', $key, $default);
         } catch (\Throwable $e) {
             return $default;
         }

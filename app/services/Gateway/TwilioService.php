@@ -87,7 +87,7 @@ class TwilioService
     private static function getDbConfig(): array
     {
         try {
-            return ServiceConfigService::getApiConfig('twilio');
+            return ServiceConfigService::getInstance()->getApiConfig('twilio');
         } catch (\Throwable $e) {
             return [];
         }

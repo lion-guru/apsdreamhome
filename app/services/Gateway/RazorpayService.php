@@ -62,7 +62,7 @@ class RazorpayService
     private static function getDbConfig(): array
     {
         try {
-            return ServiceConfigService::getApiConfig('razorpay');
+            return ServiceConfigService::getInstance()->getApiConfig('razorpay');
         } catch (\Throwable $e) {
             return [];
         }

@@ -73,7 +73,7 @@ class S3Storage implements StorageInterface
     private static function getDbConfig(): array
     {
         try {
-            return ServiceConfigService::getApiConfig('aws_s3');
+            return ServiceConfigService::getInstance()->getApiConfig('aws_s3');
         } catch (\Throwable $e) {
             return [];
         }
