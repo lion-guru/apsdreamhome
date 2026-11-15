@@ -692,21 +692,7 @@ $GLOBALS['_html_doc_started'] = true;
                     }
                 });
             });
-
-            // AI chat widget bindings (CSP-safe, no inline onclick)
-            var chatToggle = document.getElementById('chatToggle');
-            var chatClose = document.getElementById('chatClose');
-            var chatSend = document.getElementById('assocChatSend');
-            var chatInput = document.getElementById('assocChatInput');
-            if (chatToggle && typeof toggleAssociateChat === 'function') chatToggle.addEventListener('click', toggleAssociateChat);
-            if (chatClose && typeof toggleAssociateChat === 'function') chatClose.addEventListener('click', toggleAssociateChat);
-            if (chatSend && typeof sendAssociateChat === 'function') chatSend.addEventListener('click', sendAssociateChat);
-            if (chatInput && typeof sendAssociateChat === 'function') {
-                chatInput.addEventListener('keypress', function(event) {
-                    if (event.key === 'Enter') sendAssociateChat();
-                });
-            }
-        });
+         });
 
         // Close sidebar on window resize if open
         window.addEventListener('resize', function() {
@@ -716,33 +702,6 @@ $GLOBALS['_html_doc_started'] = true;
         });
     </script>
 
-    <!-- Floating AI Chat Widget -->
-    <div id="aiChatWidget" >
-        <button id="chatToggle" aria-label="Open APS Assistant chat">
-            <i class="fas fa-robot" aria-hidden="true"></i>
-        </button>
-        <div id="chatPanel" >
-            <div >
-                <div >
-                    <i class="fas fa-robot"></i>
-                    <div>
-                        <div >APS Assistant</div>
-                        <div >Property &amp; MLM Help</div>
-                    </div>
-                </div>
-                <button id="chatClose" aria-label="Close chat"><i class="fas fa-times" aria-hidden="true"></i></button>
-            </div>
-            <div id="assocChatMessages" >
-                <div >
-                    Namaste! I'm your APS assistant. Ask about properties, commissions, bookings, or anything else.
-                </div>
-            </div>
-            <div >
-                <input type="text" id="assocChatInput" placeholder="Type a message..." aria-label="Type a message...">
-                <button id="assocChatSend" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
-            </div>
-        </div>
-    </div>
     <!-- ═══ LEGAL COMPLIANCE: Associate Code of Conduct Consent Modal ═══ -->
     <div id="legalConsentModal" class="modal fade" tabindex="-1" aria-labelledby="legalConsentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -920,4 +879,4 @@ $GLOBALS['_html_doc_started'] = true;
     <?php include_once __DIR__ . '/../components/smart_chatbot.php'; ?>
     <!-- duplicate English chatbot removed — smart_chatbot.php is the single assistant (S528-fix) -->
 </body>
-</html>
+</html>
