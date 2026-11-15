@@ -747,9 +747,20 @@ body.page-home main {
   .premium-header .nav-item.btn-admin {
     display: none !important;
   }
+  .premium-header .navbar-brand img.logo {
+    max-width: 78px !important;
+    height: auto !important;
+  }
+  .premium-header .logo {
+    height: 30px;
+  }
+  .premium-header .navbar-brand {
+    min-width: 66px;
+    margin-right: 6px;
+  }
   .premium-header .navbar-nav .nav-link {
-    font-size: 10.5px;
-    padding: 16px 3px !important;
+    font-size: 10px;
+    padding: 12px 2px !important;
   }
   .premium-header .nav-item.btn-call a {
     padding: 4px 6px !important;

@@ -183,7 +183,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Core Components -->
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
     <!-- Navigation & Header -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=9" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=11" rel="stylesheet">
     <!-- Real Estate Theme & Gradients -->
     <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=18" rel="stylesheet">
     <!-- Homepage Specific Extras -->

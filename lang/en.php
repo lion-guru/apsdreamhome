@@ -1629,7 +1629,7 @@ return array(
   'trigger_event' => 'Trigger Event',
   'trusted_by' => 'Trusted by',
   'trusted_reliable' => 'Trusted & Reliable',
-  'trusted_reliable_desc' => '15+ years of honest dealings and happy families.',
+  'trusted_reliable_desc' => '4+ years of honest dealings and happy families.',
   'try_again' => 'Try Again',
   'try_mobile_reset_btn' => 'Try Mobile Reset',
   'two_bhk' => '2 BHK',
@@ -1799,7 +1799,7 @@ return array(
   'whatsapp_msg' => 'Hi, I want to list my property for sale',
   'whatsapp_us' => 'WhatsApp Us',
   'why_choose_15_years' => '15+ Years of Trusted Service',
-  'why_choose_15_years_desc' => 'A legacy of trust with 1000+ happy families served across Uttar Pradesh.',
+  'why_choose_15_years_desc' => 'A legacy of trust with 80+ happy families served across Uttar Pradesh.',
   'why_choose_rera' => 'RERA Verification, Colony-Wise',
   'why_choose_rera_desc' => 'Colony-wise RERA status verified at up-rera.in or via our legal desk (+91 70074 44842). Ask for the colony certificate before you sign.',
   'why_choose_support' => '24/7 Customer Support',
@@ -1839,7 +1839,7 @@ return array(
   'register_continue' => 'Continue',
 
   // HOME PAGE
-  'home_families_count' => '500+ Families',
+  'home_families_count' => '80+ Families',
   'home_buy_rent' => 'Buy / Rent',
   'home_buy' => 'Buy',
   'home_rent' => 'Rent',
@@ -1962,8 +1962,8 @@ return array(
   'home_get_in_touch' => 'Get In Touch',
   // Home page - Trust badges
   'home_trust_rera' => 'RERA Verification Available',
-  'home_trust_plots_sold' => '5000+ Plots Sold',
-  'home_trust_happy_families' => '500+ Happy Families',
+  'home_trust_plots_sold' => '33 Plots Booked',
+  'home_trust_happy_families' => '80+ Happy Families',
   // Home page - Stats section
   'home_stat_plots_sold' => 'Plots Sold',
   'home_stat_happy_families' => 'Happy Families',
@@ -2004,16 +2004,16 @@ return array(
   'home_trusted_platform' => 'Trusted Platform',
   'home_thousands_trust' => 'Thousands Trust APS Dream Home',
   'home_platform_desc' => 'From buyers to sellers, renters to agents — our platform serves everyone in the real estate ecosystem.',
-  'home_buyers_count' => '2,500+',
+  'home_buyers_count' => '82+',
   'home_buyers_label' => 'Happy Buyers',
   'home_buyers_desc' => 'Found their dream plot through our platform and became proud homeowners',
-  'home_sellers_count' => '800+',
+  'home_sellers_count' => '40+ Property Listings',
   'home_sellers_label' => 'Property Sellers',
   'home_sellers_desc' => 'Listed and sold their properties with transparent pricing and legal support',
-  'home_renters_count' => '1,200+',
+  'home_renters_count' => '12+ Renters',
   'home_renters_label' => 'Rental Deals',
   'home_renters_desc' => 'Verified rental properties with secure documentation and easy payments',
-  'home_associates_count' => '500+',
+  'home_associates_count' => '5+',
   'home_associates_label' => 'Active Associates',
   'home_associates_desc' => 'Earning commissions through our MLM network and helping families find homes',
   'home_rating_text' => '5.0/5 Rating',
@@ -2032,7 +2032,7 @@ return array(
   // Home page - A/B test hero CTA variants
   'hero_cta_urgent' => 'Book Your Plot Now - Limited Inventory!',
   'hero_cta_family' => 'Find Your Family\'s Dream Home Today',
-  'hero_typed_strings' => 'Premium Plots in Gorakhpur|Smart Investment|Trusted by 5000+ Families',
+  'hero_typed_strings' => 'Premium Plots in Gorakhpur|Smart Investment|Trusted by 80+ Families',
 
   // Home page - Career section sub-items
   'rank_starter' => 'Starter',

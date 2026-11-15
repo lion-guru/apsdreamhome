@@ -19,7 +19,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                 <div class="small opacity-75"><?= __('years_experience') ?></div>
             </div>
             <div class="col-6 col-md-3 mb-2 mb-md-0">
-                <div class="fs-3 fw-bold">500+</div>
+                <div class="fs-3 fw-bold">80+</div>
                 <div class="small opacity-75"><?= __('about_stat_families') ?></div>
             </div>
             <div class="col-6 col-md-3">
