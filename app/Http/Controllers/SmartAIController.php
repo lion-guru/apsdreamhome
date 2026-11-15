@@ -454,7 +454,7 @@ class SmartAIController extends BaseController
             // Get network stats
             [$tidSql, $tidParams] = $this->tenantWhere();
             $networkStats = $this->db->fetch(
-                "SELECT COUNT(*) as total FROM users WHERE referrer_id = ?{$tidSql}",
+                "SELECT COUNT(*) as total FROM users WHERE referred_by = ?{$tidSql}",
                 array_merge([$associateId], $tidParams)
             );
             $data['network_size'] = $networkStats['total'] ?? 0;
@@ -475,7 +475,7 @@ class SmartAIController extends BaseController
 
             // Get leads count
             $leadsStats = $this->db->fetch(
-                "SELECT COUNT(*) as total FROM leads WHERE associate_id = ?",
+                "SELECT COUNT(*) as total FROM leads WHERE assigned_to = ?",
                 [$associateId]
             );
             $data['total_leads'] = $leadsStats['total'] ?? 0;
