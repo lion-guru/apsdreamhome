@@ -1114,7 +1114,7 @@ class VoiceService
 
         try {
             return $this->db->fetchAll(
-                "SELECT s.*, l.name as lead_name, l.phone as lead_phone FROM ai_calling_schedule s LEFT JOIN leads l ON l.id = s.lead_id WHERE status = 'pending'{$tenantFilter} ORDER BY scheduled_date ASC, scheduled_time ASC LIMIT ?",
+                "SELECT s.*, l.name as lead_name, l.phone as lead_phone FROM ai_calling_schedule s LEFT JOIN leads l ON l.id = s.lead_id WHERE s.status = 'pending'{$tenantFilter} ORDER BY scheduled_date ASC, scheduled_time ASC LIMIT ?",
                 array_merge($params, [$limit])
             );
         } catch (\Throwable $e) {

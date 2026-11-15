@@ -1707,7 +1707,9 @@ class MobileUserApiController extends BaseController
         $this->setCorsHeaders();
         try {
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $pdo->query("SELECT id, rera_number, project_name, builder_name, status, registration_date, valid_upto, total_area, total_units, city, state_code FROM rera_projects WHERE is_active = 1 ORDER BY created_at DESC LIMIT 20");
+            // Live rera_projects schema: validity_date (not valid_upto), area_sqm (not total_area).
+            // Old column names 1054'd every call, making the mobile RERA list permanently empty.
+            $stmt = $pdo->query("SELECT id, rera_number, project_name, builder_name, status, registration_date, validity_date, area_sqm, total_units, city, state_code FROM rera_projects WHERE is_active = 1 ORDER BY created_at DESC LIMIT 20");
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $projects]);
         } catch (\Throwable $e) {
@@ -1769,16 +1771,35 @@ class MobileUserApiController extends BaseController
         $this->setCorsHeaders();
         try {
             $service = new \App\Services\DirectoryService();
-            $jobs = $service->getJobs('', '', -1, 1);
+            // DirectoryService::getJobs() returns a wrapper array (items/total/...),
+            // NOT a flat list — iterating it yielded one garbage entry per key.
+            $jobsResult = $service->getJobs('', '', -1, 1);
+            $jobs = $jobsResult['items'] ?? [];
+            // directory_jobs has salary_range (free text) but no salary_min/salary_max
+            // columns — parse numeric ranges; fall back to 0,0 (mobile shows "Negotiable").
             $jobData = [];
             foreach ($jobs as $j) {
+                $range = (string)($j['salary_range'] ?? '');
+                $salaryMin = 0; $salaryMax = 0;
+                $compact = preg_replace('/[^0-9,.\-]/', '', $range);
+                if (preg_match_all('/\d[\d,]{2,}/', $compact, $m) && !empty($m[0])) {
+                    $nums = array_map(static fn($s) => (int)str_replace(',', '', $s), $m[0]);
+                    sort($nums);
+                    if (count($nums) >= 2) {
+                        $salaryMin = $nums[0];
+                        $salaryMax = end($nums);
+                    } else {
+                        $salaryMin = $salaryMax = $nums[0];
+                    }
+                }
                 $jobData[] = [
-                    'id' => $j['id'],
+                    'id' => $j['id'] ?? null,
                     'title' => $j['title'] ?? '',
                     'company' => $j['business_name'] ?? '',
                     'location' => $j['location'] ?? $j['city'] ?? '',
-                    'salary_min' => (int)($j['salary_min'] ?? 0),
-                    'salary_max' => (int)($j['salary_max'] ?? 0),
+                    'salary_min' => $salaryMin,
+                    'salary_max' => $salaryMax,
+                    'salary_range' => $range,
                     'job_type' => $j['job_type'] ?? '',
                     'category' => $j['category'] ?? '',
                 ];

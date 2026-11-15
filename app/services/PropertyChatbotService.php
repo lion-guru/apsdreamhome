@@ -34,7 +34,17 @@ class PropertyChatbotService extends UnifiedAIService
             $sessionId = $response['session_id'] ?? (session_id() ?: 'web_' . uniqid());
             $reply = (string)($response['response'] ?? $response['reply'] ?? '');
             $role = (string)($_SESSION['user_role'] ?? $_SESSION['role'] ?? ($_SESSION['admin_role'] ?? 'guest'));
-            $uid = is_numeric($userId) ? (int)$userId : null;
+            $uid = null;
+            if (is_numeric($userId) && (int)$userId > 0) {
+                try {
+                    $exists = $db->fetch("SELECT id FROM users WHERE id = ?", [(int)$userId]);
+                    if (!empty($exists)) {
+                        $uid = (int)$userId;
+                    }
+                } catch (\Throwable $ignore) {
+                    $uid = null;
+                }
+            }
             $intent = $response['intent'] ?? null;
 
             $db->query(

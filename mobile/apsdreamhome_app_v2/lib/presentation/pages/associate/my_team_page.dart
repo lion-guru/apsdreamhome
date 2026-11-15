@@ -97,10 +97,13 @@ class _MyTeamPageState extends ConsumerState<MyTeamPage> {
   }
 
   Widget _buildStatsHeader(Map<String, dynamic> stats) {
-    final total = (stats['total_team_size'] ?? stats['total'] ?? 0) as int;
-    final active = (stats['active_members'] ?? stats['active'] ?? 0) as int;
-    final totalSales =
-        (stats['total_team_business'] ?? stats['totalSales'] ?? 0.0) as double;
+    // Server (PHP) marshals whole-number stats as JSON ints — never cast blindly.
+    final totalRaw = stats['total_team_size'] ?? stats['total'] ?? 0;
+    final activeRaw = stats['active_members'] ?? stats['active'] ?? 0;
+    final businessRaw = stats['total_team_business'] ?? stats['totalSales'] ?? 0;
+    final total = (totalRaw is num) ? totalRaw.toInt() : (int.tryParse('$totalRaw') ?? 0);
+    final active = (activeRaw is num) ? activeRaw.toInt() : (int.tryParse('$activeRaw') ?? 0);
+    final totalSales = (businessRaw is num) ? businessRaw.toDouble() : (double.tryParse('$businessRaw') ?? 0.0);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

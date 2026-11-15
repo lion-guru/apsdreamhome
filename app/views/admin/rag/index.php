@@ -107,8 +107,13 @@ $stored = $health['stored_models'] ?? [];
                 <div class="text-muted small">Keys</div>
                 <div class="h6 mb-0">
                     <i class="fas fa-key me-1 text-<?= !empty($health['gemini_key_set']) ? 'success' : 'secondary' ?>"></i>Gemini
+                    <i class="fas fa-key ms-2 me-1 text-<?= !empty($health['openrouter_key_set']) ? 'success' : 'secondary' ?>"></i>OpenRouter
                     <i class="fas fa-key ms-2 me-1 text-<?= !empty($health['hf_key_set']) ? 'success' : 'secondary' ?>"></i>HF
                 </div>
+                <?php if (!empty($health['openrouter_last_error'])): ?>
+                    <div class="small text-warning">OpenRouter: <?= htmlspecialchars((string)$health['openrouter_last_error']) ?></div>
+                <?php endif; ?>
+                <div class="small text-muted">corpus OR vectors: <?= (int)($health['openrouter_filled'] ?? 0) ?>/<?= (int)($health['total_chunks'] ?? 0) ?> (<?= htmlspecialchars(number_format((float)($health['openrouter_coverage_pct'] ?? 0), 1)) ?>%)</div>
                 <?php if (!empty($health['hf_last_error'])): ?>
                     <div class="small text-warning">HF: <?= htmlspecialchars((string)$health['hf_last_error']) ?></div>
                 <?php endif; ?>

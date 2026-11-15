@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/providers/auth_provider.dart';
 
 /// Tinder-Style Property Discovery Page
 /// Users swipe right (interested) or left (skip) on property cards.
@@ -143,11 +146,37 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
 
   void _swipeLike() {
     if (_currentIndex < _properties.length) {
+      final prop = _properties[_currentIndex];
       setState(() {
-        _savedProperties.add(_properties[_currentIndex]);
+        _savedProperties.add(prop);
       });
+      // Persist interest as a CRM lead so the deal team can call the buyer
+      _writeInterestLead(prop);
     }
     _nextCard();
+  }
+
+  Future<void> _writeInterestLead(Map<String, dynamic> prop) async {
+    try {
+      final user = ref.read(currentUserProvider);
+      final name = user?.name ?? 'Swipe Lead';
+      final phone = user?.phone ?? '';
+      final colonyId = prop['id'];
+      await ApiService().post(
+        '/leads/create',
+        data: {
+          'name': name,
+          'phone': phone,
+          'source': 'mobile_swipe',
+          'colony_id': colonyId,
+          'colony_name': prop['title'],
+          'interest_level': 'warm',
+          'notes': 'Swipe right — interested in ${prop['title']} (mobile_swipe)',
+        },
+      );
+    } catch (_) {
+      // Lead auto-save must never break the UX — swallow silently
+    }
   }
 
   void _swipeDislike() {
@@ -307,7 +336,11 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildActionBtn(Icons.close, Colors.red, _swipeDislike),
-                      _buildActionBtn(Icons.info_outline, Colors.blue, () {}),
+                      _buildActionBtn(Icons.info_outline, Colors.blue, () {
+                        if (_currentIndex < _properties.length) {
+                          context.push('/colonies/${_properties[_currentIndex]['id']}');
+                        }
+                      }),
                       _buildActionBtn(Icons.favorite, Colors.green, _swipeLike),
                     ],
                   ),

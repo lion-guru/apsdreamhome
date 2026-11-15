@@ -446,7 +446,7 @@ class AIAgentApiController extends BaseController
                 // Table might not exist — log to ai_api_logs instead
                 try {
                     $this->db->execute(
-                        "INSERT INTO ai_api_logs (tenant_id, user_id, service, endpoint, request_data, response_data, response_time_ms, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())",
+                        "INSERT INTO ai_api_logs (tenant_id, user_id, service, endpoint, request_data, response_data, response_time_ms, status_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 200, NOW())",
                         [1, $userId, 'feedback', $agentId, $feedback, "rating:$rating", 0]
                     );
                 } catch (\Throwable $e2) {
@@ -684,7 +684,7 @@ class AIAgentApiController extends BaseController
     {
         try {
             $this->db->execute(
-                "INSERT INTO ai_api_logs (tenant_id, user_id, service, endpoint, request_data, response_data, response_time_ms, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())",
+                "INSERT INTO ai_api_logs (tenant_id, user_id, service, endpoint, request_data, response_data, response_time_ms, status_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 200, NOW())",
                 [
                     1,
                     $userId,

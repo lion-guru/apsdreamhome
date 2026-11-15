@@ -19,6 +19,7 @@ class RAGService
     public const MODEL_GEMINI = 'gemini-embedding-001';
     public const MODEL_HF     = 'hf-all-MiniLM-L6-v2';
     public const MODEL_HASH   = 'hash-placeholder-v2';
+    public const MODEL_OPENROUTER = 'openrouter-text-embedding-3-small';
 
     use \App\Traits\ServiceTenantTrait;
 
@@ -87,6 +88,13 @@ class RAGService
         return $this->cfgValue($s, 'hf_api_key', 'HF_API_KEY');
     }
 
+    public function openRouterKey(): string
+    {
+        $s = $this->settings();
+        $key = $this->cfgValue($s, 'openrouter_api_key', 'OPENROUTER_API_KEY');
+        return $key;
+    }
+
     public function getEmbeddingModel(): string
     {
         $s = $this->settings();
@@ -103,6 +111,17 @@ class RAGService
         try {
             $s = $this->settings();
             $cfg = $s['__cfg'] ?? [];
+            // Probe the chosen provider FIRST — never persist a switch the
+            // corpus cannot answer against. hash-placeholder is exempt (it
+            // needs no external call) but it still works as a veto: the
+            // health desk already shows it as degraded.
+            if ($model !== self::MODEL_HASH) {
+                $probe = $this->probeModel($model);
+                if (!$probe['ok']) {
+                    $this->logOnce('set_model_probe', 'RAGEmbeddingService: refusing to persist model ' . $model . ' — provider probe failed: ' . $probe['reason']);
+                    return false;
+                }
+            }
             $cfg['rag_embedding_model'] = $model;
             $this->db->execute(
                 "UPDATE ai_settings SET settings = ?, updated_at = NOW() WHERE id = 1",
@@ -113,6 +132,38 @@ class RAGService
             $this->logOnce('set_model_failed', 'RAGEmbeddingService: cannot persist model: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Probe a specific provider with a tiny string; return ok+reason.
+     * Public so the admin "save and switch" path can show WHY a provider is not selectable.
+     */
+    public function probeModel(string $model): array
+    {
+        $model = trim($model);
+        if ($model === self::MODEL_HASH) {
+            return ['ok' => true, 'reason' => 'hash-placeholder is deterministic (no external call)'];
+        }
+        try {
+            $vec = match ($model) {
+                self::MODEL_GEMINI => $this->geminiEmbed('APS Dream Home RAG health probe'),
+                self::MODEL_OPENROUTER => $this->openRouterEmbed('APS Dream Home RAG health probe'),
+                self::MODEL_HF => $this->hfEmbed('APS Dream Home RAG health probe'),
+                default => null,
+            };
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'reason' => $e->getMessage()];
+        }
+        if (is_array($vec) && count($vec) > 0) {
+            return ['ok' => true, 'reason' => 'provider answered'];
+        }
+        $verdict = match ($model) {
+            self::MODEL_GEMINI => $this->logGuards['gemini_err'] ?? 'unknown',
+            self::MODEL_OPENROUTER => $this->logGuards['openrouter_err'] ?? 'unknown',
+            self::MODEL_HF => $this->logGuards['hf_err'] ?? 'unknown',
+            default => 'unknown model',
+        };
+        return ['ok' => false, 'reason' => (string) $verdict];
     }
 
     public function generateEmbedding(string $text): string
@@ -170,13 +221,29 @@ class RAGService
         $chunks = $this->chunkText($content, 1000, 200); // 1000 chars with 200 overlap
 
         foreach ($chunks as $index => $chunk) {
-            $embedding = $this->generateEmbedding($chunk, $docId, $index);
+            // Dual-write both provider vectors when both providers answer:
+            // `embedding` holds the primary (gemini preferred, 3072-dim), `embedding_openrouter`
+            // ALWAYS holds the openrouter vector (1536-dim) when available — so the corpus
+            // stays searchable even when the primary provider's daily quota is dead.
+            $geminiVec = $this->geminiEmbed($chunk);
+            $openrouterVec = $this->openRouterEmbed($chunk);
+
+            if ($geminiVec !== null) {
+                $embedding = json_encode(['model' => self::MODEL_GEMINI, 'vector' => $geminiVec]);
+            } elseif ($openrouterVec !== null) {
+                $embedding = json_encode(['model' => self::MODEL_OPENROUTER, 'vector' => $openrouterVec]);
+            } else {
+                $embedding = $this->hashEmbed($chunk);
+            }
+            $embeddingOpenrouter = $openrouterVec !== null
+                ? json_encode(['model' => self::MODEL_OPENROUTER, 'vector' => $openrouterVec])
+                : null;
 
             $tid = $this->tenantId();
             $this->db->execute(
-                "INSERT INTO ai_knowledge_chunks (knowledge_base_id, chunk_text, embedding, chunk_index, metadata, tenant_id, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, NOW())",
-                [$docId, $chunk, $embedding, $index, json_encode(['doc_id' => $docId]), $tid > 1 ? $tid : 1]
+                "INSERT INTO ai_knowledge_chunks (knowledge_base_id, chunk_text, embedding, embedding_openrouter, chunk_index, metadata, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())",
+                [$docId, $chunk, $embedding, $embeddingOpenrouter, $index, json_encode(['doc_id' => $docId]), $tid > 1 ? $tid : 1]
             );
         }
     }
@@ -315,16 +382,19 @@ class RAGService
             // fall through to vector path if lexical found nothing
         }
 
-        // Score chunks by cosine similarity
-        // Dimension guard - a query vector must never be compared against a
-        // chunk vector of a different length (e.g. Gemini 1536-dim query vs a stale
-        // hash-placeholder 384-dim chunk). Skipping is correct; comparing would
-        // produce meaningless scores and silently pollute results.
+        // Score chunks by cosine similarity. Provider routing: the column read
+        // matches whichever provider answered the query embed — Gemini/HF/hash
+        // vectors live in `embedding`, OpenRouter vectors live in
+        // `embedding_openrouter` (during dual-write periods the two corpora may
+        // coexist). Dimension guard still applies per column.
+        $queryModel = (string)($queryEmbedding['model'] ?? '');
+        $chunkColumn = ($queryModel === self::MODEL_OPENROUTER) ? 'embedding_openrouter' : 'embedding';
+
         $queryDim = count($queryVector);
         $results = [];
         $dimMismatch = 0;
         foreach ($chunks as $chunk) {
-            $chunkEmbedding = json_decode((string)($chunk['embedding'] ?? ''), true);
+            $chunkEmbedding = json_decode((string)($chunk[$chunkColumn] ?? ''), true);
             $chunkVector = $chunkEmbedding['vector'] ?? [];
 
             if (!is_array($chunkVector) || $queryDim === 0 || count($chunkVector) !== $queryDim) {
@@ -704,11 +774,14 @@ class RAGService
         }
 
         $model = $this->getEmbeddingModel();
-        // Gemini first (free) regardless of preference ordering: if the admin
-        // selected HF but HF has no credits, fall through to Gemini before hash.
-        $order = ($model === self::MODEL_HF)
-            ? [self::MODEL_HF, self::MODEL_GEMINI]
-            : [self::MODEL_GEMINI, self::MODEL_HF];
+        // Gemini first (free); OpenRouter second (paid pennies, live today);
+        // HF needs credits. If the admin explicitly selects a provider, honour it first.
+        $order = [self::MODEL_GEMINI, self::MODEL_OPENROUTER, self::MODEL_HF];
+        if ($model === self::MODEL_HF) {
+            $order = [self::MODEL_HF, self::MODEL_GEMINI, self::MODEL_OPENROUTER];
+        } elseif ($model === self::MODEL_OPENROUTER) {
+            $order = [self::MODEL_OPENROUTER, self::MODEL_GEMINI, self::MODEL_HF];
+        }
 
         foreach ($order as $candidate) {
             if ($candidate === self::MODEL_GEMINI) {
@@ -723,14 +796,21 @@ class RAGService
                     $this->lastProvider = 'huggingface';
                     return json_encode(['model' => self::MODEL_HF, 'vector' => $vec]);
                 }
+            } elseif ($candidate === self::MODEL_OPENROUTER) {
+                $vec = $this->openRouterEmbed($text);
+                if ($vec !== null) {
+                    $this->lastProvider = 'openrouter';
+                    return json_encode(['model' => self::MODEL_OPENROUTER, 'vector' => $vec]);
+                }
             }
         }
 
         // Last resort — ALWAYS announce the degradation.
         $this->logOnce(
             'hash_fallback',
-            'RAGEmbeddingService: DEGRADED to hash-placeholder-v2 — no embedding provider '
+            'RAGEmbeddingService: DEGRADED to hash-placeholder-v2 - no embedding provider '
             . 'succeeded (gemini: ' . ($this->logGuards['gemini_err'] ?? 'n/a')
+            . ' | openrouter: ' . ($this->logGuards['openrouter_err'] ?? 'n/a')
             . ' | hf: ' . ($this->logGuards['hf_err'] ?? 'n/a')
             . '). RAG search quality is degraded until a provider is configured.'
         );
@@ -846,6 +926,55 @@ class RAGService
     }
 
     /**
+     * OpenRouter embeddings (model openai/text-embedding-3-small, dim 1536).
+     * Pennies per million tokens; verified live from this environment (200 on
+     * the real key). Returns null on any failure.
+     */
+    public function openRouterEmbed(string $text): ?array
+    {
+        $key = $this->openRouterKey();
+        if ($key === '') {
+            $this->logGuards['openrouter_err'] = 'no key';
+            return null;
+        }
+
+        $url = 'https://openrouter.ai/api/v1/embeddings';
+        $payload = json_encode([
+            'model' => 'openai/text-embedding-3-small',
+            'input' => mb_substr($text, 0, 8000),
+        ]);
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Authorization: Bearer ' . $key],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+        ]);
+        $resp = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = (string) curl_error($ch);
+        curl_close($ch);
+
+        if ($resp === false || $code !== 200) {
+            $this->logGuards['openrouter_err'] = 'HTTP ' . $code . ' ' . $err . (is_string($resp) ? ': ' . substr($resp, 0, 160) : '');
+            error_log('RAGEmbeddingService: OpenRouter embedding HTTP ' . $code . ' ' . $err);
+            return null;
+        }
+
+        $decoded = json_decode($resp, true);
+        $vec = $decoded['data'][0]['embedding'] ?? null;
+        if (!is_array($vec) || count($vec) !== 1536) {
+            $this->logGuards['openrouter_err'] = 'bad response dim=' . (is_array($vec) ? count($vec) : 'n/a');
+            return null;
+        }
+
+        $this->logGuards['openrouter_err'] = null;
+        return array_map('floatval', $vec);
+    }
+
+    /**
      * Deterministic 384-dim placeholder. Same algorithm as the previous inline
      * implementation so old rows stay comparable.
      */
@@ -947,8 +1076,10 @@ class RAGService
         $dims = [];
         $totalChunks = 0;
         $onDim = 0;
+        $orFilled = 0;
+        $orMissing = 0;
         try {
-            $rows = $this->db->fetchAll("SELECT embedding FROM ai_knowledge_chunks") ?: [];
+            $rows = $this->db->fetchAll("SELECT embedding, embedding_openrouter FROM ai_knowledge_chunks") ?: [];
             foreach ($rows as $r) {
                 $dec = json_decode((string) ($r['embedding'] ?? ''), true);
                 $m = (string) ($dec['model'] ?? 'unknown');
@@ -958,12 +1089,18 @@ class RAGService
                 $dims[$d] = ($dims[$d] ?? 0) + 1;
                 $totalChunks++;
                 if ($d === $probeDim) { $onDim++; }
+
+                $or = json_decode((string) ($r['embedding_openrouter'] ?? ''), true);
+                $orVec = $or['vector'] ?? null;
+                if (is_array($orVec) && count($orVec) === 1536) { $orFilled++; } else { $orMissing++; }
             }
         } catch (\Throwable $e) {
             $stored = [];
             $dims = [];
             $totalChunks = 0;
             $onDim = 0;
+            $orFilled = 0;
+            $orMissing = 0;
         }
 
         return [
@@ -976,6 +1113,11 @@ class RAGService
             'hf_key_set' => ($this->freeEngines->getHfKey() !== ''),
             'hf_last_error' => $this->logGuards['hf_err'] ?? null,
             'gemini_last_error' => $this->logGuards['gemini_err'] ?? null,
+            'openrouter_key_set' => ($this->openRouterKey() !== ''),
+            'openrouter_last_error' => $this->logGuards['openrouter_err'] ?? null,
+            'openrouter_filled' => $orFilled,
+            'openrouter_missing' => $orMissing,
+            'openrouter_coverage_pct' => ($orFilled + $orMissing) > 0 ? round(($orFilled / ($orFilled + $orMissing)) * 100, 1) : 0.0,
             'stored_models' => $stored,
             'stale_chunks' => ($stored[self::MODEL_HASH] ?? 0),
             'total_chunks' => array_sum($stored),

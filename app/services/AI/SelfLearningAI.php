@@ -710,11 +710,14 @@ class SelfLearningAI
 
             // Update interests
             if (!empty($entities['property_type'])) {
+                // ai_user_profiles.preferred_types has CHECK (json_valid(...)) — a raw scalar
+                // ("plot") 4025s on every write. Always store a JSON array.
+                $preferredTypes = json_encode([$entities['property_type']]);
                 $this->db->execute(
                     "INSERT INTO ai_user_profiles (user_id, preferred_types, updated_at)
                      VALUES (?, ?, NOW())
                      ON DUPLICATE KEY UPDATE preferred_types = ?, updated_at = NOW()",
-                    [$this->userId, $entities['property_type'], $entities['property_type']]
+                    [$this->userId, $preferredTypes, $preferredTypes]
                 );
             }
 

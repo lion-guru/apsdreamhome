@@ -18,7 +18,8 @@ class AIManagementController extends AdminController
     {
         $this->requireAdmin();
         try {
-            $integrations = $this->db->fetchAll("SELECT * FROM ai_integrations ORDER BY tool_name ASC") ?: [];
+            // Live column is `integration_name` (ai_integrations has no tool_name).
+            $integrations = $this->db->fetchAll("SELECT * FROM ai_integrations ORDER BY integration_name ASC") ?: [];
             $stats = [
                 'total' => count($integrations),
                 'active' => count(array_filter($integrations, fn($r) => ($r['status'] ?? '') === 'active')),
@@ -168,53 +169,24 @@ class AIManagementController extends AdminController
     public function usageAnalytics()
     {
         $this->requireAdmin();
-        try {
-            $usage = $this->db->fetchAll("
-                SELECT a.*, u.name as user_name, u.email as user_email
-                FROM ai_usage_analytics a
-                LEFT JOIN users u ON a.user_id = u.id
-                ORDER BY a.created_at DESC
-                LIMIT 100
-            ") ?: [];
-            $byFeature = $this->db->fetchAll("
-                SELECT feature_name, COUNT(*) as count, COUNT(DISTINCT user_id) as unique_users
-                FROM ai_usage_analytics
-                GROUP BY feature_name
-                ORDER BY count DESC
-            ") ?: [];
-        } catch (\Throwable $e) {
-            $usage = [];
-            $byFeature = [];
-        }
+        // ai_usage_analytics in live DB is a 4-column stub (id/tenant_id/created_at/updated_at).
+        // Any query here 1054/1146s and is silently swallowed. Hand the view honest
+        // empty arrays — the page's designed empty state renders instead of a lie.
         return $this->render('admin/ai-management/usage', [
             'page_title' => 'AI Usage Analytics',
-            'usage' => $usage,
-            'byFeature' => $byFeature,
+            'usage' => [],
+            'byFeature' => [],
         ]);
     }
 
     public function contextMemory()
     {
         $this->requireAdmin();
-        try {
-            try {
-                $entries = $this->db->fetchAll("
-                    SELECT c.*, u.name as user_name, u.email as user_email
-                    FROM ai_context_memory c
-                    LEFT JOIN users u ON c.user_id = u.id
-                    ORDER BY c.created_at DESC
-                    LIMIT 100
-                ") ?: [];
-            } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
-            }
-        } catch (\Throwable $e) {
-            $entries = [];
-        }
+        // ai_context_memory does not exist in the live database (AF1146 on every call,
+        // swallowed by the catch). Hand the view its honest empty state.
         return $this->render('admin/ai-management/context', [
             'page_title' => 'AI Context Memory',
-            'entries' => $entries,
+            'entries' => [],
         ]);
     }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
@@ -174,7 +174,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                                   Icon(Icons.verified, color: AppTheme.goldColor, size: 18),
                                   SizedBox(width: 8),
                                   Text(
-                                    'RERA APPROVED \u2022 GORAKHPUR \u2022 LUCKNOW',
+                                    'GORAKHPUR - LUCKNOW - PURVANCHAL',
                                     style: TextStyle(
                                       color: AppTheme.goldColor,
                                       fontWeight: FontWeight.w700,
@@ -293,10 +293,10 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildTrustItem(Icons.verified, 'RERA Verified', 'All projects approved'),
-            _buildTrustItem(Icons.shield, 'Legal Clear', 'Clean titles guaranteed'),
+            _buildTrustItem(Icons.description_outlined, 'Documented Plots', 'Land-chain documented'),
+            _buildTrustItem(Icons.shield, 'Legal Review', 'Legal desk review'),
             _buildTrustItem(Icons.payment, 'Easy EMI', 'Flexible payment plans'),
-            _buildTrustItem(Icons.support_agent, '24/7 Support', 'Dedicated assistance'),
+            _buildTrustItem(Icons.support_agent, '24/7 Visits', 'Dedicated assistance'),
           ],
         ),
       ),
@@ -809,10 +809,10 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
   }
 
   Widget _buildTestimonials() {
-    final testimonials = [
-      {'name': 'Rajesh Kumar', 'location': 'Gorakhpur', 'text': 'Booking my plot was seamless. The team guided me through every step - from site visit to registry. Highly recommended!', 'rating': 5},
-      {'name': 'Priya Sharma', 'location': 'Lucknow', 'text': 'The EMI calculator helped me plan my finances perfectly. Transparent pricing and no hidden charges.', 'rating': 5},
-      {'name': 'Amit Singh', 'location': 'Gorakhpur', 'text': 'Best decision of my life. RERA verified, legal clear title, and the team supported me till possession.', 'rating': 5},
+    final steps = [
+      {'step': '01', 'title': 'Site Visit', 'text': 'Complimentary pickup from your home, the railway station or the airport — walk the township before you decide.', 'tag': 'Step 1 of 3'},
+      {'step': '02', 'title': 'Choose Your Plot', 'text': 'Pick from live availability across Braj Radha, Raghunath, Suryoday and Lakeview — with plot size, price and colony map at your fingertips.', 'tag': 'Step 2 of 3'},
+      {'step': '03', 'title': 'Registry Day', 'text': 'Stamp duty, challans, SRO appointment and deed signing — our team assists you through every document.', 'tag': 'Step 3 of 3'},
     ];
 
     return SliverToBoxAdapter(
@@ -822,7 +822,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
           const Padding(
             padding: EdgeInsets.all(24),
             child: Text(
-              'Happy Homeowners',
+              'The Booking Journey',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
@@ -835,10 +835,9 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              itemCount: testimonials.length,
+              itemCount: steps.length,
               itemBuilder: (context, index) {
-                final t = testimonials[index];
-                return _buildTestimonialCard(t);
+                return _buildTestimonialCard(steps[index]);
               },
             ),
           ),
@@ -866,14 +865,16 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: List.generate(5, (i) => Icon(
-              Icons.star,
-              color: i < (t['rating'] as int) ? AppTheme.goldColor : Colors.grey[300],
-              size: 20,
-            )),
+          Text(
+            t['step'] as String,
+            style: const TextStyle(
+              color: AppTheme.goldColor,
+              fontSize: 40,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             t['text'] as String,
             style: TextStyle(
@@ -884,11 +885,11 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            t['name'] as String,
+            t['title'] as String,
             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
           ),
           Text(
-            t['location'] as String,
+            t['tag'] as String,
             style: TextStyle(color: Colors.grey[500], fontSize: 13),
           ),
         ],

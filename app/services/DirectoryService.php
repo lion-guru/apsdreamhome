@@ -20,9 +20,19 @@ class DirectoryService
 
     public function getActiveCategories(): array
     {
-        $sql = "SELECT * FROM directory_categories WHERE is_active = 1" . $this->tenantSql() . " ORDER BY sort_order ASC";
+        $tid = $this->tenantId();
+        // Include listing_count (same subquery shape as getAllCategories + is_active filter)
+        // so mobile directory screens show real counts instead of eternal zeros.
+        $sql = "SELECT dc.*, (SELECT COUNT(*) FROM directory_listings dl WHERE dl.category_id = dc.id AND dl.status = 'approved'"
+             . ($tid > 1 ? " AND dl.tenant_id = ?" : "")
+             . ") as listing_count FROM directory_categories dc WHERE dc.is_active = 1" . ($tid > 1 ? " AND dc.tenant_id = ?" : "")
+             . " ORDER BY dc.sort_order ASC";
+        $params = [];
+        if ($tid > 1) {
+            $params = [$tid, $tid];
+        }
         $stmt = $this->db->prepare($sql);
-        $stmt->execute();
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 

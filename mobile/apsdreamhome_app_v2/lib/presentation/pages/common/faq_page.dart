@@ -69,14 +69,14 @@ class _FaqPageState extends State<FaqPage> {
             'You need a valid photo ID (Aadhaar/PAN), address proof, passport-size photographs, PAN card, and income proof (for EMI). NRI buyers need additional documents like PIO/OCI card.',
       },
       {
-        'question': 'Is the property RERA registered?',
+        'question': 'How do I check the RERA registration of a project?',
         'answer':
-            'All our properties are RERA registered. You can verify the registration number on the UP-RERA or respective state RERA website. Our sales team will provide the RERA certificate during booking.',
+            'RERA registration varies by project. Each colony listing in the app shows its registration details, and you can verify any entry on the official UP RERA portal (up-rera.in) or state RERA website. Our legal desk can also share the registration certificate for the specific project you select — ask during your site visit.',
       },
       {
         'question': 'How is the stamp duty calculated?',
         'answer':
-            'Stamp duty varies by state and property type. In UP, it is 7% for males and 5% for females (first property). Registration fee is 1% of the property value. Use our Stamp Duty Calculator in the app for exact amounts.',
+            'Stamp duty varies by state and buyer. In UP it is 7% (male owner), 6.5% (joint purchase) or 6% (female owner, first property), plus a 1% registration fee. Use our Stamp Duty Calculator in the app for the exact figure for your specific plot.',
       },
       {
         'question': 'What is the registry process?',

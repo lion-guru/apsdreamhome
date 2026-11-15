@@ -631,6 +631,18 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         if (/how|kaise|kaj /.test(m) || /emi/.test(m)) return 'EMI = (Plot price − 20% down payment) ÷ months. Max 60-month plan typical hai. Numbers personally calculate kijiye EMI calculator pe: <?= BASE_URL ?>/emi-calculator ya team se confirmation lijiye ' + phone;
         // Greeting
         if (/hi|hello|namaste|hii|hey/.test(m)) return 'Namaste! Mein APS Dream Home ka AI assistant hoon. Main aapki plot buying me help kar sakta hoon. Aapka budget? Kaunsi colony dekhna chahoge?';
+        // Loan / bank
+        if (/loan|bank|finance|pre.?approved/.test(m)) return 'Bank loan arrange karne ke liye hum ICICI/HDFC/SBI se pre-approved loan arrange karte hain — 100% online process. Documents: PAN, Aadhaar, income proof, booking agreement. Call legal desk: ' + legal + ' ya sales: ' + phone;
+        // Documents
+        if (/document|paperwork|parcha|khatauni|papers/.test(m)) return 'Booking documents: PAN, Aadhaar, latest photo, address proof, khatauni/143 mutation copies, bank statement 6 months. Registry pe: sale deed, stamp paper, witnesses (2), photo ID. Full list: ' + BASE_URL + '/admin/documents ya call ' + phone;
+        // Possession / mutation
+        if (/possess|mutation|dakhil|khaarij|handover/.test(m)) return 'Possession handover after final payment + registry. Mutation (dakhil-kharij) at Tehsil takes 15-30 days. NOC + possession letter issued. Registry completion timeline: 45-90 days from booking, subject to stamp duty payment.';
+        // NRI
+        if (/nri|overseas|abroad|foreign/.test(m)) return 'NRI buyers welcome — property can be booked online with 20% token + PAN/Aadhaar + passport copy. Forex payment accepted via SWIFT. Free site visit cab. Dedicated NRI support: ' + phone + ' (WhatsApp preferred).';
+        // Amenities
+        if (/amenit|park|school|hospital|club|garden/.test(m)) return 'Our colonies feature: gated entry, 24/7 security, paved roads, underground drainage, water supply, electricity, street lighting, parks, school proximity, hospital access. Specific colony amenities: ' + BASE_URL + '/properties. Call ' + phone + ' for a walkthrough.';
+        // Token refund specific
+        if (/token refund|refund token/.test(m)) return 'Token amount is NON-refundable per terms (see booking receipt footer). In case of unavoidable cancellation, apply to admin via /admin/payments with booking ID. Decision within 7 working days.';
         // Contact
         if (/contact|phone|number|address|office/.test(m)) return 'APS Dream Home Pvt Ltd, Opp. Agrasen Chowk, Sipaha Gorakhpur 273001. Sales: ' + phone + ', WhatsApp: +91 70074 44842, Legal: ' + legal + '. Email: info@apsdreamhome.com';
         // Fallback

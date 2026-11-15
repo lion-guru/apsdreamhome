@@ -435,7 +435,7 @@ class AssociateDashboardPage extends ConsumerWidget {
       {
         'icon': Icons.people_outline,
         'label': 'My Team',
-        'route': '/associate/my-team',
+        'route': '/associate/team',
         'color': AppTheme.primaryColor,
       },
       {

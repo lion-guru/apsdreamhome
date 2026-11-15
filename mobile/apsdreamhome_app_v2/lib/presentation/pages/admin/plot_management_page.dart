@@ -160,7 +160,10 @@ class _PlotManagementPageState extends ConsumerState<PlotManagementPage> {
         final available = plots.where((p) => p['status'] == 'available').length;
         final booked = plots.where((p) => p['status'] == 'booked').length;
         final totalValue = plots.fold<double>(0, (sum, p) {
-          final price = (p['total_price'] as num?)?.toDouble() ?? 0;
+          final priceRaw2 = p['total_price'];
+          final price = priceRaw2 is num
+              ? priceRaw2.toDouble()
+              : (double.tryParse('$priceRaw2') ?? 0);
           return sum + price;
         });
         return Padding(
@@ -324,8 +327,14 @@ class _PlotManagementPageState extends ConsumerState<PlotManagementPage> {
     final plotNumber = plot['plot_number']?.toString() ?? 'N/A';
     final colony = plot['colony_name']?.toString() ?? '';
     final block = plot['block_name']?.toString() ?? '';
-    final area = (plot['area_sqft'] as num?)?.toDouble() ?? 0;
-    final price = (plot['total_price'] as num?)?.toDouble() ?? 0;
+    final areaRaw = plot['area_sqft'];
+    final priceRaw = plot['total_price'];
+    final area = areaRaw is num
+        ? areaRaw.toDouble()
+        : (double.tryParse('$areaRaw') ?? 0);
+    final price = priceRaw is num
+        ? priceRaw.toDouble()
+        : (double.tryParse('$priceRaw') ?? 0);
     final width = plot['width_ft']?.toString() ?? '';
     final length = plot['length_ft']?.toString() ?? '';
 

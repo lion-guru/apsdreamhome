@@ -130,7 +130,7 @@ class TitleProtectionPage extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'All APS Dream Home properties come with clear title guarantee. '
+                    'All APS Dream Home properties come with documented title review by our legal desk. '
                     'Optional title protection insurance offers additional peace of mind.',
                     style: TextStyle(
                       color: Colors.orange.shade800,

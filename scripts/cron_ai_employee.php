@@ -30,7 +30,12 @@ $sahil = $db->fetch("SELECT * FROM ai_employees WHERE name = 'Sahil' AND status 
 
 if ($aira && $vivaan) {
     $inqs = $db->fetchAll("SELECT * FROM inquiries WHERE is_read = 0 OR status IN ('new','pending') ORDER BY id ASC LIMIT 5") ?: [];
+    echo "pre-pass (Aira->Vivaan): " . count($inqs) . " unread inquiries\n";
     foreach ($inqs as $q) {
+        if ($dryRun) {
+            printf("dry-run: would wire inquiry %d (%s) -> lead; queue qualify_lead for Vivaan\n", $q['id'], $q['phone'] ?? 'no phone');
+            continue;
+        }
         $leadId = App\Services\Lead\LeadService::wireFromInquiry([
             'name' => $q['name'] ?? '',
             'phone' => $q['phone'] ?? '',
@@ -62,6 +67,10 @@ if ($aira && $vivaan) {
 if ($sahil) {
     $due = $db->fetchAll("SELECT id, lead_id FROM followups WHERE status = 'pending' AND followup_date <= CURDATE() ORDER BY followup_date ASC LIMIT 3") ?: [];
     foreach ($due as $fu) {
+        if ($dryRun) {
+            printf("dry-run: would queue followup_draft for Sahil (followup %d, lead %d)\n", $fu['id'], (int) ($fu['lead_id'] ?? 0));
+            continue;
+        }
         $svc->enqueue((int) $sahil['id'], 'followup_draft', (int) ($fu['lead_id'] ?? 0), ['followup_id' => $fu['id']]);
         echo "followup {$fu['id']} (lead {$fu['lead_id']}) -> Sahil queued\n";
     }
@@ -72,6 +81,10 @@ $zoya = $db->fetch("SELECT * FROM ai_employees WHERE name = 'Zoya' AND status = 
 if ($zoya) {
     $overdue = $db->fetchAll("SELECT id, user_id, amount FROM emi_payments WHERE status = 'overdue' AND user_id IS NOT NULL ORDER BY due_date ASC LIMIT 3") ?: [];
     foreach ($overdue as $od) {
+        if ($dryRun) {
+            printf("dry-run: would queue notify_stale for Zoya (emi_payment %d, user %d, Rs %s)\n", $od['id'], $od['user_id'], $od['amount']);
+            continue;
+        }
         $svc->enqueue((int) $zoya['id'], 'notify_stale', 0, ['emi_payment_id' => $od['id'], 'user_id' => $od['user_id'], 'amount' => $od['amount']]);
         echo "emi overdue {$od['id']} (user {$od['user_id']}, Rs {$od['amount']}) -> Zoya queued\n";
     }

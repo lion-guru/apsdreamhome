@@ -1489,6 +1489,11 @@ isDisclaimer ||
         path: '/associate/team',
         builder: (context, state) => const MyTeamPage(),
       ),
+      // Alias — dashboards may deep-link here; unresolved location panics otherwise.
+      GoRoute(
+        path: '/associate/my-team',
+        builder: (context, state) => const MyTeamPage(),
+      ),
       GoRoute(
         path: '/associate/genealogy',
         builder: (context, state) => const GenealogyPage(),
@@ -2017,6 +2022,7 @@ String defaultRouteForRole(User? user) {
   if (user.isTelecaller) return '/employee/dashboard';
   if (user.isAssociate) return '/associate/dashboard';
   if (user.isEmployee) return '/employee/dashboard';
+  if (user.isCustomer) return '/customer-dashboard';
   return '/home';
 }
 

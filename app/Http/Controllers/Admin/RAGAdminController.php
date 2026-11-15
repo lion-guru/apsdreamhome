@@ -68,7 +68,8 @@ class RAGAdminController extends \App\Http\Controllers\Admin\AdminController
         $svc = RAGService::getInstance();
 
         if (!$svc->setEmbeddingModel($model)) {
-            $this->jsonResponse(['success' => false, 'message' => 'Could not persist model'], 500);
+            $probe = $svc->probeModel($model);
+            $this->jsonResponse(['success' => false, 'message' => 'Provider not reachable — switch refused. Reason: ' . ($probe['reason'] ?? 'unknown')], 503);
             return;
         }
 

@@ -160,7 +160,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
     try {
       final response = await _api.request(
         method: 'GET',
-        endpoint: 'notifications',
+        endpoint: '/user/notifications',
       );
 
       final dynamic data = response['data'];
@@ -199,7 +199,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
     );
 
     try {
-      await _api.request(method: 'PUT', endpoint: 'notifications/$id/read');
+      await _api.request(method: 'PUT', endpoint: '/user/notifications/$id/read');
     } catch (_) {
       // Revert on failure
       state = state.copyWith(
@@ -432,7 +432,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
           return ChoiceChip(
             label: badgeCount != null && badgeCount > 0
-                ? Text('$filter.label ($badgeCount)')
+                ? Text('${filter.label} ($badgeCount)')
                 : Text(filter.label),
             selected: isSelected,
             selectedColor: AppTheme.primaryColor.withValues(alpha: 0.15),
@@ -591,6 +591,18 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 fontSize: 14,
                 color: Colors.grey.shade500,
                 height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              error,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey.shade400,
+                height: 1.3,
               ),
             ),
             const SizedBox(height: 24),

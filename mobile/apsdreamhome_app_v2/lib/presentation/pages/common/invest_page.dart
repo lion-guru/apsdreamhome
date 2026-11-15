@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/glass_card.dart';
 
@@ -72,17 +72,17 @@ class InvestPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Real estate investment with guaranteed returns and complete transparency',
+                      'Invest in documented real estate with clear title review and transparent pricing — registration details shared for the specific colony you choose.',
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        _buildStat('12-25%', 'Annual Returns'),
+                        _buildStat('EMI', 'Flexible Plans'),
                         const SizedBox(width: 24),
-                        _buildStat('500+', 'Investors'),
+                        _buildStat('6', 'Active Colonies'),
                         const SizedBox(width: 24),
-                        _buildStat('₹50Cr+', 'Portfolio'),
+                        _buildStat('100%', 'Title Review'),
                       ],
                     ),
                   ],
@@ -172,14 +172,14 @@ class InvestPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildBullet(
-                      'Guaranteed property registration within 30 days',
+                      'Property registration assistance from booking to deed',
                     ),
                     _buildBullet('Transparent pricing with no hidden charges'),
                     _buildBullet(
                       'Legal title verification before every purchase',
                     ),
                     _buildBullet('Flexible payment plans and easy financing'),
-                    _buildBullet('Buyback guarantee on select projects'),
+                    _buildBullet('Resale assistance through our associate network'),
                     _buildBullet(
                       'Dedicated investment advisor for each client',
                     ),

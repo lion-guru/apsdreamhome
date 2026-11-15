@@ -19,7 +19,7 @@ class _CustomerShellState extends State<CustomerShell> {
   int _currentIndex = 0;
 
   static const _tabs = [
-    '/home',
+    '/customer-dashboard',
     '/colonies',
     '/plots',
     '/properties',
@@ -111,11 +111,12 @@ class _CustomerShellState extends State<CustomerShell> {
               ),
             ),
           ),
-          if (_currentIndex == 4)
-            IconButton(
-              onPressed: () => context.push('/notifications'),
-              icon: const Icon(Icons.notifications_outlined, size: 22),
-            ),
+          // Notifications bell available on every tab — customers always see it
+          IconButton(
+            onPressed: () => context.push('/notifications'),
+            icon: const Icon(Icons.notifications_outlined, size: 22),
+            tooltip: 'Notifications',
+          ),
         ],
       ),
       body: Column(

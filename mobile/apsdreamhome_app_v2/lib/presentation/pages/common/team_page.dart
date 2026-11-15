@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -205,7 +205,7 @@ class _TeamPageState extends State<TeamPage>
     _TeamMember(
       'Shushant Srivastava',
       'Head of Legal & Compliance',
-      'Expert in property law, RERA compliance, title verification, and documentation. Every deal is legally sound. Supreme Court practicing advocate.',
+      'Expert in property law, RERA compliance, title verification, and documentation. Property law, RERA compliance, title verification and documentation.',
       Icons.gavel_rounded,
       Color(0xFF7986CB),
       linkedIn: 'https://linkedin.com/in/shushantsrivastava-law',
@@ -221,7 +221,7 @@ class _TeamPageState extends State<TeamPage>
     _TeamMember(
       'Vijay Verma',
       'CTO & Head of IT and AI',
-      'Building next-gen real estate platform with AI-powered tools, automation, and data-driven insights. Ex-Microsoft, 18+ years in tech.',
+      'Building next-gen real estate platform with AI-powered tools, automation, and data-driven insights. AI tooling, automation and data-driven platforms.',
       Icons.computer_rounded,
       Color(0xFF9FA8DA),
       linkedIn: 'https://linkedin.com/in/vijayverma-tech',

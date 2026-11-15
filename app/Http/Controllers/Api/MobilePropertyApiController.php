@@ -900,10 +900,10 @@ class MobilePropertyApiController extends BaseController
             $property['features'] = [];
             try {
                 $featStmt = $pdo->prepare("
-                    SELECT feature_name, feature_value, feature_category
+                    SELECT feature_name, feature_value, feature_type
                     FROM property_features
                     WHERE property_id = ?
-                    ORDER BY feature_category, feature_name
+                    ORDER BY feature_type, feature_name
                 ");
                 $featStmt->execute([$id]);
                 $property['features'] = $featStmt->fetchAll(\PDO::FETCH_ASSOC);

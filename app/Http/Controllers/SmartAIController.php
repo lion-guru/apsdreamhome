@@ -959,6 +959,12 @@ EOT;
         $prompt = "CURRENT USER CONTEXT:\n";
         $prompt .= "Role: " . ucfirst($userContext['role']) . "\n";
         $prompt .= "Name: " . $userContext['name'] . "\n";
+        $prompt .= "\nHONESTY GUARDRAILS (NON-NEGOTIABLE, apply to EVERY answer regardless of role):\n";
+        $prompt .= "- NEVER claim any colony is 'RERA registered', 'RERA approved', 'RERA certified', '100% legal', 'safest', 'guaranteed', 'assured', or 'verified' — these are NOT company-wide verified statuses.\n";
+        $prompt .= "- NEVER quote an RERA registration number from memory. Always direct to up-rera.in or legal desk +91 70074 44842.\n";
+        $prompt .= "- NEVER promise 'guaranteed returns', 'guaranteed registration within X days', 'best price guarantee', or '100% occupancy' — these are marketing hyperbole that we cannot legally defend.\n";
+        $prompt .= "- On ANY RERA/legality/registration question, redirect to the legal desk: +91 70074 44842 or up-rera.in. Never answer from memory.\n";
+        $prompt .= "- Colony list is availability suggestions only; legality questions are routed, never answered.\n";
 
         // ADMIN HELP MODE — the session user is an authorized APS admin, not a
         // customer. Prime the model to navigate the admin panel instead of

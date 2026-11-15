@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/glass_card.dart';
 
@@ -30,14 +30,14 @@ class BuyPage extends StatelessWidget {
 
   static const _features = [
     _FeatureData(
-      'Verified Properties',
-      'All properties verified for clear title and approvals',
+      'Documented Properties',
+      'Land-chain documents reviewed before every booking',
       Icons.verified,
       Colors.green,
     ),
     _FeatureData(
-      'Best Price Guarantee',
-      'Get the best market price with no hidden charges',
+      'Transparent Pricing',
+      'No hidden charges. What you see is what you pay',
       Icons.currency_rupee,
       Colors.amber,
     ),
@@ -91,7 +91,7 @@ class BuyPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Thousands of verified properties across India',
+                      'Properties across Gorakhpur, Lucknow and Purvanchal',
                       style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                     const SizedBox(height: 20),

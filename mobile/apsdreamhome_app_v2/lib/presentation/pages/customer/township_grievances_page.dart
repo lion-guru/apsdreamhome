@@ -86,7 +86,7 @@ class _TownshipGrievancesPageState extends ConsumerState<TownshipGrievancesPage>
                   ],
                 ),
                 const Text(
-                  'Guaranteed 48-hour resolution SLA by APS Field Engineers',
+                  '48-hour target — APS Field Engineers respond within 48 hours',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 const SizedBox(height: 16),
@@ -396,7 +396,7 @@ class _TownshipGrievancesPageState extends ConsumerState<TownshipGrievancesPage>
                       children: [
                         Icon(Icons.timer_outlined, size: 14, color: Colors.grey),
                         SizedBox(width: 4),
-                        Text('SLA: 48h', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        Text('Target: 48h', style: TextStyle(fontSize: 11, color: Colors.grey)),
                       ],
                     ),
                   ],

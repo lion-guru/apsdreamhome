@@ -2034,7 +2034,10 @@ class _PartnerToolsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final portalTitle = _isStaffAccount(user) ? 'Staff Portal' : 'Associate Portal';
+    final isAdmin = user?.isAdmin ?? false;
     final items = [
+      if (isAdmin)
+        _FeatureItem(Icons.admin_panel_settings_outlined, 'Admin Panel', '/admin', AppTheme.primaryColor),
       _FeatureItem(Icons.analytics_outlined, 'Analytics', '/agent/analytics', AppTheme.primaryColor),
       _FeatureItem(Icons.calendar_month_outlined, 'Bookings', '/agent/bookings', AppTheme.infoColor),
       _FeatureItem(Icons.description_outlined, 'Documents', '/agent/documents', AppTheme.accentColor),

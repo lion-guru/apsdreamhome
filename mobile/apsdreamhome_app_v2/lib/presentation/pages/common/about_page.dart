@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -354,7 +354,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       {
         'icon': Icons.access_time,
         'title': 'Timely Delivery',
-        'desc': 'On-time project completion guaranteed',
+        'desc': 'Milestones documented and tracked progress',
       },
       {
         'icon': Icons.support_agent,

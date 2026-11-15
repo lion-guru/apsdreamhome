@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -224,7 +224,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
           ),
           const SizedBox(height: 10),
           Text(
-            'ISO-certified construction — residential, commercial & turnkey solutions',
+            'Residential, commercial & turnkey construction — residential, commercial & turnkey solutions',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70),
             textAlign: TextAlign.center,
           ),
@@ -232,11 +232,11 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _statChip('50+', 'Projects'),
+              _statChip('30+', 'Projects'),
               const SizedBox(width: 12),
-              _statChip('15+', 'Years Exp'),
+              _statChip('6', 'Active Colonies'),
               const SizedBox(width: 12),
-              _statChip('1000+', 'Clients'),
+              _statChip('24/7', 'Support'),
             ],
           ),
         ],

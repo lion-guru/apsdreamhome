@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -223,9 +223,9 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
   Widget _buildQuickStats() {
     final data = _dashboardData ?? {};
     final bookings = (data['bookings'] as Map<String, dynamic>?) ?? {};
-    final activeBookings = (bookings['active'] as int?) ?? 0;
+    final activeBookings = ((bookings['active'] as num?) ?? 0).toInt();
     final totalPaid = ((bookings['total_value'] as num?) ?? 0).toDouble();
-    final pendingEmis = (bookings['pending_emis'] as int?) ?? 0;
+    final pendingEmis = ((bookings['pending_emis'] as num?) ?? 0).toInt();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -413,7 +413,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
   Widget _buildRecentBookings() {
     final data = _dashboardData ?? {};
     final bookings = (data['bookings'] as Map<String, dynamic>?) ?? {};
-    final isActive = ((bookings['active'] as int?) ?? 0) > 0;
+    final isActive = ((bookings['active'] as num?) ?? 0) > 0;
 
     return Padding(
       padding: const EdgeInsets.all(16),

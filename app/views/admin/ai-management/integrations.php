@@ -85,7 +85,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
                     <?php else: ?>
                         <?php foreach ($integrations as $row): ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($row['tool_name'] ?? '') ?></strong></td>
+                                <td><strong><?= htmlspecialchars($row['integration_name'] ?? '') ?></strong></td>
                                 <td><span class="badge bg-info"><?= htmlspecialchars($row['integration_type'] ?? '') ?></span></td>
                                 <td>
                                     <span class="badge bg-<?= ($row['status'] ?? '') === 'active' ? 'success' : 'secondary' ?> integration-status-<?= $row['id'] ?>">

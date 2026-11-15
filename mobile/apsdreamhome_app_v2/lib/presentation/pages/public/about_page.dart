@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
@@ -311,7 +311,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'RERA verified properties, transparent pricing, legal title guarantee, and end-to-end support from booking to possession.',
+                            'Documented plots, transparent pricing, and end-to-end support from booking to possession — with registration details shared for the specific colony you choose.',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 15,
@@ -345,13 +345,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      Expanded(child: _buildStatCard('50,000+', 'Happy Homeowners', Icons.people)),
+                      Expanded(child: _buildStatCard('87+', 'Happy Customers', Icons.people)),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildStatCard('500+', 'Verified Plots', Icons.apartment)),
+                      Expanded(child: _buildStatCard('756', 'Plots in Inventory', Icons.grid_on)),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildStatCard('15+', 'Premium Townships', Icons.location_city)),
+                      Expanded(child: _buildStatCard('6', 'Active Colonies', Icons.location_city)),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildStatCard('15+', 'Years of Trust', Icons.star)),
+                      Expanded(child: _buildStatCard('33+', 'Plots Booked', Icons.star)),
                     ],
                   ),
                 ],
@@ -376,14 +376,14 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   const SizedBox(height: 24),
                   _buildFeatureItem(
                     Icons.verified,
-                    'RERA Verified',
-                    'All projects are RERA registered with complete transparency',
+                    'Documented Plots',
+                    'Land-chain documents presented before booking — verify any colony listing on the UP RERA portal',
                     Colors.green,
                   ),
                   _buildFeatureItem(
                     Icons.shield,
-                    'Legal Title Guarantee',
-                    'Clean, encumbrance-free titles with legal opinion',
+                    'Legal Title Review',
+                    'In-house legal desk reviews title chain and presents documents before booking',
                     Colors.blue,
                   ),
                   _buildFeatureItem(
@@ -400,8 +400,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   ),
                   _buildFeatureItem(
                     Icons.account_balance,
-                    'Easy EMI Options',
-                    'Flexible payment plans with leading banks & NBFCs',
+                    'EMI Plans',
+                    'Flexible installment options and in-app EMI calculator',
                     Colors.teal,
                   ),
                   _buildFeatureItem(
@@ -422,7 +422,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Leadership Team',
+                    'Founder',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -430,14 +430,11 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(child: _buildTeamMember('Abhay Kumar', 'Founder & CEO', 'assets/images/team_ceo.jpg')),
-                      const SizedBox(width: 16),
-                      Expanded(child: _buildTeamMember('Priya Sharma', 'COO', 'assets/images/team_coo.jpg')),
-                      const SizedBox(width: 16),
-                      Expanded(child: _buildTeamMember('Amit Singh', 'CTO', 'assets/images/team_cto.jpg')),
-                    ],
+                  Center(
+                    child: SizedBox(
+                      width: 220,
+                      child: _buildTeamMember('Abhay Kumar', 'Founder & CEO', 'assets/images/team_founder.jpg'),
+                    ),
                   ),
                 ],
               ),
@@ -451,7 +448,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Certifications & Affiliations',
+                    'Our Standards',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -463,10 +460,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                     spacing: 16,
                     runSpacing: 16,
                     children: [
-                      _buildCertification('RERA Registered', 'UPRERAPRJXXXXXX', Icons.verified, Colors.green),
-                      _buildCertification('ISO 9001:2015', 'Quality Management', Icons.badge, Colors.blue),
-                      _buildCertification('CREDAI Member', 'Confederation of Real Estate', Icons.business, Colors.orange),
-                      _buildCertification('NAREDCO Member', 'National Real Estate', Icons.groups, Colors.purple),
+                      _buildCertification('Documented Plots', 'Land-chain documented, legal desk review', Icons.description_outlined, Colors.green),
+                      _buildCertification('RERA Disclosure', 'Registration numbers shown on each colony listing', Icons.verified_outlined, Colors.blue),
+                      _buildCertification('Instant Registry', 'Registration assisted on-site', Icons.bolt_outlined, Colors.orange),
                     ],
                   ),
                 ],

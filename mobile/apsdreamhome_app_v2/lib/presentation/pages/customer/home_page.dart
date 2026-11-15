@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -402,13 +402,13 @@ class _HomePageState extends ConsumerState<HomePage>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
-                                      Icons.verified_rounded,
+                                      Icons.bolt_rounded,
                                       size: 12,
                                       color: AppTheme.amberLightTint,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
-                                      'RERA VERIFIED',
+                                      'INSTANT REGISTRY',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 9,
@@ -2116,10 +2116,10 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _buildStatsCounter(BuildContext context) {
     final stats = [
-      const _StatData('7+', 'Colonies', Icons.location_city_rounded, AppTheme.emeraldDeep),
-      const _StatData('750+', 'Plots', Icons.grid_on_rounded, AppTheme.lightBlue),
-      const _StatData('1000+', 'Families', Icons.people_rounded, AppTheme.orangeMaterial),
-      const _StatData('12+', 'Years', Icons.workspace_premium_rounded, AppTheme.purple),
+      const _StatData('6', 'Active Colonies', Icons.location_city_rounded, AppTheme.emeraldDeep),
+      const _StatData('33+', 'Plots Booked', Icons.grid_on_rounded, AppTheme.lightBlue),
+      const _StatData('87+', 'Happy Families', Icons.people_rounded, AppTheme.orangeMaterial),
+      const _StatData('24/7', 'Site Visits', Icons.directions_car_rounded, AppTheme.purple),
     ];
 
     return Container(
@@ -2182,42 +2182,42 @@ class _HomePageState extends ConsumerState<HomePage>
   // ───────────────────────────── TESTIMONIALS ─────────────────────────────
 
   Widget _buildTestimonialsSection(BuildContext context) {
-    final testimonials = [
+    final steps = [
       const _TestimonialData(
-        name: 'Rajesh Kumar',
-        role: 'Plot Owner, Suryoday Colony',
-        text: 'Excellent experience! The plots are well-located and the team helped me through every step of the purchase.',
-        rating: 5,
+        name: '01 · Site Visit',
+        role: 'Free pickup — station, airport or home',
+        text: 'Walk the township before you decide. Our team drives you to an open plot in Braj Radha, Raghunath, Suryoday or Lakeview.',
+        rating: 0,
       ),
       const _TestimonialData(
-        name: 'Priya Singh',
-        role: 'Home Buyer, Braj Radha Nagri',
-        text: 'APS Dream Home made my dream of owning a plot come true. Very transparent and professional.',
-        rating: 5,
+        name: '02 · Choose Your Plot',
+        role: 'Live availability, colony map, price',
+        text: 'Compare plot size, price and gata before booking — everything visible in the app, nothing hidden.',
+        rating: 0,
       ),
       const _TestimonialData(
-        name: 'Amit Verma',
-        role: 'Investor, Raghunath Nagri',
-        text: 'Great investment returns! The colonies are well-planned and the ROI has been fantastic.',
-        rating: 4,
+        name: '03 · Registry Day',
+        role: 'End-to-end at the Sub-Registrar Office',
+        text: 'Stamp duty, challans, appointment and deed — our team assists through every document at the SRO.',
+        rating: 0,
       ),
     ];
 
     return Column(
       children: [
         AppWidgets.sectionHeader(
-          title: 'What Our Clients Say',
-          subtitle: 'Trusted by families across India',
+          title: 'The Booking Journey',
+          subtitle: 'From first visit to registered title',
         ),
         SizedBox(
           height: 170,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: testimonials.length,
+            itemCount: steps.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
-              final t = testimonials[index];
+              final t = steps[index];
               return Container(
                 width: 280,
                 padding: const EdgeInsets.all(16),
@@ -2394,9 +2394,9 @@ class _HomePageState extends ConsumerState<HomePage>
   Widget _buildWhyChooseUs(BuildContext context) {
     final features = [
       const _FeatureData(
-        icon: Icons.verified_outlined,
-        title: 'RERA Registered',
-        description: 'All projects are RERA approved',
+        icon: Icons.description_outlined,
+        title: 'Documented Plots',
+        description: 'Land-chain documented, legal desk review',
         color: AppTheme.materialGreen,
       ),
       const _FeatureData(
@@ -2423,7 +2423,7 @@ class _HomePageState extends ConsumerState<HomePage>
       children: [
         AppWidgets.sectionHeader(
           title: 'Why Choose Us',
-          subtitle: 'Trusted by 1000+ families',
+          subtitle: 'Trusted by families across Purvanchal',
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
