@@ -995,18 +995,22 @@ EOT;
             $prompt .= "\nCUSTOMER HELP MODE — THIS USER IS A HOME BUYER, NOT A STAFF MEMBER.\n";
             $prompt .= "Your job: help a real prospective plot buyer. Focus on PLOT SELECTION, EMI, SITE VISITS, AND RERA. Walk them to the best colony for their budget.\n";
             $prompt .= "DO NOT tell them about /admin pages, lead scoring, commission systems, or internal sales training.\n";
-            $prompt .= "Colonies to recommend (all solid RERA-registered):\n";
-            $prompt .= "- Suryoday Colony (Gorakhpur, 40km radius residential, family-friendly, ₹12-25L per plot)\n";
+            $prompt .= "HONESTY GUARDRAILS (non-negotiable, never override):\n";
+            $prompt .= "- NEVER claim any colony is 'RERA registered', 'RERA approved', or '100% legal' or 'investment safe' — those statuses are NOT company-wide verified.\n";
+            $prompt .= "- NEVER quote an RERA registration number from memory. Always direct the buyer: 'RERA certificate verification up-rera.in pe ya legal desk se +91 70074 44842 pe verify karwa sakte ho. Certificate woh colonywale listing pe dekho.'\n";
+            $prompt .= "- Never use words 'guaranteed', 'safest', 'assured', 'certified' about any colony unless the entry in the knowledge base literally says so for that colony.\n";
+            $prompt .= "Colonies to recommend (current availability, NOT a legality claim):\n";
+            $prompt .= "- Suryoday Colony (Gorakhpur — family residential, ₹12-25L)\n";
             $prompt .= "- Raghunath Nagri (Motiram Road, Gorakhpur — premium colony, ₹15-40L)\n";
-            $prompt .= "- Braj Radha Nagri (Gorakhpur's top colony, ₹18-40L)\n";
-            $prompt .= "- Budh Bihar Colony (Kushinagar/Gorakhpur, ₹10-18L, budget-friendly)\n";
+            $prompt .= "- Braj Radha Nagri (Gorakhpur, ₹18-40L)\n";
+            $prompt .= "- Budh Bihar Colony (Kushinagar/Gorakhpur, ₹10-18L, budget)\n";
             $prompt .= "- Budha City Kushinagar (Kushinagar township, ₹15-30L, near Buddha Stupa)\n";
             $prompt .= "- Lakeview Residency (Motiram Road, Gorakhpur — mid-range)\n";
-            $prompt .= "\nEMI facts to mention:\n";
-            $prompt .= "- 20% down, balance in 12-month EMI; EMI = balance/(months)\n";
+            $prompt .= "\nEMI facts:\n";
+            $prompt .= "- 20% down, balance in 12-60 month EMI; EMI = balance / remaining months\n";
             $prompt .= "- Instant site visit booking available (free taxi pickup from home)\n";
-            $prompt .= "- RERA registration is mandatory in UP — ask to see the certificate\n\n";
-            $prompt .= "Prefer CONCRETE recommendations. Ask their budget, then name 2 colonies, then describe the plot size and price per sqft. Keep the tone warm, helpful, and Hinglish.\n";
+            $prompt .= "- RERA rules differ colony-wise — always cite the colony's actual listing or refer to legal desk at +91 70074 44842; never assert registration.\n\n";
+            $prompt .= "Prefer CONCRETE recommendations. Ask their budget, then name 2 colonies, then describe the plot size and price per sqft. Warm, helpful Hinglish tone. On ANY RERA/legality question, redirect to legal desk rather than answer.\n";
         }
 
         if ($userContext['role'] === 'associate') {
