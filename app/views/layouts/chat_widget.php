@@ -704,6 +704,19 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     function cwLinkify(t){
         return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" >$1</a>');
     }
+    function cwEscapeHtml(t){
+        return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function cwSanitizeAiText(t){
+        // AI replies arrive with markdown noise (**bold**, ## headings, `code`).
+        // Escape first, then strip the markers — the chat bubble is plain text.
+        t = cwEscapeHtml(t);
+        return t.replace(/\*\*(.+?)\*\*/g,'$1')
+            .replace(/__(.+?)__/g,'$1')
+            .replace(/(^|\s)\*([^*\n]+?)\*/g,'$1$2')
+            .replace(/#{1,6}\s*/g,'')
+            .replace(/`([^`]+?)`/g,'$1');
+    }
     function cwAddMsg(text, type, msgId){
         var c = document.getElementById('cwMessages');
         var d = document.createElement('div');
@@ -717,7 +730,8 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
                 + '<button class="cw-fb-btn cw-fb-down" title="Not helpful" data-cw-feedback="0"><i class="fas fa-thumbs-down"></i></button>'
                 + '</div>';
         }
-        d.innerHTML = av + '<div class="cw-bubble">' + cwLinkify(text.replace(/\n/g,'<br>')) + '</div>' + fb;
+        var body = (type === 'bot') ? cwSanitizeAiText(text) : cwEscapeHtml(text);
+        d.innerHTML = av + '<div class="cw-bubble">' + cwLinkify(body.replace(/\n/g,'<br>')) + '</div>' + fb;
         c.appendChild(d);
         c.scrollTop = c.scrollHeight;
         cwMsgCount++;
