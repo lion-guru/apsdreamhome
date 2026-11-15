@@ -859,7 +859,7 @@ $base = BASE_URL;
             <div class="trust-bar">
                 <div class="trust-item"><i class="fas fa-shield-halved"></i> 256-bit SSL</div>
                 <div class="trust-item"><i class="fas fa-lock"></i> Encrypted</div>
-                <div class="trust-item"><i class="fas fa-check-circle"></i> RERA Approved</div>
+                <div class="trust-item"><i class="fas fa-check-circle"></i> RERA On Request</div>
                 <div class="trust-item"><i class="fas fa-users"></i> 5,000+ Members</div>
             </div>
 
@@ -883,7 +883,7 @@ $base = BASE_URL;
 
         const benefits = {
             customer: [
-                { icon: 'fas fa-shield-halved', text: 'RERA Approved', highlight: true },
+                { icon: 'fas fa-shield-halved', text: 'RERA On Request', highlight: true },
                 { icon: 'fas fa-percent', text: 'EMI from ₹8,333/mo' },
                 { icon: 'fas fa-gift', text: 'Refer & Earn Points' },
                 { icon: 'fas fa-map-marker-alt', text: '204+ Plots Available' }

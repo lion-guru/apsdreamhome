@@ -171,7 +171,7 @@ $verify_url = $verify_url ?? '';
         <!-- Header -->
         <div class="cert-header">
             <h3 class="fw-bold mb-1" style="color: #1a365d; letter-spacing: 1px;">APS DREAM HOME VENTURES PVT. LTD.</h3>
-            <div class="small text-muted">CIN: U70109UP2020PTC132456 · RERA Registered Developer</div>
+            <div class="small text-muted">CIN: U70109UP2020PTC132456 — Registry Clear. Colony-wise RERA verification on request</div>
             <div class="small text-muted">Head Office: Corporate Tower, Civil Lines, Gorakhpur, Uttar Pradesh — 273001</div>
             
             <div class="cert-title">No-Objection Certificate (NOC)</div>

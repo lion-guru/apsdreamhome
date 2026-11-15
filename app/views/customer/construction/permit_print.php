@@ -43,7 +43,7 @@ $qrUrl = "https://apsdreamhome.com/verify/construction/" . urlencode($token);
     <!-- Header -->
     <div class="header-brand text-center">
         <h2 class="fw-black text-primary mb-1">APS DREAM HOME PRIVATE LIMITED</h2>
-        <div class="small text-muted">CIN: U70102UP2019PTC118942 | RERA Registered Integrated Township Developer</div>
+        <div class="small text-muted">CIN: U70102UP2019PTC118942 | Registry-Clear Integrated Township Developer</div>
         <div class="small text-muted">Corporate Office: Medical College Road, Asuran Chowk, Gorakhpur, Uttar Pradesh — 273004</div>
         <div class="cert-title mt-3">ARCHITECTURAL MAP APPROVAL &amp; EXCAVATION PERMIT NOC</div>
         <div class="text-muted small">Issued under Township Building Regulations &amp; Master Plan Bylaws (Gorakhpur)</div>

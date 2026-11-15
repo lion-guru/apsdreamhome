@@ -380,7 +380,7 @@ $selectedRole = $selectedRole ?? 'customer';
             <div class="trust-strip">
                 <span><i class="fas fa-shield-halved"></i>256-bit SSL</span>
                 <span><i class="fas fa-lock"></i>Encrypted</span>
-                <span><i class="fas fa-check-circle"></i>RERA Approved</span>
+                <span><i class="fas fa-check-circle"></i>RERA Verification Available</span>
                 <span><i class="fas fa-users"></i>5,000+ Members</span>
             </div>
 
@@ -425,7 +425,7 @@ document.getElementById('selectedRole').value = role;
         // Per-role benefit chips (mirrors standalone associate/agent selling points)
         var roleBenefits = {
             customer: [
-                { icon: 'fas fa-shield-halved', text: 'RERA Approved', highlight: true },
+                { icon: 'fas fa-shield-halved', text: 'RERA On Request', highlight: true },
                 { icon: 'fas fa-percent', text: 'EMI from ₹8,333/mo' },
                 { icon: 'fas fa-gift', text: 'Refer & Earn Points' },
                 { icon: 'fas fa-map-marker-alt', text: '200+ Plots Available' }

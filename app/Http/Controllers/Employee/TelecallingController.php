@@ -312,7 +312,7 @@ class TelecallingController extends AdminController
                     'urgency' => 'Price revision next month — today lock karein toh save karein.',
                 ],
                 'rebuttals' => [
-                    'Competitor cheaper' => 'Competitor ki location/amenities check karein — humara colony gated, RERA approved, bank loan ready.',
+                    'Competitor cheaper' => 'Competitor ki location/amenities check karein - hamari colony gated, registry clear, bank loan ready; colony-certificate bhi available on request.',
                     'Market down' => 'Exactly isliye invest karo — low price me entry, future me high return.',
                     'Need time' => 'Samajh sakta hoon. 48-hour hold laga deta hoon — aap soch saken, pressure nahi.',
                 ]
@@ -333,11 +333,11 @@ class TelecallingController extends AdminController
                 'label' => 'Builder pe bharosa nahi / Kya guarantee hai',
                 'scripts' => [
                     'acknowledge' => 'Valid sawal. Trust kamana padta hai.',
-                    'proof' => 'RERA registration, bank loan approved, 500+ happy families, 10+ saal se market mein.',
+                    'proof' => 'Clear bainama title, bank loan approved, 500+ families, 10+ saal se market mein; colony-wise RERA certificate up-rera.in pe verify kar sakte hain.',
                     'assurance' => 'Site visit karke khud dekh lijiye. Free Sunday cab arrange kar dete hain.',
                 ],
                 'rebuttals' => [
-                    'Legal issues' => 'RERA registered, clear title, bank approved — legal clean.',
+                    'Legal issues' => 'Clear bainama title, bank loan approved - legal clean. Colony-wise RERA certificate verification available (+91 70074 44842 ya up-rera.in).',
                     'Delayed possession' => 'Construction on track, RERA timeline binding, penalty clause in agreement.',
                 ]
             ],
