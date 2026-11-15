@@ -12,7 +12,6 @@ $base = BASE_URL;
 $page_title = $page_title ?? 'Wallet Transactions';
 $pagination = $pagination ?? ['current_page' => 1, 'per_page' => 20, 'total' => 0, 'total_pages' => 1];
 ?>
-<?php include __DIR__ . '/../layouts/associate.php'; ?>
 <?php ob_start(); ?>
 
 <div class="container-fluid py-4">

@@ -10,7 +10,6 @@
 $base = BASE_URL;
 $page_title = $page_title ?? 'Withdraw Funds';
 ?>
-<?php include __DIR__ . '/../layouts/associate.php'; ?>
 <?php ob_start(); ?>
 
 <div class="container-fluid py-4">
