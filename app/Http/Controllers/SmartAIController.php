@@ -239,7 +239,7 @@ class SmartAIController extends BaseController
                 : 'public');
         if ($response === null) {
             try {
-                $rag = new RAGService();
+                $rag = \App\Services\AI\RAGService::getInstance();
                 $ragResult = $rag->answer($message, $userContext['id'] ?? 0, $ragVisibility);
                 $ragHasProse = false;
                 foreach (($ragResult['sources'] ?? []) as $src) {
@@ -1204,7 +1204,7 @@ EOT;
     {
         header('Content-Type: application/json');
         try {
-            $rag = new RAGService();
+            $rag = \App\Services\AI\RAGService::getInstance();
             $stats = $rag->getStats();
             echo json_encode(['success' => true, 'stats' => $stats]);
         } catch (\Throwable $e) {
