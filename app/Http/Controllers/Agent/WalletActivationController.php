@@ -104,8 +104,10 @@ class WalletActivationController extends BaseController
                 exit;
             }
 
-            // Activate purchase for agent wallet (user_wallets)
-            $result = $this->walletActivationService->activatePurchaseUserWallet($purchaseId, (int)$_SESSION['user_id']);
+            // Activate purchase for the canonical wallet_points system.
+            // (S478 removed activatePurchaseUserWallet - it wrote to the dropped
+            // user_wallets table and the 500 was invisible to Razorpay's caller.)
+            $result = $this->walletActivationService->activatePurchase($purchaseId, (int)$_SESSION['user_id']);
 
             header('Content-Type: application/json');
             echo json_encode($result);
