@@ -19,6 +19,9 @@
  *    12. Payroll Auto-Lock (2+ mo) / Auto-Close (6+ mo)
  *    13. API Token Prune (expired > 30 days - the mobile app mints 30-day
  *        tokens and api_tokens otherwise only ever grows)
+ *    14. Fast-Start 30-Day Bonus Evaluation
+ *    15. AI Health Check (writes ai_health.degraded so the public chatbot
+ *        falls back to the offline corpus instead of erroring)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% →' qualified site managers)
@@ -110,6 +113,7 @@ if ($statusOnly || $dryRun) {
         echo "   12. Payroll Auto-Lock/Close" . PHP_EOL;
         echo "   13. API Token Prune (expired > 30d)" . PHP_EOL;
         echo "   14. Fast-Start 30-Day Bonus Evaluation" . PHP_EOL;
+        echo "   15. AI Health Check" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -550,7 +554,7 @@ try {
         // 14. FAST-START 30-DAY KICKSTART BONUS EVALUATION
         $taskNum++;
         echo "===============================================================" . PHP_EOL;
-        echo "{$taskNum}/14  Fast-Start 30-Day Kickstart Bonus Evaluation" . PHP_EOL;
+        echo "{$taskNum}  Fast-Start 30-Day Kickstart Bonus Evaluation" . PHP_EOL;
         echo "===============================================================" . PHP_EOL;
         try {
             $mlmEngine = new \App\Services\MLM\MLMCommissionEngine();
@@ -564,6 +568,23 @@ try {
         } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'fast_start_bonuses: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 15. AI HEALTH CHECK (writes service_configs.ai_health.degraded so the
+        //     public buyer chatbot knows when to skip LLMs and answer from the
+        //     offline corpus instead of erroring. Read-only probes.)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}  AI Health Check" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            require_once $root . '/scripts/cron_ai_health.php';
+            $log['ai_health'] = ['status' => 'completed'];
+            echo "  [OK] AI health flag refreshed" . PHP_EOL;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'ai_health: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }
