@@ -50,11 +50,11 @@ function scanTable(PDO $pdo, string $table, string $col, string $idCol, $pattern
     return $found;
 }
 
-echo "== secret audit ==\n";
-
 try {
     $root = dirname(__DIR__);
+    // bootstrap sends headers internally — must run before any output
     require_once $root . '/config/bootstrap.php';
+    echo "== secret audit ==\n";
 
     $pdo = \App\Core\Database\Database::getInstance()->getConnection();
 

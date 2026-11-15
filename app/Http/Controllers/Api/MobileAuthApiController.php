@@ -49,13 +49,10 @@ class MobileAuthApiController extends BaseController
         \App\Middleware\RateLimiter::check('mobile_login', 5, 60);
 
         $result = $this->apiAuthService->login($email, $password);
-        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-        
+
         if ($result['success']) {
-            error_log("MobileAPI Login SUCCESS: email={$email}, ip={$ip}");
             return $this->jsonSuccess($result['data'] ?? $result, $result['message'] ?? 'Login successful');
         } else {
-            error_log("MobileAPI Login FAILED: email={$email}, ip={$ip}, reason=" . ($result['error'] ?? 'unknown'));
             return $this->jsonError($result['error'] ?? 'Login failed', 401);
         }
     }

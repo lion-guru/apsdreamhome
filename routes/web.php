@@ -3778,16 +3778,9 @@ $router->get('/analytics', 'Front\\PageController@analytics');
 $router->get('/calc', 'Front\\ToolController@calc');
 $router->post('/calc', 'Front\\ToolController@calc');
 
-// WebSocket Real-time Notification Test Page
-$router->get('/websocket-test', function () {
-    $file = __DIR__ . '/../app/views/pages/websocket_test.php';
-    if (file_exists($file)) {
-        include $file;
-    } else {
-        http_response_code(404);
-        echo 'WebSocket test page not found';
-    }
-});
+// WebSocket stack is opt-in (window.APS_HR_WS) and ships no test page; the old
+// /websocket-test stub referenced a non-existent view and 404'd forever.
+// Test page can be restored here when a WS server is actually deployed.
 
 // ============================================================
 // LOCATION PROJECT PAGES (added 2026-05-15)
