@@ -25,14 +25,19 @@ Legend: P0 = breaks a business flow; P1 = wrong data/silent failure; P2 = cosmet
 
 ## NEW findings go below (added live by the night-session agents)
 
-| D-014 | Customer portal | `/user/investment-plans` 500 — view referenced nonexistent class `App\Core\Security\CsrfProtection` (correct: `App\Core\Security\CSRF::getToken()`) | P0 | FIXED+VERIFIED | pending commit |
+| D-014 | Customer portal | `/user/investment-plans` 500 — view referenced nonexistent class `App\Core\Security\CsrfProtection` (correct: `App\Core\Security\CSRF::getToken()`) | P0 | FIXED+VERIFIED | `e2062f118` |
 | D-015 | Customer portal sweep | 49 pages probed: all 200 except phantom paths I probed; `cron-alerts` & `upgrade-to-associate` 403 = intentional gates | P3 | VERIFIED | n/a |
 | D-016 | Customer portal | `investment-plans` page now renders fully (needles + titles verified live) | P0 | VERIFIED | `e2062f118` |
+| D-017 | Customer portal | `/user/pay-emi/upi-qr` 404 — wallet card's "Pay via UPI" CTA targeted a POST-only route. Added GET `/user/pay-emi/upi-qr`, login-gated VPA page (QR, upi:// deep link, back-to-wallet) | P1 | FIXED+VERIFIED (200 + QR needs needles) | this batch |
+| D-018 | Payments (EMI money math) | Auto-debit marked installments PAID off a Razorpay `order_created` with no money moved; webhook never settled EMIs. Fix: money-gate (only captured/paid/authorized/completed settles) + capture path persists `payment_orders` + webhook `payment.captured` settles installment and inserts receipt. Sacrificial E2E (HMAC-signed fake capture): installment 36 flipped pending→paid, receipt inserted, then reverted byte-identically | P0 | FIXED+VERIFIED (E2E) | this batch |
+| D-019 | Payments (webhooks) | `payment_webhook_logs` insert wrote columns that don't exist (`event_id`, `signature`, `signature_verified`, `processed`, `ip_address`) — silent 1054 swallow on EVERY webhook call since deployment. Handler now writes `gateway/event_type/payload/status/tenant_id` (live schema) and marks `status=processed|failed` keyed on insert's returned id | P1 | FIXED+VERIFIED (E2E 200 + status=processed) | this batch |
+| D-020 | API (authorization) | `/api/v2/mobile/admin/*`, `/api/v2/admin/*`, township ops, cash-drawer closed had NO admin check — any valid customer Bearer token read revenue/P&L/cash/processlist/PII (QA CRIT). New shared `ApiAdminRoleMiddleware` (401/403) applied to 42+ routes; live probes: customer→403 everywhere, admin→200 everywhere | P0 | FIXED+VERIFIED (live) | this batch |
+| D-021 | Config (service credentials) | 7 sites static-called non-static `ServiceConfigService::get/getApiConfig` (every call fataled → silent env/default fallback) — DB-configured Razorpay/Twilio/S3/Leegality/GSTN/TIN/exchange-rate settings could never load. All converted to `getInstance()->…`; every class instantiates OK | P1 | FIXED+VERIFIED | this batch |
 
 ## night-team assignments (2026-11-16)
 
-- QA Web sweep → `docs/QA_FINDINGS_WEB.md` (running)
-- CEO capability analysis → `docs/CEO_GAP_ANALYSIS.md` (**done** — see top findings: software is 70% feature-complete but ~5% operationally-complete; RERA 0/8, Razorpay blank, Play Console pending, EMI/TDS/Payroll never executed on real records, 0 lead→booking attribution). Operator summary: stop adding features; run Phase 0 (RERA → production deploy → Razorpay live → secrets rotation → offsite backup drill → Play Console upload), then ONE real buyer walk-through, ONE real salary run, ONE real registry handover.
-- Thinker/architecture review → `docs/ARCHITECT_REVIEW.md` (running)
-- Mobile/API sweep → `docs/QA_FINDINGS_API.md` (running)
+- QA Web sweep → `docs/QA_FINDINGS_WEB.md` (done — 0×5xx, 334 literal routes, 1 HIGH: employee change-password shadowed by POST-only handler)
+- CEO capability analysis → `docs/CEO_GAP_ANALYSIS.md` (done — 70% feature-complete / ~5% operationally-complete; RERA 0/8, Razorpay blank, Play Console pending, zero lead→booking attribution)
+- Thinker/architecture review → `docs/ARCHITECT_REVIEW.md` (done — EMI money-gate bug, payout enum broken, activation-capture leak, money-system duplication)
+- Mobile/API sweep → `docs/QA_FINDINGS_API.md` (done — Bearer-token admin gate bypass, PII exposure, unscoped payouts)
 
