@@ -905,8 +905,10 @@ $router->post('/api/v2/mobile/voice/start-call', 'App\Http\Controllers\Api\Voice
 $router->post('/api/v2/mobile/voice/process-response', 'App\Http\Controllers\Api\VoiceAgentController@processResponse')
     ->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// Operator/audit endpoint: full AI call transcript + lead PII of ANY session id.
+// No customer-facing caller exists in the app; admins only.
 $router->get('/api/v2/mobile/voice/session/{id}', 'App\Http\Controllers\Api\VoiceAgentController@getSession')
-    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+    ->middleware('App\Http\Middleware\ApiAdminRoleMiddleware');
 
 $router->post('/api/v2/mobile/voice/end-call', 'App\Http\Controllers\Api\VoiceAgentController@endCall')
     ->middleware('App\Http\Middleware\ApiAuthMiddleware');
