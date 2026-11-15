@@ -1279,6 +1279,27 @@ class EmployeeSelfServiceController extends BaseController
         ]);
     }
 
+    /**
+     * Render the upload form (GET). The POST processor is documentUpload().
+     */
+    public function documentUploadForm(): void
+    {
+        $this->requireEmployeeLogin();
+        try {
+            $svc = new \App\Services\DocumentService();
+            $categories = $svc->getCategories();
+            if (!is_array($categories)) {
+                $categories = [];
+            }
+        } catch (\Throwable $e) {
+            error_log('documentUploadForm: ' . $e->getMessage());
+            $categories = [];
+        }
+        $base = BASE_URL;
+        $page_title = 'Upload Document';
+        include __DIR__ . '/../../../views/employee/self_service/document_upload.php';
+    }
+
     public function documentUpload()
     {
         $this->requireEmployeeLogin();

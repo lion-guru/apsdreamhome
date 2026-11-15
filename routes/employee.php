@@ -65,7 +65,7 @@ $router->get('/employee/telecalling/desk', 'Employee\\TelecallingController@call
 $router->post('/employee/telecalling/book-site-visit', 'Employee\\TelecallingController@bookSiteVisit');
 $router->get('/employee/telecalling/lead/{id}', 'Employee\\TelecallingController@getLeadDetails');
 $router->get('/employee/telecalling/script/{id}', 'Employee\\TelecallingController@getRecommendedScript');
-$router->get('/employee/telecalling/followups', 'Employee\\TelecallingController@getTodayFollowUps');
+$router->get('/employee/telecalling/followups', 'Employee\\TelecallingController@todayFollowupsJson');
 $router->post('/employee/telecalling/complete-followup', 'Employee\\TelecallingController@completeFollowUp');
 
 // Employee Manual Calling Desk (Jio Fiber Free)
@@ -87,7 +87,7 @@ $router->get('/employee/payslips', 'Employee\\EmployeeController@payslips');
 $router->get('/employee/documents', 'Employee\\EmployeeController@documents');
 $router->get('/employee/profile', 'Employee\\EmployeeController@profile');
 $router->get('/employee/notifications', 'Employee\\EmployeeController@notifications');
-$router->get('/employee/change-password', 'Employee\\EmployeeController@changePassword');
+$router->get('/employee/change-password', 'Employee\\EmployeeController@changePasswordView');
 $router->get('/employee/checkin', 'Employee\\EmployeeController@checkin');
 $router->get('/employee/checkout', 'Employee\\EmployeeController@checkout');
 $router->get('/employee/activities', 'Employee\\EmployeeController@activities');

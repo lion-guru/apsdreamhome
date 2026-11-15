@@ -1468,7 +1468,7 @@ $router->get('/employee/telecalling/desk', 'Employee\\TelecallingController@call
 $router->post('/employee/telecalling/book-site-visit', 'Employee\\TelecallingController@bookSiteVisit');
 $router->get('/employee/telecalling/lead/{id}', 'Employee\\TelecallingController@getLeadDetails');
 $router->get('/employee/telecalling/script/{id}', 'Employee\\TelecallingController@getRecommendedScript');
-$router->get('/employee/telecalling/followups', 'Employee\\TelecallingController@getTodayFollowUps');
+$router->get('/employee/telecalling/followups', 'Employee\\TelecallingController@todayFollowupsJson');
 $router->post('/employee/telecalling/complete-followup', 'Employee\\TelecallingController@completeFollowUp');
 
 $router->get('/employee/dashboard-overview', 'Employee\\EmployeeDashboardController@dashboard');
@@ -6524,6 +6524,16 @@ $router->get('/api/legal/unaccepted', 'App\\Http\\Controllers\\Front\\LegalDocum
 // ============================================================
 $router->get('/user/passbook', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
 $router->post('/user/pay-emi/upi-qr', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@generateUpiQr');
+// Generic UPI Pay Link page linked from the customer wallet. The wallet card shows a
+// universal link; the POST route above generates per-installment QRs. This is the
+// plain VPA page the wallet CTA needs (was a GET 404 before this line).
+$router->get('/user/pay-emi/upi-qr', function () {
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: ' . BASE_URL . '/login', true, 302);
+        exit;
+    }
+    include __DIR__ . '/../app/views/pages/upi_pay_link.php';
+});
 $router->get('/user/receipt/{id}', 'App\\Http\\Controllers\\Front\\CustomerPassbookController@downloadReceipt');
 // NOTE (S224): these 8 complete the /customer/* â†’ /user/* redirect targets;
 // without them the redirects 404. Handlers verified existing in
@@ -6790,7 +6800,7 @@ $router->get('/employee/self-service/payslip/download/{id}', 'Employee\\Employee
 
 // Employee Documents
 $router->get('/employee/self-service/documents', 'Employee\\EmployeeSelfServiceController@documents');
-$router->get('/employee/self-service/documents/upload', 'Employee\\EmployeeSelfServiceController@documentUpload');
+$router->get('/employee/self-service/documents/upload', 'Employee\\EmployeeSelfServiceController@documentUploadForm');
 $router->post('/employee/self-service/documents/upload', 'Employee\\EmployeeSelfServiceController@documentUpload');
 $router->get('/employee/self-service/documents/{id}', 'Employee\\EmployeeSelfServiceController@documentDetail');
 $router->get('/employee/self-service/documents/{id}/download', 'Employee\\EmployeeSelfServiceController@documentDownload');

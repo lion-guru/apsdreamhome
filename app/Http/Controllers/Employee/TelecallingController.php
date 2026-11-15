@@ -843,6 +843,26 @@ class TelecallingController extends AdminController
     }
 
     /**
+     * JSON endpoint for the "Follow-ups today" widget.
+     * getTodayFollowUps() is an internal helper used by callingDesk(); it must not
+     * be routed directly (raw array return produced an empty body).
+     */
+    public function todayFollowupsJson(): void
+    {
+        $this->initializeEmployeeSession();
+        header('Content-Type: application/json');
+        try {
+            $rows = $this->getTodayFollowUps();
+            echo json_encode(['success' => true, 'data' => $rows]);
+        } catch (\Throwable $e) {
+            error_log('todayFollowupsJson: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Could not load follow-ups']);
+        }
+        exit;
+    }
+
+    /**
      * Complete follow-up
      */
     public function completeFollowUp()

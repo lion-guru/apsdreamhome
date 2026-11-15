@@ -18,7 +18,7 @@ $categories = $categories ?? [];
         </a>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" id="uploadForm" class="needs-validation" novalidate>
+    <form method="POST" enctype="multipart/form-data" action="<?= htmlspecialchars(BASE_URL, ENT_QUOTES, 'UTF-8') ?>/employee/self-service/documents/upload" id="uploadForm" class="needs-validation" novalidate>
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
         <!-- Document Details -->
