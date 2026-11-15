@@ -305,8 +305,18 @@ class RAGService
         $queryEmbedding = json_decode($this->generateEmbedding($query), true);
         $queryVector = $queryEmbedding['vector'] ?? [];
 
+        // Degraded mode: the query vector is hash-placeholder. It cannot honestly
+        // rank the 949 Gemini 3072-dim chunks, and ranking the 3 remaining hash
+        // chunks would still be meaningless (any two hash vectors score high
+        // against each other). Prefer lexical ranking — at least it is evidence-based.
+        if ((string)($queryEmbedding['model'] ?? '') === self::MODEL_HASH) {
+            $kw = $this->keywordSearch($query, $limit, $visSql, $tid);
+            if ($kw !== []) return $kw;
+            // fall through to vector path if lexical found nothing
+        }
+
         // Score chunks by cosine similarity
-        // Dimension guard — a query vector must never be compared against a
+        // Dimension guard - a query vector must never be compared against a
         // chunk vector of a different length (e.g. Gemini 1536-dim query vs a stale
         // hash-placeholder 384-dim chunk). Skipping is correct; comparing would
         // produce meaningless scores and silently pollute results.
@@ -346,7 +356,76 @@ class RAGService
         // Sort by score
         usort($results, fn($a, $b) => $b['score'] <=> $a['score']);
 
-        return array_slice($results, 0, $limit);
+        $out = array_slice($results, 0, $limit);
+
+        // Keyword fallback — when every chunk was skipped by the dimension guard
+        // (e.g. hash-placeholder query vector vs 3072-dim Gemini corpus), a vector
+        // search returns literally nothing and every AI path degrades to an empty
+        // answer. Recover with a bound-parameter lexical match instead of lying.
+        if ($out === [] && $dimMismatch > 0) {
+            $out = $this->keywordSearch($query, $limit, $visSql, $tid);
+        }
+
+        return $out;
+    }
+
+    /**
+     * Lexical fallback used when vector search is unusable through no fault of
+     * the caller — e.g. the provider probe fell back to hash-placeholder vectors
+     * while the corpus stores Gemini 3072-dim vectors. Returns the same shape as
+     * the vector path, marked with fallback='keyword'.
+     */
+    private function keywordSearch(string $query, int $limit, string $visSql, int $tid): array
+    {
+        $terms = preg_split('/[^\\p{L}\\p{N}]+/u', mb_strtolower($query)) ?: [];
+        $stop  = ['the', 'and', 'for', 'with', 'this', 'that', 'you', 'your', 'from', 'into', 'what', 'how', 'why', 'when', 'kya', 'hai', 'hain', 'ka', 'ki', 'ke', 'ko', 'se'];
+        $terms = array_values(array_unique(array_filter($terms, fn($t) => mb_strlen($t, 'UTF-8') >= 3 && !in_array($t, $stop, true))));
+        if ($terms === []) return [];
+
+        try {
+            $where = [];
+            $params = [];
+            foreach ($terms as $t) {
+                $where[] = '(kc.chunk_text LIKE ? OR kb.title LIKE ?)';
+                $params[] = '%' . $t . '%';
+                $params[] = '%' . $t . '%';
+            }
+            $sql = "SELECT kc.id AS chunk_id, kc.knowledge_base_id AS doc_id, kb.title AS doc_title, kb.source, kc.chunk_text AS text
+                    FROM ai_knowledge_chunks kc
+                    JOIN ai_knowledge_base kb ON kc.knowledge_base_id = kb.id
+                    WHERE kb.tenant_id = " . ($tid > 1 ? $tid : 1) . " AND kb.is_active = 1 " . $visSql
+                    . " AND (" . implode(' OR ', $where) . ") LIMIT 400";
+
+            $rows = $this->db->fetchAll($sql, $params) ?: [];
+            $scored = [];
+            foreach ($rows as $r) {
+                $hay = mb_strtolower((string)($r['text'] ?? '') . ' ' . (string)($r['doc_title'] ?? ''), 'UTF-8');
+                $hits = 0;
+                foreach ($terms as $t) { if (mb_strpos($hay, $t, 0, 'UTF-8') !== false) $hits++; }
+                if ($hits === 0) continue;
+                $r['hits'] = $hits;
+                $r['score'] = round(0.3 + 0.15 * min($hits, 3), 4);
+                $r['fallback'] = 'keyword';
+                $docId = (int)($r['doc_id'] ?? 0);
+                $key = "doc_$docId";
+                if (!isset($scored[$key]) || $hits > $scored[$key]['hits']) {
+                    $scored[$key] = $r;
+                }
+            }
+            usort($scored, fn($a, $b) => $b['hits'] <=> $a['hits']);
+            return array_slice(array_map(fn($r) => [
+                'chunk_id' => $r['chunk_id'],
+                'doc_id' => (int)$r['doc_id'],
+                'doc_title' => $r['doc_title'],
+                'source' => $r['source'],
+                'text' => $r['text'],
+                'score' => $r['score'],
+                'metadata' => ['fallback' => 'keyword', 'matched_terms' => $r['hits']],
+            ], $scored), 0, $limit);
+        } catch (\Throwable $e) {
+            error_log('RAGService::keywordSearch failed: ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
