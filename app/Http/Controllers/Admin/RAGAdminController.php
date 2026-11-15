@@ -87,6 +87,32 @@ class RAGAdminController extends \App\Http\Controllers\Admin\AdminController
     }
 
     /**
+     * Test a provider WITHOUT switching to it — the admin sees the live pass/fail
+     * and reason before clicking Save. Same probe setEmbeddingModel uses; the
+     * one-off read never mutates configuration.
+     */
+    public function testProvider()
+    {
+        $this->requireAdmin();
+
+        try {
+            $this->validateCsrfOrFail();
+        } catch (\Throwable $e) {
+            $this->jsonResponse(['success' => false, 'message' => 'CSRF failed'], 419);
+            return;
+        }
+
+        $model = trim((string) ($_POST['model'] ?? ''));
+        $probe = RAGService::getInstance()->probeModel($model);
+        $this->jsonResponse([
+            'success' => (bool) ($probe['ok'] ?? false),
+            'model' => $model,
+            'ok' => (bool) ($probe['ok'] ?? false),
+            'reason' => (string) ($probe['reason'] ?? 'unknown'),
+        ]);
+    }
+
+    /**
      * Trigger a re-embed without changing the model.
      */
     public function reembed()

@@ -77,5 +77,6 @@ $router->post('/admin/storage-lifecycle/run', 'App\\Http\\Controllers\\Admin\\St
 
 // RAG Knowledge Base (S341) - health card + embedding model switch + re-embed
 $router->get('/admin/rag', 'App\\Http\\Controllers\\Admin\\RAGAdminController@index');
+$router->post('/admin/rag/test-provider', 'App\\Http\\Controllers\\Admin\\RAGAdminController@testProvider');
 $router->post('/admin/rag/set-model', 'App\\Http\\Controllers\\Admin\\RAGAdminController@setModel');
 $router->post('/admin/rag/reembed', 'App\\Http\\Controllers\\Admin\\RAGAdminController@reembed');

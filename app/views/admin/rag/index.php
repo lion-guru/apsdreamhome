@@ -133,9 +133,10 @@ $stored = $health['stored_models'] ?? [];
                     <label class="form-label small">Embedding model</label>
                     <select aria-label="Model" class="form-select" name="model" id="ragModel">
                         <option value="gemini-embedding-001" <?= (($health['configured_model'] ?? '') === 'gemini-embedding-001') ? 'selected' : '' ?>>Gemini gemini-embedding-001 (FREE, 3072-dim)</option>
+                        <option value="openrouter-text-embedding-3-small" <?= (($health['configured_model'] ?? '') === 'openrouter-text-embedding-3-small') ? 'selected' : '' ?>>OpenRouter text-embedding-3-small (1536-dim)</option>
                         <option value="hf-all-MiniLM-L6-v2" <?= (($health['configured_model'] ?? '') === 'hf-all-MiniLM-L6-v2') ? 'selected' : '' ?>>HuggingFace all-MiniLM-L6-v2 (needs PRO)</option>
                     </select>
-                    <div class="form-text">Provider fallback order is Gemini &rarr; HuggingFace &rarr; placeholder, so a switch never breaks search.</div>
+                    <div class="form-text">Embedding chain: Gemini &rarr; OpenRouter &rarr; HuggingFace &rarr; placeholder. A provider switch is only saved after a live probe succeeds.</div>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Mode</label>
@@ -145,10 +146,12 @@ $stored = $health['stored_models'] ?? [];
                     </select>
                 </div>
                 <div class="col-md-5 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-success" id="ragTestBtn"><i class="fas fa-vial me-1"></i>Test probe</button>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save model</button>
                     <button type="button" class="btn btn-outline-secondary" id="ragReembedBtn"><i class="fas fa-sync-alt me-1"></i>Re-embed now</button>
                 </div>
             </form>
+            <div id="ragProbeResult" class="mt-2"></div>
             <div id="ragResult" class="mt-3"></div>
         </div>
     </div>
@@ -234,6 +237,23 @@ $stored = $health['stored_models'] ?? [];
             method: 'POST', body: new URLSearchParams(fd),
             headers: { 'X-CSRF-Token': CSRF }
         }).then(r => r.json()).then(render).catch(x => render({ success: false, message: x.message }));
+    });
+
+    document.getElementById('ragTestBtn')?.addEventListener('click', function () {
+        var model = document.querySelector('[name=model]').value;
+        var out = document.getElementById('ragProbeResult');
+        out.innerHTML = '<div class="text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Probing…</div>';
+        fetch(BASE + '/admin/rag/test-provider', {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': CSRF, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'csrf_token=' + encodeURIComponent(CSRF) + '&model=' + encodeURIComponent(model)
+        }).then(r => r.json()).then(function (d) {
+            if (d.ok) {
+                out.innerHTML = '<div class="alert alert-success mb-0 py-2 small"><i class="fas fa-check-circle"></i> <strong>Provider answered</strong> (' + (d.reason || '') + '). Safe to save &amp; re-embed.</div>';
+            } else {
+                out.innerHTML = '<div class="alert alert-warning mb-0 py-2 small"><i class="fas fa-exclamation-triangle"></i> <strong>Provider not reachable:</strong> ' + (d.reason || 'unknown') + ' &mdash; do NOT save this switch.</div>';
+            }
+        }).catch(x => { out.innerHTML = '<div class="alert alert-danger mb-0 py-2 small">Probe failed: ' + x.message + '</div>'; });
     });
 
     document.getElementById('ragReembedBtn')?.addEventListener('click', function () {
