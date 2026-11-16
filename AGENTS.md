@@ -1,4 +1,54 @@
-## Session 617: Admin Sidebar Menu Complete Repair — Active Route Highlighting, HTML Duplication Cleared, Submenu Inline Toggling & CSS, Hub/Section Accordion Sync, Icon Normalization, Master 11/11 Green (2026-11-16)
+## Session 618: Onboarding "$ is not defined" Console Error Fixed (S598 jQuery-order family), Admin Chrome Hierarchy Rule Mapped Across All Admin Controllers (5 BaseController-extends got layouts/admin, absorbed into S617), Grievance Resolve-Flow E2E Verified End-to-End With Zero Leftovers (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — continuation of the in-app admin audit (S614/S616/S617).
+
+### What was broken (probe-verified, all fixed)
+
+**1. `/admin/onboarding` died with "ReferenceError: $ is not defined" (line 5395 of the rendered page).**
+The layout loads jQuery **AFTER** the view content (`app/views/layouts/admin.php`: `$content` echoed line 945, `jquery-3.7.1.min.js` line 955) — S598's exact jQuery-order family, but in a view instead of a layout. `app/views/admin/onboarding/index.php` ran `$(document).ready(...)` inline → `$` undefined → the DataTables initializer never ran, silently.
+- **Fix:** rewrote the inline script to `window.addEventListener('load', ...)` with `window.jQuery` guards, so the initializer runs only after line-955 jQuery has loaded. No layout changes (parallel actor's S617 file, untouched).
+- **Verified live (in-app Chromium, fresh login via `?test_login=1`):** `/admin/onboarding` now renders with **0 console errors**, admin chrome (`.aps-admin-body`) present, table drawn.
+- Commit `1e0cdf770` (pushed, hook linted clean).
+
+**2. Admin chrome hierarchy rule mapped across all ~300 admin page controllers.**
+`HasViewRendering::render()` defaults every view to `layouts/base` (public skin) unless the controller sets `$this->layout = 'layouts/admin'`. `Admin\AdminController`'s constructor sets it — but **7 admin page controllers extend `BaseController` directly** and rendered in the public shell: `ConstructionApprovalController`, `EmployeeGrievanceController`, `HolidayCalendarController`, `MigrationAuditController` (already had the one-liner), `OffboardingController`, `OnboardingController`, `PaymentController`.
+- **Fix:** the same one-liner from `MigrationAuditController` (`$this->layout = 'layouts/admin';`) applied to the 5 React-like offenders.
+- **Absorbed:** parallel actor's S617 whole-tree commit `196ba7c10` carries my 5 two-line diffs (that's the whole-tree staging convention — they commit my controller work; I never commit their files).
+- **Verified live after S617:** `/admin/grievances`, `/admin/grievances/5`, `/admin/onboarding`, `/admin/construction-approvals`, `/admin/offboarding`, `/admin/holiday-calendar` — all render `.aps-admin-body`, **0 console errors**.
+
+**3. Grievance resolve-flow E2E (creation was S613/S614 territory; only one side had ever been proven).**
+- Created `[PROBE_TEST] S616 resolve-flow ticket` via the real browser modal (employee 1, manager category, normal priority) → GRV-202611-0001, id=5, `open`.
+- Detail page: `Change Status` dropdown drives `POST /admin/grievances/5/status` with same-origin fetch; in-app browser auto-attaches the page CSRF token (see lessons), so the fetch returned 200 `{"success":true}` while tokenless curl gets 302 and bad-token gets 400 — three gate witnesses, consistent.
+- Walked `open → investigation → under_review → resolved`; DB read-back: `status=resolved`, `resolved_by=1`, `resolved_at=2026-11-16 17:06:26` — exact.
+- **Cleanup:** id=5 + its comments deleted; `employee_grievances` = 0 rows; zero leftovers.
+
+### Self-inflicted incident (disclosed)
+My first attempt to inject the one-line layout fix used a PowerShell `.Replace("''", "'")` over **whole files** — it rewrote every empty-string literal (`''` → `'`) in 5 controllers and left 5 files unparseable. **Restored byte-identical from HEAD** (they had no other pending changes), re-applied the fix with the edit tool instead of shell. Zero content lost; caught by `php -l` before any commit or page probe. Also my first view edit left a doubled `</script>` — removed, re-linted, re-verified.
+
+### In-app-browser CSRF behavior (measured, not assumed)
+| Caller | Token | Result |
+|---|---|---|
+| Browser same-origin `fetch()` (in-app Chromium) | none | **200 `{"success":true}`** — token auto-injected from page meta |
+| Browser `fetch()` with `csrf_token=badtoken` | wrong | **400 `{"success":false,"error":"Invalid CSRF token"}`** |
+| curl POST, no token | none | **302 → `/`** (router Step 5b gate → redirect) |
+Browser POSTs in the in-app harness pass gates that curl fails — probes must not be calibrated on one of the two.
+
+### Gates
+- **PHPStan** → `[OK] No errors` · **Master** → **11/11 PASSED** (35.23s, 100% HEALTHY) · `php -l` clean on all 7 touched files · AGENTS.md integrity OK at this entry's commit.
+- **DB zero drift:** grievance rows back to 0; core 13 tracking tables untouched.
+
+### Key lessons (carried, continued)
+_1316. **Never blanket-replace literals across whole files.** `.Replace("''", "'")` took `''` (every empty-string literal) with the one instance I meant. One-off edits via the edit tool; PowerShell only for genuinely unique anchors — and `php -l` immediately after, before touching anything else.
+_1317. **"jQuery after view" is a layout-order family, not a view bug** — the view was correct against a normal layout; the layout echoes content before its jQuery. Inline view scripts must be `load`-event-safe or vanilla.
+_1318. **Admin page that extends `BaseController` directly = public skin.** The layout rule lives in the constructor chain, not in `render()`: `Admin\AdminController` sets `layouts/admin`, `BaseController` defaults to `layouts/base`. Audit `extends` lines when a page "has no sidebar".
+_1319. **Verify the exact tokenless-vs-bad-token caller contract before trusting your own 400s.** In-app browser auto-attaches meta CSRF; curl does not; "success from browser, 302 from curl" is expected, not a bypass.
+_1320. **A committed file is a byte contract.** `git checkout HEAD -- <file>` is the honest reset for a self-inflicted whole-file corruption — `git stash` on a file with no legitimate unstaged work destroys nothing the user owns (nothing to destroy), but only if you know the file was clean at HEAD. Always check first.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 617 (parallel actor, sidebar repair). This entry = **S618**. Next-free = **619**.
+
+## Session 617: Admin Sidebar Menu Complete Repair - Active Route Highlighting, HTML Duplication Cleared, Submenu Inline Toggling & CSS, Hub/Section Accordion Sync, Icon Normalization, Master 11/11 Green (2026-11-16)
 
 ### Trigger
 User instruction: "admin ka sidebar menu thik karna" (Audit, repair, and optimize the Admin portal sidebar menu).
@@ -51,7 +101,7 @@ User instruction: "admin ka sidebar menu thik karna" (Audit, repair, and optimiz
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 616. This entry = **S617**. Next-free = **618**.
 
-﻿## Session 616: Dev test_login bypasses leaked cross-portal session identity - notifications API reported admin to employee/customer sessions, bell showed admin links; fixed at all four bypasses, verified live admin->employee->customer (2026-11-16)
+## Session 616: Dev test_login bypasses leaked cross-portal session identity - notifications API reported admin to employee/customer sessions, bell showed admin links; fixed at all four bypasses, verified live admin->employee->customer (2026-11-16)
 
 ### Trigger
 Continuation of the in-app browser admin audit (S614). On the employee portal (`/employee/attendance`), the notification bell's "View All"/"Preferences" links rendered `/admin/notifications` and `/admin/notification-preferences` even though `window.NOTIFY_USER.role` was `employee`. Investigating end-to-end exposed a session-identity-bleed class affecting every dev test_login bypass in a shared browser profile.
