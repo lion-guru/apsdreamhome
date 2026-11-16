@@ -75,7 +75,7 @@ class LandManagerController extends BaseController
             ]);
         } catch (\Throwable $e) {
             error_log("Land Manager Controller Error: " . $e->getMessage());
-            $this->render('employees/department', [
+            $this->render('employee/department', [
                 'page_title' => 'Land Dashboard',
                 'dept_title' => 'Land Dashboard',
                 'dept_icon'  => 'fas fa-map',

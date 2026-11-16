@@ -208,7 +208,7 @@ class MLMController extends AdminController
     public function commission() 
     {
         $this->data['page_title'] = 'Commission';
-        return $this->render('admin/mlm/commission/index');
+        return $this->render('admin/mlm/commissions', $this->data);
     }
     
     public function network() 
@@ -220,7 +220,7 @@ class MLMController extends AdminController
     public function payouts() 
     {
         $this->data['page_title'] = 'Payouts';
-        return $this->render('admin/mlm/payouts/index');
+        return $this->render('admin/mlm/payouts', $this->data);
     }
     
     public function tree() 

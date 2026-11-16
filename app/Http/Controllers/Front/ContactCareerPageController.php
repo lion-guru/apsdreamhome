@@ -46,7 +46,7 @@ class ContactCareerPageController extends BaseController
 
     public function propertyInterest()
     {
-        $this->render('pages/property_interest', [
+        $this->render('pages/property_inquire', [
             'page_title' => 'Property Interest - APS Dream Home',
             'page_description' => 'Express interest in a property.',
         ]);
@@ -96,7 +96,7 @@ class ContactCareerPageController extends BaseController
             $job = $stmt->fetch(\PDO::FETCH_ASSOC);
         }
 
-        $this->render('pages/careers_apply', [
+        $this->render('pages/career_apply', [
             'page_title' => 'Apply for Job - APS Dream Home',
             'page_description' => 'Apply for a career at APS Dream Home.',
             'job' => $job,
@@ -126,7 +126,7 @@ class ContactCareerPageController extends BaseController
             $jobs = [];
         }
 
-        $this->render('pages/career_jobs', [
+        $this->render('pages/careers', [
             'page_title' => 'Job Listings - APS Dream Home',
             'page_description' => 'Browse all job openings.',
             'jobs' => $jobs,

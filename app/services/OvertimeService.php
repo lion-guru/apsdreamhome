@@ -235,7 +235,7 @@ class OvertimeService
     {
         return $this->db->fetchAll("
             SELECT * FROM overtime_requests
-            WHERE employee_id = ?{$this->tenantSql()}
+            WHERE employee_id = ?{$this->tenantWhere()}
             ORDER BY overtime_date DESC, created_at DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
@@ -268,14 +268,14 @@ class OvertimeService
      */
     public function approveRequest(int $requestId, int $approverId): array
     {
-        $req = $this->fetchOne("SELECT * FROM overtime_requests WHERE id = ?{$this->tenantSql()}", [$requestId]);
+        $req = $this->fetchOne("SELECT * FROM overtime_requests WHERE id = ?{$this->tenantWhere()}", [$requestId]);
         if (!$req) return ['success' => false, 'message' => 'Request not found'];
         if ($req['status'] !== 'pending') return ['success' => false, 'message' => 'Request is not pending'];
 
         $this->execute("
             UPDATE overtime_requests
             SET status = 'approved', approved_at = NOW(), approved_by = ?
-            WHERE id = ?{$this->tenantSql()}
+            WHERE id = ?{$this->tenantWhere()}
         ", array_merge([$approverId, $requestId], $this->tVal()));
 
         return ['success' => true, 'message' => 'Overtime approved'];
@@ -286,14 +286,14 @@ class OvertimeService
      */
     public function rejectRequest(int $requestId, int $rejecterId, string $reason): array
     {
-        $req = $this->fetchOne("SELECT * FROM overtime_requests WHERE id = ?{$this->tenantSql()}", [$requestId]);
+        $req = $this->fetchOne("SELECT * FROM overtime_requests WHERE id = ?{$this->tenantWhere()}", [$requestId]);
         if (!$req) return ['success' => false, 'message' => 'Request not found'];
         if ($req['status'] !== 'pending') return ['success' => false, 'message' => 'Request is not pending'];
 
         $this->execute("
             UPDATE overtime_requests
             SET status = 'rejected', rejected_at = NOW(), rejected_by = ?, rejection_reason = ?
-            WHERE id = ?{$this->tenantSql()}
+            WHERE id = ?{$this->tenantWhere()}
         ", array_merge([$rejecterId, $reason, $requestId], $this->tVal()));
 
         return ['success' => true, 'message' => 'Overtime rejected'];
@@ -304,14 +304,14 @@ class OvertimeService
      */
     public function markAsPaid(int $requestId, int $payslipId): array
     {
-        $req = $this->fetchOne("SELECT * FROM overtime_requests WHERE id = ?{$this->tenantSql()}", [$requestId]);
+        $req = $this->fetchOne("SELECT * FROM overtime_requests WHERE id = ?{$this->tenantWhere()}", [$requestId]);
         if (!$req) return ['success' => false, 'message' => 'Request not found'];
         if ($req['status'] !== 'approved') return ['success' => false, 'message' => 'Overtime not approved'];
 
         $this->execute("
             UPDATE overtime_requests
             SET status = 'paid', paid_at = NOW(), payslip_id = ?
-            WHERE id = ?{$this->tenantSql()}
+            WHERE id = ?{$this->tenantWhere()}
         ", array_merge([$payslipId, $requestId], $this->tVal()));
 
         return ['success' => true, 'message' => 'Overtime marked as paid'];
@@ -324,7 +324,7 @@ class OvertimeService
     {
         return $this->db->fetchAll("
             SELECT * FROM overtime_requests
-            WHERE employee_id = ?{$this->tenantSql()}
+            WHERE employee_id = ?{$this->tenantWhere()}
             ORDER BY date DESC
         ", array_merge([$employeeId], $this->tVal()));
     }

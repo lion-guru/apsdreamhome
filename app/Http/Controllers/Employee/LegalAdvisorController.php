@@ -78,7 +78,7 @@ class LegalAdvisorController extends BaseController
             ]);
         } catch (\Throwable $e) {
             error_log("Legal Advisor Controller Error: " . $e->getMessage());
-            $this->render('employees/department', [
+            $this->render('employee/department', [
                 'page_title' => 'Legal Dashboard',
                 'dept_title' => 'Legal Dashboard',
                 'dept_icon'  => 'fas fa-gavel',

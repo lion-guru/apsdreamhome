@@ -150,7 +150,7 @@ class RecruitmentController extends AdminController
             $this->redirect(BASE_URL . '/admin/recruitment');
             return;
         }
-        return $this->render('admin/recruitment/applications', [
+        return $this->render('admin/recruitment/show', [
             'page_title' => 'Applications: ' . $job['title'],
             'job' => $job,
             'applications' => $applications,

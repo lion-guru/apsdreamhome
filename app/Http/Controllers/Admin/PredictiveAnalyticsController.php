@@ -28,7 +28,7 @@ class PredictiveAnalyticsController extends AdminController
         $this->data['trends'] = $trends['trends'] ?? [];
         $this->data['summary'] = $trends['summary'] ?? [];
         
-        $this->render('admin/ai/predictive_analytics');
+        $this->render('admin/ai/analytics', $this->data);
     }
 
     /**

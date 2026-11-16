@@ -29,7 +29,7 @@ class ToolsPageController extends BaseController
 
     public function emiCalculator()
     {
-        $this->render('pages/emi_calculator', [
+        $this->render('pages/calc', [
             'page_title' => 'EMI Calculator - APS Dream Home',
             'page_description' => 'Calculate your monthly EMI for home loans.',
         ]);
@@ -37,7 +37,7 @@ class ToolsPageController extends BaseController
 
     public function stampDutyCalculator()
     {
-        $this->render('pages/stamp_duty_calculator', [
+        $this->render('pages/tools/stamp_duty_calculator', [
             'page_title' => 'Stamp Duty Calculator - APS Dream Home',
             'page_description' => 'Calculate stamp duty and registration charges.',
         ]);
@@ -45,7 +45,7 @@ class ToolsPageController extends BaseController
 
     public function plotConverter()
     {
-        $this->render('pages/plot_converter', [
+        $this->render('pages/tools/plot_converter', [
             'page_title' => 'Plot Size Converter - APS Dream Home',
             'page_description' => 'Convert between different plot size units.',
         ]);
@@ -53,7 +53,7 @@ class ToolsPageController extends BaseController
 
     public function plotSizeConverter()
     {
-        $this->render('pages/plot_size_converter', [
+        $this->render('pages/tools/plot_converter', [
             'page_title' => 'Plot Size Converter - APS Dream Home',
             'page_description' => 'Convert between different plot size units.',
         ]);
@@ -61,7 +61,7 @@ class ToolsPageController extends BaseController
 
     public function constructionCostEstimator()
     {
-        $this->render('pages/construction_cost_estimator', [
+        $this->render('pages/tools/construction_cost', [
             'page_title' => 'Construction Cost Estimator - APS Dream Home',
             'page_description' => 'Estimate your construction costs.',
         ]);
@@ -69,7 +69,7 @@ class ToolsPageController extends BaseController
 
     public function rentalYieldCalculator()
     {
-        $this->render('pages/rental_yield_calculator', [
+        $this->render('pages/tools/rental_yield', [
             'page_title' => 'Rental Yield Calculator - APS Dream Home',
             'page_description' => 'Calculate rental yield for your property.',
         ]);
@@ -77,7 +77,7 @@ class ToolsPageController extends BaseController
 
     public function rentVsBuyCalculator()
     {
-        $this->render('pages/rent_vs_buy_calculator', [
+        $this->render('pages/tools/rent_vs_buy', [
             'page_title' => 'Rent vs Buy Calculator - APS Dream Home',
             'page_description' => 'Compare renting vs buying.',
         ]);
@@ -85,7 +85,7 @@ class ToolsPageController extends BaseController
 
     public function propertyTaxCalculator()
     {
-        $this->render('pages/property_tax_calculator', [
+        $this->render('pages/tools/property_tax', [
             'page_title' => 'Property Tax Calculator - APS Dream Home',
             'page_description' => 'Calculate property tax.',
         ]);
@@ -93,7 +93,7 @@ class ToolsPageController extends BaseController
 
     public function sipVsRealEstateCalculator()
     {
-        $this->render('pages/sip_vs_realestate_calculator', [
+        $this->render('pages/tools/sip_vs_realestate', [
             'page_title' => 'SIP vs Real Estate Calculator - APS Dream Home',
             'page_description' => 'Compare SIP investment vs real estate.',
         ]);
@@ -101,7 +101,7 @@ class ToolsPageController extends BaseController
 
     public function gstCalculator()
     {
-        $this->render('pages/gst_calculator', [
+        $this->render('pages/tools/gst_calculator', [
             'page_title' => 'GST Calculator - APS Dream Home',
             'page_description' => 'Calculate GST on property transactions.',
         ]);
@@ -109,7 +109,7 @@ class ToolsPageController extends BaseController
 
     public function capitalGainsCalculator()
     {
-        $this->render('pages/capital_gains_calculator', [
+        $this->render('pages/tools/capital_gains', [
             'page_title' => 'Capital Gains Calculator - APS Dream Home',
             'page_description' => 'Calculate capital gains tax on property sale.',
         ]);

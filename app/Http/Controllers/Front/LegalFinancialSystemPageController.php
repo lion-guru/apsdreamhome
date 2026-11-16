@@ -69,7 +69,7 @@ class LegalFinancialSystemPageController extends BaseController
 
     public function legalTermsConditions()
     {
-        $this->render('pages/legal_terms', [
+        $this->render('pages/legal/terms', [
             'page_title' => 'Legal Terms & Conditions - APS Dream Home',
             'page_description' => 'Legal terms and conditions.',
         ]);
@@ -77,7 +77,7 @@ class LegalFinancialSystemPageController extends BaseController
 
     public function legalDocuments()
     {
-        $this->render('pages/legal_documents', [
+        $this->render('pages/legal/documents', [
             'page_title' => 'Legal Documents - APS Dream Home',
             'page_description' => 'Legal documents and resources.',
         ]);
@@ -242,7 +242,7 @@ class LegalFinancialSystemPageController extends BaseController
 
     public function systemLaunchSystem()
     {
-        $this->render('pages/launch_system', [
+        $this->render('pages/system/launch_system', [
             'page_title' => 'System Launch - APS Dream Home',
             'page_description' => 'System launch and initialization.',
         ]);

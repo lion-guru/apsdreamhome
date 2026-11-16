@@ -20,7 +20,7 @@ class WhatsAppTemplateController extends BaseController
         $categories = $this->getCategories();
         $analytics = $this->getTemplateAnalytics();
 
-        $this->render('pages/whatsapp-templates', [
+        $this->render('admin/tools/whatsapp-templates', [
             'page_title' => 'WhatsApp Templates - APS Dream Home',
             'page_description' => 'Create and manage WhatsApp message templates',
             'templates' => $templates,

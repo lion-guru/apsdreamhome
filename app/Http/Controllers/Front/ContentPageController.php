@@ -78,7 +78,7 @@ class ContentPageController extends BaseController
             // fallback
         }
 
-        $this->render('pages/blog_post', [
+        $this->render('pages/blog-post', [
             'page_title' => $post['title'] . ' - APS Dream Home',
             'page_description' => $post['excerpt'] ?? 'Read our latest blog post',
             'post' => $post,
@@ -115,7 +115,7 @@ class ContentPageController extends BaseController
             $reviews = [];
         }
 
-        $this->render('pages/reviews', [
+        $this->render('pages/customer_reviews', [
             'page_title' => 'Reviews - APS Dream Home',
             'page_description' => 'Customer reviews and ratings.',
             'reviews' => $reviews,
@@ -134,7 +134,7 @@ class ContentPageController extends BaseController
             ORDER BY created_at DESC
         ", $params) ?: [];
 
-        $this->render('pages/documents', [
+        $this->render('pages/legal/documents', [
             'page_title' => 'Documents - APS Dream Home',
             'page_description' => 'Download important documents.',
             'documents' => $documents,
@@ -402,7 +402,7 @@ class ContentPageController extends BaseController
 
     public function legalTermsConditions()
     {
-        $this->render('pages/legal_terms', [
+        $this->render('pages/legal/terms', [
             'page_title' => 'Terms & Conditions - APS Dream Home',
             'page_description' => 'Terms and conditions of use.',
         ]);
@@ -410,7 +410,7 @@ class ContentPageController extends BaseController
 
     public function legalDocuments()
     {
-        $this->render('pages/legal_documents', [
+        $this->render('pages/legal/documents', [
             'page_title' => 'Legal Documents - APS Dream Home',
             'page_description' => 'Legal documents and resources.',
         ]);
@@ -462,7 +462,7 @@ class ContentPageController extends BaseController
 
     public function systemLaunchSystem()
     {
-        $this->render('pages/launch_system', [
+        $this->render('pages/system/launch_system', [
             'page_title' => 'System Launch - APS Dream Home',
             'page_description' => 'System launch and initialization.',
         ]);

@@ -152,7 +152,7 @@ class PaymentController extends BaseController
         $totalPayment = $emi * $numPayments;
         $totalInterest = $totalPayment - $propertyPrice;
 
-        $this->render('payments/emi_calculator', [
+        $this->render('payment/emi_calculator', [
             'result' => [
                 'emi' => round($emi, 2),
                 'total_interest' => round($totalInterest, 2),
@@ -182,7 +182,7 @@ class PaymentController extends BaseController
             [$userId]
         ) ?: [];
 
-        $this->render('payments/history', [
+        $this->render('payment/history', [
             'transactions' => $payments,
             'filters' => ['status' => $_GET['status'] ?? '', 'gateway' => $_GET['gateway'] ?? '', 'from' => $_GET['from'] ?? '', 'to' => $_GET['to'] ?? ''],
             'base' => BASE_URL
@@ -216,7 +216,7 @@ class PaymentController extends BaseController
             $stats = [];
         }
 
-        $this->render('payments/index', [
+        $this->render('admin/payments/index', [
             'pageTitle' => 'Payments - APS Dream Home',
             'payments' => $payments,
             'totalReceived' => $stats['total_received'] ?? 0,
@@ -245,7 +245,7 @@ class PaymentController extends BaseController
             return;
         }
 
-        $this->render('payments/initiate', [
+        $this->render('payment/initiate', [
             'pageTitle' => 'Initiate Payment',
             'amount' => $amount,
             'purpose' => $purpose,
@@ -265,7 +265,7 @@ class PaymentController extends BaseController
         $error = $_SESSION['error'] ?? 'Payment was cancelled or failed';
         unset($_SESSION['error']);
 
-        $this->render('payments/failure', [
+        $this->render('payment/failure', [
             'pageTitle' => 'Payment Failed',
             'errorMessage' => $error,
             'base' => BASE_URL
@@ -286,7 +286,7 @@ class PaymentController extends BaseController
 
     public function plans()
     {
-        $this->render('payments/plans', [
+        $this->render('payment/plans', [
             'pageTitle' => 'Payment Plans - APS Dream Home',
             'base' => BASE_URL
         ]);
@@ -303,7 +303,7 @@ class PaymentController extends BaseController
             exit;
         }
 
-        $this->render('payments/refund', [
+        $this->render('payment/refund', [
             'pageTitle' => 'Request Refund',
             'base' => BASE_URL
         ]);
@@ -325,7 +325,7 @@ class PaymentController extends BaseController
             exit;
         }
 
-        $this->render('payments/settings', [
+        $this->render('payment/settings', [
             'pageTitle' => 'Payment Settings',
             'base' => BASE_URL
         ]);

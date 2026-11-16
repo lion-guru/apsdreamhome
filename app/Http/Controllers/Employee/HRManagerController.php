@@ -79,7 +79,7 @@ class HRManagerController extends BaseController
 
         } catch (\Throwable $e) {
             error_log("HR Manager Controller Error: " . $e->getMessage());
-            $this->render('employees/department', [
+            $this->render('employee/department', [
                 'page_title' => 'HR Dashboard',
                 'dept_title' => 'HR Dashboard',
                 'dept_icon'  => 'fas fa-users-cog',

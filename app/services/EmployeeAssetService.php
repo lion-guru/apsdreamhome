@@ -71,7 +71,7 @@ class EmployeeAssetService
     {
         return $this->db->fetchAll("
             SELECT * FROM employee_asset_assignments
-            WHERE employee_id = ?{$this->tenantSql()}
+            WHERE employee_id = ?{$this->tenantWhere()}
             ORDER BY assigned_date DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
@@ -83,7 +83,7 @@ class EmployeeAssetService
     {
         return $this->db->fetchAll("
             SELECT * FROM employee_asset_assignments
-            WHERE employee_id = ? AND status = 'active'{$this->tenantSql()}
+            WHERE employee_id = ? AND status = 'active'{$this->tenantWhere()}
             ORDER BY assigned_date DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
@@ -109,7 +109,7 @@ class EmployeeAssetService
         if (!empty($data['asset_tag'])) {
             $existing = $this->fetchOne("
                 SELECT id FROM employee_asset_assignments
-                WHERE asset_tag = ? AND status = 'active'{$this->tenantSql()}
+                WHERE asset_tag = ? AND status = 'active'{$this->tenantWhere()}
             ", [$data['asset_tag']]);
             if ($existing) return ['success' => false, 'message' => 'Asset tag already assigned'];
         }

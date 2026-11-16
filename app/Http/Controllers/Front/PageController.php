@@ -755,16 +755,17 @@ public function becomeAssociate()
     }
 
     public function userPropertyDetail($id) {
+        $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         try {
             $id = (int)$id;
             $stmt = $this->db->prepare("SELECT * FROM user_properties WHERE id = ? AND status = 'active' LIMIT 1");
             $stmt->execute([$id]);
             $property = $stmt->fetch(\PDO::FETCH_ASSOC);
-            if (!$property) { header('Location: /apsdreamhome/properties'); exit; }
-            $this->render('pages/property_detail', ['property' => $property]);
+            if (!$property) { header('Location: ' . $base . '/properties'); exit; }
+            $this->render('pages/resell_property_detail', ['property' => $property]);
         } catch (\Throwable $e) {
             error_log('PageController userPropertyDetail: ' . $e->getMessage());
-            header('Location: /apsdreamhome/properties'); exit;
+            header('Location: ' . $base . '/properties'); exit;
         }
     }
 private function getPlans()

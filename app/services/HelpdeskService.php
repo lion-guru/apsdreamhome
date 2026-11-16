@@ -145,7 +145,7 @@ class HelpdeskService
     {
         $query = "
             SELECT * FROM helpdesk_tickets
-            WHERE employee_id = ?{$this->tenantSql()}
+            WHERE employee_id = ?{$this->tenantWhere()}
         ";
         $params = array_merge([$employeeId], $this->tVal());
 

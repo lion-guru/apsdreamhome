@@ -37,7 +37,7 @@ class MobileSystemPageController extends BaseController
 
     public function createMobileApp()
     {
-        $this->render('pages/create_mobile_app', [
+        $this->render('pages/mobile_app', [
             'page_title' => 'Create Mobile App - APS Dream Home',
             'page_description' => 'Create your own real estate mobile app.',
         ]);
@@ -45,7 +45,7 @@ class MobileSystemPageController extends BaseController
 
     public function systemLaunchSystem()
     {
-        $this->render('pages/launch_system', [
+        $this->render('pages/system/launch_system', [
             'page_title' => 'System Launch - APS Dream Home',
             'page_description' => 'System launch and initialization.',
         ]);

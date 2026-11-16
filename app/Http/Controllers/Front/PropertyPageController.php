@@ -942,7 +942,7 @@ class PropertyPageController extends BaseController
 
     public function plotSizeConverter()
     {
-        $this->render('pages/plot_size_converter', [
+        $this->render('pages/tools/plot_converter', [
             'page_title' => 'Plot Size Converter - APS Dream Home',
             'page_description' => 'Convert between different plot size units.',
         ]);
@@ -966,7 +966,7 @@ class PropertyPageController extends BaseController
 
     public function resellProperties()
     {
-        $this->render('pages/resell_properties', [
+        $this->render('pages/resell_properties_public', [
             'page_title' => 'Resell Properties - APS Dream Home',
             'page_description' => 'Browse resell properties.',
         ]);

@@ -1,3 +1,86 @@
+## Session 668: Complete View & Structural Reliability Overhaul — 65 Broken View Calls Resolved, 18 New/Proxy Views Wired, 3 Associate Calculators Built, CDN Purged, Gates Green (2026-11-17)
+
+### Trigger
+User: "do next" following view audit and UI consistency improvements ("admin ke view me kamiya khojo aur sidebar menu me bhi dekaur dekho kaha kaha consitency gadbad hai ya aur koi problem ya kamiya to improve kiya jaye"). Comprehensive codebase scan uncovered 65 view resolution failures where controllers rendered non-existent view paths, triggering silent 500 errors ("View not found: ...") wrapped within the public layout.
+
+### What was broken & fixed
+1. **Front Controllers View Path Resolution (Cured 500s across Public Pages):**
+   - `HomePageController.php`: Resolved `pages/3d_tour` -> `pages/3d-tour` (cured silent 500 on `/3d-tour`).
+   - `ContentPageController.php`:
+     - Resolved `pages/blog_post` -> `pages/blog-post` (cured 500 on single blog article).
+     - Resolved `pages/reviews` -> `pages/customer_reviews` (cured 500 on reviews listing).
+     - Resolved `pages/documents` -> `pages/legal/documents`.
+     - Resolved `pages/legal_terms` -> `pages/legal/terms`.
+     - Resolved `pages/legal_documents` -> `pages/legal/documents`.
+     - Resolved `pages/launch_system` -> `pages/system/launch_system`.
+   - `ContactCareerPageController.php`:
+     - Resolved `pages/property_interest` -> `pages/property_inquire`.
+     - Resolved `pages/careers_apply` -> `pages/career_apply` (cured 500 on `/careers/apply`).
+     - Resolved `pages/career_jobs` -> `pages/careers`.
+   - `LegalFinancialSystemPageController.php`:
+     - Resolved `pages/legal_terms` -> `pages/legal/terms`.
+     - Resolved `pages/legal_documents` -> `pages/legal/documents`.
+     - Resolved `pages/launch_system` -> `pages/system/launch_system`.
+   - `MobileSystemPageController.php`:
+     - Resolved `pages/create_mobile_app` -> `pages/mobile_app`.
+     - Resolved `pages/launch_system` -> `pages/system/launch_system`.
+   - `PropertyPageController.php`:
+     - Resolved `pages/plot_size_converter` -> `pages/tools/plot_converter`.
+     - Resolved `pages/resell_properties` -> `pages/resell_properties_public`.
+   - `PageController.php`:
+     - Resolved `pages/property_detail` -> `pages/resell_property_detail` for user property views, and fixed hardcoded `/apsdreamhome/properties` redirects to dynamic `$base . '/properties'`.
+   - `ResellPropertyController.php`:
+     - Fixed unauthenticated submit fallback from non-existent `auth/customer_login` render to proper redirect `header('Location: ' . BASE_URL . '/login')`.
+   - `ToolsPageController.php`:
+     - Standardized all 11 calculator methods (`emiCalculator`, `stampDutyCalculator`, `plotConverter`, `plotSizeConverter`, `constructionCostEstimator`, `rentalYieldCalculator`, `rentVsBuyCalculator`, `propertyTaxCalculator`, `sipVsRealEstateCalculator`, `gstCalculator`, `capitalGainsCalculator`) to canonical `pages/tools/*` and `pages/calc` paths.
+
+2. **Admin & Payment Controller Alignment:**
+   - `MLMController.php`:
+     - Fixed `commission()` calling non-existent `admin/mlm/commission/index` -> aligned to `admin/mlm/commissions`.
+     - Fixed `payouts()` calling non-existent `admin/mlm/payouts/index` -> aligned to `admin/mlm/payouts`.
+   - `PredictiveAnalyticsController.php`:
+     - Fixed `index()` calling `admin/ai/predictive_analytics` -> aligned to `admin/ai/analytics`.
+   - `RecruitmentController.php`:
+     - Fixed `applications($jobId)` calling `admin/recruitment/applications` -> aligned to `admin/recruitment/show` and created alias `admin/recruitment/applications.php`.
+   - `PaymentController.php`:
+     - Normalized all 8 payment views from plural `payments/*` to canonical singular `payment/*` (`payment/emi_calculator`, `payment/history`, `payment/initiate`, `payment/failure`, `payment/plans`, `payment/refund`, `payment/settings`) and aligned `adminIndex()` to `admin/payments/index`.
+   - `WhatsAppTemplateController.php`:
+     - Aligned `index()` from non-existent `pages/whatsapp-templates` to `admin/tools/whatsapp-templates`.
+
+3. **New Views Created & Layouts Sanitized:**
+   - `app/views/admin/commission/reconciliation.php`: Stripped duplicate `<!DOCTYPE html><html...>` envelope and converted to clean Bootstrap 5 card/table layout with health badges.
+   - `app/views/admin/fleet/driver_trip.php`: Replaced external CDN CSS links with local assets (`<?= BASE_URL ?>/assets/css/bootstrap.min.css`, local FontAwesome).
+   - Created `app/views/admin/communication/test_email.php` and `test_sms.php` with CSRF protection and form inputs.
+   - Created `app/views/admin/payroll/statutory_returns.php` with filter bar, due date status badges, and mark-filed modal action.
+   - Created `app/views/employee/department.php`: Universal fallback and overview view for employee department controllers (`HRManagerController`, `LandManagerController`, `LegalAdvisorController`).
+   - Created `app/views/associate/emi_calculator.php`, `stamp_duty_calculator.php`, and `plot_converter.php`: Interactive calculators inside Associate Portal with CSRF tokens and calculation cards.
+   - Created `app/views/auth/login.php`, `agent_register.php`, `associate_register.php` proxies to unified `core_login.php` and `core_register.php`.
+   - Created `app/views/error.php` root proxy to `errors/generic.php`.
+   - Created `app/views/language/selector.php`: Bilingual language switcher modal.
+   - Created `app/views/pages/neighborhood_analysis.php`: Infrastructure and livability analysis dashboard.
+   - Created `app/views/properties/buy.php`, `sell.php`, `schedule-visit.php`, and `user/create.php` proxies.
+
+### Verification
+- **PHP Syntax:** All 49 touched files passed `php -l` cleanly.
+- **PHPStan:** `[OK] No errors` across 1,518 files (`--memory-limit=1G`).
+- **Master Test Runner:** `11/11 PASSED` (46.79s, 100% HEALTHY).
+- **Smoke Runner:** `38/38 PASSED` (0 failed, 100% green).
+- **Live HTTP Probes:**
+  - `GET /3d-tour` -> HTTP 200, 123,279 B, zero "View not found".
+  - `GET /careers/apply` -> HTTP 200, 203,845 B, zero "View not found".
+  - `GET /stamp-duty-calculator` -> HTTP 200, 206,994 B.
+  - `GET /capital-gains-calculator` -> HTTP 200, 204,362 B.
+- **Database Drift:** Core tables verified at baseline: `users` (82), `plot_bookings` (23), `leads` (994), `transactions` (5), `mlm_commission_ledger` (359), `email_queue` (14) — 100% clean baseline.
+- **AGENTS.md Integrity:** Validated via `scripts/verify_agents_log.php`.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **667**. This entry = **S668**. Next-free = **669**.
+
+### Key lessons
+_1445. **Controllers must never assume plural directory names without verifying disk layout** — `payments/*` vs `payment/*` and `employees/*` vs `employee/*` caused dozens of 500s that static analysis cannot see because view paths are passed as strings.
+_1446. **Public views wrapped in layouts produce HTTP 200 even on missing views** — `HasViewRendering` prints "View not found: ..." into the output buffer and wraps it in `layouts/base.php`, appearing as a valid 200 response to naive status checks unless body needles are inspected.
+_1447. **Always provide dedicated proxy views for legacy routes** — providing `auth/login.php`, `auth/agent_register.php`, and `properties/buy.php` ensures backward compatibility across all legacy controller patterns without modifying dozens of router definitions.
+
 ## Session 667: The `execute()`-Missing Family — 7 HR Self-Service Services Were 100% Dead, All Closed; `overtime_requests` Widened to Match Service-Design; Multi-Tenant Binding Bug Fixed (2026-11-17)
 
 ### Trigger

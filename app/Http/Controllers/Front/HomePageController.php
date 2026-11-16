@@ -166,7 +166,7 @@ class HomePageController extends BaseController
 
     public function threeDTour()
     {
-        $this->render('pages/3d_tour', [
+        $this->render('pages/3d-tour', [
             'page_title' => '3D Virtual Tour - APS Dream Home',
             'page_description' => 'Explore our properties with immersive 3D virtual tours.',
         ]);

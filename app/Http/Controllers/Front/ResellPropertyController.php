@@ -48,7 +48,8 @@ class ResellPropertyController extends BaseController
             $userId = (int)($_SESSION['user_id'] ?? 0);
             if (!$userId) {
                 $_SESSION['error'] = 'Please login to list a property';
-                return $this->render('auth/customer_login', $this->data);
+                header('Location: ' . BASE_URL . '/login');
+                exit;
             }
             $data = $_POST;
             $data['user_id'] = $userId;
