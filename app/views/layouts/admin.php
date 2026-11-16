@@ -470,6 +470,8 @@ $GLOBALS['_html_doc_started'] = true;
                 </div>
             <?php endif; ?>
 
+            <?php include __DIR__ . "/flash-block.php"; ?>
+
             <?php echo $content ?? ''; ?>
         </div>
     </main>
