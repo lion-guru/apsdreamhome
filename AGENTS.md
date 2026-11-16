@@ -1,3 +1,28 @@
+## Session 633: Live Distribution Preview Added To Commission Plan Create Page — Per-Rank Row Cost + Upline Slab-Differential Chain, Advisory Labels, Clamp-Aware Cap Messaging, Gates Green (2026-11-16)
+
+### Trigger
+User (Hinglish): "live calculation bhi pata chale ki plan ban raha to calculation aur distribution kaise ho raha etc" — the create page must SHOW the payout math as you edit, before any save.
+
+### What was built
+`app/views/admin/commission/plans/create.php` — new full-width **Live Distribution Preview** panel placed between the Rank Levels table and the Create/Cancel actions (id `livePreviewPanel`):
+- Inputs: sale amount (default ₹15,00,000), selling rank selector (Associate → Site Manager, rows above seller shown muted). "Full Calculator" link jumps to the existing `/admin/commission-plans/calculator` for the saved-plan breakdown.
+- Live table re-renders on **every keystroke anywhere in the form** (140 ms debounce) reading the UNSAVED `levels[i][j]` cells directly: Direct %, Team %, Level Bonus, Matching, Leadership, Performance, Row Total, ₹ share of sale.
+- Summary chips: **Selling-rank payout** (all components of the selected rank's row) + **Upline slab differential chain** (`Σ max(0, dir[k]−dir[k−1])`, provably equal to the top direct slab by construction — callout `pvTopSlab` shows it; `pvUplinePay` shows ₹) + **Row-cost vs cap status**.
+- Cap semantics corrected after first render: rows above Global Cap are **expected** (slab stack) — the MLM engine **clamps the sale's total payout to `global_cap_pct`** (see `MLMCommissionEngine.php:1002` — "Hard cap from mlm_settings.global_cap_pct"), not an error. Status now reads "rows above cap → clamped to X%" (info, not danger), per-row cells carry a muted `clamp` badge.
+- Labeling: `ADVISORY` badge + disclaimer copy ("save karne se pehle hi dikhta hai; exact payout MLM engine karta hai Activate ke baad"). Inline nonce `<script>`; zero PHP changed; no new endpoints.
+
+### Live verification (fresh test login)
+- Page renders 7 rank rows live: Associate default → seller 7.0% ₹1,05,000; upline differential chain ₹2,25,000; `topSlab` = 20.0%; rows 3–7 flagged clamp — all correct from the current form defaults.
+- Seller switched to Site Manager, sale to ₹3 crore → seller payout `₹1,89,00,000` (63.0%), upline chain `₹45,00,000` (15% of ₹3 Cr — correct), status "5 rows above cap → clamped to 20.0%" — console 0 errors throughout.
+- **PHPStan** → `[OK] No errors` · **Master** → **11/11 PASSED** (47.15s) · 0 DB writes (form-side math only).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 632 (parallel actor, AI Insight Panel in Morning Brief, entry present in this file). This entry = **S633**. Next-free = **634**.
+
+### Key lessons
+_1357. **Cap semantics beat alarm design.** Calling expected slab values "over cap" in red invented a bug; the engine's real behavior is clamp-to-cap — the label must state the contract, not shout an error that doesn't exist.
+_1358. **A preview that reads the form's own DOM cells needs no server roundtrip.** 140 ms debounce against `[name^="levels["]` inputs gives sub-100 ms recalc with zero new endpoints and zero save-coupling.
+_1359. **Slab differentials are provably the top slab.** `Σ(dir[k]−dir[k−1]) = dir[top]` — surfacing this as a callout means the admin sees immediately whether top slab vs cap still leaves room for Track A+, or whether cap clamping bites the moment an entry is saved.
 ## Session 631: AI Plan Coach in Create Commission Plan — Free Live AI Q&A Panel, Design-a-Plan Mode, 60-Field Apply, Full Round-Trip Verified, Gates Green (2026-11-16)
 
 ### Trigger

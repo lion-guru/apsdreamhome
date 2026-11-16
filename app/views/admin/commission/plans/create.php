@@ -197,6 +197,47 @@ $activePlanName = $activePlanName ?? null;
                 </table>
             </div>
 
+            <!-- LIVE PREVIEW (advisory, unsaved form values) -->
+            <div class="cp-card" id="livePreviewPanel" style="margin-bottom:.5rem;border:1px solid #312e81;box-shadow:0 0 0 1px #1e2440">
+                <div class="cp-card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                        <div>
+                            <h6 class="m-0"><i class="fas fa-chart-simple me-2 text-primary"></i>Live Distribution Preview <span class="badge" style="background:#312e81;color:#c7d2fe;font-size:.58rem">ADVISORY</span></h6>
+                            <div class="small text-muted">Save karne se pehle hi dikh jaata hai — jo numbers aap badalne ja rahe ho unka asar. Exact payout MLM engine karta hai (Activate ke baad).</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="small text-muted">Sale ₹</span>
+                            <input type="number" id="pvSale" class="cp-input" style="width:150px;font-weight:600" value="1500000" step="100000" min="0" aria-label="Preview sale amount">
+                            <select id="pvRank" class="cp-input" style="width:165px" aria-label="Selling rank"></select>
+                            <a href="<?= $base ?>/admin/commission-plans/calculator" class="cp-btn cp-btn-outline" style="padding:7px 12px;font-size:.75rem"><i class="fas fa-external-link-alt"></i>Full Calculator</a>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="table rank-table m-0" id="pvTable" aria-label="Live distribution by rank">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Rank<small>as selling rank in this slab</small></th>
+                                    <th scope="col">Direct %</th>
+                                    <th scope="col">Team %</th>
+                                    <th scope="col">Level Bonus</th>
+                                    <th scope="col">Matching %</th>
+                                    <th scope="col">Leadership %</th>
+                                    <th scope="col">Performance %</th>
+                                    <th scope="col">Row Total</th>
+                                    <th scope="col">₹ on this sale</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pvBody"><tr><td colspan="9" class="text-center text-muted">Loading…</td></tr></tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex flex-wrap gap-4 mt-2" style="font-size:.78rem">
+                        <div>Selling rank payout: <b id="pvSellerPay" class="text-warning">₹0</b> (<span id="pvSellerPct">0%</span>)</div>
+                        <div>Upline slab differential: <b id="pvUplinePay" class="text-info">₹0</b> · chain = top slab (<span id="pvTopSlab">20%</span>) by construction</div>
+                        <div>Row-cost vs cap: <b id="pvCapStatus" class="text-info">—</b> <span class="text-muted">(rows above Global Cap = engine clamps, not an error)</span></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex gap-2 flex-wrap align-items-center">
                 <button type="submit" class="cp-btn cp-btn-primary"><i class="fas fa-save"></i>Create Draft Plan (v1)</button>
                 <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-times"></i>Cancel</a>
@@ -415,5 +456,98 @@ $activePlanName = $activePlanName ?? null;
         suggestion = null;
         applyBtn.style.display = 'none';
     });
+})();
+</script>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function(){
+    var form = document.querySelector('form[action*="commission-plans/store"]');
+    if (!form) { return; }
+    var saleEl = document.getElementById('pvSale');
+    var rankEl = document.getElementById('pvRank');
+    var tbody = document.getElementById('pvBody');
+    if (!saleEl || !rankEl || !tbody) { return; }
+
+    var rankNames = ['Associate', 'Sr. Associate', 'BDM', 'Sr. BDM', 'Vice President', 'President', 'Site Manager'];
+    rankNames.forEach(function(n, i){
+        var o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = n;
+        rankEl.appendChild(o);
+    });
+    rankEl.value = '0';
+
+    function getNum(name){
+        var el = form.querySelector('[name="' + name + '"]');
+        return el ? (parseFloat(el.value) || 0) : 0;
+    }
+    function cell(i, j){ return getNum('levels[' + i + '][' + j + ']'); }
+    function fmt(n){ return new Intl.NumberFormat('en-IN', { style:'currency', currency:'INR', maximumFractionDigits: 0 }).format(Math.round(n)); }
+
+    function recalc(){
+        var amount = parseFloat(saleEl.value) || 0;
+        var seller = parseInt(rankEl.value, 10) || 0;
+        var cap = getNum('global_cap_pct');
+        if (cap <= 0) { cap = 20; }
+
+        var rows = [];
+        var overCap = 0;
+        for (var i = 0; i < 7; i++) {
+            var d = cell(i, 2), t = cell(i, 3), lb = cell(i, 4), m = cell(i, 5), l = cell(i, 6), p = cell(i, 7);
+            var tot = d + t + lb + m + l + p;
+            var amt = amount * tot / 100;
+            var over = tot > cap;
+            if (over) { overCap++; }
+            rows.push({ i:i, d:d, t:t, lb:lb, m:m, l:l, p:p, tot:tot, amt:amt, over:over });
+        }
+
+        var html = rows.map(function(r){
+            var dim = r.i < seller ? ' class="text-muted"' : '';
+            var totCell = r.over
+                ? '<td class="text-info">' + r.tot.toFixed(1) + '% <span class="badge" style="background:#312e81;color:#c7d2fe;font-size:.58rem">clamp</span></td>'
+                : '<td>' + r.tot.toFixed(1) + '%</td>';
+            return '<tr' + dim + '>'
+                + '<td><strong>' + rankNames[r.i] + '</strong></td>'
+                + '<td>' + r.d.toFixed(1) + '</td>'
+                + '<td>' + r.t.toFixed(1) + '</td>'
+                + '<td>' + r.lb.toFixed(1) + '</td>'
+                + '<td>' + r.m.toFixed(1) + '</td>'
+                + '<td>' + r.l.toFixed(1) + '</td>'
+                + '<td>' + r.p.toFixed(1) + '</td>'
+                + totCell
+                + '<td>' + fmt(r.amt) + '</td>'
+                + '</tr>';
+        }).join('');
+        tbody.innerHTML = html;
+
+        // Selling-rank payout = its own row (all components)
+        var sellerRow = rows[seller];
+        document.getElementById('pvSellerPay').textContent = fmt(sellerRow.amt);
+        document.getElementById('pvSellerPct').textContent = sellerRow.tot.toFixed(1) + '%';
+
+        // Upline direct differential chain = top slab − junior slab sums = top slab
+        var diff = 0;
+        for (var k = 1; k < 7; k++) { diff += Math.max(0, cell(k, 2) - cell(k - 1, 2)); }
+        document.getElementById('pvUplinePay').textContent = fmt(amount * diff / 100);
+        document.getElementById('pvTopSlab').textContent = cell(6, 2).toFixed(1) + '%';
+
+        var status = document.getElementById('pvCapStatus');
+        if (overCap === 0) {
+            status.textContent = 'All rows within cap';
+            status.className = 'text-success fw-bold';
+        } else {
+            status.textContent = overCap + ' rows above cap -> clamped to ' + cap.toFixed(1) + '%';
+            status.className = 'text-info fw-bold';
+        }
+    }
+
+    var debounce = null;
+    function queue(){ clearTimeout(debounce); debounce = setTimeout(recalc, 140); }
+    form.addEventListener('input', queue);
+    form.addEventListener('change', queue);
+    saleEl.addEventListener('input', recalc);
+    rankEl.addEventListener('change', recalc);
+
+    recalc();
 })();
 </script>
