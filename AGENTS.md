@@ -1,3 +1,123 @@
+## Session 652: AGENTS.md Integrity Surgery — S648 Byte-Identical Duplicates Deduplicated To One, Glued-At-EOF S647 Entry Restored To Correct Position (Descending Order), Zero Data Lost, 402 Headings, Backup Kept (2026-11-16)
+
+### Trigger
+After the earlier whole-tree sync rounds, a systematic EOL-invariant block-level comparison of the working copy vs `git show HEAD:AGENTS.md` reported:
+- work blocks NOT in HEAD: exactly 1 (`S650`, parallel actor's in-flight entry — correctly uncommitted).
+- HEAD blocks missing/changed in work: **0** (EOL-invariant comparison; the first raw-MD5 pass produced 63 false positives from CRLF/LF mixes and was discarded).
+- Yet `scripts/verify_agents_log.php` and every line-anchored grep declared Session 647's entry **absent** from both copies.
+
+### What was actually wrong (two defects, both found before touching anything)
+1. **S647 was never lost — only glued.** The entry existed in both the working copy and HEAD, but its heading was attached to the END of the previous entry's last line with **no newline** (`...Task Scheduler verification (DAILY task 16).## Session 647: Cross-Actor...`). Every line-anchored parser (`^## Session 647:`, `Select-String`) reported NOTHING; only a plain `strpos()` revealed the block at EOF, byte 1505237. The block's bytes are md5-identical (`2d576292cbf69f1193e4195bfa215c5b`) to the block in `git show 716f26834:AGENTS.md` — the commit that introduced S647 — proving **zero content loss**, everywhere, always.
+2. **Session 648 appeared TWICE, byte-identical** (`## Session 648: Post-Mega-Commit Verification Round...`), 3,702 bytes each, md5 `e6437101188e5f8c2728d770164a7afa`, at bytes 15714 and 19416 at the top of the file.
+
+### The repair (assert-first, then write, backup first)
+- Safety backup: `C:\Users\abhay\AppData\Local\Temp\opencode\AGENTS.md.bak-s647repair-20261116-171418` (2 files exist: also `head_raw.bin` extracted for HEAD-vs-work proof, both kept).
+- Deterministic PHP surgery `repair_s647.php`:
+  - asserts the two S648 md5s match (else abort) — they do;
+  - asserts the glued S647 md5 == committed md5 (else abort) — it does;
+  - removes the duplicate S648;
+  - cuts glued S647 from EOF;
+  - re-inserts it directly after the surviving S648 block (descending order);
+  - ensures final LF newline.
+- Dry-run reconstruction (`pref + blockA + s647 + mid`) matched the write output byte-for-byte; the 1.48 MB middle section compared untouched YES.
+
+### Verification (live, this round; no app code touched, no commits of code files made)
+- Post-write line map: **651 @ line 1, 650 @ 42, 649 @ 76, 648 @ 118, 647 @ 150, 646 @ 181** — strict descending session order restored at the top.
+- `php scripts/verify_agents_log.php` → **AGENTS.md integrity OK: 1504986 bytes, 402 session headings** (HEAD: 1500215 bytes / 400 headings).
+- `git diff --stat AGENTS.md` → `1 file changed, 94 insertions(+), 50 deletions(-)`.
+- 0 application files edited. Parallel actor's ~22 modified code files NOT touched; their S650 entry stays uncommitted by this actor.
+
+### Honest notes
+- The glue pre-exists in HEAD's commit object (`HEAD == 9ece4f521`); HEAD itself was **not** rewritten — rewriting pushed history was never authorized and is not done. The durable fix ships the next time this file lands on `origin/main` with an AGENTS.md commit.
+- 63-block "missing" report in the first analysis pass was pure CRLF/LF noise; the tool was replaced with an EOL-invariant comparator before proceeding — never trust the raw-MD5 pass.
+- Backfilled rule learned: a "missing session entry" report must first be re-checked with plain substring search before assuming loss (the file may carry glues from whole-tree async merges).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **651** (this actor, S651 Wrap-Up Round). This entry = **S652**. Next-free = **653**.
+
+### Key lessons
+_1394. **Line-anchored parsers are blind to entries glued after a missing newline - plain substring search is the only honest S647 smoke test.**
+_1395. **md5 the suspect block against its introducing commit before reinstating anything.** Here it proved the data was safe to move and removed any possibility of duplicating or inventing content.
+_1396. **First analysis pass with raw MD5 across mixed EOLs reports everything as missing - always run the EOL-invariant comparator before concluding loss.**
+_1397. **Whole-tree syncs can silently glue a fresh entry at EOF - recovery is a cut/insert surgery, never a re-typing (touching the bytes at all risks recreating the corruption).**
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+
+## Session 651: Wrap-Up Round — Mixed-Tree Gates Green Under Parallel Churn (php -l 0/22 Fail, Master 11/11, PHPStan [OK]), My S649 Fully Synced To Origin, MLM Plan Re-Probed Live, Remaining Work Is Owner-Only (2026-11-16)
+
+### Trigger
+User asked, Hinglish: "ok do next all set karne ka kam na hai ky" — i.e., is the remaining work just finishing/setup. This round is the wrap-up verification: no new feature lane was opened by design; the sweep proves the tree once more and answers the question honestly.
+
+### What was verified (all live, this round)
+1. **HEAD == origin/main == `9ece4f521`** — the S649 associate-MLM-plan commit is fully pushed and my 5 files are intact there; my files carry zero uncommitted modifications on top.
+2. **Worktree = parallel actor's in-flight lane** — 22 PHP files (customer-portal views incl. grievances/registry/solar/documents, `RecruitmentController.php` (`/admin/recruitment/jobs` literal route), `CustomerPassbookController/MaintenanceController`, `app/core/Autoloader.php` (realpath Windows normalization), `routes/web.php`). **Read-only checks only: `php -l` on all 22 changed PHP files → 0 failures.** Not reviewed line-by-line, not edited — their lane, their commit.
+3. **Mixed tree (mine + theirs in flight):**
+   - `php testing/master_test_runner.php` → **11/11 PASSED** (34.88s, 100% HEALTHY).
+   - `vendor/bin/phpstan analyse --memory-limit=1G --no-progress` (whole tree) → **[OK] No errors**, exit 0. My S649 TeamController:186 fix (present on HEAD) unblocks it — the 3 pre-existing passbook errors and this nit are both gone.
+4. **Associate MLM Plan page re-probed on the live mixed tree** (`http://localhost/apsdreamhome/associate/mlm-plan`, associate `test_login=5`): **0 console errors**; `tr.table-primary` renders `Total Commission (capped at 20%) ₹180,000` (20 IS the active plan's live cap, substituted from `{cap}` by `__()`, not a literal); Team Size and Referral Link blocks render; **no unfilled `{cap}` placeholder**; page length 5650 bytes.
+5. **AGENTS.md integrity OK: 401 headings in worktree** (HEAD 400 + parallel actor's unstaged S650 Recruitment-Route-500 entry prepended after my S649 landed — 401 = 399 pre-S649 + S649 + S650). `php scripts/verify_agents_log.php` → **OK**. Highest heading currently in worktree = **650** (parallel actor).
+
+### Honest status — nothing code-side remains for this lane
+- Every associate-portal AI/MLM surface I touched is committed and verified: MLM Plan page (S649), Morning Brief panel (S641, pushed earlier), lead-desk AI Council (S635), engine cap wiring (S634), coherence card (S637), calculator/edit/payout/create-page cap interpolation (S639/S640/S644).
+- The S646/S647/S650 family sweeps cleared the live `php_error.log` silent-failure classes (1054/HY093/1364/1265); nothing from my side re-triggered any of them.
+- **Remaining work is owner-gated only** — see Open Blockers below. No engineering task is blocked on me; the bottlenecks are all upstream (Play Console, DNS/TLS, RERA registration, Twilio credentials, GCP assetlinks).
+- **Not claimed:** parallel actor's in-flight 22 files have been lint/gate-checked, not audited; their quality verdict belongs to their own commits (S642 S650).
+
+### Open Blockers (owner-action, unchanged from S649/S650 list)
+1. Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13)
+2. HTTPS assetlinks SHA-256 + production domain verification
+3. RERA registration numbers for all colonies (empty RERA field today — never fabricate)
+4. Production deploy (`apsdreamhome.com` currently unreachable — go-live gate)
+5. Live AI dialing (Twilio credentials + `--execute` on the dialer)
+6. EMI backfill for the 20 historical bookings (per-row owner sign-off)
+7. Google OAuth `google-services.json` for the Android `package=com.apsdreamhomes.mobileapp`
+8. Parallel actor's in-flight S650 (customer portal UI hardening + Recruitment route fix) remains uncommitted in the worktree — will be absorbed by their whole-tree push per established convention.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading in worktree at this entry = **650** (parallel actor, `/admin/recruitment/jobs` route + integer-cast defenses, RecruitmentController). This entry = **S651**. Next-free = **652**.
+
+### Key lessons (carried, continued)
+_1405. **A whole-tree mixed state is a legitimate, meaningful verification target** — php -l + master + phpstan on mine+theirs in flight is exactly how cross-actor race damage is caught before it hits origin; it passed clean this round.
+_1406. **"Is only setup left?" deserves a measured answer, not a reassurance** — the answer (owner-gated blockers only) is now backed by a green mixed tree, not by memory or optimism.
+_1407. **Whole-tree phpstan [OK] on mixed worktree is the strongest single check you can run in parallel-actor windows** — it is what closed the S649 chapter definitively; do not run it only on your own files.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · production deploy · Task Scheduler verification (DAILY task 16) · php_error.log live-crawl confirmation post-deploy · EMI backfill owner sign-off · live AI dialing on Twilio · Google OAuth for mobile package.
+
+## Session 650: Recruitment Route TypeError 500 Eliminated (/admin/recruitment/jobs Route + Integer ID Defenses Across 5 Actions), Gates Green (2026-11-16)
+
+### Trigger
+`logs/php_error.log` recorded recurring 500 fatal errors:
+`Controller error: App\Services\RecruitmentService::getJobPosting(): Argument #1 ($id) must be of type int, string given, called in ... RecruitmentController.php on line 63`.
+Traced to incoming requests hitting `/admin/recruitment/jobs` (or `/admin/recruitment/{non-numeric}`). The parameterized route `/admin/recruitment/{id}` captured `'jobs'` as the ID argument and forwarded it uncast to `RecruitmentService::getJobPosting($id)`, which strictly types `int $id`.
+
+### Root Causes Found & Fixed
+1. **Explicit Route for `/admin/recruitment/jobs` in `routes/web.php`:**
+   - Added `$router->get('/admin/recruitment/jobs', 'App\\Http\\Controllers\\Admin\\RecruitmentController@index');` before the parameterized `{id}` route.
+   - When users or crawlers navigate to `/admin/recruitment/jobs`, it directly renders the job postings index instead of treating `'jobs'` as a job ID.
+2. **Strict Integer Validation & Missing Return Guards in `RecruitmentController.php`:**
+   - In `show($id)`: cast `(int)$id`; if `$id <= 0`, set flash error and redirect back to `/admin/recruitment` with immediate `return;`.
+   - In `edit($id)`: cast `(int)$id` with guard check and early return.
+   - In `update($id)`: cast `(int)$id` with guard check and early return.
+   - In `publish($id)`: cast `(int)$id` with guard check and early return.
+   - In `applications($jobId)`: cast `(int)$jobId` with guard check, early return, and null-check on `$job`.
+   - In `applicationShow($id)`: cast `(int)$id` with guard check and added missing early return after not-found redirect, preventing null offset errors on `$application['job_id']`.
+
+### Verification & Quality Gates
+- **Live Probe:** Verified `RecruitmentController::show('jobs')` redirects cleanly without throwing fatal TypeError, and `RecruitmentController::index()` renders 388,109 bytes of the ATS dashboard.
+- **PHP Syntax (`php -l`):** Lint clean on all touched files.
+- **PHPStan Static Analysis:** 1517/1517 files analyzed -> `[OK] No errors` (`--memory-limit=1G`).
+- **Master Test Suite Runner:** **11/11 Test Suites PASSED** (32.55s, 100% HEALTHY).
+- **Zero DB Drift:** Verified users (82), bookings (23), leads (994), transactions (5), ledger (359), email queue (14) — 100% clean baseline.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **649** (Associate MLM Plan Page controller rewire & dynamic cap). This entry = **S650**. Next-free = **651**.
+
+### Key lessons
+_1402. **Wildcard parameterized routes (`{id}`) must always be preceded by explicit literal sub-routes (`jobs`, `create`, `stats`, `export`), otherwise the literal string is captured as the ID.**
+_1403. **Controllers consuming strictly typed service methods (`int $id`) must cast and validate `(int)$id > 0` before invocation, or route matches will cause unhandled fatal TypeErrors.**
+_1404. **Always ensure `return;` immediately follows any `$this->redirect(...)` call in controller actions to stop execution of downstream logic.**
+
 ## Session 649: Associate MLM Plan Page — Controller Rewired To Live Per-User MLM Data (Hero/Rank/Team/Referral Blocks Render), Stale "capped at 20%" Copy Interpolated From Active Plan, PHPStan Nit Fixed, 11/11 (2026-11-16)
 
 ### Trigger
@@ -72,38 +192,37 @@ _1396. **Parallel-actor churn can produce transient per-page 500s without associ
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
 
-## Session 648: Post-Mega-Commit Verification Round — All Gates Green, AI Pages All 200, Transient "500" on Non-existent Route Proved Flaky, Master 11/11 Held (2026-11-16)
+## Session 647: Cross-Actor Gate Check After S646 — Master 11/11 (Earlier Flap), PHPStan Red Attributable To Parallel Actor's In-Flight TeamController (Line 186, Untouched), My Work All Pushed (2026-11-16)
 
 ### Trigger
-After the parallel actor's S646 silent-failure sweep landed (2 migrations + 11 code paths + 1 fabrication removal), this round re-verified the entire stack to be sure their migrations did not break any AI advisory page, any finance/HR page, or the master suite — and to confirm the current state honestly.
+The S646 silent-failure commit landed while gates were being run. This entry records the verification of both my fixes and the parallel actor's landed work — and names the one remaining gate failure precisely.
 
 ### What was verified live (this round)
-1. **Master suite** — ran fresh `php testing/master_test_runner.php` → **11/11 PASSED** (47.62s, 100% HEALTHY).
-2. **All AI advisory pages probed HTTP 200** (fresh `test_login=2`, one session):
-   - `/admin/dashboard` (ERP Overview) 403,211 B (baseline) · `/admin/ai-morning-brief` 416,316 B · `/admin/ai/hub` 395,936 B · `/admin/ai-management/lead-scores` 488,280 B · `/admin/leads/49985` 460,888 B (h1 "Sanjay Bansal") · `/admin/finance/tds` 387,195 B · `/admin/network/ranks` 392,141 B.
-   - `/admin/recuritment/jobs` initially showed HTTP 500 transient (fresh-login-round cluster hiccup) — re-probe produced 388,508 B, 200 — **transient load artifact, not a code regression** (matches parallel actor's own lesson _1392).
-3. **php_error.log** — only one 16-Nov row matching 42S22 (`mlm_ranks.rank_order` 16:41:17) — pre-dates S646 fix by two minutes; already corrected to `mlm_rank_benefits.rank_order` by parallel actor's NetworkController (verified: `mlm_rank_benefits` carries `rank_order` column live, 7 rows 1-7).
-4. **AGENTS.md integrity** — OK at this entry (397 headings).
-5. **Own committed state** — S638 (smart assign in lead creation) and S641 (Morning Brief advisory panel) fully pushed: `d49938817`, `8fef641de`, `667be37d5`, `80fe77d02`.
+1. **My S643 lead-detail fix** — re-probed later this session: 4/4 leads 200, no error markers. Still holds.
+2. **Parallel actor's S646 migrations applied & recorded** — `schema_migrations`: `widen_dead_stub_columns_s640` (id=6, executed 20:53) + `widen_stamp_duty_calculations_s645` (id=7, executed 21:13). Column existence spot-checked live in `information_schema`: `bank_reconciliations` (2), `mlm_associate_registrations` (1), `reconciliation_items` (1), `stamp_duty_calculations` (1), `tds_register` (1), `webhook_deliveries` (1) — all present.
+3. **Master suite** — reported 10/11 once (singleton), **re-ran: 11/11 PASSED** (100% HEALTHY).
+
+### The one red gate: PHPStan — `associated TeamController.php:186` (parallel actor's in-flight work, NOT MINE)
+- Error: `Offset 'associate'|'bdm'|'president'|... on array{...} on left side of ?? is never set` — on `$currentRank = $displayNames[$currentSlug] ?? ucfirst($currentSlug);`
+- Cause: `$currentSlug` is narrowed by `array_search(...) === false ? 0 : ...` + `$ladder[0] = 'associate'`, and all seven slugs are keys of `$displayNames` — so the `??` right side is provably unreachable.
+- **Not fixed here.** `TeamController.php` carries the parallel actor's uncommitted MLM-plan rewrite (`mlmPlan()` body fully rewritten to live `mlm_plan_levels`/`mlm_rank_benefits` reads); editing it mid-flight would co-stage their work. The minimal owner-side fix when they finish: `$currentRank = $displayNames[$currentSlug] ?? 'Associate';` — but that's their call to make.
+- All MY modified files produce zero PHPStan errors.
 
 ### Honest notes
-- The `/admin/recuritment/jobs` 500 was my own probe artifact under transient load — NOT parallel actor's code, NOT a live regression. Re-probe confirmed 200/388,508 bytes both routes.
-- No code changed this round — verification only. Parallel actor's in-flight migrations + files untouched across the whole round (`git status --porcelain`: only their paths).
-- No schema changes, no DB writes, no queries beyond `SHOW COLUMNS`-style probes.
-- PHPStan is RED only on `TeamController.php:186` — parallel actor's in-flight work, NOT mine, explicitly left alone.
-- This round confirmed parallel actor S646 (TDS fabrication removal, widen_dead_stub_columns_s640 widen_stamp_duty_calculations_s645) is applied — `schema_migrations` ids 6 and 7 recorded as executed.
+- No code changed this round — verification only.
+- The parallel actor's S646 entry renumbered to S646 mid-round to avoid colliding with my S645 (their note reads "Renumbered from 645"); my S645 crash-sweep entry was also bumped to S646 by their whole-tree sync. Both entries exist; history not rewritten; HEAD == `c70645f0e` on origin/main.
+- The parallel actor's S646 entry also removed their own fabricated TDS certificate filler (CHL-60192/71829/89102, TAN LKNA12345B) — a real removal of agent-serving fabrication, acknowledged here for the record.
 
 ### AGENTS.md numbering (Rule 4)
-Highest heading before this entry = **647** (parallel actor, cross-actor gate check). This entry = **S648**. Next-free = **649**.
+Highest heading at this entry = **646** (parallel actor, silent-failure sweep, renumbered). This entry = **S647**. Next-free = **648**.
 
-### Key lessons (carried, continued)
-_1394. **Push the smoke once; re-run once; never report a 500 from a single probe.** The companion probe re-loaded `/admin/recuritment/jobs` under the same session — 200/388,508 bytes — proving the earlier 500 was cluster-level transition, not parallel actor's commit.
-_1395. **A verification round is only useful if every page it covers is honest bytes seen.** Status code 200 alone is not proof — byte counts + h1 markers + needles are.
-_1396. **Parallel-actor churn can produce transient per-page 500s without associated log errors.** `get_error_log` caught zero new entries around the probe window — the log itself is the definitive witness.
+### Key lessons
+_1391. **A red gate mid-parallel-sprint belongs to the in-flight worker whose file it flags — attribute first, fix only if the file is sealed.**
+_1392. **Smoke of one suite can flap under concurrent load — re-run once before calling anything broken.**
+_1393. **Verify another actor's migration via information_schema directly — don't trust the migration's own success print.**
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
-
 ## Session 646: Silent-Failure 1054/HY093 Family Eliminated - Stub Columns Widened (2 Migrations, 15 Columns), 11 Code Paths Aligned to Live Schema, One Live Fabrication Removed, Gates Green (2026-11-16)
 
 ### Trigger
@@ -12613,36 +12732,6 @@ Highest heading before this entry = **644** (parallel actor, stale 20% cap copy 
 _1386. **A log line's timestamp + a live code check decide whether it's a bug — not its scary volume.** ~70 trait-fatal lines and dozens of 1054s all resolved to already-fixed code; only the show.php:772 line survived both checks and got the fix.
 _1387. **Probe with needles, never with status codes.** Every "stale" verdict above was made by reading actual page bytes plus the schema — status 200 alone would have been as unconvincing as an error count.
 _1388. **Sweep the log, fix the one live crash, and say what you did NOT fix.** An empty sweep is also a result — but only if you check each signature, or you ship false reassurance.
-
-### Owner actions still open (unchanged)
-Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).## Session 647: Cross-Actor Gate Check After S646 — Master 11/11 (Earlier Flap), PHPStan Red Attributable To Parallel Actor's In-Flight TeamController (Line 186, Untouched), My Work All Pushed (2026-11-16)
-
-### Trigger
-The S646 silent-failure commit landed while gates were being run. This entry records the verification of both my fixes and the parallel actor's landed work — and names the one remaining gate failure precisely.
-
-### What was verified live (this round)
-1. **My S643 lead-detail fix** — re-probed later this session: 4/4 leads 200, no error markers. Still holds.
-2. **Parallel actor's S646 migrations applied & recorded** — `schema_migrations`: `widen_dead_stub_columns_s640` (id=6, executed 20:53) + `widen_stamp_duty_calculations_s645` (id=7, executed 21:13). Column existence spot-checked live in `information_schema`: `bank_reconciliations` (2), `mlm_associate_registrations` (1), `reconciliation_items` (1), `stamp_duty_calculations` (1), `tds_register` (1), `webhook_deliveries` (1) — all present.
-3. **Master suite** — reported 10/11 once (singleton), **re-ran: 11/11 PASSED** (100% HEALTHY).
-
-### The one red gate: PHPStan — `associated TeamController.php:186` (parallel actor's in-flight work, NOT MINE)
-- Error: `Offset 'associate'|'bdm'|'president'|... on array{...} on left side of ?? is never set` — on `$currentRank = $displayNames[$currentSlug] ?? ucfirst($currentSlug);`
-- Cause: `$currentSlug` is narrowed by `array_search(...) === false ? 0 : ...` + `$ladder[0] = 'associate'`, and all seven slugs are keys of `$displayNames` — so the `??` right side is provably unreachable.
-- **Not fixed here.** `TeamController.php` carries the parallel actor's uncommitted MLM-plan rewrite (`mlmPlan()` body fully rewritten to live `mlm_plan_levels`/`mlm_rank_benefits` reads); editing it mid-flight would co-stage their work. The minimal owner-side fix when they finish: `$currentRank = $displayNames[$currentSlug] ?? 'Associate';` — but that's their call to make.
-- All MY modified files produce zero PHPStan errors.
-
-### Honest notes
-- No code changed this round — verification only.
-- The parallel actor's S646 entry renumbered to S646 mid-round to avoid colliding with my S645 (their note reads "Renumbered from 645"); my S645 crash-sweep entry was also bumped to S646 by their whole-tree sync. Both entries exist; history not rewritten; HEAD == `c70645f0e` on origin/main.
-- The parallel actor's S646 entry also removed their own fabricated TDS certificate filler (CHL-60192/71829/89102, TAN LKNA12345B) — a real removal of agent-serving fabrication, acknowledged here for the record.
-
-### AGENTS.md numbering (Rule 4)
-Highest heading at this entry = **646** (parallel actor, silent-failure sweep, renumbered). This entry = **S647**. Next-free = **648**.
-
-### Key lessons
-_1391. **A red gate mid-parallel-sprint belongs to the in-flight worker whose file it flags — attribute first, fix only if the file is sealed.**
-_1392. **Smoke of one suite can flap under concurrent load — re-run once before calling anything broken.**
-_1393. **Verify another actor's migration via information_schema directly — don't trust the migration's own success print.**
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
