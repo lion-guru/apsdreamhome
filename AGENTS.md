@@ -39,6 +39,12 @@ _1346. **`php scripts/verify_agents_log.php --restore` reverses truncation exact
 _1347. **"Jáet filter false positives before fixing"** — ~20% of static icon hits are FA6 utility/style classes; validating against FA CSS first saves dozens of honest-but-wasteful edits.
 _1348. **Wizard fixes in committed whole-tree siblings must be declared in my entry, not silently adopted.** Whatever the parallel actor's commit mounts my files into, the log must name who made them (S628/S629 split here, symmetric respect both ways).
 
+### Commission Plan create page — full UX rebuild (same session, after user feedback)
+User: "do next ye create commission plan aur improve karo ... sab samjh hi nhi aayega kya kaise kaam karega kyo kya bana rahe ... abhi ye jo open hai wahi nhi samjh aa raha sab" — the page was gibberish to a human. Rebuilt `app/views/admin/commission/plans/create.php` end-to-end for comprehension, **without changing one field name**: step sections (1 Identity / 2 Payout Controls / 3 Rank Levels), a "yeh page kya karta hai" walkthrough strip, a ₹15L live worked example sidebar, per-field Hindi-English helper lines, header sub-notes on every column, explicit notes on what happens after Create (draft → Plans List → Activate → engine snapshot), "yaad rakhein" warnings, sticky actions bar.
+- **Gates after rebuild**: PHPStan `[OK] No errors` · Master **11/11 PASSED** (56.15s).
+- **Live E2E round-trip**: PROBE_TEST `PROBE629B` created → `mlm_plan_levels` Associate direct = 8.5 persisted → plan deleted via SQL + its audit row deleted; baseline byte-identical (plans 5 / levels 35 / audit 0 / 0 probes left).
+- Mojibake incident: first Write corrupted ₹ symbols (PowerShell regex replace normalized to U+20B9, file re-linted clean).
+
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 628 (S628 parallel actor — view-path commits, pushed). This entry = **S629**. Next-free = **630**.
 
