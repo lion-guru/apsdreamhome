@@ -27,6 +27,17 @@ class SalaryAdvanceService
         }
     }
 
+    /**
+     * Execute a write statement. Delegates to Database::query(), which THROWS
+     * on failure - the transaction callers below catch \Throwable and roll back,
+     * so a failed statement can never commit a partial state.
+     */
+    private function execute(string $sql, array $params = []): bool
+    {
+        $this->db->query($sql, $params);
+        return true;
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -102,10 +113,10 @@ class SalaryAdvanceService
         $this->db->beginTransaction();
         try {
             $this->execute("
-                INSERT INTO salary_advances 
-                (tenant_id, employee_id, type, amount, installments, emi_amount, interest_rate, status, requested_at, tenant_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
-            ", [$tid, $employeeId, $type, $amount, $installments, $emiAmount, $interestRate, $tid]);
+                INSERT INTO salary_advances
+                (tenant_id, employee_id, type, amount, installments, emi_amount, interest_rate, status, requested_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+            ", [$tid, $employeeId, $type, $amount, $installments, $emiAmount, $interestRate]);
 
             $advanceId = $this->db->lastInsertId();
 
@@ -153,7 +164,7 @@ class SalaryAdvanceService
                 INSERT INTO salary_advance_repayments
                 (tenant_id, advance_id, employee_id, installment_no, principal_amount, interest_amount, total_amount, due_date, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-            ", [1, $advanceId, $this->getEmployeeIdFromAdvance($advanceId), $i, $principalAmt, $interestAmt, $emiAmount, $dueDate]);
+            ", [$this->tenantId(), $advanceId, $this->getEmployeeIdFromAdvance($advanceId), $i, $principalAmt, $interestAmt, $emiAmount, $dueDate]);
         }
     }
 
@@ -213,11 +224,16 @@ class SalaryAdvanceService
         if (!$advance) return ['success' => false, 'message' => 'Advance not found'];
         if ($advance['status'] !== 'pending') return ['success' => false, 'message' => 'Advance is not pending'];
 
-        $this->execute("
-            UPDATE salary_advances 
-            SET status = 'approved', approved_at = NOW(), approved_by = ?
-            WHERE id = ?{$this->tenantSql()}
-        ", array_merge([$approverId, $advanceId], $this->tVal()));
+        try {
+            $this->execute("
+                UPDATE salary_advances
+                SET status = 'approved', approved_at = NOW(), approved_by = ?
+                WHERE id = ?{$this->tenantSql()}
+            ", array_merge([$approverId, $advanceId], $this->tVal()));
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::approveAdvance] ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Advance approval failed. Please try again.'];
+        }
 
         // If advance, create wallet credit entry
         if ($advance['type'] === 'advance') {
@@ -265,11 +281,16 @@ class SalaryAdvanceService
         if (!$advance) return ['success' => false, 'message' => 'Advance not found'];
         if ($advance['status'] !== 'pending') return ['success' => false, 'message' => 'Advance is not pending'];
 
-        $this->execute("
-            UPDATE salary_advances 
-            SET status = 'rejected', rejected_at = NOW(), rejected_by = ?, rejection_reason = ?
-            WHERE id = ?{$this->tenantSql()}
-        ", array_merge([$rejecterId, $reason, $advanceId], $this->tVal()));
+        try {
+            $this->execute("
+                UPDATE salary_advances
+                SET status = 'rejected', rejected_at = NOW(), rejected_by = ?, rejection_reason = ?
+                WHERE id = ?{$this->tenantSql()}
+            ", array_merge([$rejecterId, $reason, $advanceId], $this->tVal()));
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::rejectAdvance] ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Advance rejection failed. Please try again.'];
+        }
 
         return ['success' => true, 'message' => 'Advance rejected'];
     }
@@ -289,18 +310,23 @@ class SalaryAdvanceService
         $newPaid = $repayment['paid_amount'] + $paidAmount;
         $newStatus = $newPaid >= $repayment['total_amount'] ? 'paid' : 'pending';
 
-        $this->execute("
-            UPDATE salary_advance_repayments
-            SET paid_amount = ?, status = ?, paid_at = CASE WHEN ? = 'paid' THEN NOW() ELSE NULL END
-            WHERE id = ?
-        ", [$newPaid, $newStatus, $newStatus, $repayment['id']]);
+        try {
+            $this->execute("
+                UPDATE salary_advance_repayments
+                SET paid_amount = ?, status = ?, paid_at = CASE WHEN ? = 'paid' THEN NOW() ELSE NULL END
+                WHERE id = ?
+            ", [$newPaid, $newStatus, $newStatus, $repayment['id']]);
 
-        // Update advance remaining balance
-        $this->execute("
-            UPDATE salary_advances
-            SET remaining_balance = remaining_balance - ?
-            WHERE id = ?
-        ", [$paidAmount, $repayment['advance_id']]);
+            // Update advance remaining balance
+            $this->execute("
+                UPDATE salary_advances
+                SET remaining_balance = remaining_balance - ?
+                WHERE id = ?
+            ", [$paidAmount, $repayment['advance_id']]);
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::processRepayment] ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Repayment processing failed. Please try again.'];
+        }
 
         // Check if all repayments done
         $pending = $this->fetchOne("SELECT COUNT(*) as cnt FROM salary_advance_repayments WHERE advance_id = ? AND status != 'paid'", [$repayment['advance_id']]);
