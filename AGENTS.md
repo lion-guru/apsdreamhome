@@ -1,3 +1,56 @@
+## Session 617: Admin Sidebar Menu Complete Repair — Active Route Highlighting, HTML Duplication Cleared, Submenu Inline Toggling & CSS, Hub/Section Accordion Sync, Icon Normalization, Master 11/11 Green (2026-11-16)
+
+### Trigger
+User instruction: "admin ka sidebar menu thik karna" (Audit, repair, and optimize the Admin portal sidebar menu).
+
+### Root Causes & Defects Identified (Traced Live)
+1. **Active Route Highlighting Inoperative:**
+   In `rbac_sidebar.php`, `$itemFullUrl` was computed with `$base` (e.g. `http://localhost/apsdreamhome/admin/erp`), while `$reqPath` was parsed from `$_SERVER['REQUEST_URI']` (e.g. `/apsdreamhome/admin/erp`). The strict equality check `$reqPath === $itemFullUrl` failed on every single page load across the entire admin panel. Active classes were never added (`Total active links: 0`), and active section/hub auto-expansion was completely dead.
+2. **Invalid Duplicate `<head>` and `<body>` Document Tree:**
+   `app/views/layouts/admin.php` contained duplicate `</head>` and `<body>` tags at lines 104 and 250 from a historical merge fragment. The `APS` sidebar scripts were floating between two open body tags with an unstyled floating `<button class="sidebar-toggle">` overlapping the top navbar hamburger.
+3. **Missing Submenu CSS & Inline Expansion:**
+   Submenus (e.g. Plots Inventory children, Reports Engine children, Leads Feedback) had zero CSS definitions in `admin-theme.css`. The only legacy definitions were trapped inside an unused tablet media query in `responsive-fixes.css` (which is not loaded). Clicking parent items with children navigated away immediately with no way to toggle submenus on desktop or mobile touch screens.
+4. **SessionStorage Accordion Desynchronization:**
+   `APS.toggleSidebarHub` stored keys as `'hub:' + hubId`, preventing `APS._restoreSections()` from resolving DOM elements by ID (`document.getElementById(hubId)` was null). Additionally, `APS.toggleAllSections()` and `APS.resetSidebarView()` did not persist hub states.
+5. **Sidebar Search False-Positive Section Headers:**
+   `filterSidebar` queried `sec.parentElement.querySelectorAll('.sidebar-item')` (the entire hub), keeping section headers visible even when that section had zero search matches.
+6. **Missing FontAwesome Icon Prefixes:**
+   Several items in `admin_menu_items` used prefixless names or Lucide tokens (`phone`, `git-branch`, `bar-chart-2`, `users`, `fa-hard-hat`), resulting in blank icon renders.
+
+### Fixes Applied
+- **`app/views/admin/layouts/rbac_sidebar.php`:**
+  - Implemented relative `$currentRoute` extraction from `$_SERVER['REQUEST_URI']` stripped of `$basePath` and `/public`.
+  - Added URL normalization (`$normItemUrl`) and prefix matching (excluding generic `/admin` and `/admin/dashboard` to prevent wildcard collision).
+  - Added recursive child matching: when on a child page (e.g. `/admin/plots/development`), the child link receives `active`, the parent receives `submenu-open`, and parent section and hub are flagged as active.
+  - Implemented `$formatIcon` normalizer mapping Lucide and prefixless icons to standard FontAwesome 5/6 classes (`fas fa-phone-alt`, `fas fa-code-branch`, `fas fa-chart-bar`, `fas fa-users`, `fas fa-hard-hat`).
+  - Added dedicated accessible `<button type="button" class="sidebar-sub-arrow-btn">` for parent items so clicking the arrow toggles the submenu without navigating away.
+  - Refined search filter to evaluate matches against each section's own menu, auto-expand matching parents, and added `Escape` key handling.
+- **`app/views/layouts/admin.php`:**
+  - Removed duplicate `</head>` and `<body>` tags, placing `APS` initialization scripts in `<head>` and standardizing on a single `<body class="aps-admin-body">`.
+  - Removed rogue floating `.sidebar-toggle` button in favor of `.top-nav`'s canonical `.toggle-btn`.
+  - Fixed `APS.toggleSidebarHub` to store `state[hubId] = hidden` matching `document.getElementById(id)`.
+  - Added `APS.toggleSubmenu(e, trigger)` and wired `window.toggleSubmenu` / `window.resetSidebarView`.
+  - Fixed mobile link click handler to avoid closing the drawer when clicking submenu toggles or dead links.
+  - Bumped `admin-theme.css?v=6` -> `v=7`.
+- **`public/assets/admin/css/admin-theme.css`:**
+  - Added CSS specifications for `.sidebar-item.has-children`, `.sidebar-sub-arrow-btn`, `.sidebar-sub-arrow`, `.sidebar-submenu`, `.sidebar-subitem`, and `.sidebar-sublink`.
+- **Admin Controllers (`ConstructionApproval`, `EmployeeGrievance`, `HolidayCalendar`, `Offboarding`, `Onboarding`):**
+  - Explicitly set `$this->layout = 'layouts/admin';` to enforce admin chrome with sidebar.
+
+### Verification
+- **Live HTML Probe:**
+  - `/admin/erp`: 1 active link (`ERP Overview`), 449 icons with 0 bad prefixes.
+  - `/admin/plots`: 1 active link (`Plots Inventory`).
+  - `/admin/plots/development`: Parent `Plots Inventory` active, child `Plot Development` active, parent `sec-inventorycolonies` auto-expanded (`Collapsed: NO`), parent item `submenu-open: 1`.
+- **Gates:**
+  - `php -l` clean across all 7 touched PHP files.
+  - **PHPStan:** `[OK] No errors` (1514/1514 files analyzed).
+  - **Master Test Suite:** **11/11 PASSED** (54.11s) — Unit, Integration, DB probe, Township health, Payout lifecycle, Smoke runner all green.
+  - Core 13 tracking tables: Zero DB drift.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 616. This entry = **S617**. Next-free = **618**.
+
 ﻿## Session 616: Dev test_login bypasses leaked cross-portal session identity - notifications API reported admin to employee/customer sessions, bell showed admin links; fixed at all four bypasses, verified live admin->employee->customer (2026-11-16)
 
 ### Trigger

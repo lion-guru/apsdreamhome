@@ -15,6 +15,8 @@ class OnboardingController extends BaseController
     public function __construct()
     {
         parent::__construct();
+        // Admin views need the admin chrome; BaseController defaults to the public layout.
+        $this->layout = 'layouts/admin';
     }
 
     private function pdo(): \PDO

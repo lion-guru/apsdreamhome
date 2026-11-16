@@ -1,627 +1,644 @@
-<?php
-
-/**
- * Admin Sidebar - DB-driven with future-proof fallback.
- * Primary: admin_menu_items table (RBAC-filtered). If the DB menu is
- * unreachable or empty (crash/restore gaps), the service self-heals
- * missing rows from the static manifest, and as a last resort the
- * sidebar renders the manifest directly — the menu never goes blank.
- * Route guards (requireAdmin/checkMenuPermission) stay the enforcer.
- */
-
-use App\Services\AdminMenuService;
-use App\Core\Middleware\TenantContext;
-
-// Get current page for active state
-$currentPage = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
-$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
-
-// Initialize menu service
-$menuItems = [];
-$menuError = null;
-$menuOffline = false;
-try {
-    $menuService = new AdminMenuService();
-    $menuItems = $menuService->getMenuItems();
-    if (empty($menuItems)) {
-        // Self-heal: re-seed missing rows from the static manifest, then re-read
-        try {
-            $menuService->ensureMenuIntegrity();
-            $menuItems = $menuService->getMenuItems();
-        } catch (\Throwable $healError) {
-            error_log('Sidebar: menu self-heal failed: ' . $healError->getMessage());
-        }
-    }
-    if (empty($menuItems)) {
-        // Last resort: static manifest fallback — menu never goes blank
-        $menuItems = $menuService->fallbackMenuItems();
-        $menuOffline = !empty($menuItems);
-    }
-} catch (\Throwable $e) {
-    $menuError = $e->getMessage();
-    error_log('Sidebar: AdminMenuService failed: ' . $e->getMessage());
-    try {
-        $menuItems = (new AdminMenuService())->fallbackMenuItems();
-        $menuOffline = !empty($menuItems);
-        if ($menuOffline) $menuError = null;
-    } catch (\Throwable $fbError) {
-        error_log('Sidebar: manifest fallback failed: ' . $fbError->getMessage());
-    }
-}
-
-// Group menu items by section
-$groupedItems = [];
-foreach ($menuItems as $item) {
-    $section = strtolower($item['section'] ?? 'main');
-    $groupedItems[$section][] = $item;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// 5 ENTERPRISE HUBS — Consolidated from 23 legacy sections
-// ═══════════════════════════════════════════════════════════════
-// Hub 1: Inventory & Projects
-// Hub 2: Sales & CRM Pipeline
-// Hub 3: MLM Network & Team
-// Hub 4: Finance & Collections
-// Hub 5: Enterprise Control
-// ═══════════════════════════════════════════════════════════════
-
-// Hub definitions — map legacy sections to 5 hubs
-$hubDefinitions = [
-    'inventory' => [
-        'label' => '1. Inventory & Projects',
-        'icon' => 'fas fa-building',
-        'sections' => ['projects', 'colonies', 'plots', 'land', 'township_ops', 'properties', 'valuations', 'sites', 'cms'],
-    ],
-    'sales' => [
-        'label' => '2. Sales & CRM Pipeline',
-        'icon' => 'fas fa-funnel-dollar',
-        'sections' => ['crm', 'sales', 'leads', 'inquiries', 'site_visits', 'bookings', 'legal', 'registry', 'possession'],
-    ],
-    'mlm' => [
-        'label' => '3. MLM Network & Team',
-        'icon' => 'fas fa-sitemap',
-        'sections' => ['mlm', 'commission', 'associates', 'payouts', 'rewards', 'mlm_settings', 'referrals'],
-    ],
-    'finance' => [
-        'label' => '4. Finance & Collections',
-        'icon' => 'fas fa-coins',
-        'sections' => ['finance', 'commission', 'cashbook', 'expenses', 'banking', 'gst', 'tds', 'efiling', 'collections', 'penalties', 'emi_auto_pay', 'plot_costs', 'payroll', 'billing'],
-    ],
-    'control' => [
-        'label' => '5. System & HR',
-        'icon' => 'fas fa-cogs',
-        'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai_tech', 'employee', 'hr', 'training', 'quality', 'health', 'audit_log', 'backup', 'cache'],
-    ],
-    'operations' => [
-        'label' => '6. Operations & SaaS',
-        'icon' => 'fas fa-briefcase',
-        'sections' => ['communication', 'saas', 'operations', 'reports', 'analytics', 'webhooks', 'api', 'company', 'menu_permissions', 'services', 'marketing'],
-    ],
-];
-
-// Build section-to-hub mapping for quick lookup
-$sectionToHub = [];
-foreach ($hubDefinitions as $hubKey => $def) {
-    foreach ($def['sections'] as $section) {
-        $sectionToHub[$section] = $hubKey;
-    }
-}
-
-// Default hub for unknown sections
-$defaultHub = 'control';
-
-// Section display names with icons (for individual section headers within hubs)
-$sectionNames = [
-    'dashboards'  => '📊 Dashboards',
-    'crm'         => '👥 CRM & Leads',
-    'projects'    => '🏗️ Projects & Townships',
-    'colonies'    => '🏘️ Colonies & Planning',
-    'plots'       => '📐 Plots & Inventory',
-    'land'        => '🏞️ Land Bank & Acquisitions',
-    'township_ops'=> '🏙️ Township & Utilities',
-    'properties'  => '🏠 Properties & Resale',
-    'valuations'  => '📊 Property Valuations',
-    'mlm'         => '📜 MLM Network',
-    'finance'     => '💰 Finance & Accounting',
-    'commission'  => '💸 Commission Engine',
-    'cms'         => '📖 Content (CMS)',
-    'marketing'   => '📢 Marketing & Referrals',
-    'reports'     => '📈 Reports & Analytics',
-    'operations'  => '⚙️ Operations',
-    'users'       => '👤 Users & Roles',
-    'locations'   => '📍 Locations',
-    'settings'    => '⚙️ Settings',
-    'hrm'         => '👨‍💼 HR & Payroll',
-    'legal'       => '⚖️ Legal & Compliance',
-    'sales'       => '🏷️ Sales & Bookings',
-    'services'    => '🛠️ Local Services & Directory',
-    'system'      => '🔧 System Admin',
-    'ai_tech'     => '🤖 AI & Technology',
-    'security'    => '🔒 Security',
-    'employee'    => '👨‍💼💼 Employee Portal',
-    'saas'        => '☁️ SaaS / Multi-Tenant',
-    'communication' => '📞 Communication',
-    'leads'       => '🎯 Leads',
-    'inquiries'   => '📧 Inquiries',
-    'site_visits' => '🏗️ Site Visits',
-    'bookings'    => '📋 Bookings',
-    'registry'    => '📝 Registry',
-    'possession'  => '🔑 Possession',
-    'cashbook'    => '💵 Cash Book',
-    'expenses'    => '💸 Expenses',
-    'banking'     => '🏦 Banking',
-    'gst'         => '🧾 GST',
-    'tds'         => '📝 TDS',
-    'efiling'     => '📤 E-Filing',
-    'collections' => '💰 Collections',
-    'penalties'   => '⚠️ Penalties',
-    'emi_auto_pay'=> '🔁 EMI Auto-Pay',
-    'plot_costs'  => '📊 Plot Costs',
-    'payroll'     => '💼 Payroll',
-    'billing'     => '🧾 Billing',
-    'mlm_settings'=> '⚙️ MLM Settings',
-    'associates'  => '👥 Associates',
-    'payouts'     => '💸 Payouts',
-    'rewards'     => '🏆 Rewards',
-    'referrals'   => '🔗 Referrals',
-    'audit_log'   => '📋 Audit Log',
-    'backup'      => '💾 Backup',
-    'cache'       => '⚡ Cache',
-    'webhooks'    => '🔗 Webhooks',
-    'api'         => '🔌 API',
-    'company'     => '🏢 Company',
-    'menu_permissions' => '🔐 Menu Permissions',
-    'training'    => '🎓 Training',
-    'quality'     => '✅ Quality',
-    'health'      => '🏥 Health',
-    'hr'          => '👨‍💼 HR',
-];
-
-// Hub sort order
-$hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control', 'operations'];
-
-// Flatten the menu tree: getMenuItems() nests children inside parents for
-// RBAC roles (admin/manager), but the sidebar groups by section — without
-// flattening, nested children (e.g. Locations submenu) never render.
-// Children are kept as a 'children' array on each parent item for submenu rendering.
-// IMPORTANT: Only TOP-LEVEL items go into $flatItems; children are accessed via parent['children'].
-$flatItems = [];
-$flattenMenu = function ($items, $parentSection = null, $isChild = false) use (&$flattenMenu, &$flatItems) {
-    foreach ($items as $item) {
-        if (empty($item['section']) && $parentSection) {
-            $item['section'] = $parentSection;
-        }
-        if (!empty($item['children']) && is_array($item['children'])) {
-            $item['children'] = $flattenMenu($item['children'], $item['section'] ?? $parentSection, true);
-        } else {
-            $item['children'] = [];
-        }
-        if (!$isChild) {
-            $flatItems[] = $item;
-        }
-    }
-    return $items;
-};
-$flattenMenu($menuItems);
-
-// Group menu items by hub (using 5 Enterprise Hubs)
-$hubbedItems = [];
-foreach ($flatItems as $item) {
-    $section = strtolower($item['section'] ?? 'main');
-    $hub = $sectionToHub[$section] ?? $defaultHub;
-    $hubbedItems[$hub][$section][] = $item;
-}
-
-// Sort hubs by defined order, and preserve defined section order within each hub
-$sortedHubbed = [];
-foreach ($hubOrder as $hub) {
-    if (isset($hubbedItems[$hub])) {
-        $orderedSections = [];
-        $hubSections = $hubDefinitions[$hub]['sections'] ?? [];
-        foreach ($hubSections as $sec) {
-            if (isset($hubbedItems[$hub][$sec])) {
-                $orderedSections[$sec] = $hubbedItems[$hub][$sec];
-            }
-        }
-        foreach ($hubbedItems[$hub] as $sec => $items) {
-            if (!isset($orderedSections[$sec])) {
-                $orderedSections[$sec] = $items;
-            }
-        }
-        $sortedHubbed[$hub] = $orderedSections;
-    }
-}
-// Append any hubs not in the order list
-foreach ($hubbedItems as $hub => $sections) {
-    if (!isset($sortedHubbed[$hub])) {
-        $sortedHubbed[$hub] = $sections;
-    }
-}
-$hubbedItems = $sortedHubbed;
-?>
-
-<aside class="sidebar" id="sidebarMenu">
-    <div class="sidebar-header">
-        <a href="<?php echo e($base); ?>/admin/dashboard" class="sidebar-logo">
-            <?php
-            $tenantLogo = TenantContext::getLogo();
-            $tenantName = TenantContext::getName();
-            $tenantColors = TenantContext::getColors();
-            ?>
-            <?php if ($tenantLogo): ?>
-                <img src="<?php echo htmlspecialchars($tenantLogo ?? '');?>" alt="Logo" >
-            <?php else: ?>
-                <i class="fas fa-home"></i>
-            <?php endif; ?>
-            <span><?php echo htmlspecialchars($tenantName ?? ''); ?></span>
-        </a>
-        <div class="sidebar-sub">Admin Panel v2.0</div>
-    </div>
-
-    <!-- Sidebar Search / Quick Filter -->
-    <div class="sidebar-search p-2">
-        <div class="input-group input-group-sm">
-            <span class="input-group-text bg-transparent border-end-0">
-                <i class="fas fa-search text-muted"></i>
-            </span>
-            <input type="search" class="form-control border-start-0" id="sidebarSearch" 
-                   placeholder="Quick find feature..." aria-label="Search admin menu"
-                   autocomplete="off">
-            <span class="input-group-text bg-transparent border-start-0" id="clearSearchBtn" style="display:none; cursor:pointer;">
-                <i class="fas fa-times text-muted"></i>
-            </span>
-        </div>
-    </div>
-
-    <?php
-    // Tenant Switch Banner — show when SuperAdmin is impersonating a tenant
-    $switchActive = !empty($_SESSION['tenant_switch_active']);
-    $switchName = $_SESSION['tenant_switch_name'] ?? '';
-    ?>
-    <?php if ($switchActive): ?>
-    <div >
-        <div class="d-flex align-items-center gap-2 mb-1">
-            <i class="fas fa-exchange-alt"></i>
-            <strong>Viewing: <?= htmlspecialchars($switchName ?? '') ?></strong>
-        </div>
-        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" >
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-            <button type="submit" class="btn btn-sm btn-light w-100">
-                <i class="fas fa-undo me-1"></i>Back to My Tenant
-            </button>
-        </form>
-    </div>
-    <?php endif; ?>
-
-    <?php
-    // User-Impersonation Banner — "Login as user" rewrites the session role
-    // globally, so EVERY open admin tab starts rendering that user's menu.
-    // This banner explains the shrunken menu and offers a one-click way back.
-    $impFrom = $_SESSION['impersonated_from'] ?? null;
-    ?>
-    <?php if (!empty($impFrom)): ?>
-    <div class="px-2 pb-2">
-        <div class="alert alert-info py-2 px-2 mb-0" role="status">
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <i class="fas fa-user-secret"></i>
-                <strong>Viewing as <?= htmlspecialchars($_SESSION['name'] ?? 'user') ?> (<?= htmlspecialchars($_SESSION['role'] ?? '') ?>)</strong>
-            </div>
-            <div class="small mb-2">Admin: <?= htmlspecialchars($impFrom['admin_name'] ?? '') ?> — open tabs follow this user until you switch back.</div>
-            <a href="<?= $base ?>/admin/users/stop-impersonation" class="btn btn-sm btn-primary w-100">
-                <i class="fas fa-undo me-1"></i>Back to Admin
-            </a>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Tenant CSS Variables for white-labeling -->
-    <style>
-        :root {
-            --tenant-primary: <?php echo htmlspecialchars($tenantColors['primary'] ?? ''); ?>;
-            --tenant-secondary: <?php echo htmlspecialchars($tenantColors['secondary'] ?? ''); ?>;
-        }
-    </style>
-
-    <?php
-    $reqUri = $_SERVER['REQUEST_URI'] ?? '';
-    $reqPath = rtrim(parse_url($reqUri, PHP_URL_PATH), '/');
-
-    // Determine which hub/section has the active item (to auto-expand it)
-    $hubHasActive = [];
-    $sectionHasActive = [];
-    foreach ($hubbedItems as $hub => $sections) {
-        foreach ($sections as $section => $items) {
-            foreach ($items as $item) {
-                $itemFullUrl = rtrim($base . $item['url'], '/');
-                if ($reqPath === $itemFullUrl || ($itemFullUrl !== $base && strpos($reqPath, $itemFullUrl . '/') === 0)) {
-                    $hubHasActive[$hub] = true;
-                    $sectionHasActive[$hub][$section] = true;
-                    break 3;
-                }
-            }
-        }
-    }
-
-    // Role-based default hub collapse: non-privileged roles see only their
-    // primary hub open (active page hub wins, else the hub with most items).
-    // Privileged roles keep everything open. Toggle still works per click.
-    // Effective role via the same single-source resolver the menu service
-    // and the admin route guard use (admin_role-first). Keeps hub
-    // collapse behaviour consistent with the rendered menu items.
-    $sidebarRole = \App\Http\Middleware\RBACManager::getUserRole() ?? '';
-    $sidebarPrivileged = in_array($sidebarRole, ['super_admin', 'admin'], true);
-    $hubItemCounts = [];
-    foreach ($hubbedItems as $hub => $sections) {
-        $hubItemCounts[$hub] = 0;
-        foreach ($sections as $items) $hubItemCounts[$hub] += count($items);
-    }
-    $sidebarPrimaryHub = null;
-    foreach ($hubItemCounts as $hub => $cnt) {
-        if ($sidebarPrimaryHub === null || $cnt > $hubItemCounts[$sidebarPrimaryHub]) $sidebarPrimaryHub = $hub;
-    }
-    ?>
-
-
-    <!-- Expand All / Collapse All toggle -->
-    <div role="button" tabindex="0" class="sidebar-sec" onclick="toggleAllSidebarSections()">
-        <span><i class="fas fa-layer-group"></i> All Sections</span>
-        <i class="fas fa-chevron-down sidebar-sec-arrow" id="arrow-expand-all"></i>
-    </div>
-
-    <!-- Reset View: clears per-tab fold state + search filter, expands all.
-         Fold state is per-tab (sessionStorage); this restores the full menu
-         in one click when it ever looks "changed" or incomplete. -->
-    <div role="button" tabindex="0" class="sidebar-sec" onclick="resetSidebarView()" title="Clear search, expand all sections">
-        <span><i class="fas fa-undo"></i> Reset View</span>
-    </div>
-
-    <?php if (!empty($menuError)): ?>
-        <div >
-            <i class="fas fa-exclamation-triangle"></i> Sidebar error:<br>
-            <code><?php echo htmlspecialchars($menuError ?? ''); ?></code>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($menuOffline)): ?>
-        <div class="px-2 pb-2">
-            <span class="badge bg-warning text-dark w-100" title="Menu served from built-in manifest while the database menu is unavailable">
-                <i class="fas fa-shield-alt me-1"></i>Offline menu — DB sync pending
-            </span>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($hubbedItems)): ?>
-        <?php foreach ($hubbedItems as $hub => $sections): ?>
-            <?php if (!empty($sections)): ?>
-                <?php
-                $hubId = 'hub-' . preg_replace('/[^a-z0-9]/', '', $hub);
-                $hubDef = $hubDefinitions[$hub] ?? ['label' => ucfirst($hub), 'icon' => 'fas fa-folder'];
-                $isHubActive = !empty($hubHasActive[$hub]);
-                $isHubOpen = $sidebarPrivileged || $isHubActive || $hub === $sidebarPrimaryHub;
-                ?>
-                <!-- Hub: <?php echo $hubDef['label']; ?> -->
-                <div class="sidebar-hub mb-3">
-                    <div role="button" tabindex="0" class="sidebar-hub-header" onclick="APS.toggleSidebarHub('<?php echo e($hubId); ?>')">
-                        <span class="d-flex align-items-center gap-2">
-                            <i class="<?php echo $hubDef['icon']; ?> text-primary"></i>
-                            <strong><?php echo $hubDef['label']; ?></strong>
-                        </span>
-                        <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $isHubOpen ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($hubId); ?>"></i>
-                    </div>
-                    <div class="sidebar-hub-content" id="<?php echo e($hubId); ?>" <?php echo $isHubOpen ? '' : 'style="display:none"'; ?>>
-                        <?php foreach ($sections as $section => $items): ?>
-                            <?php if (!empty($items)): ?>
-                                <?php
-                                $secId = 'sec-' . preg_replace('/[^a-z0-9]/', '', $hub . '-' . $section);
-                                $sectionHasActiveFlag = !empty($sectionHasActive[$hub][$section]);
-                                ?>
-                                <div role="button" tabindex="0" class="sidebar-sec" onclick="toggleSidebarSection('<?php echo e($secId); ?>')">
-                                    <span><?php echo $sectionNames[$section] ?? ucfirst($section); ?></span>
-                                    <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $sectionHasActiveFlag ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($secId); ?>"></i>
-                                </div>
-                                <ul class="sidebar-menu" id="<?php echo e($secId); ?>" >
-                                    <?php foreach ($items as $item): ?>
-                                        <?php
-                                        $itemFullUrl = rtrim($base . $item['url'], '/');
-                                        $isActive = ($reqPath === $itemFullUrl) || ($itemFullUrl !== $base && strpos($reqPath, $itemFullUrl . '/') === 0);
-                                        $hasChildren = !empty($item['children']) && is_array($item['children']);
-                                        ?>
-                                        <li class="sidebar-item <?= $hasChildren ? 'has-children' : '' ?>">
-                                            <a href="<?php echo $base . htmlspecialchars($item['url'] ?? ''); ?>"
-                                                class="sidebar-link <?php echo $isActive ? 'active' : ''; ?>">
-                                                <i class="<?php echo htmlspecialchars($item['icon'] ?? 'fas fa-circle'); ?>"></i>
-                                                <?php echo htmlspecialchars($item['name'] ?? ''); ?>
-                                                <?php if ($hasChildren): ?>
-                                                    <i class="fas fa-chevron-right sidebar-sub-arrow"></i>
-                                                <?php endif; ?>
-                                            </a>
-                                            <?php if ($hasChildren): ?>
-                                                <ul class="sidebar-submenu">
-                                                    <?php foreach ($item['children'] as $child): ?>
-                                                        <?php
-                                                        $childFullUrl = rtrim($base . $child['url'], '/');
-                                                        $childActive = ($reqPath === $childFullUrl) || ($childFullUrl !== $base && strpos($reqPath, $childFullUrl . '/') === 0);
-                                                        ?>
-                                                        <li class="sidebar-subitem">
-                                                            <a href="<?php echo $base . htmlspecialchars($child['url'] ?? ''); ?>"
-                                                                class="sidebar-sublink <?php echo $childActive ? 'active' : ''; ?>">
-                                                                <i class="<?php echo htmlspecialchars($child['icon'] ?? 'fas fa-circle'); ?>"></i>
-                                                                <?php echo htmlspecialchars($child['name'] ?? ''); ?>
-                                                            </a>
-                                                        </li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            <?php endif; ?>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <div >
-            <i class="fas fa-exclamation-circle"></i>
-            <strong>No menu items found</strong><br>
-            <span >
-                Check that admin_menu_items table has data<br>
-                and AdminMenuService is working.
-            </span>
-        </div>
-    <?php endif; ?>
-
-</aside>
-
-<!-- Sidebar Search / Filter JavaScript -->
-<script>
-(function() {
-    const searchInput = document.getElementById('sidebarSearch');
-    const clearBtn = document.getElementById('clearSearchBtn');
-    const sidebar = document.getElementById('sidebarMenu');
-    if (!searchInput || !sidebar) return;
-
-    const hubs = sidebar.querySelectorAll('.sidebar-hub');
-    const sections = sidebar.querySelectorAll('.sidebar-sec');
-    const items = sidebar.querySelectorAll('.sidebar-item');
-    const menus = sidebar.querySelectorAll('.sidebar-menu');
-
-    let debounceTimer = null;
-
-    function filterSidebar(query) {
-        const q = query.trim().toLowerCase();
-        
-        // Show/hide clear button
-        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
-
-        if (!q) {
-            // Show everything, restore collapsed state from localStorage
-            hubs.forEach(hub => hub.style.display = '');
-            sections.forEach(sec => sec.style.display = '');
-            menus.forEach(menu => menu.style.display = '');
-            items.forEach(item => item.style.display = '');
-            restoreCollapsedState();
-            return;
-        }
-
-        // Hide all initially
-        items.forEach(item => {
-            const text = item.textContent.trim().toLowerCase();
-            const match = text.includes(q);
-            item.style.display = match ? '' : 'none';
-        });
-
-        // Show parent hubs/sections that have matching items
-        hubs.forEach(hub => {
-            const hubItems = hub.querySelectorAll('.sidebar-item');
-            const hasMatch = Array.from(hubItems).some(item => item.style.display !== 'none');
-            hub.style.display = hasMatch ? '' : 'none';
-            if (hasMatch) {
-                // Auto-expand matching hub
-                const content = hub.querySelector('.sidebar-hub-content');
-                if (content) content.style.display = '';
-                const arrow = hub.querySelector('.sidebar-sec-arrow');
-                if (arrow) arrow.classList.remove('collapsed');
-            }
-        });
-
-        sections.forEach(sec => {
-            const secItems = sec.parentElement.querySelectorAll('.sidebar-item');
-            const hasMatch = Array.from(secItems).some(item => item.style.display !== 'none');
-            sec.style.display = hasMatch ? '' : 'none';
-            if (hasMatch) {
-                const menuId = sec.getAttribute('onclick')?.match(/toggleSidebarSection\('([^']+)'\)/);
-                if (menuId) {
-                    const menu = document.getElementById(menuId[1]);
-                    if (menu) menu.style.display = '';
-                    const arrow = document.getElementById('arrow-' + menuId[1]);
-                    if (arrow) arrow.classList.remove('collapsed');
-                }
-            }
-        });
-
-        // Show menus that have visible items
-        menus.forEach(menu => {
-            const menuItems = menu.querySelectorAll('.sidebar-item');
-            const hasMatch = Array.from(menuItems).some(item => item.style.display !== 'none');
-            menu.style.display = hasMatch ? '' : 'none';
-        });
-    }
-
-    function restoreCollapsedState() {
-        try {
-            // One-time migration: pre-fix fold state lived in localStorage
-            // (shared across tabs). Move it to per-tab sessionStorage once,
-            // then drop the shared copy so tabs stop affecting each other.
-            if (!sessionStorage.getItem('adminSidebarSections')) {
-                const legacy = localStorage.getItem('adminSidebarSections');
-                if (legacy) {
-                    sessionStorage.setItem('adminSidebarSections', legacy);
-                    localStorage.removeItem('adminSidebarSections');
-                }
-            }
-            const saved = sessionStorage.getItem('adminSidebarSections');
-            if (!saved) return;
-            const state = JSON.parse(saved);
-            Object.keys(state).forEach(id => {
-                const menu = document.getElementById(id);
-                const arrow = document.getElementById('arrow-' + id);
-                if (menu) menu.style.display = state[id] ? '' : 'none';
-                if (arrow) arrow.classList.toggle('collapsed', !state[id]);
-            });
-        } catch (e) { console.error('Sidebar state restore error:', e); }
-    }
-
-    searchInput.addEventListener('input', function() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => filterSidebar(this.value), 150);
-    });
-
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            filterSidebar('');
-            searchInput.focus();
-        });
-    }
-
-    // Keyboard shortcut: Ctrl/Cmd + K focuses search
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            searchInput.focus();
-        }
-    });
-})();
-</script>
-
-<!-- Hub/Section toggle functions (for search auto-expand) -->
-<script>
-function toggleSidebarHub(hubId) {
-    const content = document.getElementById(hubId);
-    const arrow = document.getElementById('arrow-' + hubId);
-    if (!content) return;
-    const hidden = content.style.display === 'none';
-    content.style.display = hidden ? '' : 'none';
-    if (arrow) arrow.classList.toggle('collapsed', !hidden);
-}
-
-function resetSidebarView() {
-    try { sessionStorage.removeItem('adminSidebarSections'); } catch (e) { console.error('Sidebar state restore error:', e); }
-    const si = document.getElementById('sidebarSearch');
-    if (si) si.value = '';
-    const clearBtn = document.getElementById('clearSearchBtn');
-    if (clearBtn) clearBtn.style.display = 'none';
-    document.querySelectorAll('.sidebar-hub, .sidebar-sec, .sidebar-menu, .sidebar-item').forEach(function(el) {
-        el.style.display = '';
-    });
-    document.querySelectorAll('.sidebar-hub-content').forEach(function(el) {
-        el.style.display = '';
-    });
-    document.querySelectorAll('.sidebar-sec-arrow').forEach(function(a) {
-        a.classList.remove('collapsed');
-    });
-}
+<?php
+
+/**
+ * Admin Sidebar - DB-driven with future-proof fallback.
+ * Primary: admin_menu_items table (RBAC-filtered). If the DB menu is
+ * unreachable or empty (crash/restore gaps), the service self-heals
+ * missing rows from the static manifest, and as a last resort the
+ * sidebar renders the manifest directly — the menu never goes blank.
+ * Route guards (requireAdmin/checkMenuPermission) stay the enforcer.
+ */
+
+use App\Services\AdminMenuService;
+use App\Core\Middleware\TenantContext;
+
+// Get current page for active state
+$currentPage = $active_page ?? basename($_SERVER['REQUEST_URI'] ?? '');
+$base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+
+// Icon normalizer: ensures all icons are valid FontAwesome class strings
+$formatIcon = function (?string $icon): string {
+    $icon = trim($icon ?? '');
+    if (empty($icon)) return 'fas fa-circle';
+    if (preg_match('/^(fas|far|fab|fa)\s+fa-/', $icon)) return $icon;
+    $iconMap = [
+        'phone' => 'fas fa-phone-alt',
+        'git-branch' => 'fas fa-code-branch',
+        'bar-chart-2' => 'fas fa-chart-bar',
+        'users' => 'fas fa-users',
+        'home' => 'fas fa-home',
+        'settings' => 'fas fa-cog',
+        'user' => 'fas fa-user',
+        'file' => 'fas fa-file',
+        'folder' => 'fas fa-folder',
+        'mail' => 'fas fa-envelope',
+        'bell' => 'fas fa-bell',
+        'calendar' => 'fas fa-calendar',
+        'search' => 'fas fa-search',
+    ];
+    if (isset($iconMap[$icon])) return $iconMap[$icon];
+    if (strpos($icon, 'fa-') === 0) return 'fas ' . $icon;
+    return 'fas fa-' . $icon;
+};
+
+// Initialize menu service
+$menuItems = [];
+$menuError = null;
+$menuOffline = false;
+try {
+    $menuService = new AdminMenuService();
+    $menuItems = $menuService->getMenuItems();
+    if (empty($menuItems)) {
+        // Self-heal: re-seed missing rows from the static manifest, then re-read
+        try {
+            $menuService->ensureMenuIntegrity();
+            $menuItems = $menuService->getMenuItems();
+        } catch (\Throwable $healError) {
+            error_log('Sidebar: menu self-heal failed: ' . $healError->getMessage());
+        }
+    }
+    if (empty($menuItems)) {
+        // Last resort: static manifest fallback — menu never goes blank
+        $menuItems = $menuService->fallbackMenuItems();
+        $menuOffline = !empty($menuItems);
+    }
+} catch (\Throwable $e) {
+    $menuError = $e->getMessage();
+    error_log('Sidebar: AdminMenuService failed: ' . $e->getMessage());
+    try {
+        $menuItems = (new AdminMenuService())->fallbackMenuItems();
+        $menuOffline = !empty($menuItems);
+        if ($menuOffline) $menuError = null;
+    } catch (\Throwable $fbError) {
+        error_log('Sidebar: manifest fallback failed: ' . $fbError->getMessage());
+    }
+}
+
+// Group menu items by section
+$groupedItems = [];
+foreach ($menuItems as $item) {
+    $section = strtolower($item['section'] ?? 'main');
+    $groupedItems[$section][] = $item;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 5 ENTERPRISE HUBS — Consolidated from 23 legacy sections
+// ═══════════════════════════════════════════════════════════════
+// Hub 1: Inventory & Projects
+// Hub 2: Sales & CRM Pipeline
+// Hub 3: MLM Network & Team
+// Hub 4: Finance & Collections
+// Hub 5: Enterprise Control
+// ═══════════════════════════════════════════════════════════════
+
+// Hub definitions — map legacy sections to 5 hubs
+$hubDefinitions = [
+    'inventory' => [
+        'label' => '1. Inventory & Projects',
+        'icon' => 'fas fa-building',
+        'sections' => ['projects', 'colonies', 'plots', 'land', 'township_ops', 'properties', 'valuations', 'sites', 'cms'],
+    ],
+    'sales' => [
+        'label' => '2. Sales & CRM Pipeline',
+        'icon' => 'fas fa-funnel-dollar',
+        'sections' => ['crm', 'sales', 'leads', 'inquiries', 'site_visits', 'bookings', 'legal', 'registry', 'possession'],
+    ],
+    'mlm' => [
+        'label' => '3. MLM Network & Team',
+        'icon' => 'fas fa-sitemap',
+        'sections' => ['mlm', 'commission', 'associates', 'payouts', 'rewards', 'mlm_settings', 'referrals'],
+    ],
+    'finance' => [
+        'label' => '4. Finance & Collections',
+        'icon' => 'fas fa-coins',
+        'sections' => ['finance', 'commission', 'cashbook', 'expenses', 'banking', 'gst', 'tds', 'efiling', 'collections', 'penalties', 'emi_auto_pay', 'plot_costs', 'payroll', 'billing'],
+    ],
+    'control' => [
+        'label' => '5. System & HR',
+        'icon' => 'fas fa-cogs',
+        'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai_tech', 'employee', 'hr', 'training', 'quality', 'health', 'audit_log', 'backup', 'cache'],
+    ],
+    'operations' => [
+        'label' => '6. Operations & SaaS',
+        'icon' => 'fas fa-briefcase',
+        'sections' => ['communication', 'saas', 'operations', 'reports', 'analytics', 'webhooks', 'api', 'company', 'menu_permissions', 'services', 'marketing'],
+    ],
+];
+
+// Build section-to-hub mapping for quick lookup
+$sectionToHub = [];
+foreach ($hubDefinitions as $hubKey => $def) {
+    foreach ($def['sections'] as $section) {
+        $sectionToHub[$section] = $hubKey;
+    }
+}
+
+// Default hub for unknown sections
+$defaultHub = 'control';
+
+// Section display names with icons (for individual section headers within hubs)
+$sectionNames = [
+    'dashboards'  => '📊 Dashboards',
+    'crm'         => '👥 CRM & Leads',
+    'projects'    => '🏗️ Projects & Townships',
+    'colonies'    => '🏘️ Colonies & Planning',
+    'plots'       => '📐 Plots & Inventory',
+    'land'        => '🏞️ Land Bank & Acquisitions',
+    'township_ops'=> '🏙️ Township & Utilities',
+    'properties'  => '🏠 Properties & Resale',
+    'valuations'  => '📊 Property Valuations',
+    'mlm'         => '📜 MLM Network',
+    'finance'     => '💰 Finance & Accounting',
+    'commission'  => '💸 Commission Engine',
+    'cms'         => '📖 Content (CMS)',
+    'marketing'   => '📢 Marketing & Referrals',
+    'reports'     => '📈 Reports & Analytics',
+    'operations'  => '⚙️ Operations',
+    'users'       => '👤 Users & Roles',
+    'locations'   => '📍 Locations',
+    'settings'    => '⚙️ Settings',
+    'hrm'         => '👨‍💼 HR & Payroll',
+    'legal'       => '⚖️ Legal & Compliance',
+    'sales'       => '🏷️ Sales & Bookings',
+    'services'    => '🛠️ Local Services & Directory',
+    'system'      => '🔧 System Admin',
+    'ai_tech'     => '🤖 AI & Technology',
+    'security'    => '🔒 Security',
+    'employee'    => '👨‍💼💼 Employee Portal',
+    'saas'        => '☁️ SaaS / Multi-Tenant',
+    'communication' => '📞 Communication',
+    'leads'       => '🎯 Leads',
+    'inquiries'   => '📧 Inquiries',
+    'site_visits' => '🏗️ Site Visits',
+    'bookings'    => '📋 Bookings',
+    'registry'    => '📝 Registry',
+    'possession'  => '🔑 Possession',
+    'cashbook'    => '💵 Cash Book',
+    'expenses'    => '💸 Expenses',
+    'banking'     => '🏦 Banking',
+    'gst'         => '🧾 GST',
+    'tds'         => '📝 TDS',
+    'efiling'     => '📤 E-Filing',
+    'collections' => '💰 Collections',
+    'penalties'   => '⚠️ Penalties',
+    'emi_auto_pay'=> '🔁 EMI Auto-Pay',
+    'plot_costs'  => '📊 Plot Costs',
+    'payroll'     => '💼 Payroll',
+    'billing'     => '🧾 Billing',
+    'mlm_settings'=> '⚙️ MLM Settings',
+    'associates'  => '👥 Associates',
+    'payouts'     => '💸 Payouts',
+    'rewards'     => '🏆 Rewards',
+    'referrals'   => '🔗 Referrals',
+    'audit_log'   => '📋 Audit Log',
+    'backup'      => '💾 Backup',
+    'cache'       => '⚡ Cache',
+    'webhooks'    => '🔗 Webhooks',
+    'api'         => '🔌 API',
+    'company'     => '🏢 Company',
+    'menu_permissions' => '🔐 Menu Permissions',
+    'training'    => '🎓 Training',
+    'quality'     => '✅ Quality',
+    'health'      => '🏥 Health',
+    'hr'          => '👨‍💼 HR',
+];
+
+// Hub sort order
+$hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control', 'operations'];
+
+// Flatten the menu tree: getMenuItems() nests children inside parents for
+// RBAC roles (admin/manager), but the sidebar groups by section — without
+// flattening, nested children (e.g. Locations submenu) never render.
+// Children are kept as a 'children' array on each parent item for submenu rendering.
+// IMPORTANT: Only TOP-LEVEL items go into $flatItems; children are accessed via parent['children'].
+$flatItems = [];
+$flattenMenu = function ($items, $parentSection = null, $isChild = false) use (&$flattenMenu, &$flatItems) {
+    foreach ($items as $item) {
+        if (empty($item['section']) && $parentSection) {
+            $item['section'] = $parentSection;
+        }
+        if (!empty($item['children']) && is_array($item['children'])) {
+            $item['children'] = $flattenMenu($item['children'], $item['section'] ?? $parentSection, true);
+        } else {
+            $item['children'] = [];
+        }
+        if (!$isChild) {
+            $flatItems[] = $item;
+        }
+    }
+    return $items;
+};
+$flattenMenu($menuItems);
+
+// Group menu items by hub (using 5 Enterprise Hubs)
+$hubbedItems = [];
+foreach ($flatItems as $item) {
+    $section = strtolower($item['section'] ?? 'main');
+    $hub = $sectionToHub[$section] ?? $defaultHub;
+    $hubbedItems[$hub][$section][] = $item;
+}
+
+// Sort hubs by defined order, and preserve defined section order within each hub
+$sortedHubbed = [];
+foreach ($hubOrder as $hub) {
+    if (isset($hubbedItems[$hub])) {
+        $orderedSections = [];
+        $hubSections = $hubDefinitions[$hub]['sections'] ?? [];
+        foreach ($hubSections as $sec) {
+            if (isset($hubbedItems[$hub][$sec])) {
+                $orderedSections[$sec] = $hubbedItems[$hub][$sec];
+            }
+        }
+        foreach ($hubbedItems[$hub] as $sec => $items) {
+            if (!isset($orderedSections[$sec])) {
+                $orderedSections[$sec] = $items;
+            }
+        }
+        $sortedHubbed[$hub] = $orderedSections;
+    }
+}
+// Append any hubs not in the order list
+foreach ($hubbedItems as $hub => $sections) {
+    if (!isset($sortedHubbed[$hub])) {
+        $sortedHubbed[$hub] = $sections;
+    }
+}
+$hubbedItems = $sortedHubbed;
+?>
+
+<aside class="sidebar" id="sidebarMenu">
+    <div class="sidebar-header">
+        <a href="<?php echo e($base); ?>/admin/dashboard" class="sidebar-logo">
+            <?php
+            $tenantLogo = TenantContext::getLogo();
+            $tenantName = TenantContext::getName();
+            $tenantColors = TenantContext::getColors();
+            ?>
+            <?php if ($tenantLogo): ?>
+                <img src="<?php echo htmlspecialchars($tenantLogo ?? '');?>" alt="Logo" >
+            <?php else: ?>
+                <i class="fas fa-home"></i>
+            <?php endif; ?>
+            <span><?php echo htmlspecialchars($tenantName ?? ''); ?></span>
+        </a>
+        <div class="sidebar-sub">Admin Panel v2.0</div>
+    </div>
+
+    <!-- Sidebar Search / Quick Filter -->
+    <div class="sidebar-search p-2">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text bg-transparent border-end-0">
+                <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="search" class="form-control border-start-0" id="sidebarSearch" 
+                   placeholder="Quick find feature..." aria-label="Search admin menu"
+                   autocomplete="off">
+            <span class="input-group-text bg-transparent border-start-0" id="clearSearchBtn" style="display:none; cursor:pointer;">
+                <i class="fas fa-times text-muted"></i>
+            </span>
+        </div>
+    </div>
+
+    <?php
+    // Tenant Switch Banner — show when SuperAdmin is impersonating a tenant
+    $switchActive = !empty($_SESSION['tenant_switch_active']);
+    $switchName = $_SESSION['tenant_switch_name'] ?? '';
+    ?>
+    <?php if ($switchActive): ?>
+    <div >
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="fas fa-exchange-alt"></i>
+            <strong>Viewing: <?= htmlspecialchars($switchName ?? '') ?></strong>
+        </div>
+        <form method="POST" action="<?= $base ?>/admin/tenants/stop-switch" >
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+            <button type="submit" class="btn btn-sm btn-light w-100">
+                <i class="fas fa-undo me-1"></i>Back to My Tenant
+            </button>
+        </form>
+    </div>
+    <?php endif; ?>
+
+    <?php
+    // User-Impersonation Banner — "Login as user" rewrites the session role
+    // globally, so EVERY open admin tab starts rendering that user's menu.
+    // This banner explains the shrunken menu and offers a one-click way back.
+    $impFrom = $_SESSION['impersonated_from'] ?? null;
+    ?>
+    <?php if (!empty($impFrom)): ?>
+    <div class="px-2 pb-2">
+        <div class="alert alert-info py-2 px-2 mb-0" role="status">
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="fas fa-user-secret"></i>
+                <strong>Viewing as <?= htmlspecialchars($_SESSION['name'] ?? 'user') ?> (<?= htmlspecialchars($_SESSION['role'] ?? '') ?>)</strong>
+            </div>
+            <div class="small mb-2">Admin: <?= htmlspecialchars($impFrom['admin_name'] ?? '') ?> — open tabs follow this user until you switch back.</div>
+            <a href="<?= $base ?>/admin/users/stop-impersonation" class="btn btn-sm btn-primary w-100">
+                <i class="fas fa-undo me-1"></i>Back to Admin
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Tenant CSS Variables for white-labeling -->
+    <style>
+        :root {
+            --tenant-primary: <?php echo htmlspecialchars($tenantColors['primary'] ?? ''); ?>;
+            --tenant-secondary: <?php echo htmlspecialchars($tenantColors['secondary'] ?? ''); ?>;
+        }
+    </style>
+
+    <?php
+    $basePath = rtrim(parse_url($base, PHP_URL_PATH) ?? '', '/');
+    $rawPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
+    $reqPath = rtrim($rawPath, '/');
+    if (!empty($basePath) && strpos($reqPath, $basePath) === 0) {
+        $currentRoute = substr($reqPath, strlen($basePath));
+    } else {
+        $currentRoute = $reqPath;
+    }
+    if (strpos($currentRoute, '/public') === 0) {
+        $currentRoute = substr($currentRoute, 7);
+    }
+    $currentRoute = '/' . ltrim(rtrim($currentRoute, '/'), '/');
+
+    // Determine which hub/section has the active item (to auto-expand it)
+    $hubHasActive = [];
+    $sectionHasActive = [];
+    foreach ($hubbedItems as $hub => $sections) {
+        foreach ($sections as $section => $items) {
+            foreach ($items as $item) {
+                $normItemUrl = '/' . ltrim(rtrim(parse_url($item['url'] ?? '', PHP_URL_PATH) ?? '', '/'), '/');
+                $isItemActive = ($currentRoute === $normItemUrl) || ($normItemUrl !== '/admin' && $normItemUrl !== '/admin/dashboard' && strpos($currentRoute, $normItemUrl . '/') === 0);
+                $hasActiveChild = false;
+                if (!empty($item['children']) && is_array($item['children'])) {
+                    foreach ($item['children'] as $child) {
+                        $childNormUrl = '/' . ltrim(rtrim(parse_url($child['url'] ?? '', PHP_URL_PATH) ?? '', '/'), '/');
+                        if ($currentRoute === $childNormUrl || strpos($currentRoute, $childNormUrl . '/') === 0) {
+                            $hasActiveChild = true;
+                            break;
+                        }
+                    }
+                }
+                if ($isItemActive || $hasActiveChild) {
+                    $hubHasActive[$hub] = true;
+                    $sectionHasActive[$hub][$section] = true;
+                    break 2;
+                }
+            }
+        }
+    }
+
+    // Role-based default hub collapse: non-privileged roles see only their
+    // primary hub open (active page hub wins, else the hub with most items).
+    // Privileged roles keep everything open. Toggle still works per click.
+    // Effective role via the same single-source resolver the menu service
+    // and the admin route guard use (admin_role-first). Keeps hub
+    // collapse behaviour consistent with the rendered menu items.
+    $sidebarRole = \App\Http\Middleware\RBACManager::getUserRole() ?? '';
+    $sidebarPrivileged = in_array($sidebarRole, ['super_admin', 'admin'], true);
+    $hubItemCounts = [];
+    foreach ($hubbedItems as $hub => $sections) {
+        $hubItemCounts[$hub] = 0;
+        foreach ($sections as $items) $hubItemCounts[$hub] += count($items);
+    }
+    $sidebarPrimaryHub = null;
+    foreach ($hubItemCounts as $hub => $cnt) {
+        if ($sidebarPrimaryHub === null || $cnt > $hubItemCounts[$sidebarPrimaryHub]) $sidebarPrimaryHub = $hub;
+    }
+    ?>
+
+
+    <!-- Expand All / Collapse All toggle -->
+    <div role="button" tabindex="0" class="sidebar-sec" onclick="toggleAllSidebarSections()">
+        <span><i class="fas fa-layer-group"></i> All Sections</span>
+        <i class="fas fa-chevron-down sidebar-sec-arrow" id="arrow-expand-all"></i>
+    </div>
+
+    <!-- Reset View: clears per-tab fold state + search filter, expands all.
+         Fold state is per-tab (sessionStorage); this restores the full menu
+         in one click when it ever looks "changed" or incomplete. -->
+    <div role="button" tabindex="0" class="sidebar-sec" onclick="resetSidebarView()" title="Clear search, expand all sections">
+        <span><i class="fas fa-undo"></i> Reset View</span>
+    </div>
+
+    <?php if (!empty($menuError)): ?>
+        <div >
+            <i class="fas fa-exclamation-triangle"></i> Sidebar error:<br>
+            <code><?php echo htmlspecialchars($menuError ?? ''); ?></code>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($menuOffline)): ?>
+        <div class="px-2 pb-2">
+            <span class="badge bg-warning text-dark w-100" title="Menu served from built-in manifest while the database menu is unavailable">
+                <i class="fas fa-shield-alt me-1"></i>Offline menu — DB sync pending
+            </span>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($hubbedItems)): ?>
+        <?php foreach ($hubbedItems as $hub => $sections): ?>
+            <?php if (!empty($sections)): ?>
+                <?php
+                $hubId = 'hub-' . preg_replace('/[^a-z0-9]/', '', $hub);
+                $hubDef = $hubDefinitions[$hub] ?? ['label' => ucfirst($hub), 'icon' => 'fas fa-folder'];
+                $isHubActive = !empty($hubHasActive[$hub]);
+                $isHubOpen = $sidebarPrivileged || $isHubActive || $hub === $sidebarPrimaryHub;
+                ?>
+                <!-- Hub: <?php echo $hubDef['label']; ?> -->
+                <div class="sidebar-hub mb-3">
+                    <div role="button" tabindex="0" class="sidebar-hub-header" onclick="APS.toggleSidebarHub('<?php echo e($hubId); ?>')">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="<?php echo $hubDef['icon']; ?> text-primary"></i>
+                            <strong><?php echo $hubDef['label']; ?></strong>
+                        </span>
+                        <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $isHubOpen ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($hubId); ?>"></i>
+                    </div>
+                    <div class="sidebar-hub-content" id="<?php echo e($hubId); ?>" <?php echo $isHubOpen ? '' : 'style="display:none"'; ?>>
+                        <?php foreach ($sections as $section => $items): ?>
+                            <?php if (!empty($items)): ?>
+                                <?php
+                                $secId = 'sec-' . preg_replace('/[^a-z0-9]/', '', $hub . '-' . $section);
+                                $sectionHasActiveFlag = !empty($sectionHasActive[$hub][$section]);
+                                ?>
+                                <div role="button" tabindex="0" class="sidebar-sec" onclick="toggleSidebarSection('<?php echo e($secId); ?>')">
+                                    <span><?php echo $sectionNames[$section] ?? ucfirst($section); ?></span>
+                                    <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $sectionHasActiveFlag ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($secId); ?>"></i>
+                                </div>
+                                <ul class="sidebar-menu" id="<?php echo e($secId); ?>" >
+                                    <?php foreach ($items as $item): ?>
+                                        <?php
+                                        $normItemUrl = '/' . ltrim(rtrim(parse_url($item['url'] ?? '', PHP_URL_PATH) ?? '', '/'), '/');
+                                        $isActive = ($currentRoute === $normItemUrl) || ($normItemUrl !== '/admin' && $normItemUrl !== '/admin/dashboard' && strpos($currentRoute, $normItemUrl . '/') === 0);
+                                        $hasChildren = !empty($item['children']) && is_array($item['children']);
+                                        $hasActiveChild = false;
+                                        if ($hasChildren) {
+                                            foreach ($item['children'] as $child) {
+                                                $childNormUrl = '/' . ltrim(rtrim(parse_url($child['url'] ?? '', PHP_URL_PATH) ?? '', '/'), '/');
+                                                if ($currentRoute === $childNormUrl || strpos($currentRoute, $childNormUrl . '/') === 0) {
+                                                    $hasActiveChild = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        ?>
+                                        <li class="sidebar-item <?= $hasChildren ? 'has-children' : '' ?> <?= $hasActiveChild ? 'submenu-open' : '' ?>">
+                                            <a href="<?php echo $base . htmlspecialchars($item['url'] ?? ''); ?>"
+                                                class="sidebar-link <?php echo $isActive ? 'active' : ''; ?>">
+                                                <i class="<?php echo htmlspecialchars($formatIcon($item['icon'] ?? '')); ?>"></i>
+                                                <span><?php echo htmlspecialchars($item['name'] ?? ''); ?></span>
+                                                <?php if ($hasChildren): ?>
+                                                    <button type="button" class="sidebar-sub-arrow-btn" aria-label="Toggle submenu" onclick="APS.toggleSubmenu(event, this)">
+                                                        <i class="fas fa-chevron-right sidebar-sub-arrow"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </a>
+                                            <?php if ($hasChildren): ?>
+                                                <ul class="sidebar-submenu">
+                                                    <?php foreach ($item['children'] as $child): ?>
+                                                        <?php
+                                                        $childNormUrl = '/' . ltrim(rtrim(parse_url($child['url'] ?? '', PHP_URL_PATH) ?? '', '/'), '/');
+                                                        $childActive = ($currentRoute === $childNormUrl) || (strpos($currentRoute, $childNormUrl . '/') === 0);
+                                                        ?>
+                                                        <li class="sidebar-subitem">
+                                                            <a href="<?php echo $base . htmlspecialchars($child['url'] ?? ''); ?>"
+                                                                class="sidebar-sublink <?php echo $childActive ? 'active' : ''; ?>">
+                                                                <i class="<?php echo htmlspecialchars($formatIcon($child['icon'] ?? '')); ?>"></i>
+                                                                <span><?php echo htmlspecialchars($child['name'] ?? ''); ?></span>
+                                                            </a>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php endif; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div >
+            <i class="fas fa-exclamation-circle"></i>
+            <strong>No menu items found</strong><br>
+            <span >
+                Check that admin_menu_items table has data<br>
+                and AdminMenuService is working.
+            </span>
+        </div>
+    <?php endif; ?>
+
+</aside>
+
+<!-- Sidebar Search / Filter JavaScript -->
+<script>
+(function() {
+    const searchInput = document.getElementById('sidebarSearch');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    const sidebar = document.getElementById('sidebarMenu');
+    if (!searchInput || !sidebar) return;
+
+    const hubs = sidebar.querySelectorAll('.sidebar-hub');
+    const menus = sidebar.querySelectorAll('.sidebar-menu');
+    const items = sidebar.querySelectorAll('.sidebar-item');
+
+    let debounceTimer = null;
+
+    function filterSidebar(query) {
+        const q = query.trim().toLowerCase();
+        
+        // Show/hide clear button
+        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
+        if (!q) {
+            // Show everything, restore collapsed state from sessionStorage
+            hubs.forEach(hub => {
+                hub.style.display = '';
+                const header = hub.querySelector('.sidebar-hub-header');
+                if (header) header.style.display = '';
+            });
+            menus.forEach(menu => {
+                menu.style.display = '';
+                const secArrow = document.getElementById('arrow-' + menu.id);
+                const secHeader = secArrow ? secArrow.closest('.sidebar-sec') : null;
+                if (secHeader) secHeader.style.display = '';
+            });
+            items.forEach(item => item.style.display = '');
+            if (window.APS && APS._restoreSections) {
+                APS._restoreSections();
+            }
+            return;
+        }
+
+        // Filter individual items (including child items)
+        items.forEach(item => {
+            const text = item.textContent.trim().toLowerCase();
+            const match = text.includes(q);
+            item.style.display = match ? '' : 'none';
+            if (match && item.classList.contains('has-children')) {
+                item.classList.add('submenu-open');
+            }
+        });
+
+        // Filter section menus and headers
+        menus.forEach(menu => {
+            const menuItems = menu.querySelectorAll('.sidebar-item');
+            const hasMatch = Array.from(menuItems).some(item => item.style.display !== 'none');
+            menu.style.display = hasMatch ? '' : 'none';
+            const secArrow = document.getElementById('arrow-' + menu.id);
+            const secHeader = secArrow ? secArrow.closest('.sidebar-sec') : null;
+            if (secHeader) {
+                secHeader.style.display = hasMatch ? '' : 'none';
+                if (hasMatch && secArrow) {
+                    secArrow.classList.remove('collapsed');
+                }
+            }
+        });
+
+        // Filter hubs
+        hubs.forEach(hub => {
+            const hubItems = hub.querySelectorAll('.sidebar-item');
+            const hasMatch = Array.from(hubItems).some(item => item.style.display !== 'none');
+            hub.style.display = hasMatch ? '' : 'none';
+            if (hasMatch) {
+                const content = hub.querySelector('.sidebar-hub-content');
+                if (content) content.style.display = '';
+                const arrow = hub.querySelector('.sidebar-hub-header .sidebar-sec-arrow');
+                if (arrow) arrow.classList.remove('collapsed');
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => filterSidebar(this.value), 150);
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            this.value = '';
+            filterSidebar('');
+            this.blur();
+        }
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterSidebar('');
+            searchInput.focus();
+        });
+    }
+
+    // Keyboard shortcut: Ctrl/Cmd + K focuses search
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+})();
 </script>
