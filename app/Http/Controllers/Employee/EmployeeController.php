@@ -2348,14 +2348,32 @@ class EmployeeController extends BaseController
 
     private function handleTestLogin(string $mode): void
     {
+        // Dev bypass: start from a clean identity so stale cross-portal keys (admin_role=admin from
+        // a previous bypass in the same browser session) cannot bleed in. staff roles get the same
+        // admin_* keys establishSession() sets in production.
+        foreach (['admin_id','admin_user_id','admin_email','admin_role','admin_name','admin_username',
+                   'employee_id','employee_role','employee_user_id','employee_needs_resolution',
+                   'associate_id','agent_id','farmer_id','customer_id','associate_user_id','agent_user_id'] as $k) {
+            unset($_SESSION[$k]);
+        }
+
         // Hardcoded test user to avoid DB queries in read-only mode
         $user = ['id' => 7, 'name' => 'Employee User', 'email' => 'employee@test.com', 'password' => '', 'role' => 'employee'];
 
         $_SESSION['user_id']     = $user['id'];
         $_SESSION['employee_id'] = $user['id'];
-        $_SESSION['role']        = $user['role'] ?? 'employee';
-        $_SESSION['user_email']  = $user['email'] ?? '';
-        $_SESSION['user_name']   = $user['name'] ?? 'Employee';
+        $_SESSION['role']        = $user['role'];
+        $_SESSION['user_email']  = $user['email'];
+        $_SESSION['user_name']   = $user['name'];
+        // Staff roles carry the same admin_* keys establishSession() sets in production
+        $_SESSION['admin_role']     = $user['role'];
+        $_SESSION['admin_id']       = (int)$user['id'];
+        $_SESSION['admin_user_id']  = (int)$user['id'];
+        $_SESSION['admin_email']    = $user['email'];
+        $_SESSION['admin_name']     = $user['name'];
+        $_SESSION['admin_username'] = $user['name'];
+        $_SESSION['employee_role']  = $user['role'];
+        $_SESSION['employee_user_id'] = (int)$user['id'];
         $_SESSION['logged_in']   = true;
 
         $this->redirect('/employee/dashboard');

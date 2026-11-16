@@ -529,6 +529,15 @@ class AuthController extends BaseController
      */
     private function handleTestLogin(string $mode): void
     {
+        // Dev bypass: start from a clean identity so stale cross-portal keys (admin_role=admin from
+        // a previous bypass in the same browser session) cannot bleed in. Only the keys the real
+        // establishSession() path sets are written back onto the session.
+        foreach (['admin_id','admin_user_id','admin_email','admin_role','admin_name','admin_username',
+                   'employee_id','employee_role','employee_user_id','employee_needs_resolution',
+                   'associate_id','agent_id','farmer_id','customer_id'] as $k) {
+            unset($_SESSION[$k]);
+        }
+
         $db = Database::getInstance();
         $tid = 1;
         try { $tid = TenantContext::getId(); } catch (\Throwable $e) { error_log("TenantContext error: " . $e->getMessage()); }
