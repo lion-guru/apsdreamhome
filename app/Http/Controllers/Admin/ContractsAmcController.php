@@ -18,6 +18,8 @@ class ContractsAmcController extends BaseController
     public function __construct()
     {
         parent::__construct();
+        // Admin views need the admin chrome; BaseController defaults to the public layout.
+        $this->layout = 'layouts/admin';
     }
 
     /**
