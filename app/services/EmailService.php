@@ -40,7 +40,10 @@ class EmailService
     public function send($to, $subject, $body, $fromName = null)
     {
         try {
-            return $this->unifiedService->send($to, $subject, $bodyHtml, '');
+            // Bug: this was calling unifiedService with $bodyHtml — an undefined variable
+            // in this scope (parameter is $body). PHP 8 throws 'Undefined variable' every call,
+            // which was swallowed by the catch, returning false for every outgoing email.
+            return $this->unifiedService->send($to, $subject, $body, '');
         } catch (\Throwable $e) {
             error_log("Email sending failed (legacy): " . $e->getMessage());
             return false;
