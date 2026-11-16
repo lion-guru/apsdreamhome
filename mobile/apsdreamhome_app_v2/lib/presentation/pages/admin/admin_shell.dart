@@ -70,7 +70,8 @@ class _AdminShellState extends State<AdminShell> {
   }
 
   Widget _buildSidebar(BuildContext context, User user) {
-    final menuItems = _getMenuItems('director');
+    final subRole = (user.role ?? user.rank).toLowerCase();
+    final menuItems = _getMenuItems(subRole);
 
     return Container(
       color: const Color(0xFF1E293B),
@@ -178,7 +179,7 @@ class _AdminShellState extends State<AdminShell> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        'ADMIN',
+                        (user.role ?? user.rank).toUpperCase(),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.6),
                           fontSize: 11,
@@ -438,92 +439,104 @@ class _AdminShellState extends State<AdminShell> {
     );
   }
 
+  // Role-aware sidebar: each admin sub-role only sees what its desk owns.
+  // No fabricated badge counts - a badge exists only when the app has a real
+  // number to show (none does yet, so none is rendered).
   List<Map<String, dynamic>> _getMenuItems(String subRole) {
-    final commonItems = [
-      {
-        'icon': Icons.dashboard_outlined,
-        'label': 'Dashboard',
-        'route': '/admin',
-        'badge': 0,
-      },
-      {
-        'icon': Icons.campaign_outlined,
-        'label': 'CRM',
-        'route': '/admin/crm',
-        'badge': 28,
-      },
-      {
-        'icon': Icons.book_online_outlined,
-        'label': 'Bookings',
-        'route': '/admin/bookings',
-        'badge': 5,
-      },
-      {
-        'icon': Icons.people_outline,
-        'label': 'Customers',
-        'route': '/admin/customers',
-        'badge': 0,
-      },
-      {
-        'icon': Icons.assessment_outlined,
-        'label': 'Reports',
-        'route': '/admin/reports',
-        'badge': 0,
-      },
-    ];
+    final dashboard = {
+      'icon': Icons.dashboard_outlined,
+      'label': 'Dashboard',
+      'route': '/admin',
+    };
+    final crm = {
+      'icon': Icons.campaign_outlined,
+      'label': 'CRM',
+      'route': '/admin/crm',
+    };
+    final bookings = {
+      'icon': Icons.book_online_outlined,
+      'label': 'Bookings',
+      'route': '/admin/bookings',
+    };
+    final customers = {
+      'icon': Icons.people_outline,
+      'label': 'Customers',
+      'route': '/admin/customers',
+    };
+    final reports = {
+      'icon': Icons.assessment_outlined,
+      'label': 'Reports',
+      'route': '/admin/reports',
+    };
+    final colonies = {
+      'icon': Icons.location_city_outlined,
+      'label': 'Colonies',
+      'route': '/admin/colonies',
+    };
+    final plots = {
+      'icon': Icons.map_outlined,
+      'label': 'Plots',
+      'route': '/admin/plots',
+    };
+    final employees = {
+      'icon': Icons.group_outlined,
+      'label': 'Employees',
+      'route': '/admin/employees',
+    };
+    final commissions = {
+      'icon': Icons.account_balance_wallet_outlined,
+      'label': 'Commissions',
+      'route': '/admin/commissions',
+    };
+    final payouts = {
+      'icon': Icons.payments_outlined,
+      'label': 'Payouts',
+      'route': '/admin/payouts',
+    };
+    final accounts = {
+      'icon': Icons.account_balance_outlined,
+      'label': 'Accounts',
+      'route': '/admin/accounts',
+    };
+    final settings = {
+      'icon': Icons.settings_outlined,
+      'label': 'Settings',
+      'route': '/admin/settings',
+    };
 
-    final directorItems = [
-      {
-        'icon': Icons.location_city_outlined,
-        'label': 'Colonies',
-        'route': '/admin/colonies',
-        'badge': 0,
-      },
-      {
-        'icon': Icons.map_outlined,
-        'label': 'Plots',
-        'route': '/admin/plots',
-        'badge': 12,
-      },
-      {
-        'icon': Icons.group_outlined,
-        'label': 'Employees',
-        'route': '/admin/employees',
-        'badge': 0,
-      },
-      {
-        'icon': Icons.account_balance_wallet_outlined,
-        'label': 'Commissions',
-        'route': '/admin/commissions',
-        'badge': 8,
-      },
-      {
-        'icon': Icons.payments_outlined,
-        'label': 'Payouts',
-        'route': '/admin/payouts',
-        'badge': 3,
-      },
-      {
-        'icon': Icons.account_balance_outlined,
-        'label': 'Accounts',
-        'route': '/admin/accounts',
-        'badge': 0,
-      },
-      {
-        'icon': Icons.settings_outlined,
-        'label': 'Settings',
-        'route': '/admin/settings',
-        'badge': 0,
-      },
-    ];
+    bool match(List<String> keys) => keys.any(subRole.contains);
 
-    switch (subRole.toLowerCase()) {
-      case 'director':
-      case 'md':
-        return [...commonItems, ...directorItems];
-      default:
-        return commonItems;
+    if (match(const ['super_admin', 'superadmin', 'admin', 'md', 'director'])) {
+      return [
+        dashboard,
+        crm,
+        bookings,
+        customers,
+        reports,
+        colonies,
+        plots,
+        employees,
+        commissions,
+        payouts,
+        accounts,
+        settings,
+      ];
     }
+    if (match(const ['account', 'finance', 'cfo', 'billing'])) {
+      return [dashboard, bookings, commissions, payouts, accounts, reports, settings];
+    }
+    if (match(const ['hr', 'people', 'recruit'])) {
+      return [dashboard, employees, reports, settings];
+    }
+    if (match(const ['sales', 'crm', 'marketing', 'lead'])) {
+      return [dashboard, crm, bookings, customers, reports, settings];
+    }
+    if (match(const ['manager', 'ops', 'coo'])) {
+      return [dashboard, crm, bookings, customers, employees, reports, settings];
+    }
+    // Unknown admin sub-role: safe read-mostly baseline rather than leaking
+    // payouts/commissions/accounts to a role that must not see them.
+    return [dashboard, crm, bookings, customers, reports, settings];
   }
 
   bool _isCurrentRoute(String route) {

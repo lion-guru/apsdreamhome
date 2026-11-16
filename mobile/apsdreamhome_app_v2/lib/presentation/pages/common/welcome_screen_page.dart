@@ -96,12 +96,17 @@ class _WelcomeScreenPageState extends State<WelcomeScreenPage>
   }
 
   void _goToDashboard() {
-    final dashboardRoute = widget.role == 'associate'
-        ? '/associate/dashboard'
-        : widget.role == 'agent'
-        ? '/agent/dashboard'
-        : '/home';
-    context.go(dashboardRoute);
+    const dashboardForRole = <String, String>{
+      'customer': '/home',
+      'associate': '/associate/dashboard',
+      'agent': '/agent/dashboard',
+      'employee': '/employee/dashboard',
+      'telecaller': '/employee/dashboard',
+      'admin': '/admin',
+      'super_admin': '/admin',
+      'manager': '/admin',
+    };
+    context.go(dashboardForRole[widget.role] ?? '/home');
   }
 
   @override

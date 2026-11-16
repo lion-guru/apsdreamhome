@@ -17,7 +17,12 @@ class EmployeeShell extends StatefulWidget {
 }
 
 class _EmployeeShellState extends State<EmployeeShell> {
-  final int _currentIndex = 0;
+  int _indexForLocation(String location) {
+    if (location.startsWith('/employee/tasks')) return 1;
+    if (location.startsWith('/employee/check-in')) return 2;
+    if (location.startsWith('/employee/profile')) return 3;
+    return 0; // /employee/dashboard and anything else under /employee
+  }
 
   final _tabs = const [
     '/employee/dashboard',
@@ -28,6 +33,8 @@ class _EmployeeShellState extends State<EmployeeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    final currentIndex = _indexForLocation(location);
     return ListenableBuilder(
       listenable: AuthBridge.instance.currentUser,
       builder: (context, _) {
@@ -97,7 +104,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
           ),
           body: widget.child,
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
+            currentIndex: currentIndex,
             onTap: (index) => context.go(_tabs[index]),
             type: BottomNavigationBarType.fixed,
             selectedItemColor: AppTheme.primaryColor,

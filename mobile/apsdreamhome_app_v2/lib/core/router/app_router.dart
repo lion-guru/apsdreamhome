@@ -288,6 +288,11 @@ class AuthBridge {
   final ValueNotifier<User?> currentUser = ValueNotifier<User?>(null);
 }
 
+/// Matches a route prefix with an exact-or-slash boundary
+/// ('/admin' matches '/admin' and '/admin/crm', but not '/administrator').
+bool _pathMatches(String uri, List<String> prefixes) =>
+    prefixes.any((p) => uri == p || uri.startsWith('$p/'));
+
 /// Global router instance — NOT a Riverpod Provider to avoid InheritedModel assertion
 GoRouter? _globalRouter;
 
@@ -517,9 +522,32 @@ isDisclaimer ||
         return null;
       }
 
-      // Protected routes — redirect to login if not authenticated
+      // Protected routes - redirect to login if not authenticated
       if (!isAuthenticated) {
         return '/login';
+      }
+
+      // Role-prefix guard - an authenticated role cannot open another role's
+      // area by typing the URL directly (e.g. a customer hitting /associate/*).
+      // Admins keep access to every area they manage.
+      if (_pathMatches(uri, const ['/admin']) && !authUser.isAdmin) {
+        return defaultRouteForRole(authUser);
+      }
+      if (_pathMatches(uri, const ['/agent']) &&
+          !(authUser.isAgent || authUser.isAdmin)) {
+        return defaultRouteForRole(authUser);
+      }
+      if (_pathMatches(uri, const ['/associate']) &&
+          !(authUser.isAssociate || authUser.isAgent || authUser.isAdmin)) {
+        return defaultRouteForRole(authUser);
+      }
+      if (_pathMatches(uri, const ['/employee']) &&
+          !(authUser.isEmployee || authUser.isAdmin)) {
+        return defaultRouteForRole(authUser);
+      }
+      if (uri == '/customer-dashboard' &&
+          !(authUser.isCustomer || authUser.isAdmin)) {
+        return defaultRouteForRole(authUser);
       }
 
       return null;
