@@ -1,3 +1,42 @@
+## Session 614: In-App Browser Admin Audit - ERP Overview Icons Fixed (Specificity War vs Dark Mode), Charts Wired From Vestigial Empty Tables Onto Live Data (Payments/Leads), All Gates Green, Commit e6d8d560a (2026-11-16)
+
+### Trigger
+User (Hinglish, mid-round): "admin me bhut se kamiya dikhengi... multi agent ka use karo... deeply kar paoge... Chrome me jada testing ache se hoga tab karna" + "tumhara inbuilt broser bhi to hsi" — in-app Chromium audit of the admin surface, fix what is actually broken, keep the gates green.
+
+### Method (audit-first, no fixes before root cause)
+In-app browser (`tools.browser.*`) with an explicit `tabID`; DOM/console probes replace screenshots because the desktop window is not currently visible to `browser.screenshot` ("Screenshot needs a visible tab"). Console errors are captured per page; every module-card computed colour is asserted directly.
+
+### What was broken (all fixed)
+1. **ERP Overview module icons rendered white-on-pastel = invisible for every admin on every load.** `dark-mode.css` had `html.dark-mode .erp-module-card .mc-icon { color: inherit; }` whose specificity (element + 3 classes) outranked the view's inline `.erp-module-card .mc-icon.icon-land { color: #10b981; }` (3 classes), dragging glyphs to the inherited `rgb(226, 232, 240)`. FIX: the blanket `color: inherit` rule is deleted (a `.mc-icon` comment now notes why) and `layouts/admin.php` cache-busts `dark-mode.css` `v=9` -> `v=10`. Verified by re-reading `getComputedStyle`: icons now paint `rgb(16,185,129)`, `rgb(59,130,246)`, `rgb(20,184,166)`, `rgb(245,158,11)`, `rgb(239,68,68)` - exactly the declared greens/blues/teals/ambers/reds.
+2. **Cash Flow chart was wired to the vestigial `daily_cash_book` table (0 rows, never in use anywhere).** Rewired to `payments` (`status='completed'`, `COALESCE(payment_date, DATE(created_at))` within 90 days). It now renders its one real Oct-15 wallet-receipt bar (₹50,000). Honest "No recent cash activity" empty-state added to the view for the zero-qualifying-rows case - no fabricated bars.
+3. **Lead Pipeline doughnut was wired to the vestigial empty `lead_pipeline` table.** Rewired to `leads` (`deleted_at IS NULL`). Doughnut now shows the real 9-status funnel: new 174 / contacted 131 / qualified 130 / nurture 123 / proposal 108 / closed_lost 92 / closed_won 85 / negotiation 83 / site_visit 53.
+4. **Why `lead_pipeline`/`daily_cash_book` died:** `DailyOperationsService` still INSERTs into `lead_pipeline`, so it fills for no live flow; nothing else writes it or the cash book. A stale schema promise, not a UI bug - the left-to-right fix is read the canonical tables.
+
+### Verified live
+- **PHPStan** -> `[OK] No errors`. **Master** -> **11/11 PASSED** (29.22s). `php -l` clean x2.
+- In-app browser: ERP Overview gen-4/5 reloads - 5/5 icons coloured correctly, both canvases mounted at 878x240, Chart.js draws with real JSON (`cashData` has the Oct-15 ₹50,000 bar; `pipeData` 9 statuses). Console errors = 0.
+- Role-login spot check (fresh cookie jars, all landing pages): admin `/admin/erp` 200 · associate `/associate/dashboard` 200 · agent `/agent/dashboard` 200 · employee `/employee/dashboard` 200 · customer `/user/dashboard` 200.
+- Grievance flow re-verified twice end-to-end (curl + real-page fill/submit): `[PROBE_TEST] S613*` row inserted id=3 -> rendered on list -> deleted; **0 probe leftovers**.
+- `git status --porcelain` shows ONLY this round's four files plus the two untracked non-mine scripts; AGENTS.md head = S613, this entry = S614.
+
+### Commit hygiene (disclosed)
+Commit `e6d8d560a` (pushed, hook linted green) carries message tag `(S612)` - an off-by-one in the commit title written after the parallel actor had taken S612; body content is correct. Not force-pushed (never rewrite shared `main`).
+
+### Not-fixed / owner-call territory (reported, not taken)
+- **Network Tree** renders parallel actor test artists ("Test Emp 1771178797" + 2 "Unknown" associates from `mlm_network_tree`) - not my data, untouched.
+- **Admin session rotates per login** - pool re-log required between probes; `test_login=N` bypass is dev-only by design.
+- **`/admin/grievances/create` 500** - `GET /admin/grievances/create` matches `{id}='create'`; by design the page is a modal submit, no create action exists. Not a defect; the URL is simply unregistered.
+- Cash-flow chart shows ONE bar because it is the only completed-payment row inside the 90-day window; the Apr-2026 payments excluded by design; no fake series added.
+
+### Key lessons (carried, continued)
+_1316. **A `color: inherit` in dark-mode can silently overpower a view's inline 3-class colour rule** - inspect specificity counts with `matches()` + sibling rule comparison before touching view CSS. Removing the override beat repairing 5 view rules.
+_1317. **A chart wired to an empty table is a lie that renders elegantly** - canvas draws 0-value bars/none and nobody notices; read the counts of `FROM lead_pipeline` / `FROM daily_cash_book` BEFORE hardwiring the view; wire to the tables the app actually writes.
+_1318. **Screenshot-blocked audits still find real bugs** - `getComputedStyle` + `el.matches(...)` + `innerHTML.length` probes caught an invisible-icon ownership dispute that no screenshot would have resolved any faster, and they survive without a visible desktop window.
+_1319. **Timing gaps between actors are the default failure mode** - parallel actor took S612 mid-round; rule 4 rescue (this entry = S614 against S613) is the sanctioned path; never rewrite pushed `main` to fix a commit title.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 613 (Budh Bihar image removal + home hero 5000+). This entry = **S614**. Next-free = **615**.
+
 ## Session 613: Budh Bihar Stock-Interior Layout Images Removed + Final 5000+ Removal From Home Hero (2026-11-16)
 
 ### Trigger
