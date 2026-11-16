@@ -110,6 +110,54 @@ class SmartLeadAssignmentService
     }
 
     /**
+     * Recommend the top-N associates for a lead WITHOUT assigning anything.
+     * Pure compute: never writes, never reassigns. Use for advisory UI
+     * (e.g. admin lead desk showing "who fits best" before a human decides).
+     *
+     * Returns: ['success' => true, 'recommendations' => [
+     *      ['user_id', 'name', 'role', 'active_leads', 'performance_score',
+     *       'conversion_rate', 'skill_score', 'total_score', 'factors'], ... ]]
+     */
+    public function recommendForLead(int $leadId, int $limit = 3): array
+    {
+        try {
+            $tid = (int) $this->tenantId();
+
+            $lead = $this->getLead($leadId);
+            if (!$lead) {
+                return ['success' => false, 'message' => 'Lead not found', 'recommendations' => []];
+            }
+
+            $candidates = $this->getCandidateAssociates($tid);
+            if (empty($candidates)) {
+                return ['success' => false, 'message' => 'No available associates found', 'recommendations' => []];
+            }
+
+            $scored = [];
+            foreach ($candidates as $cand) {
+                $score = $this->scoreAssociateForLead($cand, $lead, $tid);
+                $scored[] = array_merge([
+                    'user_id' => (int) $cand['user_id'],
+                    'name' => $cand['name'] ?? '',
+                    'role' => $cand['role'] ?? '',
+                    'active_leads' => (int) ($cand['active_leads'] ?? 0),
+                    'performance_score' => isset($cand['performance_score']) ? (float) $cand['performance_score'] : null,
+                ], $score);
+            }
+
+            usort($scored, fn ($a, $b) => ($b['total_score'] ?? 0) <=> ($a['total_score'] ?? 0));
+
+            return [
+                'success' => true,
+                'recommendations' => array_slice($scored, 0, max(1, min(10, $limit))),
+            ];
+        } catch (\Throwable $e) {
+            error_log("SmartLeadAssignmentService recommendForLead: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Unable to compute recommendations', 'recommendations' => []];
+        }
+    }
+
+    /**
      * Auto-assign a batch of unassigned leads using the smart strategy.
      */
     public function autoAssignBatch(int $limit = 50): array

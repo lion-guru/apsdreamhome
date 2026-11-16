@@ -297,6 +297,28 @@ class LeadController extends AdminController
             $notes = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) { error_log("LeadController::show notes query failed: " . $e->getMessage()); }
 
+        // AI advisory (pure compute / cache-read — NEVER writes on GET).
+        // Churn risk renders from the recomputable cache (lead_churn_predictions);
+        // visitor can POST /admin/leads/{id}/score-churn to refresh just this lead.
+        $churnPrediction = null;
+        try {
+            $churnPrediction = $this->db->fetchOne(
+                "SELECT risk_level, risk_score, churn_probability, next_action, predicted_at
+                 FROM lead_churn_predictions WHERE lead_id = ? LIMIT 1",
+                [(int)$id]
+            ) ?: null;
+        } catch (\Throwable $e) { error_log("LeadController::show churn cache read failed: " . $e->getMessage()); }
+
+        // Best-fit associate recommendation (pure compute — never assigns)
+        $assignRecommendations = [];
+        try {
+            $recSvc = new \App\Services\AI\SmartLeadAssignmentService(\App\Core\Database\Database::getInstance());
+            $rec = $recSvc->recommendForLead((int)$id, 3);
+            if (($rec['success'] ?? false) && !empty($rec['recommendations'])) {
+                $assignRecommendations = $rec['recommendations'];
+            }
+        } catch (\Throwable $e) { error_log("LeadController::show assign recommendations failed: " . $e->getMessage()); }
+
         // Available agents for reassignment
         $agents = [];
         try {
@@ -318,8 +340,35 @@ class LeadController extends AdminController
             'assignments' => $assignments,
             'notes' => $notes,
             'agents' => $agents,
+            'churn_prediction' => $churnPrediction,
+            'assign_recommendations' => $assignRecommendations,
             'page_title' => 'Lead: ' . ($lead['name'] ?? ''),
         ]);
+    }
+
+    /**
+     * POST /admin/leads/{id}/score-churn - re-score a single lead's churn risk.
+     * Writes ONE upsert into the recomputable cache (lead_churn_predictions);
+     * never assigns, never changes lead data. requireAdmin + CSRF.
+     */
+    public function scoreChurn($id)
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $svc = new \App\Services\AI\LeadChurnPredictionService();
+            $result = $svc->predict((int)$id);
+            if (($result['success'] ?? false)) {
+                $this->setFlash('success', 'Churn risk scored: ' . ($result['risk_level'] ?? '?') . ' (' . (int)($result['risk_score'] ?? 0) . '/100)');
+            } else {
+                $this->setFlash('error', 'Churn scoring failed: ' . ($result['error'] ?? 'unknown'));
+            }
+        } catch (\Throwable $e) {
+            error_log("LeadController::scoreChurn: " . $e->getMessage());
+            $this->setFlash('error', 'Churn scoring failed - see error log.');
+        }
+        $this->redirect('/admin/leads/' . (int)$id);
     }
     
     /**

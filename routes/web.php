@@ -1872,6 +1872,7 @@ $router->post('/admin/leads/{id}/destroy', 'App\\Http\\Controllers\\Admin\\LeadC
 $router->post('/admin/leads/{id}/note', 'App\\Http\\Controllers\\Admin\\LeadController@addNote');
 $router->post('/admin/leads/{id}/status', 'App\\Http\\Controllers\\Admin\\LeadController@updateStatus');
 $router->post('/admin/leads/{id}/assign', 'App\\Http\\Controllers\\Admin\\LeadController@assign');
+$router->post('/admin/leads/{id}/score-churn', 'App\\Http\\Controllers\\Admin\\LeadController@scoreChurn');
 
 // Lead AJAX (inline interactions & tasks)
 $router->post('/admin/leads/{id}/log-interaction', 'App\\Http\\Controllers\\Admin\\LeadController@logInteraction');

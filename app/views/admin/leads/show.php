@@ -11,6 +11,9 @@ $source_details = $source_details ?? [];
 $assignments = $assignments ?? [];
 $notes = $notes ?? [];
 $agents = $agents ?? [];
+$churnPrediction = $churn_prediction ?? null;
+$assignRecommendations = $assign_recommendations ?? [];
+$this_csrf = $_SESSION['csrf_token'] ?? '';
 
 $statusColors = [
     'new'=>'danger','contacted'=>'info','qualified'=>'primary','site_visit'=>'warning',
@@ -240,6 +243,80 @@ function timeAgo($dt) {
                 </div>
             </div>
         <?php endif; ?>
+    </div>
+
+    <!-- AI Council — advisory only. The human decides. -->
+    <div class="row g-2 mb-3">
+        <!-- Churn Risk -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body py-2 px-3 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted fw-bold text-uppercase"><i class="fas fa-robot text-info me-1"></i>AI Churn Risk</small>
+                        <span class="badge bg-info text-dark">advisory</span>
+                    </div>
+                    <?php if (is_array($churnPrediction) && !empty($churnPrediction)): ?>
+                        <?php
+                        $crLevel = strtolower((string)($churnPrediction['risk_level'] ?? 'unknown'));
+                        $crScore = (int)($churnPrediction['risk_score'] ?? ($churnPrediction['churn_probability'] ?? 0));
+                        $crBadge = $crLevel === 'critical' ? 'dark' : ($crLevel === 'high' ? 'danger' : ($crLevel === 'medium' ? 'warning' : 'secondary'));
+                        ?>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-center">
+                                <span class="badge bg-<?= $crBadge ?> fs-6 px-2 py-2"><?= htmlspecialchars(strtoupper($crLevel)) ?></span><br>
+                                <small class="text-muted">risk level</small>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="progress mb-1" style="height: 10px;">
+                                    <div class="progress-bar bg-<?= $crBadge ?>" role="progressbar" style="width: <?= max(0, min(100, $crScore)) ?>%" aria-valuenow="<?= $crScore ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="small"><strong><?= $crScore ?>/100</strong> churn probability</div>
+                                <?php if (!empty($churnPrediction['next_action'])): ?><div class="small text-muted"><i class="fas fa-arrow-right me-1"></i><?= htmlspecialchars($churnPrediction['next_action']) ?></div><?php endif; ?>
+                                <div class="small text-muted">Scored <?= htmlspecialchars($churnPrediction['predicted_at'] ? date('d M H:i', strtotime($churnPrediction['predicted_at'])) : 'unknown') ?></div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-muted small py-1">Not scored yet — one click scores this lead from live data.</div>
+                    <?php endif; ?>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/leads/<?= (int)$lead['id'] ?>/score-churn" class="mt-2 mb-0">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this_csrf, ENT_QUOTES, 'UTF-8'); ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-info"><i class="fas fa-sync-alt me-1"></i><?= is_array($churnPrediction) && !empty($churnPrediction) ? 'Re-score this lead' : 'Score this lead' ?></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Best-Fit Team (advisory) -->
+        <div class="col-lg-7 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body py-2 px-3 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted fw-bold text-uppercase"><i class="fas fa-user-check text-primary me-1"></i>Best-Fit Team <span class="text-normal">(skill-based, advisory)</span></small>
+                        <span class="badge bg-primary">never auto-assigned</span>
+                    </div>
+                    <?php if (!empty($assignRecommendations)): ?>
+                    <ul class="list-group list-group-flush mb-0">
+                        <?php foreach ($assignRecommendations as $i => $rec): ?>
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
+                            <span>
+                                <span class="badge bg-light text-dark border me-2">#<?= $i + 1 ?></span>
+                                <strong><?= htmlspecialchars($rec['name'] ?? 'Unknown') ?></strong>
+                                <small class="text-muted text-capitalize ms-1"><?= htmlspecialchars($rec['role'] ?? '') ?></small>
+                                <small class="text-muted d-block">conv <?= (float)($rec['conversion_rate'] ?? 0) ?>% · <?= (int)($rec['active_leads'] ?? 0) ?> active leads</small>
+                            </span>
+                            <span class="text-end">
+                                <span class="h6 mb-0"><?= (float)($rec['total_score'] ?? 0) ?></span><br><small class="text-muted">fit / 100</small>
+                            </span>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <div class="small text-muted mt-2"><i class="fas fa-info-circle me-1"></i>Weighted: performance 25% + conversion 25% + response time 20% + workload 15% + specialization 10% + budget 5%. Reassign manually above if you agree.</div>
+                    <?php else: ?>
+                    <div class="text-muted small py-2 text-center">No active associates/agents found for recommendation.</div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- AI Summary (fallback template, no API call) -->
