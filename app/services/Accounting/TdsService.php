@@ -177,9 +177,13 @@ class TdsService
 
     private function getCurrentFinancialYear(): string
     {
+        // Match the FY label shape used across the TDS pages ("2026-27"),
+        // not a two-year expando ("2026-2027") - filters compare this exact string.
         $year = (int)date('Y');
         $month = (int)date('m');
-        if ($month > 3) return $year . '-' . ($year + 1);
-        return ($year - 1) . '-' . $year;
+        if ($month >= 4) {
+            return $year . '-' . substr((string)($year + 1), -2);
+        }
+        return ($year - 1) . '-' . substr((string)$year, -2);
     }
 }
