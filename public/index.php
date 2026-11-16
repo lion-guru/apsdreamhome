@@ -23,6 +23,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Views read $_SESSION['csrf_token'] directly. Pages that also call getCsrfToken()
+// mint it on demand; pages that do not (any page lacking an explicit caller)
+// rendered an empty hidden field and every POST to them got a 403.
+// Seed the token once per session here — the single entry point for every web request.
+if (empty($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Remember-me auto-login: a valid persistent cookie restores the session.
 // Only active + approved accounts; token rotates on every use inside the service.
 if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_token'])) {

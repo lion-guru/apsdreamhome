@@ -1266,11 +1266,45 @@ class EmployeeSelfServiceController extends BaseController
     public function documents()
     {
         $this->requireEmployeeLogin();
-        $employeeId = $_SESSION['employee_id'];
 
-        $docVaultService = new \App\Services\DocumentVaultService();
-        $documents = $docVaultService->getEmployeeDocuments($employeeId);
-        $categories = $docVaultService->getCategories(['is_active' => 1]);
+        // Self-service reads directly from the legacy documents table, scoped
+        // to the logged-in user. (The old EmployeeSelfServiceService →
+        // DocumentVaultService path had no working upload route and misnamed
+        // the user_id parameter — documents() never worked.)
+        $userId = (int)($_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? $_SESSION['employee_id'] ?? 0);
+        if ($userId <= 0) {
+            $userId = (int)($_SESSION['employee_id'] ?? 0);
+        }
+
+        $tid = (int)($_SESSION['tenant_id'] ?? 1);
+        $tSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $tParams = $tid > 1 ? [$tid] : [];
+
+        if ($this->db) {
+            $stmt = $this->db->prepare(
+                "SELECT id, document_number, 'Self-Service' AS category_name,
+                        COALESCE(NULLIF(document_type,''), 'Document') AS document_name,
+                        COALESCE(url, '') AS file_name,
+                        issue_date, expiry_date, verification_status, url, uploaded_on
+                 FROM documents
+                 WHERE user_id = ?{$tSql}
+                 ORDER BY uploaded_on DESC
+                 LIMIT 50"
+            );
+            $stmt->execute(array_merge([$userId], $tParams));
+            $documents = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } else {
+            $documents = [];
+        }
+
+        $categories = [];
+        try {
+            $categories = $this->db->fetchAll(
+                "SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY sort_order ASC, name ASC"
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('employee documents: categories load failed: ' . $e->getMessage());
+        }
 
         return $this->render('employee/self_service/documents', [
             'page_title' => 'My Documents',
@@ -1307,26 +1341,78 @@ class EmployeeSelfServiceController extends BaseController
 
         if (!isset($_FILES['document_file']) || $_FILES['document_file']['error'] !== UPLOAD_ERR_OK) {
             $_SESSION['error'] = 'No file uploaded';
-            $this->redirect(BASE_URL . '/employee/self-service/documents');
+            $this->redirect(BASE_URL . '/employee/self-service/documents/upload');
+            return;
         }
 
-        $docVaultService = new \App\Services\DocumentVaultService();
-        $data = [
-            'category_id' => (int)($_POST['category_id'] ?? 0),
-            'document_name' => $_POST['document_name'] ?? '',
-            'issue_date' => $_POST['issue_date'] ?? null,
-            'expiry_date' => $_POST['expiry_date'] ?? null,
-            'issuing_authority' => $_POST['issuing_authority'] ?? null,
-            'document_number_ref' => $_POST['document_number_ref'] ?? null,
-            'is_confidential' => !empty($_POST['is_confidential']),
-            'access_level' => $_POST['access_level'] ?? 'self',
-        ];
+        $file = $_FILES['document_file'];
+        $allowedExt = ['pdf','jpg','jpeg','png','doc','docx'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExt, true)) {
+            $_SESSION['error'] = 'Invalid file type. Allowed: ' . implode(', ', $allowedExt);
+            $this->redirect(BASE_URL . '/employee/self-service/documents/upload');
+            return;
+        }
+        if ($file['size'] > 10 * 1024 * 1024) {
+            $_SESSION['error'] = 'File size exceeds 10MB limit';
+            $this->redirect(BASE_URL . '/employee/self-service/documents/upload');
+            return;
+        }
+
+        $uploadDir = rtrim(APS_ROOT, '/') . '/public/uploads/employee_documents/';
+        if (!is_dir($uploadDir) && !@mkdir($uploadDir, 0755, true)) {
+            $_SESSION['error'] = 'Could not create upload directory';
+            $this->redirect(BASE_URL . '/employee/self-service/documents/upload');
+            return;
+        }
+
+        $employeeId = (int)($_SESSION['employee_id'] ?? 0);
+        $userId = (int)($_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? $employeeId);
+        $tid = (int)($_SESSION['tenant_id'] ?? 1);
+        $fileName = 'emp_' . $employeeId . '_' . uniqid() . '.' . $ext;
+        $dest = $uploadDir . $fileName;
+        $expiry = !empty($_POST['expiry_date']) ? $_POST['expiry_date'] : null;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            $_SESSION['error'] = 'Failed to save file';
+            $this->redirect(BASE_URL . '/employee/self-service/documents/upload');
+            return;
+        }
+
+        // Self-service uploads go into the legacy documents table, scoped to
+        // this user. (employee_documents references employee_profiles(id) and
+        // rejected rows whenever the test/admin session had no employee_profile
+        // row — the upload was fully broken for any such user.)
+
+        $type = strtolower((string)($_POST['document_type'] ?? 'general'));
+        $allowed = ['offer_letter','appointment_letter','id_proof','address_proof','education_cert','experience_cert','salary_slip','increment_letter','relieving_letter','other','general'];
+        if (!in_array($type, $allowed, true)) {
+            $type = 'general';
+        }
+
+        $docName = trim((string)($_POST['document_name'] ?? $file['name']));
 
         try {
-            $result = $docVaultService->uploadDocument($_SESSION['employee_id'], $data, $_FILES['document_file']);
-            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+            $this->db->insert('documents', [
+                'tenant_id'          => $tid,
+                'user_id'            => $userId,
+                'entity_type'        => 'self_service_document',
+                'entity_id'          => $userId,
+                'document_type'      => $type,
+                'type'               => $docName,
+                'document_number'    => substr($_POST['document_number_ref'] ?? ('APS-DOC-' . date('YmdHis')), 0, 100),
+                'issue_date'         => !empty($_POST['issue_date']) ? $_POST['issue_date'] : null,
+                'expiry_date'        => $expiry,
+                'issued_by'          => substr((string)($_POST['issuing_authority'] ?? ''), 0, 200) ?: null,
+                'verification_status' => 'pending',
+                'url'                => '/uploads/employee_documents/' . $fileName,
+                'is_kyc'             => !empty($_POST['is_confidential']) ? 1 : 0,
+            ]);
+            $_SESSION['success'] = 'Document uploaded successfully';
         } catch (\Throwable $e) {
-            $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
+            error_log('EmployeeSelfServiceController::documentUpload insert failed: ' . $e->getMessage());
+            @unlink($dest);
+            $_SESSION['error'] = 'Upload failed — please check the error log';
         }
         $this->redirect(BASE_URL . '/employee/self-service/documents');
     }
