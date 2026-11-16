@@ -764,11 +764,19 @@ function timeAgo($dt) {
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-light py-2"><h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-chart-bar me-2"></i>Score Breakdown</h2></div>
                         <div class="card-body">
-                            <?php if (!empty($score_breakdown) && is_array($score_breakdown)): ?>
-                                <?php foreach ($score_breakdown as $factor => $data): ?>
+                            <?php
+                            // getScoreBreakdown() returns an ENVELOPE: total_score / grade / breakdown(nested).
+                            // Iterate only the factor rows. Coerce to numbers so a stray string never fatals.
+                            $sb = isset($score_breakdown) && is_array($score_breakdown) ? $score_breakdown : [];
+                            $factors = (isset($sb['breakdown']) && is_array($sb['breakdown'])) ? $sb['breakdown'] : $sb;
+                            ?>
+                            <?php if (!empty($factors)): ?>
+                                <?php foreach ($factors as $factor => $data): ?>
                                     <?php
                                     $val = is_array($data) ? ($data['score'] ?? $data['value'] ?? 0) : $data;
                                     $max = is_array($data) ? ($data['max'] ?? 100) : 100;
+                                    $val = is_numeric($val) ? (float) $val : 0.0;
+                                    $max = is_numeric($max) ? (float) $max : 100.0;
                                     $pct = $max > 0 ? min(100, ($val / $max) * 100) : 0;
                                     $barColor = $pct >= 70 ? 'success' : ($pct >= 40 ? 'warning' : 'danger');
                                     ?>
@@ -786,8 +794,11 @@ function timeAgo($dt) {
                                 <p class="text-muted mb-3">No score data available. Score is calculated automatically based on lead activity and engagement.</p>
                             <?php endif; ?>
                             <div class="text-center mt-3 p-3 bg-light rounded">
-                                <div ><?= $leadScore ?></div>
+                                <div class="fw-bold"><?= $leadScore ?></div>
                                 <small class="text-muted text-uppercase fw-bold">Overall Score</small>
+                                <?php if (!empty($sb['grade'])): ?>
+                                    <div class="mt-2"><span class="badge bg-primary fs-6">Grade <?= htmlspecialchars((string) $sb['grade']) ?></span></div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
