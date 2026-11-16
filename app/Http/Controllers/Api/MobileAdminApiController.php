@@ -1657,6 +1657,58 @@ class MobileAdminApiController extends BaseController
         }
     }
 
+    // DB-driven admin menu for the mobile app: mirrors the web sidebar's
+    // permission model exactly (can_view on admin_role_menu_permissions).
+    // The app renders only the items it has screens for and falls back to
+    // its built-in baseline on any failure - unknown roles get emptiness.
+    public function menu()
+    {
+        $this->setCorsHeaders();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            return;
+        }
+        $role = strtolower(trim((string)($GLOBALS['api_user_role'] ?? 'customer')));
+        $tid = (int)($GLOBALS['api_user_tenant_id'] ?? 1);
+        try {
+            // Admin-ish gate: the role must exist in the permission table.
+            $roleCheck = $this->db->prepare("SELECT COUNT(*) FROM admin_role_menu_permissions WHERE role = ? AND tenant_id = ?");
+            $roleCheck->execute([$role, $tid]);
+            if (!(int)$roleCheck->fetchColumn()) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'This role has no admin menu']);
+                return;
+            }
+            $stmt = $this->db->prepare("SELECT i.id, i.name, i.icon, i.url, i.section, i.order_index
+                FROM admin_menu_items i
+                JOIN admin_role_menu_permissions p ON p.menu_item_id = i.id
+                WHERE p.role = ? AND p.can_view = 1 AND i.is_active = 1
+                  AND p.tenant_id = ? AND i.tenant_id = ?
+                ORDER BY i.section, i.order_index, i.id");
+            $stmt->execute([$role, $tid, $tid]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $menu = [];
+            foreach ($rows as $row) {
+                $menu[] = [
+                    'id' => (int)$row['id'],
+                    'name' => $row['name'],
+                    'icon' => $row['icon'] ?? 'circle',
+                    'url' => $row['url'],
+                    'section' => $row['section'] ?? 'main',
+                    'order_index' => (int)($row['order_index'] ?? 0),
+                ];
+            }
+            $sections = [];
+            foreach ($menu as $item) { $sections[$item['section']] = true; }
+            echo json_encode(['success' => true, 'role' => $role, 'sections' => count($sections), 'count' => count($menu), 'menu' => $menu]);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Menu lookup failed']);
+        }
+    }
+
     public function logLeadCall($id) {
         $this->setCorsHeaders();
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);

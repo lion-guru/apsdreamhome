@@ -5,6 +5,7 @@ import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/services/auth_service.dart';
+import '../../../core/services/admin_menu_service.dart';
 
 /// Admin Shell - Main Layout for Admin Panel
 /// Uses AuthBridge (ValueNotifier) instead of Riverpod to avoid InheritedModel assertion.
@@ -19,6 +20,24 @@ class AdminShell extends StatefulWidget {
 
 class _AdminShellState extends State<AdminShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  /// DB-driven menu for this role (web RBAC, can_view-resolved), filtered to
+  /// screens the app implements. Null until the first fetch completes - the
+  /// shell renders the built-in role baseline until then.
+  List<AdminMenuEntry>? _syncedMenu;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadSyncedMenu());
+  }
+
+  Future<void> _loadSyncedMenu() async {
+    final menu = await AdminMenuService.instance.fetchMenu();
+    if (!mounted || menu == null) return;
+    if (menu.isEmpty) return; // keep the built-in baseline - nothing to show
+    setState(() => _syncedMenu = menu);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +90,17 @@ class _AdminShellState extends State<AdminShell> {
 
   Widget _buildSidebar(BuildContext context, User user) {
     final subRole = (user.role ?? user.rank).toLowerCase();
-    final menuItems = _getMenuItems(subRole);
+    final synced = _syncedMenu;
+    final menuItems = synced == null
+        ? _getMenuItems(subRole)
+        : synced
+            .map((e) => {
+                  'icon': iconForEntry(e),
+                  'label': e.name,
+                  'route': routeForEntry(e),
+                  'section': e.section,
+                })
+            .toList();
 
     return Container(
       color: const Color(0xFF1E293B),
@@ -128,20 +157,9 @@ class _AdminShellState extends State<AdminShell> {
 
           // Menu
           Expanded(
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              itemCount: menuItems.length,
-              itemBuilder: (context, index) {
-                final item = menuItems[index];
-                final isSelected = _isCurrentRoute(item['route'] as String);
-                return _buildMenuItem(
-                  icon: item['icon'] as IconData,
-                  label: item['label'] as String,
-                  route: item['route'] as String,
-                  isSelected: isSelected,
-                  badge: item['badge'] as int?,
-                );
-              },
+              children: _buildMenuItems(context, menuItems),
             ),
           ),
 
@@ -200,6 +218,47 @@ class _AdminShellState extends State<AdminShell> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  List<Widget> _buildMenuItems(
+    BuildContext context,
+    List<Map<String, dynamic>> items,
+  ) {
+    final widgets = <Widget>[];
+    String? lastSection;
+    for (final item in items) {
+      final section = item['section'] as String?;
+      if (section != null && section != lastSection) {
+        lastSection = section;
+        widgets.add(_buildSectionHeader(section));
+      }
+      final route = item['route'] as String;
+      widgets.add(
+        _buildMenuItem(
+          icon: item['icon'] as IconData,
+          label: item['label'] as String,
+          route: route,
+          isSelected: _isCurrentRoute(route),
+          badge: item['badge'] as int?,
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  Widget _buildSectionHeader(String section) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(28, 16, 16, 6),
+      child: Text(
+        adminSectionLabel(section),
+        style: TextStyle(
+          color: Colors.white.withValues(alpha: 0.45),
+          fontSize: 10,
+          letterSpacing: 1.2,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

@@ -1121,6 +1121,7 @@ $router->get("$crmPrefix/analytics/agents", 'Api\CRMController@agentPerformance'
 $router->get('/api/v2/mobile/employee/dashboard', 'Api\MobileAdminApiController@employeeDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/employee/tasks', 'Api\MobileAdminApiController@employeeTasks')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/employee/attendance', 'Api\MobileAdminApiController@employeeAttendance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/admin/menu', 'Api\MobileAdminApiController@menu')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Bookings routes (existing at /api/mobile/v2/bookings)
 $router->get('/api/v2/mobile/bookings', 'Api\MobileBookingApiController@listBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
