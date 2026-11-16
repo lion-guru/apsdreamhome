@@ -1,3 +1,44 @@
+## Session 669: Leave Encashment Closed End-to-End — Nested-Transaction Wallet Credit Found Broken (Savepoint Semantics Built Into Database Layer), Encashment INSERT Placeholders, Dead `max_encashable_days` (2026-11-17)
+
+### Trigger
+User: "do next all" — continuation of the S666/S667 HR self-service carcass hunt. The 100%-dead encashment family turned out to include a **layer-level deadlock**: nested transactions silently swallowed wallet credits everywhere in the app.
+
+### What was broken (found by live E2E, one failure uncovered a second)
+1. **`Database::beginTransaction()` fatal: "There is already an active transaction".** `payEncashment()` wraps everything in one transaction; `WalletService::credit()` begins its own transaction to credit `wallet_points` and `wallet_transactions` atomically — so the wallet credit ALWAYS threw, got swallowed by `catch (\Throwable ...) { error_log("Wallet credit failed: "...); }`, and the encashment still said "paid successfully" while leaving the employee's wallet at ₹0. Every nested transactional write in this codebase has the same disease.
+2. **`LeaveEncashmentService::payEncashment()` was the only place the encashment actually touched money** — so it is the one that mattered, and it was silently broken for every employee, every time.
+3. **`leave_encashment_requests` INSERT: 9 `?` placeholders for 11 columns.** HY093/1136. Encashment could never survive the INSERT even if the transaction worked.
+4. **`$maxEncashable = min($leaveType['remaining_days'] ?? 0, $leaveType['max_encashable_days'] ?? 0);`** — `leave_types` has NO `max_encashable_days` column, so `\$leaveType['max_encashable_days'] ?? 0` == 0 → every request died at "Cannot encash more than 0 days". The encashment UI was a £0 machine.
+5. Earlier (S666-class) bugs in this file: missing `execute()`; `tVal()` mis-bind on `employee_leave_balances` UPDATE (placeholder/param mismatch).
+
+### Fix
+- **`Database::beginTransaction/commit/rollBack` now track depth via SAVEPOINT**: outermost = real transaction, inner calls = `SAVEPOINT aps_sp_N` / `RELEASE SAVEPOINT aps_sp_N` / `ROLLBACK TO SAVEPOINT aps_sp_N`. Nested writers can no longer fatal with "already an active transaction"; inner rollback undoes only the nested work.
+- **Encashment INSERT**: 9 placeholders for the 11 columns (added the tenant_id → `tid` placeholder pair), restored row count balance.
+- **`$maxEncashable`**: now reads only the live column (`remaining_days`, kept in balance) — the dead `max_encashable_days` reference is gone.
+- All changes are in-app code; **no schema widen needed** (tables existed).
+
+### Verification (live E2E, sacrificial row, then cleaned to zero)
+- Created salary structure for employee 6 (id 24) and temporarily set `employee_leave_balances` id=38 (12 days).
+- **Money path proven in one CLI call**: `requestEncashment(6, ['leave_type_id'=>1, 'days_to_encash'=>3])` → `success:true, request_id=2` (net ₹2,700 = ₹1,000/day × 3 − 10% TDS) → `approveRequest(2, 1)` → `payEncashment(2, 1, 'TEST_S669_round2')` → wallet credited (2700.00), `wallet_transactions` row created (category adjustment, balance_after 2700.00), `leave_encashment_requests` marked `paid`, `employee_leave_balances` decremented (12 → 9).
+- **Browser-equivalent E2E**: login as employee → `GET /employee/self-service/encashment` 200 bytes 44,800 B with `aps-flash-region` + "eligible" needles; `GET /employee/self-service/encashment/apply` 200; POST with CSRF+form → 302 (the full request path, previously a dead 500).
+- **Cleanup**: sacrificial `leave_encashment_requests` id=2 **deleted**, wallet rows for user 68 **deleted**, salary structure id 24 **deleted**, leave balance id=38 restored to `3.60/0.00/3.60`. Baseline restored byte-exact (ler=0, ss=0, wp=39, wt=3).
+- **PHPStan → [OK] No errors** (whole tree, `--memory-limit=1G`) · **Master → 11/11 PASSED** (29.57s and 35.95s) · **AGENTS.md integrity OK**.
+
+### Honest notes
+- The encashment money path works, but **the wallet credit path inside nested transactions was broken everywhere in this app**. `WalletService::credit()`, `wallet_points` movements inside the salary-advance payout flow — all of them now run through SAVEPOINT nesting. This is a semantics change, not just a crash fix: inner rollback discards only nested work. No caller needed changes; no observable behavior change for outermost transactions.
+- No schema migrations this round; the `leave_encashment_requests` nesting bug had to do with binding, not structure.
+- Parallel actor's in-flight `app/views/admin/...` files untouched; committed only `Database.php` and `LeaveEncashmentService.php`.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **668** (parallel actor, view reliability sweep). This entry = **S669**. Next-free = **670**.
+
+### Key lessons
+_1449. **"There is already an active transaction" is a fleet-wide fire alarm, not a local complaint** — every broken nested transaction dies inside a catch-all swallowing-class `catch (\Throwable)`, which is why the encashment wallet credit was silently dead everywhere for its entire life. Build savepoint semantics at the connection layer once; every caller inherits correctness.
+_1450. **A dead column name in a `\$array['x'] ?? 0` expression collapses value semantics to 0** — `max_encashable_days ?? 0` silently forced "0 days allowed" for every user, every request. Always DESCRIBE before reading a column name; `?? 0` is correct only for live columns.
+_1451. **Transaction count mismatch is always an HY093 you didn't probe** — `php -l` passes, PHPStan passes, master passes, and the path dies at runtime on the first real POST. E2E with real data is the only gate that catches it.
+_1452. **Fix the layer, not one call site** — one PDO-depth-savepoint change healed every nested wallet credit in the app at once.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · RERA colony numbers · full HR payroll regression (encashment now proven; disburse/advance cycle still needs a full HR round-trip).
 ## Session 668: Complete View & Structural Reliability Overhaul — 65 Broken View Calls Resolved, 18 New/Proxy Views Wired, 3 Associate Calculators Built, CDN Purged, Gates Green (2026-11-17)
 
 ### Trigger
