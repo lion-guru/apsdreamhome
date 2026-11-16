@@ -12081,3 +12081,46 @@ _1356. **Excluding another actor's in-flight files must be deliberate.** Autoloa
 
 ### Owner actions still open (unchanged)
 Play Console upload of `apsdreamhome-v1.2.10-release.aab` · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · `bohisawagar-banner.jpg` · production deploy (`apsdreamhome.com` unreachable) · SmartAssign wiring at lead intake (not done — zero-risk suggestion) · colony-tagged-lead form field owner (makes per-colony demand measurable, currently zero signal)
+## Session 635: AI Council on Admin Lead Desk — Churn Risk Badge + Re-Score Button + Best-Fit Team (Advisory, Never Auto-Assigns), Pushed (2026-11-16)
+
+### Trigger
+User: "do next" — after S632 wired the Morning Brief insight panels, the admin lead detail page still showed zero AI. The two AI services (churn prediction, smart lead assignment) were invisible to the exact desk that owns leads.
+
+### What was built
+**1. `SmartLeadAssignmentService::recommendForLead(int $leadId, int $limit = 3): array`** (new public method, pure compute — never writes): ranks candidates with the existing weighted composite (performance 25% + conversion 25% + response time 20% + workload 15% + specialization 10% + budget 5%) and returns the top-3 with `user_id, name, role, active_leads, performance_score, conversion_rate, skill_score, total_score, factors`. No assignment, no crm_assignments writes, no DB changes at all.
+
+**2. `Admin\LeadController::show()`** — two advisories computed safely (each in its own try/catch, logged on failure):
+- `churn_prediction` — READ-ONLY from the `lead_churn_predictions` cache (never computes on GET; zero writes on page load).
+- `assign_recommendations` — top-3 via `recommendForLead($id, 3)` (pure compute on read).
+
+**3. New `POST /admin/leads/{id}/score-churn`** (`scoreChurn($id)`): `requireAdmin()` + `validateCsrfOrFail()`; calls `LeadChurnPredictionService::predict($id)` — a single-lead upsert into the recomputable cache; flashes the result; redirects to the lead. Never assigns anything; never changes lead data.
+
+**4. View `app/views/admin/leads/show.php`** — new "**AI Council**" strip inserted before the AI Summary section:
+- **AI Churn Risk** card: level badge (dark/danger/warning/secondary), probability bar 0–100, next action, scored-at timestamp, and a `Score / Re-score this lead` button (POST + csrf). Not scored yet? Shows an honest CTA instead.
+- **Best-Fit Team** card: top-3 ranked associates/agents with fit score `x/100`, conversion %, active leads, weighted-factor breakdown line, "never auto-assigned" badge, and explicit "Reassign manually above if you agree" hint.
+
+**5. Route** `POST /admin/leads/{id}/score-churn` registered in `routes/web.php` next to the other lead POSTs.
+
+### Verification (all live, test_login=2 / super_admin)
+- Page `/admin/leads/49985` (Sanjay Bansal, live lead): renders needles `AI Council`, `Best-Fit Team`, `AI Churn Risk`, `advisory`, `never auto-assigned`, `Re-score this lead`, `progress-bar bg-`, `churn probability`, `risk level` — **42,944 bytes**, full lead page intact.
+- **POST `/admin/leads/49985/score-churn`** (fresh CSRF from page, follow-302): **302 → `/admin/leads/49985`**, churn row refreshed: `lead_id=49985, risk_level=high, risk_score=55.00, scored_at=20:20:33`. Exactly one upsert — the designed behavior.
+- One transient 404 during probing was **my own typo** (`/apsdreamhome/apsdreamhome/admin/leads/49985/score-churn` — doubled path), not the app — corrected and re-probed green.
+- **PHPStan → `[OK] No errors`** (1517 files) · **Master → 11/11 PASSED** (40.57s) · **Smoke → PASS** (inside master) · `php -l` clean ×4 · AGENTS.md integrity re-run at this entry.
+
+### Honest notes
+- Churn risk on page load is **cache-only** by design — an admin refreshing repeatedly does not re-score (one bounded POST does, one row).
+- The re-score POST wrote exactly one cache row (intended product footgun-free operation).
+- Parallel actor's in-flight files (Autoloader.php, customer/colony_progress.php, documents.php, maintenance_dues.php, nri_desk.php) were **not** committed by me; my staged set was verified before commit: exactly my 4 files.
+- The "Best-Fit" recommendation is **advisory** — the admin still assigns manually via the existing Reassign modal; no lead routing behavior changed.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = S634 (parallel actor, commission engine cap fix, committed 4dee2c8b3). This entry = **S635**. Next-free = **636**.
+
+### Key lessons
+_1363. **Put the read path on GET, the write path behind one explicit button.** The page load reads the churn cache with zero writes; the single-lead POST does exactly one upsert. No "score on every view" surprise.
+_1364. **Advisory AI must never mutate by being viewed.** recommendForLead() doesn't call persistAssignment(); the UI explicitly says "never auto-assigned". Any AI that assigns during a page render is a policy bug, not a feature.
+_1365. **A "best fit" list is information, a decision belongs to the human.** We show top-3 with the factor recipe (25/25/20/15/10/5) so the admin can challenge the ranking, not just accept it.
+_1366. **A re-score button beats a background guess every time.** One lead in front of you, one click, one upsert, one honest flash — better than daily batch rescoring the entire pool nobody reads.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · colony-tagged-lead form field owner · auto-assign integration at lead intake (round-robin → smart routing) remains an owner decision — this session makes smart routing VISIBLE and ready, deliberately not live.
