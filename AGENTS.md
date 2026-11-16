@@ -12124,3 +12124,31 @@ _1366. **A re-score button beats a background guess every time.** One lead in fr
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · colony-tagged-lead form field owner · auto-assign integration at lead intake (round-robin → smart routing) remains an owner decision — this session makes smart routing VISIBLE and ready, deliberately not live.
+## Session 636: Nightly Churn Prediction Refresh Added to Master Cron Runner — DAILY Task 16, Idempotent Cache, Master 11/11 (2026-11-16)
+
+### Trigger
+With the admin Morning Brief (S632) and the lead-desk AI Council (S635) both reading the `lead_churn_predictions` cache, a cache that goes stale would turn yesterday's scores into today's "truth". The master cron runner (`scripts/run_all_crons.php`) is the canonical place — it already carries the parallel actor's AI Health Check as DAILY task 15.
+
+### What was added
+1. **DAILY task 16 — Churn Prediction Refresh** (between AI Health Check and the MONTHLY block): calls `LeadChurnPredictionService::predictAll(300)` — scores up to 300 open leads per night into the recomputable cache. Wrapped in its own try/catch; a failure never fails the runner, writes into `$errors[]` only; logged as `churn_refresh` in the run summary.
+2. **Header docblock + `--dry-run` list** updated: 16 DAILY tasks, 15 MONTHLY entries shown.
+3. **Zero business events**: no assignment, penalties, emails, or wallet rows — one bounded upsert per lead, refresh-only.
+
+### Verification
+- `php -l` clean · `--dry-run` lists task 16 without executing · standalone proof (`test_churn_cron.php`, deleted same turn): `predictAll(300) → predicted=300, skipped=0`; DB read-back: rows stay 300 (15 critical / 111 high / 174 medium — same population, refresh successful) · master suite **11/11 PASSED** after the edit (operator-only change, suite untouched).
+
+### Honest notes
+- The runner must be invoked by Windows Task Scheduler (owner territory) — task 16 runs only when the DAILY mode runs. Code-side, everything is ready and proven.
+- Parallel actor wired SmartLeadAssignmentService into lead intake during this round (`LeadController::store` — smart routing first, legacy fallback); that is their work, untouched by me, complementary to the advisory surface.
+- No money tables read or written; no schema; no migrations.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **635** (mine, AI Council on lead desk, committed 97e1692d6; also on-file alongside parallel actor's 634). This entry = **S636**. Next-free = **637**.
+
+### Key lessons
+_1367. **Caches feeding admin UI die quietly without a refresh job.** A one-click button (S635) refreshes one lead; a nightly task keeps the panel honest for the whole desk. Both layers, not either.
+_1368. **Add refresh jobs at the same seam as their sibling health check.** Task 15 pattern (require/inline + try/catch + summary log) makes the new task reviewable in minutes, not a new cron file.
+_1369. **Prove the exact code path you shipped, standalone.** The cron never ran here (full DAILY executes business writes — owner territory), but `predictAll(300)` was executed directly: the exact service call task 16 makes, with the same result.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · colony-tagged-lead form field owner · admin Task Scheduler verification (that the DAILY task 16 actually fires on schedule — code is ready, the scheduler is yours).
