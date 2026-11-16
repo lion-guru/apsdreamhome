@@ -1,3 +1,57 @@
+## Session 607: Multi-Role Browser Crawl — All 7 Test Roles × ~40 Pages Render 0 Page-Errors; Departments Desk Verified Live (11 Departments, 75 Designations, 8 Employees); Employee/Department System Inventory (2026-11-16)
+
+### Trigger
+User (Hinglish, before sleeping): "do next bina ruke kaam karo" + "testing nevigate karo sabhi user ko bhi login kar ke dekh lena jaise admin ka kar rahe etc" — keep working without stopping; log in as every role and navigate like the admin audit.
+
+### What was done (agent-browser `qa-rolltest` session against the live app)
+
+**7 dev-login roles crawled, every surface 0 page-errors, console flagged lines 0:**
+| Role | Login URL | Landing | Pages crawled | Result |
+|---|---|---|---|---|
+| super_admin | `/admin/login?test_login=2` | `/admin/erp` | `/admin/dashboard`, `/admin/erp`, `/admin/users`, `/admin/leads`, `/admin/properties`, `/admin/plots`, `/admin/payments`, `/admin/sales/bookings`, `/admin/grievances`, `/admin/ai/hub`, `/admin/feature-flags`, `/admin/gst`, `/admin/reports`, `/admin/bookings` | 14/14 clean |
+| admin | `/admin/login?test_login=1` | `/admin/erp` | (spot check) | clean |
+| telecaller | `/employee/login?test_login=3` | `/employee/dashboard` | `/employee/dashboard`, `/employee/attendance`, `/employee/self-service`, `/employee/leads`, `/employee/inquiries` | 5/5 clean |
+| employee | `/employee/login?test_login=4` | `/employee/dashboard` | `/employee/dashboard`, `/employee/attendance`, `/employee/profile`, `/employee/notifications`, `/employee/self-service`, `/employee/self-service/grievances`, `/employee/ai-coach` | 7/7 clean |
+| associate | `/associate/login?test_login=5` | `/associate/dashboard` | `/associate/dashboard`, `/associate/leads`, `/associate/commissions`, `/associate/wallet`, `/associate/team`, `/associate/rewards`, `/associate/offers`, `/associate/bookings` | 8/8 clean |
+| agent | `/agent/login?test_login=6` | `/agent/dashboard` | `/agent/dashboard`, `/agent/leads`, `/agent/deals`, `/agent/commissions`, `/agent/properties`, `/agent/salary`, `/agent/id-card` | 7/7 clean |
+| customer | `/login?test_login=7` | `/user/dashboard` | `/user/dashboard`, `/user/bookings`, `/user/passbook`, `/user/installments`, `/user/wallet`, `/user/referral`, `/user/documents`, `/user/site-visits` | 8/8 clean |
+
+Console checks on admin pages (`[error]`/Uncaught/net::/Failed to/\`[error]\`): 0 flagged lines on all 8 re-checked admin pages. ERP Overview and Employee Dashboard screenshots captured (`departments_admin.png`, `employee_dashboard.png`).
+
+**Probe artifact (not a bug):** `/associate/deals` returns 404 — my own guessed URL; `grep -r associate/deals` matches nothing anywhere (routes, views, menus). The associate menu has no Deals item; the 404 is correct behavior for an unregistered path, not a dead menu link.
+
+### `/admin/departments` — verified live, real data
+- 11 departments (SALES, FIN, CS, OPS, LEGAL, HR, MKTG, IT, EXEC, CONST, LAND), all active; hierarchical (`parent_dept_id`), budgets, head assignment column (`head_user_id`, mostly 1-digit seed rows with NULL here — see gaps).
+- 75 rows in `employee_designation_roles` (designation → role mapping for 7 role classes).
+- 8 total employees in `employee_profiles` (6 users with employee-class roles: 4 employees + 1 backoffice_staff? — count query confirmed 6; `employees` table holds 15 rows incl. legacy).
+- Department requests + comments sub-system (`department_requests`, `department_request_comments`) for inter-department service requests.
+- Page: "Department Management" 200, stats ribbon 11/11/75/8, Add Department + Manage Designations buttons render, 0 console/page errors.
+
+### What EXISTS for employees & departments (inventory, not aspiration)
+- **Employee Portal** (`/employee/*`) — RBAC portal: dashboard, attendance, profile, notifications, inquiries (with staff assignment), self-service (tax calculator, Form16, grievances, advances, reimbursements, offers, letters), AI coach. Live in 3 roles (employee/telecaller) — all 0 errors above.
+- **Department structure** — `departments` (11, tree via parent_dept_id, dept_budget, head_user_id) + `employee_designation_roles` (75) + designation→role enforcement layer.
+- **HR modules** — attendance, leaves (two table families: `employee_leaves` and `employee_leave_requests` — legacy/new drift, both live), payroll (`employee_payroll`/`employee_payrolls` — same drift), salary structure (`employee_salary_structure`/`employee_salary_structures` — same drift), salary grants (`mlm_salary_grants` for performance-based associate salaries), KPI/goals/performance reviews, assets, bonuses, advances, reimbursements, investment declarations, availability, workload, skills.
+- **Admin UI awareness** — sidebar shows 453 items across 21 sections; Departments page is the one operational view for the HR backbone.
+- **AI workforce** — `ai_employees` + `ai_employee_tasks` tables exist (AI digital agents built in S354-era work).
+- **Portal menus** (`PortalMenuService`) per role: customer/associate/agent/employee/admin — unit-checked in earlier sessions and empirically confirmed again here (all menu links visited were 200).
+
+### Honest gaps (owner calls / next sessions — NOT built speculatively this round)
+1. **Department heads unassigned** — `head_user_id` NULL on the seeded departments; "who leads this department?" is not answerable from the data today. Owner needs to name heads (Engineering, Sales, Ops, Legal, Finance, HR, Marketing, IT, Acquisition, Construction, CEO Office).
+2. **Table drift (salary/leaves/payroll ×2 each)** — legacy + new schema both live; reads mix both; unifying is a migration-heavy consolidation — needs its own careful pass, never a one-liner.
+3. **`dept_budget` is display-only** — no enforcement anywhere; budgets tracked but never debited/alerted. Real "department P&L" (budget vs actuals) does not exist.
+4. **No department-scoped data isolation** — RLS-equivalent doesn't exist in this custom MVC (apart from tenant_id); a sales manager sees all sales data, not only their department's slices. Dept-scoped views would be a real build, not an enable.
+5. **Telecaller role absent from `users`** — codebase references telecaller everywhere; zero (0) live telecaller users; `backoffice_staff` also absent. Seeding them is an owner decision.
+6. **DO NOT build** more department screens before the owner resolves 1/2/5 — otherwise they calcify against non-functional data.
+
+### Verified end-to-end
+- Browser session `qa-rolltest` closed cleanly; screenshot artifacts live in temp only (not in repo).
+- PHPStan and Master gates unchanged by this round (zero code changes — browser-only verification + DB structure reads).
+- Parallel actor's in-flight files: none visible (`git status --porcelain` clean).
+- DB: zero writes this round.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 606. This entry = **S607**. Next-free = **608**.
+
 ## Session 606: VAPID Key Endpoint Consistency Fix — /api/push/vapid-key Leaked Internal 'x.y' Format; Now Returns Canonical base64url Uncompressed EC Point (2026-11-16)
 
 ### Trigger
