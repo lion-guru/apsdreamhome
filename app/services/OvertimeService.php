@@ -44,6 +44,17 @@ class OvertimeService
         }
     }
 
+    /**
+     * Execute a write statement. Delegates to Database::query(), which THROWS on failure -
+     * the transaction callers below catch \Throwable and roll back, so a failed statement
+     * can never partially commit.
+     */
+    private function execute(string $sql, array $params = []): bool
+    {
+        $this->db->query($sql, $params);
+        return true;
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -135,7 +146,7 @@ class OvertimeService
         $monthlyHours = $this->db->fetchOne("
             SELECT COALESCE(SUM(hours), 0) as total
             FROM overtime_requests
-            WHERE employee_id = ? AND date BETWEEN ? AND ? AND status IN ('pending','approved','paid')
+            WHERE employee_id = ? AND overtime_date BETWEEN ? AND ? AND status IN ('pending','approved')
         ", [$employeeId, $monthStart, $monthEnd]);
 
         $monthlyTotal = ($monthlyHours['total'] ?? 0) + $hours;
@@ -170,7 +181,7 @@ class OvertimeService
         // Check for existing request on same date
         $existing = $this->db->fetchOne("
             SELECT id FROM overtime_requests
-            WHERE employee_id = ? AND date = ? AND status IN ('pending','approved')
+            WHERE employee_id = ? AND overtime_date = ? AND status IN ('pending','approved')
         ", [$employeeId, $date]);
 
         if ($existing) {
@@ -185,9 +196,9 @@ class OvertimeService
 
         $this->execute("
             INSERT INTO overtime_requests
-            (tenant_id, employee_id, date, start_time, end_time, hours, rate_multiplier, hourly_rate, amount, reason, status, requested_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        ", [1, $employeeId, $date, $startTime, $endTime, $hours, $multiplier, $hourlyRate, $amount, $reason, $status]);
+            (tenant_id, employee_id, overtime_date, start_time, end_time, hours, rate_multiplier, hourly_rate, amount, reason, status, requested_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ", [$this->tenantId(), $employeeId, $date, $startTime, $endTime, $hours, $multiplier, $hourlyRate, $amount, $reason, $status]);
 
         $requestId = $this->db->lastInsertId();
 
@@ -337,7 +348,7 @@ class OvertimeService
             FROM overtime_requests orr
             LEFT JOIN employee_profiles ep ON ep.legacy_id = orr.employee_id OR ep.user_id = orr.employee_id OR ep.id = orr.employee_id
             LEFT JOIN users u_emp ON u_emp.id = ep.user_id
-            WHERE ep.department = ? AND orr.date BETWEEN ? AND ? AND orr.tenant_id = 1
+            WHERE ep.department = ? AND orr.overtime_date BETWEEN ? AND ? AND orr.tenant_id = 1
             GROUP BY ep.id, u_emp.name, ep.employee_code
             ORDER BY u_emp.name
         ", [$department, $start, $end]);

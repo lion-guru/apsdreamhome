@@ -71,7 +71,7 @@ class SalaryAdvanceService
                    CAST(ep.salary AS DECIMAL(12,2)) as salary, ep.status as status
             FROM employee_profiles ep
             JOIN users u ON u.id = ep.user_id
-            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.status = 'active'{$this->tenantSql()}
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.status = 'active'{$this->tenantWhere()}
         ", array_merge([$employeeId, $employeeId, $employeeId], $this->tVal()));
 
         if (!$emp) {
@@ -80,7 +80,7 @@ class SalaryAdvanceService
 
         // Check for existing pending requests
         $pending = $this->fetchOne(
-            "SELECT id FROM salary_advances WHERE employee_id = ? AND status IN ('pending','approved'){$this->tenantSql()}",
+            "SELECT id FROM salary_advances WHERE employee_id = ? AND status IN ('pending','approved'){$this->tenantWhere()}",
             array_merge([$employeeId], $this->tVal())
         );
         if ($pending) {
@@ -187,7 +187,7 @@ class SalaryAdvanceService
             LEFT JOIN employee_profiles ep ON ep.legacy_id = sa.employee_id OR ep.user_id = sa.employee_id OR ep.id = sa.employee_id
             LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             LEFT JOIN users u ON u.id = ep.user_id
-            WHERE sa.id = ?{$this->tenantSql()}
+            WHERE sa.id = ?{$this->tenantWhere()}
         ", array_merge([$advanceId], $this->tVal()));
     }
 
@@ -198,7 +198,7 @@ class SalaryAdvanceService
     {
         return $this->db->fetchAll("
             SELECT * FROM salary_advances
-            WHERE employee_id = ?{$this->tenantSql()}
+            WHERE employee_id = ?{$this->tenantWhere()}
             ORDER BY requested_at DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
@@ -210,7 +210,7 @@ class SalaryAdvanceService
     {
         return $this->db->fetchAll("
             SELECT * FROM salary_advance_repayments
-            WHERE advance_id = ?{$this->tenantSql()}
+            WHERE advance_id = ?{$this->tenantWhere()}
             ORDER BY installment_no
         ", array_merge([$advanceId], $this->tVal()));
     }
@@ -228,7 +228,7 @@ class SalaryAdvanceService
             $this->execute("
                 UPDATE salary_advances
                 SET status = 'approved', approved_at = NOW(), approved_by = ?
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$approverId, $advanceId], $this->tVal()));
         } catch (\Throwable $e) {
             error_log('[' . __CLASS__ . '::approveAdvance] ' . $e->getMessage());
@@ -258,7 +258,7 @@ class SalaryAdvanceService
             $this->execute("
                 UPDATE salary_advances 
                 SET status = 'disbursed', disbursed_at = NOW(), disbursed_by = ?, disbursement_ref = ?, remaining_balance = amount
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$disburserId, $disbursementRef, $advanceId], $this->tVal()));
 
             // Credit to wallet
@@ -285,7 +285,7 @@ class SalaryAdvanceService
             $this->execute("
                 UPDATE salary_advances
                 SET status = 'rejected', rejected_at = NOW(), rejected_by = ?, rejection_reason = ?
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$rejecterId, $reason, $advanceId], $this->tVal()));
         } catch (\Throwable $e) {
             error_log('[' . __CLASS__ . '::rejectAdvance] ' . $e->getMessage());
@@ -405,6 +405,6 @@ class SalaryAdvanceService
             JOIN salary_advances sa ON sar.advance_id = sa.id
             WHERE sar.employee_id = ? AND sar.status IN ('pending','overdue') AND sar.due_date <= CURDATE()" . $this->tenantSql() . "
             ORDER BY sar.due_date
-        ", [$employeeId]);
+        ", array_merge([$employeeId], $this->tVal()));
     }
 }

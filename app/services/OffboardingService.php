@@ -27,6 +27,17 @@ class OffboardingService
         }
     }
 
+    /**
+     * Execute a write statement. Delegates to Database::query(), which THROWS on failure -
+     * the transaction callers below catch \Throwable and roll back, so a failed statement
+     * can never partially commit.
+     */
+    private function execute(string $sql, array $params = []): bool
+    {
+        $this->db->query($sql, $params);
+        return true;
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -202,7 +213,12 @@ class OffboardingService
         try {
             $this->execute("UPDATE employees SET status = 'terminated', offboarded_at = NOW() WHERE id = ?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
             if (!empty($data['settlement_amount'])) {
-                $this->execute("INSERT INTO employee_fnf_settlements (employee_id, settlement_amount, settlement_date, processed_by, notes, status, tenant_id) VALUES (?, ?, CURDATE(), ?, ?, 'completed', ?)", [$employeeId, $data['settlement_amount'], $data['processed_by'] ?? 1, $data['notes'] ?? '', $this->tenantId()]);
+                $settlementNo = 'FNF-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+                $this->execute("INSERT INTO employee_fnf_settlements (tenant_id, settlement_no, employee_id, resignation_date, last_working_day, exit_type, earnings_total, deductions_total, net_payable, settlement_amount, settlement_date, processed_by, created_by, notes, status, created_at) VALUES (?, ?, ?, ?, CURDATE(), 'resignation', ?, 0.00, ?, ?, NOW(), ?, ?, ?, 'calculated', NOW())", [
+                    $this->tenantId(), $settlementNo, $employeeId, date('Y-m-d'),
+                    (float)$data['settlement_amount'], (float)$data['settlement_amount'], (float)$data['settlement_amount'],
+                    (int)($data['processed_by'] ?? 1), (int)($data['processed_by'] ?? 1), (string)($data['notes'] ?? '')
+                ]);
             }
             $this->db->commit();
             return ['success' => true, 'message' => 'Offboarding completed'];

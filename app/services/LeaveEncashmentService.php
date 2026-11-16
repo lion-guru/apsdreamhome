@@ -27,6 +27,17 @@ class LeaveEncashmentService
         }
     }
 
+    /**
+     * Execute a write statement. Delegates to Database::query(), which THROWS on failure -
+     * the transaction callers below catch \Throwable and roll back, so a failed statement
+     * can never partially commit.
+     */
+    private function execute(string $sql, array $params = []): bool
+    {
+        $this->db->query($sql, $params);
+        return true;
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -65,7 +76,7 @@ class LeaveEncashmentService
             SELECT lb.*, lt.name as leave_type_name, lt.code as leave_type_code, lt.is_encashable
             FROM employee_leave_balances lb
             JOIN leave_types lt ON lb.leave_type_id = lt.id
-            WHERE lb.employee_id = ? AND lb.year = YEAR(CURDATE()) AND lt.is_encashable = 1{$this->tenantSql()}
+            WHERE lb.employee_id = ? AND lb.year = YEAR(CURDATE()) AND lt.is_encashable = 1{$this->tenantWhere()}
         ", array_merge([$employeeId], $this->tVal()));
 
         $totalEncashable = 0;
@@ -157,7 +168,7 @@ class LeaveEncashmentService
                 INSERT INTO leave_encashment_requests
                 (tenant_id, employee_id, leave_type_id, days_to_encash, eligible_days, amount_per_day, total_amount, tax_deduction, net_amount, status, requested_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-            ", [$this->tenantId(), $employeeId, $leaveTypeId, $daysToEncash, $leaveType['remaining_days'], $amountPerDay, $totalAmount, $taxDeduction, $netAmount, $tid]);
+            ", [$tid, $employeeId, $leaveTypeId, $daysToEncash, $leaveType['remaining_days'], $amountPerDay, $totalAmount, $taxDeduction, $netAmount]);
 
             $requestId = $this->db->lastInsertId();
             $this->db->commit();
@@ -192,7 +203,7 @@ class LeaveEncashmentService
             JOIN leave_types lt ON ler.leave_type_id = lt.id
             LEFT JOIN employee_profiles ep ON ep.legacy_id = ler.employee_id OR ep.user_id = ler.employee_id OR ep.id = ler.employee_id
             LEFT JOIN users u_emp ON u_emp.id = ep.user_id
-            WHERE ler.id = ?{$this->tenantSql()}
+            WHERE ler.id = ?{$this->tenantWhere()}
         ", array_merge([$requestId], $this->tVal()));
     }
 
@@ -205,7 +216,7 @@ class LeaveEncashmentService
             SELECT ler.*, lt.name as leave_type_name, lt.code as leave_type_code
             FROM leave_encashment_requests ler
             JOIN leave_types lt ON ler.leave_type_id = lt.id
-            WHERE ler.employee_id = ?{$this->tenantSql()}
+            WHERE ler.employee_id = ?{$this->tenantWhere()}
             ORDER BY ler.requested_at DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
@@ -222,7 +233,7 @@ class LeaveEncashmentService
         $this->execute("
             UPDATE leave_encashment_requests
             SET status = 'approved', approved_at = NOW(), approved_by = ?
-            WHERE id = ?{$this->tenantSql()}
+            WHERE id = ?{$this->tenantWhere()}
         ", array_merge([$approverId, $requestId], $this->tVal()));
 
         return ['success' => true, 'message' => 'Leave encashment approved'];
@@ -245,14 +256,14 @@ class LeaveEncashmentService
             $this->execute("
                 UPDATE employee_leave_balances
                 SET used_days = used_days + ?, remaining_days = remaining_days - ?
-                WHERE employee_id = ? AND leave_type_id = ?{$this->tenantSql()}
-            ", [$req['days_to_encash'], $req['days_to_encash'], $req['employee_id'], $req['leave_type_id']]);
+                WHERE employee_id = ? AND leave_type_id = ?{$this->tenantWhere()}
+            ", array_merge([$req['days_to_encash'], $req['days_to_encash'], $req['employee_id'], $req['leave_type_id']], $this->tVal()));
 
             // Update request
             $this->execute("
                 UPDATE leave_encashment_requests
                 SET status = 'paid', paid_at = NOW(), paid_by = ?, payment_ref = ?
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$payerId, $paymentRef, $requestId], $this->tVal()));
 
             // Credit to wallet
@@ -278,7 +289,7 @@ class LeaveEncashmentService
         $this->execute("
             UPDATE leave_encashment_requests
             SET status = 'rejected', rejected_at = NOW(), rejected_by = ?, rejection_reason = ?
-            WHERE id = ?{$this->tenantSql()}
+            WHERE id = ?{$this->tenantWhere()}
         ", array_merge([$rejecterId, $reason, $requestId], $this->tVal()));
 
         return ['success' => true, 'message' => 'Request rejected'];

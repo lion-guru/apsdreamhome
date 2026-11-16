@@ -121,7 +121,7 @@ class AnnouncementService
      */
     public function createAnnouncement(array $data): array
     {
-        $this->execute("
+        $this->db->execute("
             INSERT INTO company_announcements
             (tenant_id, title, content, type, priority, target_audience, target_departments, target_roles, target_users,
              start_date, end_date, is_pinned, attachments, created_by, status, created_at)
@@ -186,7 +186,7 @@ class AnnouncementService
         }
 
         $params[] = $id;
-        $this->execute("
+        $this->db->execute("
             UPDATE company_announcements 
             SET " . implode(', ', $updates) . ", updated_at = NOW()
             WHERE id = ?
@@ -200,7 +200,7 @@ class AnnouncementService
      */
     public function deleteAnnouncement(int $id): bool
     {
-        $this->execute("DELETE FROM company_announcements WHERE id = ?", [$id]);
+        $this->db->execute("DELETE FROM company_announcements WHERE id = ?", [$id]);
         return true;
     }
 }

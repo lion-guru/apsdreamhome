@@ -27,6 +27,17 @@ class ShiftSwapService
         }
     }
 
+    /**
+     * Execute a write statement. Delegates to Database::query(), which THROWS on failure -
+     * the transaction callers below catch \Throwable and roll back, so a failed statement
+     * can never partially commit.
+     */
+    private function execute(string $sql, array $params = []): bool
+    {
+        $this->db->query($sql, $params);
+        return true;
+    }
+
     use ServiceTenantTrait;
 
     private $db;
