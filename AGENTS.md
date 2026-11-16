@@ -1,3 +1,27 @@
+## Session 613: Budh Bihar Stock-Interior Layout Images Removed + Final 5000+ Removal From Home Hero (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — final cleanup of remaining unsplash-stock-as-inventory artifacts spotted in the last sweep.
+
+### What was broken (probed, then fixed)
+
+**1. Budh Bihar Colony (id=5) `layout_image` and `gallery_images` were Unsplash stock luxury interiors** (`photo-1600210492493`, `photo-1600566752355`, `photo-1600585152220`, `photo-1600585154340`). The colony is a plotted-land project; displaying a stock luxury villa interior as its "inventory" image is fabrication. NULLed both columns — honest placeholder now renders. Backup retained (`colonies_s613_pre_img`).
+
+**2. Home hero still rendered "Trusted by 5000+ Families" via a redundant inline fallback** — `data-strings` was `<?= __('hero_typed_strings') ?>||Premium Plots in Gorakhpur||Smart Investment Opportunities||Trusted by 5000+ Families||`. The JS splits on `|` and tolerates `||` as separators, so both ends rendered; the translation is the canonical source (`Premium Plots in Gorakhpur|Smart Investment|Trusted by 80+ Families`). **Inline fallback deleted** — translation is now the only source. Live HTML probe after the fix: `data-strings="Premium Plots in Gorakhpur|Smart Investment|Trusted by 80+ Families"` — zero `5000+` occurrences on the rendered page.
+
+### Verification
+- `php -l` clean ×2. Home page serves 200.
+- **Rendered HTML probe:** `5000+` → **0 hits** (was 1 live). All remaining stat claims on home are the honest ones (80+).
+- Parallel actor's in-flight work (`app/helpers.php`, `CustomerPassbookController.php`, `UserController.php`, `ReferralController.php`, `app/views/pages/user_payment_history.php`) has been committed by them — worktree clean as of this entry.
+
+### Gates
+- **PHPStan** → `[OK] No errors`. **Master** → **11/11 PASSED**.
+- **DB**: no new tables created (one additive backup `colonies_s613_pre_img` for one NULLed column pair); core 13 tables byte-identical.
+- **DBZeroDrift**: colonies.images/layout_images/gallery NULLed in two seats (Raghunath + Budh Bihar). Backup tables retained.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 612. This entry = **S613**. Next-free = **614**.
+
 ## Session 612: Wording Integrity Sweep — "across India" → "across Uttar Pradesh" in 4 Files + 1 Legacy Site-String, All Public Routes HEAD/GET-Verified (2026-11-16)
 
 ### Trigger
