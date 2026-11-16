@@ -531,7 +531,8 @@ function showResults(oldResult, newResult, savings, savingsPct, betterRegime, gr
             div.className = 'd-flex justify-content-between small';
             div.innerHTML = `<span>${key}</span><span class="fw-bold">${formatINR(val)}</span>`;
             oldDedDiv.appendChild(div);
-        });
+        }
+    });
     
     // New Regime
     document.getElementById('newTotalTax').textContent = formatINR(newResult.totalTax);

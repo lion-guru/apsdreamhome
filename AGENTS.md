@@ -1,3 +1,29 @@
+## Session 601: Agent & Employee Portal Crawls Confirmed Clean; Employee Self-Service Tax Calculator SyntaxError Root-Caused & Fixed (missing arrow-body }), PHPStan OK, Master 11/11 (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" - completing the portal family sweep (public S599, customer S600, agent + employee this round). Every GET URL reachable from the live agent/employee sessions crawled in a real browser with auto console capture.
+
+### What was actually broken (all probe-verified, all fixed)
+
+**1. `/employee/self-service/tax-calculator` died with "SyntaxError: Unexpected token ')'"** - the page's inline tax-slabs script never parsed, so the entire Income Tax Calculator was inert for every employee who opened it. Root cause (acorn-verified against the live DOM capture): the "Old Deductions" renderer ends with `Object.entries(oldDeductions).forEach(([key, val]) => { ... oldDedDiv.appendChild(div); });` — the arrow body `{` opened for the callback, the `if (val > 0) {` inside was closed, but the arrow body itself was never closed: the file jumped from `appendChild(div);` directly to `});`, so the parser hit `)` while still inside the arrow function body and threw "Unexpected token ')'". Fixed by inserting one `}` so the `if` closes, then `});` closes the arrow callback + `.forEach(`. Re-verified live: **0 console errors**, `#taxCalcForm` and `#resultsSection` both present.
+
+**Not broken (verified green):**
+- **Agent portal (12 real GET routes)**: `/agent/dashboard`, `/agent/leads`, `/agent/deals`, `/agent/commissions`, `/agent/profile`, `/agent/site-visits`, `/agent/bookings`, `/agent/properties`, `/agent/offers`, `/agent/salary`, `/agent/wallet`, `/agent/collections`, `/agent/id-card` - all render with **0 console errors**. `/agent/referrals` 404'd (invented URL; no route exists).
+- **Employee portal real routes**: `/employee/dashboard`, `/employee/profile`, `/employee/attendance`, `/employee/notifications`, `/employee/self-service`, `/employee/self-service/grievances`, `/employee/self-service/grievances/create` - all **0 console errors**. `/employee/leave` and `/employee/grievances` 302 to the dashboard (by design); `/employee/grievances/create` 404 (invented URL; real: `/employee/self-service/grievances/create`).
+- **`/employee/self-service/tax-calculator`** was the only live failure this round.
+
+### Verified end-to-end
+- **PHPStan** - [OK] No errors. **Master** - **11/11 PASSED** (27.75s).
+- No DB writes; view-only fix.
+
+### Key lessons (carried, continued)
+_1314. **A green page is not proof its JS parsed** - the tax calculator looked fine visually while its entire inline script was dead; only the console tells. Crawl with console capture or you have not verified the page.
+_1315. **acorn, not a regex scanner, locates the missing brace** - the earlier regex-literal-fooled scanners were useless here; acorn against the live rendered DOM found the exact unclosed `{`.
+_1316. **Console-fatal tax tools kill silently** - payroll-affecting calculators failing means employees take wrong regime/deduction decisions with nobody watching; admin/payroll views need the same console check as customer pages.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 600. This entry = S601. Next-free = **602**.
+
 ## Session 600: Customer Portal 64-URL Crawl - Double-Layout-Include Root-Caused in 3 Views (Syntax-Fatal Duplicate Globals), Razorpay CSP Unlock on Pay Pages, Associate Portal Confirmed Clean, PHPStan OK, Master 11/11 (2026-11-16)
 
 ### Trigger
