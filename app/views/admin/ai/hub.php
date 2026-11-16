@@ -254,6 +254,13 @@ $isManager = in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin', [
         </div>
 
         <div class="col-12 mt-2"><h5 class="text-muted mb-2"><i class="fas fa-phone-volume me-1"></i> AI Voice &amp; Calls</h5></div>
+        <div class="col-12"><p class="small text-muted mb-3">
+            <i class="fas fa-circle-check text-success me-1"></i>Stored provider configs: <strong><?= (int)($voice_status['total'] ?? 0) ?> of 5</strong>
+            (<code><?= htmlspecialchars(implode(', ', $voice_status['stored'] ?? []) ?: 'none') ?></code>) &middot;
+            Active: <code><?= htmlspecialchars((string)($voice_status['active'] ?? '')) ?: 'not set' ?></code> &middot;
+            <a href="<?= $base ?>/admin/service-configs" class="text-decoration-none">verify keys <i class="fas fa-arrow-right"></i></a>
+            <br><span class="text-muted">"stored" means a config blob exists at rest &mdash; keys are not proven valid until a test call succeeds.</span>
+        </p></div>
 
         <div class="col-md-4">
             <a href="<?= $base ?>/admin/ai-calling" class="text-decoration-none">

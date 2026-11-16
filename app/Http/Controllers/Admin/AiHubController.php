@@ -36,6 +36,23 @@ class AiHubController extends AdminController
             error_log('AiHub: employee counts failed: ' . $e->getMessage());
         }
 
+        // AI Voice provider status (service_configs group 'voice' holds one encrypted JSON blob per provider;
+        // 'stored' means a config exists at rest — NOT that the keys are valid. Deep-link to service-configs to verify.)
+        $voiceStatus = ['stored' => [], 'total' => 0, 'active' => null];
+        try {
+            $rows = $this->db->fetchAll("SELECT config_key FROM service_configs WHERE group_name = 'voice' AND config_value <> '' ORDER BY config_key");
+            $voiceStatus['stored'] = array_values(array_map(function ($r) { return (string)$r['config_key']; }, $rows));
+            $voiceStatus['total'] = count($voiceStatus['stored']);
+        } catch (\Throwable $e) {
+            error_log('AiHub: voice stored configs failed: ' . $e->getMessage());
+        }
+        try {
+            $activeRow = $this->db->fetchOne("SELECT config_value FROM service_configs WHERE group_name = 'ai_voice' AND config_key = 'provider_type' AND config_value <> '' ORDER BY id DESC LIMIT 1");
+            $voiceStatus['active'] = $activeRow['config_value'] ?? null;
+        } catch (\Throwable $e) {
+            error_log('AiHub: voice active provider failed: ' . $e->getMessage());
+        }
+
         // RAG health snapshot
         $health = [];
         try {
@@ -120,6 +137,7 @@ class AiHubController extends AdminController
             'low_stock_colonies' => $lowStockColonies,
             'agent_counts' => $agentCounts,
             'ai_employee_counts' => $empCounts,
+            'voice_status' => $voiceStatus,
         ];
 
         $this->render('admin/ai/hub', $data);
