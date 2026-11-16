@@ -112,12 +112,8 @@ class RankService
     {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
-            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
-            $params = $tid > 1 ? [$tid] : [];
-
-            $stmt = $db->prepare("SELECT rank_slug, min_gbv, max_gbv, direct_rate FROM mlm_rank_slabs" . $tidSql . " ORDER BY min_gbv");
-            $stmt->execute($params);
+            $stmt = $db->prepare("SELECT rank_slug, min_gbv, max_gbv, commission_rate FROM mlm_rank_slabs WHERE is_active = 1 ORDER BY min_gbv ASC");
+            $stmt->execute();
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             if (!empty($rows)) {
@@ -126,7 +122,7 @@ class RankService
                     $slabs[$row['rank_slug']] = [
                         'min_gbv' => (int)$row['min_gbv'],
                         'max_gbv' => (int)$row['max_gbv'],
-                        'rate'    => (float)$row['direct_rate'],
+                        'rate'    => (float)$row['commission_rate'],
                     ];
                 }
                 return $slabs;
@@ -155,12 +151,8 @@ class RankService
     {
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $tid = $this->tenantId();
-            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
-            $params = $tid > 1 ? [$tid] : [];
-
-            $stmt = $db->prepare("SELECT global_cap_pct, track_a_pct, track_b_pct, track_c_pct, same_level_override_gen1, same_level_override_gen2 FROM mlm_commission_plans WHERE status = 'active'" . $tidSql . " ORDER BY version DESC LIMIT 1");
-            $stmt->execute($params);
+            $stmt = $db->prepare("SELECT global_cap_pct, track_a_pct, track_b_pct, track_c_pct, same_level_override_gen1, same_level_override_gen2 FROM mlm_commission_plans WHERE status = 'active' ORDER BY version DESC LIMIT 1");
+            $stmt->execute();
             $plan = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($plan) {

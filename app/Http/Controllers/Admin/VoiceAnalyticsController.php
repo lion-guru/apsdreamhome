@@ -66,7 +66,7 @@ class VoiceAnalyticsController extends AdminController
         try {
             $stats['total_calls'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE $where")['c'] ?? 0;
             $stats['connected_calls'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE $where AND status = 'completed'")['c'] ?? 0;
-            $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration_seconds) as avg FROM ai_call_sessions WHERE $where AND duration > 0")['avg'] ?? 0;
+            $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration_seconds) as avg FROM ai_call_sessions WHERE $where AND duration_seconds > 0")['avg'] ?? 0;
             $stats['total_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE $where AND auto_created_lead_id IS NOT NULL")['c'] ?? 0;
             $stats['conversion_rate'] = $stats['total_calls'] > 0 ? round(($stats['total_leads'] / $stats['total_calls']) * 100, 2) : 0;
         } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
@@ -138,11 +138,11 @@ class VoiceAnalyticsController extends AdminController
         try {
             return $this->db->fetchAll("
                 SELECT 
-                    COALESCE(call_outcome, customer_response, 'unknown') as outcome,
+                    COALESCE(outcome, customer_response, 'unknown') as outcome,
                     COUNT(*) as count
                 FROM ai_call_sessions 
                 WHERE $where
-                GROUP BY call_outcome, customer_response
+                GROUP BY outcome, customer_response
                 ORDER BY count DESC
             ");
         } catch (\Throwable $e) {
@@ -172,7 +172,8 @@ class VoiceAnalyticsController extends AdminController
             $connected = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE $where AND status = 'completed'")['c'] ?? 0;
             $interested = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE $where AND (customer_response = 'interested' OR interest_level IN ('hot','warm'))")['c'] ?? 0;
             $leads = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE $where AND auto_created_lead_id IS NOT NULL")['c'] ?? 0;
-            $booked = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads e JOIN plot_bookings b ON b.lead_id = e.auto_created_lead_id WHERE $where")['c'] ?? 0;
+            $bookedWhere = preg_replace("/\\bcreated_at\\b/", "e.created_at", $where);
+            $booked = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads e JOIN plot_bookings b ON b.lead_id = e.auto_created_lead_id WHERE " . $bookedWhere)["c"] ?? 0;
 
             return [
                 ['stage' => 'Total Calls', 'count' => $total, 'pct' => 100],

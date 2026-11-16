@@ -19,7 +19,7 @@ class RecurringTransactionService
     public function getAll(?string $status = null): array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT rt.*, u.name as user_name, v.name as vendor_name
+        $sql = "SELECT rt.*, u.name as user_name, v.vendor_name as vendor_name
                 FROM recurring_transactions rt
                 LEFT JOIN users u ON u.id = rt.user_id
                 LEFT JOIN vendors v ON v.id = rt.vendor_id
@@ -36,7 +36,7 @@ class RecurringTransactionService
     public function getById(int $id): ?array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT rt.*, u.name as user_name, v.name as vendor_name
+        $sql = "SELECT rt.*, u.name as user_name, v.vendor_name as vendor_name
                 FROM recurring_transactions rt
                 LEFT JOIN users u ON u.id = rt.user_id
                 LEFT JOIN vendors v ON v.id = rt.vendor_id

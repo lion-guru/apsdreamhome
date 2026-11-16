@@ -93,6 +93,7 @@ class LeadController extends AdminController
     {
         $this->requireAdmin();
         $adminId = $this->getCurrentUserId();
+        $role = $this->getCurrentUserRole();
 
         $name = trim($_POST['name'] ?? '');
         if (empty($name)) {

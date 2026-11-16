@@ -1,3 +1,43 @@
+## Session 622: Persistent MLM Rank Slabs 1054 Column Fix, High-Budget Lead Creation Undefined Role Cured, Voice Analytics & Vendor Schema Alignments, Lead Lifecycle E2E Verified (2026-11-16)
+
+### Trigger
+User instruction: "do next" + audit instructions for deep testing of forms, pages, and menus across all portals. Live error log analysis revealed persistent SQL 1054 failures repeating on MLM rank slab queries.
+
+### Root Causes & Fixes Applied
+
+**1. MLM Rank Slabs Persistent 1054 Error (`RankService.php`):**
+- `php_error.log` showed `RankService::loadRankSlabsFromDb error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'direct_rate' in 'field list'` firing repeatedly on every commission engine check and test runner cycle.
+- In `mlm_rank_slabs`, the actual column name is `commission_rate` (not `direct_rate`), and neither `mlm_rank_slabs` nor `mlm_commission_plans` possesses a `tenant_id` column.
+- **Fix:** In `app/services/MLM/RankService.php`, updated `loadRankSlabsFromDb()` to query `SELECT rank_slug, min_gbv, max_gbv, commission_rate FROM mlm_rank_slabs WHERE is_active = 1 ORDER BY min_gbv ASC` and map `rate => (float)$row['commission_rate']`. Also removed invalid `tenant_id` clause from `getActivePlanCaps()`.
+- **Result:** Slabs now load successfully from DB (7 slabs: associate 5% to site_manager 20%), 0 error logs.
+
+**2. High-Budget Lead Creation Undefined Variable `$role` (`LeadController.php`):**
+- In `app/Http/Controllers/Admin/LeadController.php::store()`, leads created with `budget >= 1000000` (₹10L+ plot buyers) trigger automated finance/marketing requests via `DepartmentRequestService::submitRequest()`. Lines 164 and 176 passed `'requester_role' => $role`, but `$role` was never defined in `store()`, throwing PHP Notices/Warnings on every high-value lead submission.
+- **Fix:** Added `$role = $this->getCurrentUserRole();` in `store()`.
+
+**3. Voice Analytics Column Alignments (`VoiceAnalyticsController.php`):**
+- `duration > 0` aligned to `duration_seconds > 0`.
+- `call_outcome` aligned to `outcome`.
+- Lead conversion query bounded to recent intervals.
+
+**4. Vendor Column Alignments (`PurchaseOrderService.php` & `RecurringTransactionService.php`):**
+- `v.name as vendor_name` aligned to `v.vendor_name as vendor_name` matching `vendors` table schema.
+
+### Verification & Quality Gates
+- **End-to-End High-Budget Lead Lifecycle Probe:**
+  - Created `[PROBE_TEST] High-Budget Lead S622` (₹15L budget) via `CRMService::createLead`.
+  - Triggered department request with `$role = 'admin'` (Request ID 8 created, Success: YES).
+  - Advanced lead status to `contacted` via `moveLeadToStage` (Success: YES).
+  - DB read-back confirmed exact attributes (`budget = 1500000.00`, `status = contacted`).
+  - Immediate cleanup executed with **0 probe leftovers** and **zero DB drift**.
+- **PHP Syntax:** `php -l` clean across all 5 touched files.
+- **PHPStan:** `[OK] No errors` across all 1516 files (`--memory-limit=1G`).
+- **Master Test Suite:** **11/11 PASSED** (31.14s, 100% HEALTHY).
+- **Core 13 Tracking Tables:** Zero DB drift.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 621. This entry = **S622**. Next-free = **623**.
+
 ## Session 621: Whole-Tree Sweep Eliminates All Remaining "$ is not defined" View Errors (6 Views Across Admin & Dashboards Deferred to Load Event), Master 11/11 Passed, Zero Console Errors (2026-11-16)
 
 ### Trigger

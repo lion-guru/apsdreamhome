@@ -19,7 +19,7 @@ class PurchaseOrderService
     public function getAll(?string $status = null): array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT po.*, v.name as vendor_name, d.name as department_name
+        $sql = "SELECT po.*, v.vendor_name as vendor_name, d.name as department_name
                 FROM purchase_orders po
                 LEFT JOIN vendors v ON v.id = po.vendor_id
                 LEFT JOIN departments d ON d.id = po.department_id
@@ -34,7 +34,7 @@ class PurchaseOrderService
     public function getById(int $id): ?array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT po.*, v.name as vendor_name, v.contact_person as vendor_contact_person, v.phone as vendor_phone, v.email as vendor_email
+        $sql = "SELECT po.*, v.vendor_name as vendor_name, v.contact_person as vendor_contact_person, v.phone as vendor_phone, v.email as vendor_email
                 FROM purchase_orders po
                 LEFT JOIN vendors v ON v.id = po.vendor_id
                 WHERE po.id = ?" . ($tid > 1 ? " AND po.tenant_id = ?" : "");
