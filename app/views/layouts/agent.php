@@ -179,6 +179,9 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
         </header>
 
+        <!-- Flash Messages -->
+        <?php include __DIR__ . "/flash-block.php"; ?>
+
         <!-- Content Body -->
         <div class="content-wrapper" id="aps-main-content">
             <?php echo $content ?? ''; ?>
