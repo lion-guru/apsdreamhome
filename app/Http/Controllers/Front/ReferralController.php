@@ -60,18 +60,21 @@ class ReferralController extends BaseController
             'email' => 'mailto:?subject=' . urlencode('Join APS Dream Home') . '&body=' . urlencode($shareMsg),
         ];
 
-        // Share analytics
+        // Share analytics — real whatsapp_lead_shares columns: user_id / channel / shared_at
         $shareStats = ['total' => 0, 'by_platform' => [], 'recent' => []];
         try {
-            $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM whatsapp_lead_shares WHERE shared_by_user_id = ?");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM whatsapp_lead_shares WHERE user_id = ?");
             $stmt->execute([$userId]);
             $shareStats['total'] = (int)$stmt->fetchColumn();
 
-            $stmt2 = $this->db->prepare("SELECT share_method, COUNT(*) as cnt FROM whatsapp_lead_shares WHERE shared_by_user_id = ? GROUP BY share_method ORDER BY cnt DESC");
+            $stmt2 = $this->db->prepare("SELECT channel AS share_method, COUNT(*) as cnt FROM whatsapp_lead_shares WHERE user_id = ? GROUP BY channel ORDER BY cnt DESC");
             $stmt2->execute([$userId]);
             $shareStats['by_platform'] = $stmt2->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-            $stmt3 = $this->db->prepare("SELECT * FROM whatsapp_lead_shares WHERE shared_by_user_id = ? ORDER BY created_at DESC LIMIT 10");
+            $stmt3 = $this->db->prepare("SELECT wls.*, wls.channel AS share_method, wls.shared_at AS created_at, l.name AS lead_name
+                FROM whatsapp_lead_shares wls
+                LEFT JOIN leads l ON l.id = wls.lead_id
+                WHERE wls.user_id = ? ORDER BY wls.shared_at DESC LIMIT 10");
             $stmt3->execute([$userId]);
             $shareStats['recent'] = $stmt3->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) { error_log("ReferralController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }

@@ -2988,6 +2988,7 @@ class UserController extends BaseController
 
         try {
             // Payment receipts
+            // booking_payment_receipts has NO payment_date column; the date is receipt_date
             $st = $pdo->prepare("
                 SELECT bpr.*, b.booking_number, p.plot_number, c.name as colony_name,
                        ips.installment_no AS installment_number, ips.due_date
@@ -2997,7 +2998,7 @@ class UserController extends BaseController
                 LEFT JOIN colonies c ON p.colony_id = c.id
                 LEFT JOIN booking_payment_schedules ips ON ips.id = bpr.installment_id
                 WHERE b.customer_id = ?
-                ORDER BY bpr.payment_date DESC, bpr.created_at DESC
+                ORDER BY bpr.receipt_date DESC, bpr.created_at DESC
             ");
             $st->execute([$userId]);
             $payments = $st->fetchAll(\PDO::FETCH_ASSOC) ?: [];
@@ -3007,7 +3008,7 @@ class UserController extends BaseController
                 $amt = (float)($p['amount'] ?? 0);
                 $stats['total_paid'] += $amt;
                 $stats['total_count']++;
-                if (date('Y-m', strtotime($p['payment_date'] ?? $p['created_at'])) === $thisMonth) {
+                if (date('Y-m', strtotime($p['receipt_date'] ?? $p['created_at'])) === $thisMonth) {
                     $stats['this_month'] += $amt;
                 }
                 if (!$stats['last_payment']) {

@@ -1143,11 +1143,19 @@ class CustomerPassbookController extends BaseController
         $userId = (int)$_SESSION['user_id'];
         $tid = (int)$this->tenantId();
 
-        // S272: agreement_documents table was never migrated — fail as 404
-        // (like "not found"), never as a 1146 fatal. Feature backlog: no
-        // writer generates these rows yet (agreement generator unbuilt).
+        // S272: agreement_documents table has never been migrated - fail as 404.
+        // Guard on table existence first so we do not emit a 1146 per customer visit.
         try {
-            $doc = $this->db->fetchOne("
+            $agreementTableExists = $this->db->fetchOne(
+                "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?",
+                ['agreement_documents']
+            );
+        } catch (\Throwable $e) { $agreementTableExists = false; }
+
+        $doc = null;
+        if ($agreementTableExists) {
+            try {
+                $doc = $this->db->fetchOne("
             SELECT ad.*, b.booking_number, p.plot_number, p.gata_number, p.khasra_number, lp.owner_name AS gata_owner, c.name as colony_name
             FROM agreement_documents ad
             LEFT JOIN plot_bookings b ON ad.booking_id = b.id
@@ -1156,9 +1164,10 @@ class CustomerPassbookController extends BaseController
             LEFT JOIN colonies c ON p.colony_id = c.id
             WHERE ad.id = ? AND ad.customer_id = ? AND ad.tenant_id = ?
         ", [$id, (int)$_SESSION['user_id'], (int)$this->tenantId()]);
-        } catch (\Throwable $e) {
-            error_log("downloadAgreement: " . $e->getMessage());
-            $doc = null;
+            } catch (\Throwable $e) {
+                error_log("downloadAgreement: " . $e->getMessage());
+                $doc = null;
+            }
         }
 
         if (!$doc) {
@@ -1203,7 +1212,8 @@ class CustomerPassbookController extends BaseController
             SELECT ad.*, c.name as colony_name
             FROM allotment_documents ad
             LEFT JOIN colonies c ON ad.colony_id = c.id
-            WHERE ad.user_id = ? AND ad.tenant_id = ?
+            WHERE ad.customer_id = ? AND ad.tenant_id = ?
+              AND ad.status IN ('issued','accepted','expired')
             ORDER BY ad.created_at DESC
         ", [$userId, $tid]);
         } catch (\Throwable $e) {
@@ -1230,9 +1240,19 @@ class CustomerPassbookController extends BaseController
             $passbookDocuments = [];
         }
 
-        // Fetch agreement documents
+        // Fetch agreement documents (S272: table never migrated - guard on existence,
+        // otherwise this emits a 1146 log entry on every customer page load).
         try {
-            $agreementDocuments = $this->db->fetchAll("
+            $agreementTableExistsDocs = $this->db->fetchOne(
+                "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?",
+                ['agreement_documents']
+            );
+        } catch (\Throwable $e) { $agreementTableExistsDocs = false; }
+
+        $agreementDocuments = [];
+        if ($agreementTableExistsDocs) {
+            try {
+                $agreementDocuments = $this->db->fetchAll("
             SELECT ad.*, b.booking_number, p.plot_number, c.name as colony_name
             FROM agreement_documents ad
             LEFT JOIN plot_bookings b ON ad.booking_id = b.id
@@ -1241,9 +1261,10 @@ class CustomerPassbookController extends BaseController
             WHERE ad.customer_id = ? AND ad.tenant_id = ?
             ORDER BY ad.created_at DESC
         ", [$userId, $tid]);
-        } catch (\Throwable $e) {
-            error_log('CustomerPassbookController::documents agreements: ' . $e->getMessage());
-            $agreementDocuments = [];
+            } catch (\Throwable $e) {
+                error_log('CustomerPassbookController::documents agreements: ' . $e->getMessage());
+                $agreementDocuments = [];
+            }
         }
 
         // Fetch title certificates for the customer's booked plots

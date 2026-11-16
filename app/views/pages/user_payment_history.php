@@ -49,7 +49,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
             <div class="aps-cp-stat-body">
                 <div class="aps-cp-stat-value">
                     <?php if ($stats['last_payment']): ?>
-                        <?= date('d M', strtotime($stats['last_payment']['payment_date'] ?? $stats['last_payment']['created_at'] ?? 'now')) ?>
+                        <?= date('d M', strtotime($stats['last_payment']['receipt_date'] ?? $stats['last_payment']['created_at'] ?? 'now')) ?>
                     <?php else: ?>
                         —
                     <?php endif; ?>
@@ -88,7 +88,7 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                     </thead>
                     <tbody>
                         <?php foreach ($payments as $p):
-                            $payDate = $p['payment_date'] ?? $p['paid_date'] ?? $p['created_at'] ?? '';
+                            $payDate = $p['receipt_date'] ?? $p['paid_date'] ?? $p['created_at'] ?? '';
                             $amount = (float)($p['amount'] ?? $p['paid_amount'] ?? 0);
                         ?>
                         <tr>
