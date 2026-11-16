@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     <div class="mb-4 premium-reveal">
                         <span class="hero-typed-label">
                             <i class="fas fa-circle me-1"></i>
-                            <?= __('home_we_offer') ?> <span id="typed-text" class="fw-semibold gradient-text-gold" data-strings="<?= __('hero_typed_strings') ?>||Premium Plots in Gorakhpur||Smart Investment Opportunities||Trusted by 5000+ Families||"></span><span class="typing-cursor iu-teal-light"></span>
+                            <?= __('home_we_offer') ?> <span id="typed-text" class="fw-semibold gradient-text-gold" data-strings="<?= __('hero_typed_strings') ?>"></span><span class="typing-cursor iu-teal-light"></span>
                         </span>
                     </div>
                     <div class="d-flex gap-3 flex-wrap premium-reveal">
