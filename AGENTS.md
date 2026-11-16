@@ -1,3 +1,36 @@
+## Session 638: Smart Lead Assignment Wired Into Lead Creation Flow — Skill-Based Routing Auto-Assigns New Leads, Legacy Fallback Intact, 11/11 (2026-11-16)
+
+### Trigger
+Continuation of the AI rollout program. SmartLeadAssignmentService (S622) was built but only wired into the lead detail advisory panel (`recommendForLead`) and AJAX endpoints (`autoAssignSingle`/`autoAssign`). New leads created via `LeadController::store()` still used pure legacy round-robin/least-burdened assignment.
+
+### What was built
+**`LeadController::store()`** — the auto-assign block (after lead creation) now tries `SmartLeadAssignmentService::assignLead($leadId, 'smart')` first. If skill data is insufficient (all associates carry default scores / no specialization), it transparently falls back to the legacy `LeadAssignmentService::assignLead()`. The composite score uses 6 factors:
+1. Performance score (25%) — `associate_profiles.performance_score`
+2. Conversion rate (25%) — approved `plot_bookings` closed / assigned leads
+3. Response time (20%) — mapped to score bands (≤1h=100, ≤4h=80, ≤24h=60, ≤72h=40, 13+=20)
+4. Current workload (15%) — active open leads per candidate
+5. Specialization match (10%) — `property_interest` vs `associate_profiles.specializations`, `colony_id` vs `preferred_locations`
+6. Budget range match (5%) — lead budget vs `preferred_budget_min`/`preferred_budget_max`
+
+Tenant-scoped throughout via `$this->tenantId()`; writes to `leads.assigned_to` + `crm_assignments` (reason `smart_assign`).
+
+### Verification
+- `php -l` clean on `LeadController.php`
+- **PHPStan** → `[OK] No errors`
+- **Master suite** → **11/11 PASSED** (41.65s)
+- Live probe: created a test lead without `assigned_to` → smart-assign writes `assigned_to` to the top-scored associate + `crm_assignments` row with `reason='smart_assign'`; fallback path verified by temporarily clearing skill data.
+- Lead row deleted after probe; zero leftovers.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **637** (parallel actor, Commission Plans rank-rate coherence card). This entry = **S638**. Next-free = **639**.
+
+### Key lessons (carried, continued)
+_1370. **Route on create, not just on view.** Advisory panels are useful, but automatic assignment at lead creation is where routing actually affects the business.
+_1371. **Always keep a legacy fallback.** When no associate has skill data, the smart score is uniform (50) for everyone; falling back to round-robin prevents arbitrary assignments.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · colony-tagged-lead form field owner · wire SmartLeadAssignmentService into admin Morning Brief widget (suggestion only) · auto-assign integration at lead intake is now LIVE.
+
 ## Session 637: Commission Plans List — Rank Rate Coherence Card Live (Engine Reads mlm_rank_benefits, Not mlm_plan_levels), Honest Create-Page Notes, Gates Green (2026-11-16)
 
 ### Trigger
