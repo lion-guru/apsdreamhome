@@ -203,7 +203,7 @@ class RoleBasedDashboardController extends AdminController
             // Role-specific additional stats
             if (in_array($role, ['associate'])) {
                 $stats['team_size'] = $safeQuery("SELECT COUNT(*) as c FROM mlm_network_tree WHERE sponsor_id=?", [$userId]);
-                $stats['total_commission'] = '₹' . number_format($safeSum("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE user_id=?", [$userId]) / 100000, 1) . 'L';
+                $stats['total_commission'] = '₹' . number_format($safeSum("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE beneficiary_user_id=?", [$userId]) / 100000, 1) . 'L';
                 $stats['rank'] = 'N/A';
                 try {
                     $r = $db->prepare("SELECT rank FROM associates WHERE user_id=?");
@@ -213,7 +213,7 @@ class RoleBasedDashboardController extends AdminController
             } elseif (in_array($role, ['agent'])) {
                 $stats['my_leads'] = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE assigned_to=?{$tidSql}", [$userId]);
                 $stats['conversions'] = $safeQuery("SELECT COUNT(*) as c FROM leads WHERE assigned_to=? AND status='converted'{$tidSql}", [$userId]);
-                $stats['earnings'] = '₹' . number_format($safeSum("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE user_id=?", [$userId]) / 100000, 1) . 'L';
+                $stats['earnings'] = '₹' . number_format($safeSum("SELECT COALESCE(SUM(amount),0) as c FROM mlm_commission_ledger WHERE beneficiary_user_id=?", [$userId]) / 100000, 1) . 'L';
             } elseif (in_array($role, ['employee', 'telecaller', 'backoffice_staff'])) {
                 $stats['my_tasks'] = $safeQuery("SELECT COUNT(*) as c FROM tasks WHERE assigned_to=?", [$userId]);
                 $stats['pending_tasks'] = $safeQuery("SELECT COUNT(*) as c FROM tasks WHERE assigned_to=? AND status='pending'", [$userId]);
