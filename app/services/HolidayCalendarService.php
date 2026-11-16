@@ -2,7 +2,6 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Traits\ServiceTenantTrait;
 
 class HolidayCalendarService
 {
@@ -22,7 +21,7 @@ class HolidayCalendarService
         }
     }
 
-    use ServiceTenantTrait;
+    use \App\Traits\ServiceTenantTrait;
 
     private $db;
 
@@ -65,7 +64,7 @@ class HolidayCalendarService
     public function getHolidays(array $filters = []): array
     {
         $query = "SELECT * FROM holiday_calendar WHERE tenant_id = ?";
-        $params = [1];
+        $params = [$this->tenantId()];
 
         if (!empty($filters['type'])) {
             $query .= " AND type = ?";
@@ -97,14 +96,14 @@ class HolidayCalendarService
         return $this->fetchAll("
             SELECT * FROM holiday_calendar
             WHERE tenant_id = ? AND date BETWEEN ? AND ?
-            ORDER BY date ASC", [1, $startDate, $endDate]);
+            ORDER BY date ASC", [$this->tenantId(), $startDate, $endDate]);
     }
 
     public function isHoliday(string $date): bool
     {
         $result = $this->fetchOne("
             SELECT 1 FROM holiday_calendar
-            WHERE date = ? AND is_active = 1 AND tenant_id = 1", [$date]);
+            WHERE date = ? AND is_active = 1 AND tenant_id = ?", [$date, $this->tenantId()]);
         return (bool)$result;
     }
 
@@ -170,7 +169,7 @@ class HolidayCalendarService
 
     public function deleteHoliday(int $id): array
     {
-        $this->execute("DELETE FROM holiday_calendar WHERE id = ? AND tenant_id = 1", [$id]);
+        $this->execute("DELETE FROM holiday_calendar WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
         return ['success' => true];
     }
 
@@ -188,10 +187,11 @@ class HolidayCalendarService
 
     public function getStats(): array
     {
-        $total = $this->fetchOne("SELECT COUNT(*) as c FROM holiday_calendar WHERE tenant_id = 1")['c'] ?? 0;
-        $active = $this->fetchOne("SELECT COUNT(*) as c FROM holiday_calendar WHERE tenant_id = 1 AND is_active = 1")['c'] ?? 0;
-        $thisYear = $this->fetchOne("SELECT COUNT(*) as c FROM holiday_calendar WHERE tenant_id = 1 AND YEAR(date) = YEAR(CURDATE())")['c'] ?? 0;
-        $byType = $this->fetchAll("SELECT type, COUNT(*) as c FROM holiday_calendar WHERE tenant_id = 1 GROUP BY type");
+        $tid = $this->tenantId();
+        $total = $this->fetchOne("SELECT COUNT(*) as c FROM holiday_calendar WHERE tenant_id = ?", [$tid])['c'] ?? 0;
+        $active = $this->fetchOne("SELECT COUNT(*) as c FROM holiday_calendar WHERE tenant_id = ? AND is_active = 1", [$tid])['c'] ?? 0;
+        $thisYear = $this->fetchOne("SELECT COUNT(*) as c FROM holiday_calendar WHERE tenant_id = ? AND YEAR(date) = YEAR(CURDATE())", [$tid])['c'] ?? 0;
+        $byType = $this->fetchAll("SELECT type, COUNT(*) as c FROM holiday_calendar WHERE tenant_id = ? GROUP BY type", [$tid]);
         return [
             'total' => $total,
             'active' => $active,
@@ -205,8 +205,8 @@ class HolidayCalendarService
         $fromDate = $fromDate ?? date('Y-m-d');
         return $this->fetchOne("
             SELECT * FROM holiday_calendar
-            WHERE tenant_id = 1 AND is_active = 1 AND date >= ?
-            ORDER BY date ASC LIMIT 1", [$fromDate]);
+            WHERE tenant_id = ? AND is_active = 1 AND date >= ?
+            ORDER BY date ASC LIMIT 1", [$this->tenantId(), $fromDate]);
     }
 
     public function bulkImport(array $holidays): array
@@ -227,6 +227,6 @@ class HolidayCalendarService
 
     public function getHoliday(int $id): ?array
     {
-        return $this->fetchOne("SELECT * FROM holiday_calendar WHERE id = ? AND tenant_id = 1", [$id]);
+        return $this->fetchOne("SELECT * FROM holiday_calendar WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
     }
 }
