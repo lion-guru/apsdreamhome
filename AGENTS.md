@@ -12913,3 +12913,41 @@ _1401. **When the fix list is long, do them in order of user visibility, not cod
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16 & 17) · `/api/ai/chat` Flutter-side probe on a real device.
+## Session 658: AI Hub Finished — AI Operations Row (Agentic AI / AI Employee Desk / Agentic CRM, Live Counters) Landed & Pushed; Self-Inflicted Public-Widget Collapse Recovered From HEAD With Zero Feature Loss; Gates Green (2026-11-16)
+
+### Trigger
+User: "ok sare kaam karo bina ruke" and follow-ups "do nxt" — finish the open AI-surface work: wire the two remaining AI surfaces (Agentic AI + AI Employee Desk) into the admin hub with live counters, and verify the public chatbot's degraded path for real instead of leaving the banner unchecked.
+
+### What was completed (`9207e6a74`, pushed)
+1. **AiHubController: AI-Operations counters** (read-only, try/catch-logged): `agent_counts` (idle/active/busy from `ai_agents.status` SUM) and `ai_employee_counts` (active/paused employees + pending `ai_employee_tasks`). Zero DB writes; silent-degrade on missing tables.
+2. **app/views/admin/ai/hub.php: new "AI Operations" row** inserted between Predictive AI and Core AI — three cards with live counters and deep links:
+   - Agentic AI → `/admin/agentic-ai` ("7 agents, 0 busy" at probe time — reserved for explicit triggers only)
+   - AI Employee Desk → `/admin/ai-employee` ("3 active, live task count")
+   - Agentic CRM → `/admin/crm/agentic` ("Assisted, not autonomous")
+3. **app/views/layouts/chat_widget.php: divider-banner U+FFFD cleanup** (28 lines) — see incident below.
+
+### Verification
+- Live hub probe (fresh `test_login=2` jar): HTTP 200, 401,191 B — needles AI Operations / Agentic AI / AI Employee Desk / Agentic CRM / "7 agents" / "3 active" / "task(s) pending" ALL present.
+- Live homepage probe: 315,957 B served — needles `cwWrap`, `APS AI Assistant`, `api/ai/health`, `smart-ai/chat` ALL present; the public widget is serving with its offline-degraded path intact.
+- php -l clean ×3 · **PHPStan → [OK] No errors** · **Master → 11/11 PASSED** (31.28s) · AGENTS.md integrity OK.
+- Git: my 3 files staged explicitly, parallel actor's in-flight files untouched; hook auto-push confirmed (`origin/main` == `9207e6a74`).
+- AI-degraded flag verification (carried from earlier): flipped `service_configs.ai_health.degraded` to 1 → hub correctly rendered the red "AI engines degraded" banner → restored to 0 → banner absent; DB left at 0.
+
+### Self-inflicted incident (disclosed honestly — recovered)
+While cleaning 1,348 U+FFFD bytes from `chat_widget.php`'s decorative banner comments, I used a regex `([\uFFFD\s])+` → replaced with `" "`. **The `\s` matched every newline**, collapsing 814 lines into ONE line:
+- PHP kept passing `php -l` (PHP ignores line breaks) — a false green.
+- JavaScript broke: the first `//` comment at byte ~15,192 commented out the remainder of the script — the entire chatbot/voice/health/offline corpus was live HTML but dead JS.
+Recovery: `git checkout -- app/views/layouts/chat_widget.php` (HEAD is complete; verified needles via **php `substr_count`** — PowerShell `Select-String` falsely reported `ai/health` x0 and `APS AI Assistant` x0 on the UTF-8/mojibake file), then re-applied byte-exact EF BF BD removal with LF-count assertion (814 → 814, U+FFFD 1,348 → 0, 56,347 → 52,303 B), `php -l` clean, homepage needles re-verified. Only the cosmetic divider cleanup was redone — no feature was lost, ever, because HEAD was the correct base.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor shipped **S657** mid-session (mobile: DB-driven admin menu sync, `e5e3a4c19`) — this entry takes **S658**. Next-free = **659**.
+
+### Key lessons
+_1402. **Never regex-replace `\s` across a whole file unless the new lines are the point.** Match the exact byte sequence (EF BF BD) or use a line-preserving edit; assert LF count before and after.
+_1403. **One-line files pass `php -l` but kill JavaScript — `//` comments become file-eaters.** Verify line count, not just lint.
+_1404. **`git checkout -- <file>` is the honest recovery when git holds the good version** — HEAD had the complete widget; I lost only cosmetic work. Do it the moment you find the corruption.
+_1405. **Tool output is not proof — PHP `substr_count` beat PowerShell `Select-String` 100% on a UTF-8/mojibake file.** When strings are UTF-8, grep through PHP or Node, not the terminal.
+_1406. **Live byte-count probes catch what neither lint nor grep can** — the homepage must serve 315 KB with needles after any layout edit; that check alone would have caught the dead widget before any save.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification for `run_all_crons.php` DAILY tasks 15/16/17.
