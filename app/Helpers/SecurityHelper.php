@@ -92,7 +92,7 @@ class SecurityHelper
         $csp .= "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; ";
         $csp .= "img-src 'self' data: blob: https:; ";
         $csp .= "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; ";
-        $csp .= "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; ";
+        $csp .= "frame-src 'self' https://maps.google.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com https://www.openstreetmap.org; ";
         $csp .= "connect-src 'self' https: ws: wss:;";
         $csp .= "report-uri " . (defined('BASE_URL') ? BASE_URL : '') . "/csp-report";
         $csp .= "report-to csp-endpoint";

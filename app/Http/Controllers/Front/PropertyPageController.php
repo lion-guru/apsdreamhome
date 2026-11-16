@@ -802,18 +802,49 @@ class PropertyPageController extends BaseController
         ]);
     }
 
+    public function renderFeaturedProperties()
+    {
+        $featuredProperties = [];
+        try {
+            $stmt = $this->db->prepare("
+                SELECT p.id, p.title, p.price, p.area, p.area_sqft, p.area_unit, p.location, p.type, p.bedrooms, p.bathrooms,
+                       (SELECT pi.image_path FROM property_images pi WHERE pi.property_id = p.id AND pi.is_active = 1 ORDER BY pi.is_primary DESC, pi.sort_order ASC, pi.id ASC LIMIT 1) AS image_path
+                FROM properties p
+                WHERE p.status = 'active' AND p.featured = 1 AND p.deleted_at IS NULL
+                ORDER BY p.created_at DESC LIMIT 9
+            ");
+            $stmt->execute();
+            foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $img = (string)($row['image_path'] ?? '');
+                if ($img === '') {
+                    $img = BASE_URL . '/assets/images/placeholder/property.svg';
+                } elseif (strpos($img, 'http') !== 0 && strpos($img, '/') !== 0) {
+                    $img = BASE_URL . '/' . ltrim($img, '/');
+                }
+                $areaSqft = (float)($row['area_sqft'] ?? ($row['area'] ?? 0));
+                $featuredProperties[] = [
+                    'id'       => (int)($row['id'] ?? 0),
+                    'name'     => $row['title'] ?? 'Featured Property',
+                    'location' => $row['location'] ?? '',
+                    'price'    => '₹' . number_format((float)($row['price'] ?? 0)),
+                    'area'     => number_format($areaSqft, 0) . ' sq.ft',
+                    'type'     => ucfirst((string)($row['type'] ?? 'property')),
+                    'image'    => $img,
+                ];
+            }
+        } catch (\Throwable $e) {
+            error_log('renderFeaturedProperties: ' . $e->getMessage());
+        }
+        $this->render('pages/featured_properties', [
+            'page_title' => 'Featured Properties - APS Dream Home',
+            'page_description' => 'Handpicked featured properties from APS Dream Home.',
+            'featuredProperties' => $featuredProperties,
+        ]);
+    }
+
     public function getFeaturedProperties()
     {
-        header('Content-Type: application/json');
-        try {
-            $stmt = $this->db->prepare("SELECT * FROM properties WHERE status = 'active' AND featured = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 8");
-            $stmt->execute();
-            $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            echo json_encode(['success' => true, 'data' => $properties]);
-        } catch (\Throwable $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        }
-        exit;
+        $this->renderFeaturedProperties();
     }
 
     public function plotsAvailability()

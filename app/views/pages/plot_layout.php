@@ -309,6 +309,7 @@ function renderSVG() {
     var GAP = 10;
     var PLOT_PAD = 4;
     var runningY = 30;
+    var maxSvgWidth = 800;
 
     colsToShow.forEach(function(colony) {
         var plots = colony.plots;
@@ -331,7 +332,6 @@ function renderSVG() {
         html += '<text x="20" y="' + runningY + '" class="colony-group-label">' + escHtml(colony.name) + '</text>';
         runningY += 24;
 
-        var maxSvgWidth = 800;
 
         blockNames.forEach(function(blockName) {
             var blockPlots = blocks[blockName];

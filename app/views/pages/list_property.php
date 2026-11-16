@@ -840,6 +840,7 @@ LPHEAD;
             });
         });
 
+    }
 // ----- Listing Preview Modal -----
     var previewBtn = document.getElementById('previewListingBtn');
     var previewModalEl = document.getElementById('previewListingModal');

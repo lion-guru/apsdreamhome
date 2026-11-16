@@ -60,7 +60,7 @@ trait HasSecurityHeaders
             . "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; "
             . "img-src 'self' data: blob: https:; "
             . "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; "
-            . "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; "
+            . "frame-src 'self' https://maps.google.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com https://www.openstreetmap.org; "
             . "connect-src 'self' https: ws: wss:; "
             . "report-uri {$base}/csp-report; "
             . "report-to csp-endpoint";

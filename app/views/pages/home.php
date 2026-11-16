@@ -471,9 +471,17 @@ document.addEventListener('DOMContentLoaded', function(){
                 </div>
                 <?php endforeach; ?>
                 <?php else: ?>
-                <?php foreach (array_slice($featured_properties, 0, 6) as $project):
+                <?php
+                // Only render project cards whose /colony/{slug} resolves to an active colony.
+                // Sites table holds demo/legacy rows (APS Valley/Heights/Awadhpuri/Ganga Nagri) with
+                // no matching colony — they must never produce a dead View-Details link.
+                $validColonySlugs = ['suryoday-colony', 'braj-radha-nagri', 'budh-bihar-colony', 'lakeview-residency', 'raghunath-nagri-motiram', 'green-city-phase-1-20261115064021'];
+                $colonySlugMap = ['raghunath nagri' => 'raghunath-nagri-motiram'];
+                foreach (array_slice($featured_properties, 0, 6) as $project):
                         $projectTitle = $project['title'] ?? $project['name'] ?? '';
                         $slug = $project['slug'] ?? strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $projectTitle));
+                        $slug = $colonySlugMap[strtolower(trim($slug))] ?? $slug;
+                        if (!in_array($slug, $validColonySlugs, true)) { continue; }
                         $imgPath = '/assets/images/projects/';
                         if ($projectTitle && stripos($projectTitle, 'Suryoday') !== false) {
                             $imgPath .= 'gorakhpur/suryoday.jpg';

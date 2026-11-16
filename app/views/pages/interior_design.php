@@ -387,10 +387,6 @@ function planRoom() {
     document.getElementById('plannerDetails').innerHTML = html;
     document.getElementById('plannerResult').classList.remove('d-none');
 }
-    html += '</table>';
-    document.getElementById('plannerDetails').innerHTML = html;
-    document.getElementById('plannerResult').classList.remove('d-none');
-}
 function planBudget() {
     const total = parseFloat(document.getElementById('budgetTotal').value) || 500000;
     const type = document.getElementById('budgetType').value;

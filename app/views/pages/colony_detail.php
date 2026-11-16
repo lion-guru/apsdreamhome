@@ -252,14 +252,26 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
 <?php endif; ?>
 
 <!-- Video -->
-<?php if ($colony['youtube_video_url'] ?? ''): ?>
+<?php
+// Normalize common YouTube URL shapes to an embeddable URL - YouTube refuses
+// to frame watch?v= URLs (X-Frame-Options), embed URLs frame fine.
+function aps_youtube_embed(string $url): string {
+    $url = trim($url);
+    if ($url === '') return '';
+    if (preg_match('#youtube\.com/embed/([A-Za-z0-9_-]{6,})#', $url, $m)) return 'https://www.youtube.com/embed/' . $m[1];
+    if (preg_match('#(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/shorts/)([A-Za-z0-9_-]{6,})#', $url, $m)) return 'https://www.youtube.com/embed/' . $m[1];
+    return $url;
+}
+$apsYoutubeUrl = aps_youtube_embed((string)($colony['youtube_video_url'] ?? ''));
+?>
+<?php if ($apsYoutubeUrl !== ''): ?>
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-video text-primary me-2"></i><?= __('colony_video_tour_heading') ?></h2>
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow">
-                    <iframe src="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>" allowfullscreen title="Colony walkthrough video"></iframe>
+                    <iframe src="<?php echo htmlspecialchars($apsYoutubeUrl); ?>" allowfullscreen title="Colony walkthrough video"></iframe>
                 </div>
             </div>
         </div>
