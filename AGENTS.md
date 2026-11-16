@@ -1,3 +1,39 @@
+## Session 655: Customer Layout Was Flash-Blind - Every setFlash/$_SESSION["flash_*"] Write Across All ~30 Customer-Controller Sites Rendered Nothing, Now Surfaces as dismissible Bootstrap Alerts; Zero Other View Defects Found, Gates Green (2026-11-16)
+
+### Trigger
+User: "customer view me koi kami ho to improve karo suggestion do" (audit customer view family, improve what is missing).
+
+### What was found (all deep-checked before touching)
+1. **Flash messages on customer pages were 100% invisible.** `app/views/layouts/customer.php` contained zero flash rendering. Controllers across the portal write either raw `$_SESSION['flash_success'|flash_error'|flash_info']` (CustomerConstructionController, CustomerGrievanceController, CustomerPassbookController, AssociatePageController, ?) or `$this->setFlash('success'|'error'|?)` via `HasFlashMessages` - the latter keys (`success`/`error`/`info`) are consumed inline only by `journey.php` and `nri_desk.php` (2 of ~30 views), so EVERY other customer view swallowed its action feedback silently: construction permit submitted, maintenance ticket created, grievance rating saved, nominee saved, EMI payment logged - all vanished without a peep on screen.
+2. **No hardcoded absolute paths** (`action="/?"`,`href="/user/?"`,`src="/assets/?"`) remain anywhere in customer views (0 matches).
+3. **Zero broken FontAwesome classes in customer views** - all referenced `fa-*` classes exist in the local FA 6.5.1 stylesheet.
+4. **Unlabeled `<input>` matches** are all legitimate hidden CSRF/booking_id/amount inputs; the one `type="text"` with an `value=""` in foreclosure_preview is a read-only display input.
+5. All customer pages probed HTTP 200 with real byte counts & needles (dashboard 86KB, passbook 231KB, documents 63KB).
+
+### What was built
+`app/views/layouts/customer.php` - new `<div class="flash-container" role="status" aria-live="polite">` placed before `#aps-main-content`, iterating both flash families with identical semantics to base.php (consume-then-unset, htmlspecialchars escaped, dismissible Bootstrap alert, `aria-label` on close button, icon per severity). Consumes `$_SESSION['success'|'error'|'info']` AND `$_SESSION['flash_success'|'flash_error'|'flash_info']`.
+
+### Verification
+- `php -l` clean x1 ? **PHPStan -> [OK] No errors** (1517 files) ? **Master -> 11/11 PASSED** (37.35s).
+- Live probes (fresh test_login=7 jar, unlinked same turn): `/user/dashboard` 86,251 B flash-region YES ? `/user/wallet` 52,333 B YES ? `/user/documents` 63,250 B YES ? `/user/maintenance-dues` 50,439 B YES ? `/user/installments` 67,637 B YES ? `/user/passbook` 200 (self-contained full-HTML view, renders outside the layout by design).
+- Inline `getFlash()` views (journey, nri_desk) consume the key before the layout reads it - zero double-render.
+- No schema, no DB, no routes, no money tables; one view file changed.
+
+### Honest notes
+- The flash illumination is a UI-only fix; the controllers were already writing the keys correctly - the layout simply never read them.
+- `layouts/customer` does not echo any flash today; after this change it renders ALL flash keys present at layout-include time. Customer pages that are full standalone HTML (passbook, agreement, allotment letter) skip the layout and rely on their own inline flashes.
+- Parallel actor's in-flight customer-portal files (grievances/construction/registry/solar/transfers/views + CameraPassbook etc.) untouched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **654** (mine, TDS FY label fix) = 654. This entry = **S655**. Next-free = **656**.
+
+### Key lessons
+_1394. **A flash key nothing renders is a dead letter - audit every $_SESSION write path for a corresponding consumer before calling a UX "working".**
+_1395. **A portal layout with no flash region is a portal with no action feedback - 100% of actions are silent if the layout is the only consumer point.**
+_1396. **Inline `getFlash()` views are the only flash-render sites in a portal - 2/30 stayed visible while 28 went silent; never assume "the framework shows it".**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload ? HTTPS assetlinks SHA-256 ? RERA colony numbers ? EMI backfill ? live AI dialing (Twilio + `--execute`) ? production deploy ? Task Scheduler verification (DAILY task 16) ? passbook view (self-rendered, skips layout) still delivers its CTAs/CTAs via inline markup - owner can port to the layout any time.
 ## Session 654: TDS Pipeline Proven End-to-End After S646 Fixes - recordTDS, generateTdsCertificate &amp; FY Label Shape Verified With Sacrificial Live Records (Zero Leftovers), One FY Mismatch Cured, 11/11 (2026-11-16)
 
 ### Trigger
@@ -12837,3 +12873,43 @@ _1400. **One file, one purpose, one commit.** The fix is 19 lines of view; it la
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+## Session 656: AI Hub Live Degraded Banner + Predictive AI Row (Churn / Demand Forecast / Smart Assign) + Real AI Employee Names + Dead Link Fixed + AI Worker Wired Into Nightly Cron (Live: All 14 Stuck Tasks Processed, 27 Done), Gates Green (2026-11-16)
+
+### Trigger
+User: "iss project ke ai system me koi improvement, chatbot AI assistant, agentic AI, AI agent staff employee etc me koi improvement ya ai system ke view me UIUX me koi improvement ya kamiya khoj ke batao suggestion do" → audit gaps. "ok sare kaam karo bina ruke" → fix them all without stopping.
+
+### Gap list → what got fixed this round
+1. **AI Hub showed zero of its own newest services.** Predictive AI services shipped (S619 churn / S622 smart-assign / S626 demand forecast / S632 morning-brief panel) but the hub page listed only Executive Assistant, Morning Brief, RAG, Settings, Analytics, System, Training, Calling, Management, Marketing — none of mine. **Fixed:** new "Predictive AI" row: 3 cards (Lead Churn Prediction / Colony Demand Forecast / Smart Lead Assign), each with LIVE counters read from the DB at render time (scored / high+critical / unassigned / low-stock colonies), linking to the existing morning-brief page.
+2. **Dead `/admin/legal/ai-generate` link in Hub** (GET route doesn't exist; POST exists). 404 confirmed live. **Fixed:** hub now points to `/admin/legal/ai-composer` (the GET composer page).
+3. **AI employee desk hardcoded "Aira" for every enqueue option** (so "Vivaan"/"Sahil" selected correctly but always displayed "Aira <role>"). **Fixed:** real name + em dash + role shown ("Sahil — followup").
+4. **Result column truncated at 90 chars silently.** **Fixed:** expandable `<details><summary>…</summary><small>full text</small></details>`.
+5. **Disabled "Run next" with no explanation.** **Fixed:** tooltip "Employee is paused — activate to run tasks".
+6. **AI employee worker never ran in production** (no schedule; `cron_ai_employee.php` existed but nothing called it). **Fixed:** wired as DAILY task 17 in `scripts/run_all_crons.php` (dry-run unless `--live`). **Live run this session:** processed the 14 stuck tasks (11 qualify_lead + 3 followup_draft) → **all 27 tasks now done** (this was the reason the AI-employee chain looked dead).
+7. **Hub had no degraded indicator** even though `service_configs.ai_health.degraded` flag exists (written by `cron_ai_health.php`). **Fixed:** red banner on the hub when degraded — tells admins the public chatbot is answering offline and which check to re-run.
+
+### Verification
+- Live probe (fresh `test_login=2` jar): `/admin/ai/hub` HTTP 200 (391,157 B) — Predictive AI row present, all 3 cards with live counters, degraded banner logic correct (absent when flag=0 ✓), dead link fixed.
+- Employee desk probe: real names render, `<details>` expandable result renders, paused-title on disabled button renders.
+- `php scripts/cron_ai_employee.php --tasks=11` (live, once) → 14 tasks processed, `lead_activities` notes 215–222 written (real [Aira] Hindi-English qualify notes on actual leads).
+- `php scripts/run_all_crons.php --dry-run` lists tasks 15/16/17 correctly.
+- **PHPStan → [OK] No errors** · **Master → 11/11 PASSED** (32.38s) · `php -l` clean ×4 · **AGENTS.md integrity OK**.
+
+### What this round deliberately did NOT do (honest scope)
+- No new AI services built this round — this is "make what exists visible + working".
+- `/admin/ai-calling` still redirects to `/admin/ai-calling/dashboard` (designed); not touched.
+- `ai_health.degraded` flag reads 0 (healthy) — banner appears only when the flag flips.
+- Public-facing chatbot degraded-state UX (swap bubble for call-now btn) NOT done — needs visual verification with a public session; flagged for a browser pass.
+- Parallel actor committed S655 (customer flash) and S656 (mobile RBAC) mid-round; their files untouched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **655** (parallel actor, customer layout flash). This entry = **S656**. Next-free = **657**.
+
+### Key lessons
+_1397. **Shipped AI must be linked from the hub page — anything not reachable there does not exist for admins.** Four shipped services were invisible until this round.
+_1398. **A cron that exists but is never invoked is a bug, not an ecosystem.** The AI employee chain was dead for 11 days; one `exec()` call in the nightly runner revived it.
+_1399. **A red banner on the degraded flag is the only honest way to tell admins "AI is answering from a fallback, not from live models".**
+_1400. **Hardcoded persona names in UI are lies; names come from the database column.** "Aira" was shown for every employee.
+_1401. **When the fix list is long, do them in order of user visibility, not code convenience.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16 & 17) · `/api/ai/chat` Flutter-side probe on a real device.
