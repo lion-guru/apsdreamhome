@@ -32,6 +32,51 @@ _1416. **Browser-equivalent E2E is the only proof that a flash render actually d
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload ? HTTPS assetlinks SHA-256 ? RERA colony numbers ? EMI backfill ? live AI dialing (Twilio + `--execute`) ? production deploy ? Task Scheduler verification (DAILY task 16).
+## Session 661: Employee Onboarding Fully Wired End-To-End + Customize-Dashboard Widgets Now Render Live Data (Two Commits: ee25375f6 + 79bf15a00), Both Lanes PHPStan-OK & Master 11/11 (2026-11-16)
+
+### Trigger
+User: scorned my "archive orphans" sweep ("archive me kta daal diye sayad wo kaam ke liye bana ho bus link na hua ho ya thik se impliment na hua ho") citing that restored-38 "orphan" views were built for real features but never wired. Took the criticism, re-audited every restored view against live routes/controllers, found the employee-onboarding chain is a fully-built feature missing only wiring - then finished wiring it, end-to-end: admin CRUD for templates, assignment flow, checklist, seeded default template, live render at /admin/onboarding. Then wired the three dashboard-widget partials into the Customize Dashboard (drag-and-drop, persisted via user_dashboard_layouts) with live KPI/chart/table feeds - previously the page rendered static "Coming soon" placeholders.
+
+### Part A - Employee onboarding chain (committed `ee25375f6`)
+1. **OnboardingService**: 6 latent bugs - (a) `assignTemplate()` queried `WHERE template_id = ? AND is_active = 1` (column does not exist) -> removed predicate; (b) items INSERT branch bound `$this->db->lastInsertId()` instead of `$templateId` -> fixed; (c) `updateItemStatus()` bound `$itemId` twice in the params merge -> fixed; (d) `is_numeric(...)` GUARD before binding `assigned_to` (BIGINT column, role-string sent by seed) -> bind NULL if non-numeric; (e) `CAST(sort_order AS UNSIGNED)` (sort_order is varchar) -> fixed; (f) added negative-branch test: an `execute()` wrapper was added because the call-site used `$this->execute()` that did not exist (aliasing `$this->db->execute()` to keep zero caller churn) + private `pdo()` return type fix (`\\PDO` -> `\PDO`).
+2. **Admin CRUD layer**: OnboardingController now supports index/create/store/edit/update/destroy templates, `assignTemplate()` POST, `assignmentDetail()` with employee list + per-item checklist, `updateItem()` JSON endpoint with status whitelist (pending/in_progress/completed/skipped/waived) + CSRF + `requireAdmin()`. Role-scoped `$currentUserId()` = `$_SESSION['admin_id'] ?? $_SESSION['user_id']` with tenant-aware SQL branches.
+3. **Routes**: GET+POST `/admin/onboarding/create-template(/save)`, GET+POST `/admin/onboarding/template/{id}(/save|/delete)`, GET `/admin/onboarding/assign[/{employeeId}]`, POST `/admin/onboarding/assign-template`, POST `/admin/onboarding/update-item` - all registered in `routes/web.php`, admin-gated.
+4. **Seeded default template** "Standard Employee Onboarding" (8 items, idempotent migration `seed_default_onboarding_template_s657.php`); re-run -> SKIP.
+5. **Live probes**: /admin/onboarding renders 200 with real DB needles (`Standard Employee Onboarding`, `8 items`, template badge); PHP `php -l` clean; PHPStan "No errors" on my controller paths.
+6. Careers admin dashboard, legal print-preview (sanitized server-side HTML), Smart Township public pages (/smart-township + /packages), API-keys edit/test views - all wired; the voice_booking_widget include (via base.php) absorbed by the parallel actor's S659 whole-tree commit - verified contained.
+
+### Part B - Customize Dashboard widget layer (committed `79bf15a00`)
+1. **DashboardWidgetController**: two new JSON read-only feeds - `widgetDataChart()` serves `revenue_monthly_6m`, `leads_monthly_6m`, `bookings_monthly_6m` (rolling 6-month `DATE_FORMAT` series, zero-filled, tenant-scoped via `$this->tenantId() > 1 ? ' AND tenant_id = ?' : ''` etc.); `widgetDataTable()` serves `recent_leads`, `recent_bookings`, `pending_followups` (limit clamp 1..50). **`total_price` 1054 fixed inline** -> `total_plot_value` (the silent catch had hidden it - feed would have looked permanently empty).
+2. **`getLiveKpis()`**: now also returns `unread_notifications` (tenant + `is_read = 0 OR read_at IS NULL`) and `pending_followups` (leads due in 2 days, excluding closed/converted/dead).
+3. **`savedLayout` decoded**: the view previously fell back to `$layout = !empty($savedLayout) ? $savedLayout : [...]`, so ANY drag-and-drop persisted via save/reset round-trip reverted to the default on reload. `index()` now reads `widgets_order` then `layout_config.widgets` and passes `$savedLayout` to the view. Verified live: save `[recent_leads, revenue_chart, stats_overview, pending_tasks]` -> reload render order exactly `recent_leads,revenue_chart,stats_overview,pending_tasks` -> reset -> 0 rows; HTTP 200; master 11/11.
+4. **customize.php rewritten in place**: scoped `<style>` for the gridstack-style partials (`.widget-item`, `.widget-card`, `.widget-header`, `.widget-title`, `.widget-actions`, `.kpi-value`, `.kpi-icon`, `.kpi-unit`, `.kpi-progress`, `.kpi-target`, `.table-responsive` fragments); live KPI cards fed by `$kpis` server-side (leads/month, pending follow-ups, unread notifications); chart canvases load Chart.js via `/assets/js/vendor/chart.umd.js` then fetch the JSON feed (failing gracefully); both tables render `recent_leads` / `pending_followups`; Quick Actions links to real admin routes; `.widget-remove` now drops the grid item via a delegated click handler; dead `Configure` cog hidden via CSS; **BASE_URL + cookie-CSRF mismatch in `fetch()` fixed** (the drag-drop POST previously hit the web-root, not the app, on any subfolder install).
+5. **Live needles probed HTTP 200**: page footer `; Customize Dashboard ; chart.umd.js ; widget-data/chart_widget ; widget-data/table_widget ; data-widget="stats_overview|revenue_chart|recent_leads|pending_tasks|notifications|pending_followups"` - all YES; feed endpoints return well-formed JSON with live rows.
+
+### Verification
+- php -l: clean across 3 files; **PHPStan: [OK] No errors** (DashboardWidgetController + OnboardingController + their service paths); master gate **11/11 PASSED** (29.36s and 28.83s twice; 103 tests, 465 assertions).
+- Live HTTP probes via manual cookie chain (PHP-curl cannot write jar in this environment; `sys_get_temp_dir()` unusable - `storage/app/tmp` workaround) confirmed full round-trip.
+- git: `ee25375f6` (12 files, onboarding lane) and `79bf15a00` (3 files, dashboard lane) staged with path-named `git add`, committed + auto-pushed; parallel actor's in-flight files NOT touched.
+- DB pre-state safety dump kept at `backups/db/...pre_..._2026-11-14*`. AGENTS.md integrity OK at this entry (412 headings pre-insert).
+
+### Honest notes
+- The four non-default KPI cards reuse the same three live KPI values the morning-brief/data-desk views use; they are not a new data source.
+- `lead_churn_predictions` is re-scored on each POST by design; nightly churn refresh already lives in `run_all_crons.php` (DAILY task 16).
+- The widget feed is read-only; the layout save/reset pair is the only state mutation, scoped to `user_dashboard_layouts` for the logged-in admin id.
+- 34 "dead" orphan views were restored this round or remain unwired; those were documented separately and are NOT claimed done here.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **660** (parallel actor, Voice Provider Status + smoke-harness sentinel merge into their S659). This entry = **S661**. Next-free = **662**.
+
+### Key lessons
+_1421. **A partial without its CSS is invisible math** - gridstack-style widget partials expected chip/badge CSS from their original dashboard host that no longer loads; scoped styles fixed it without redesigning either host.
+_1422. **Silent `$catch Throwable { $records = [] }` is a lie to the frontend** - the recent_bookings feed looked "empty" for months because of `total_price` 1054 hidden by the dead catch; always DESCRIBE the live table before writing the SQL and re-check the catch's duty.
+_1423. **Drag-drop is a write path - if the page doesn't persist reload, it's broken** - without `savedLayout` decoding, the page's core promise ("drag to rearrange, reload, it sticks") was false; the round-trip probe (save -> reload -> assert render order -> reset -> count==0) is the actual proof.
+_1424. **CSRF in X-CSRF-Token header > php://input JSON for drag-drop POSTs** - drops from `$_POST` pollute the JSON decode; passing CSRF header beats reacting to a 403 in the JS layer.
+_1425. **A subfolder-install fetch is an honesty check for any JS endpoint** - `fetch('/admin/dashboard/customize/save')` hits the web root, not the app; every admin fetch needs BASE_URL interpolation and a cookie-CSRF probe under `/apsdreamhome/` paths.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · decision on 34 dead orphans (wire vs archive).
+
 ## Session 656: Admin Sidebar Hierarchy & Submenu Tree Restored, Executive Overview Hub Placed at Top, 29 Double-Wrapped Views Sanitized, Dangling Header/Footer Includes Purged, Portability Hardened, Gates Green (2026-11-16)
 
 ### Trigger
