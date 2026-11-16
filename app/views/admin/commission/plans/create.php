@@ -42,6 +42,14 @@ $activePlanName = $activePlanName ?? null;
 .rank-table input{background:#0f1225;border:1px solid #2a2f4a;border-radius:6px;color:#e0e0e0;padding:6px 8px;width:100%;font-size:.82rem;text-align:right}
 .rank-table input:focus{border-color:#4f8cff;outline:none}
 @media (max-width: 1200px){ .cp-side{position:static !important;width:100% !important} }
+.cp-ai-chip{background:#1e2440;border:1px solid #2a2f4a;color:#cbd5ff;border-radius:14px;padding:5px 10px;font-size:.68rem;cursor:pointer;transition:all .2s}
+.cp-ai-chip:hover{border-color:#4f8cff;background:#242c52}
+.cp-ai-card{border:1px solid #4f8cff44;box-shadow:0 0 22px #4f8cff14}
+.cp-ai-flash{background:#ffd166 !important;color:#1a1a1a !important;border-color:#ffd166 !important;transition:background 1.2s ease}
+.cp-ai-msg{border-radius:10px;padding:.5rem .7rem;font-size:.78rem;line-height:1.45}
+.cp-ai-msg-user{background:#3b4a8f;color:#e9ebff;align-self:flex-end}
+.cp-ai-msg-ai{background:#12172b;border:1px solid #2a2f4a;color:#cdd6f4;align-self:flex-start}
+.cp-ai-msg-error{border-color:#ff6b6b66;color:#ffb8b8}
 </style>
 
 <div class="row g-3">
@@ -201,7 +209,32 @@ $activePlanName = $activePlanName ?? null;
 
 <!-- SIDE: worked example -->
 <div class="col-xl-3">
-    <div class="cp-mini cp-side mb-3" style="position:sticky;top:1rem">
+    <div class="cp-mini cp-side cp-ai-card mb-3" style="position:sticky;top:1rem" id="aiCoachCard">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="t m-0"><i class="fas fa-wand-magic-sparkles me-1"></i>AI Plan Coach <span class="badge" style="background:#312e81;color:#c7d2fe;font-size:.58rem">FREE</span></div>
+            <button class="btn btn-sm btn-outline-secondary py-0 px-1" id="aiCoachToggle" type="button" aria-label="Toggle AI panel"><i class="fas fa-chevron-down" id="aiCoachToggleIcon"></i></button>
+        </div>
+        <div id="aiCoachBody">
+            <p class="small mb-2" style="color:#9aa9cf">Form bharte waqt kisi bhi question ko puchho — ya poora plan AI se design karwa lo. Jawab Hinglish me, WhatsApp-style. Lahza expect karo (max 15s).</p>
+            <div class="d-flex flex-wrap gap-1 mb-2" id="aiCoachChips">
+                <button type="button" class="cp-ai-chip" data-q="Poora plan design karo — balanced safe starter, company ke liye." data-mode="design">✨ Design my plan</button>
+                <button type="button" class="cp-ai-chip" data-q="GBV kya hai aur kaise decide karein? Site Manager kaise banta hai?">GBV kya hai</button>
+                <button type="button" class="cp-ai-chip" data-q="Global Cap 20% sahi hai ya kam karu? Explain karo company perspective se.">Global Cap explain</button>
+                <button type="button" class="cp-ai-chip" data-q="Track A, B, C ka difference samjhao with an example sale of ₹15,00,000.">A/B/C samjhao</button>
+                <button type="button" class="cp-ai-chip" data-q="Mere current numbers review karo — kya sahi hai, kya risky hai?">Check my numbers</button>
+            </div>
+            <div id="aiCoachThread" class="d-flex flex-column gap-2 mb-2" style="max-height:260px;overflow-y:auto;min-height:36px"></div>
+            <div class="input-group input-group-sm">
+                <input type="text" id="aiCoachInput" class="form-control" placeholder="e.g. 'Track B 3 se 4 karna risky hai kya?'" aria-label="Ask AI plan coach" autocomplete="off">
+                <button class="btn btn-primary" id="aiCoachSend" type="button" aria-label="Ask AI"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mt-2">
+                <button class="btn btn-sm btn-success" id="aiCoachApply" type="button" style="display:none"><i class="fas fa-wand-magic-sparkles me-1"></i>Apply to form</button>
+                <button class="btn btn-sm btn-outline-secondary ms-auto" id="aiCoachReset" type="button"><i class="fas fa-rotate-left me-1"></i>Reset chat</button>
+            </div>
+        </div>
+    </div>
+    <div class="cp-mini mb-3">
         <div class="t"><i class="fas fa-calculator me-1"></i>Live example — kaise calculate hoga?</div>
         <div class="mb-2"><b>Sale ₹15,00,000</b> — seller <b>Sr. Associate</b> rank pe hai (7% direct):</div>
         <div style="padding-left:.5rem;border-left:2px solid #2a2f4a">
@@ -235,3 +268,152 @@ $activePlanName = $activePlanName ?? null;
     </div>
 </div>
 </div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+(function(){
+    var base = <?= json_encode(defined('BASE_URL') ? BASE_URL : '') ?>;
+    var toggle = document.getElementById('aiCoachToggle');
+    var toggleIcon = document.getElementById('aiCoachToggleIcon');
+    var body = document.getElementById('aiCoachBody');
+    var thread = document.getElementById('aiCoachThread');
+    var input = document.getElementById('aiCoachInput');
+    var sendBtn = document.getElementById('aiCoachSend');
+    var applyBtn = document.getElementById('aiCoachApply');
+    var resetBtn = document.getElementById('aiCoachReset');
+    var chips = document.getElementById('aiCoachChips');
+
+    if (!thread || !input || !sendBtn) { return; }
+
+    var isOpen = true;
+    var suggestion = null;
+
+    toggle.addEventListener('click', function(){
+        isOpen = !isOpen;
+        body.style.display = isOpen ? '' : 'none';
+        toggleIcon.className = isOpen ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
+    });
+
+    function csrfToken(){
+        var f = document.querySelector('input[name="csrf_token"]');
+        return f ? f.value : '';
+    }
+
+    function collectState(){
+        var state = {};
+        var named = document.querySelectorAll('[name]');
+        var levels = [];
+        for (var i = 0; i < named.length; i++) {
+            var el = named[i];
+            var n = el.name;
+            if (!n || n === 'csrf_token') { continue; }
+            if (n.indexOf('levels[') === 0) {
+                var m = n.match(/levels\[(\d+)\]\[(\d+)\]/);
+                if (m) {
+                    var ri = parseInt(m[1], 10), ci = parseInt(m[2], 10);
+                    if (!levels[ri]) { levels[ri] = []; }
+                    levels[ri][ci] = el.value;
+                }
+            } else {
+                state[n] = (el.value || '').substring(0, 200);
+            }
+        }
+        if (levels.length) { state.levels = levels; }
+        return state;
+    }
+
+    function addMsg(role, text, isError){
+        var div = document.createElement('div');
+        div.className = 'cp-ai-msg ' + (role === 'user' ? 'cp-ai-msg-user' : 'cp-ai-msg-ai') + (isError ? ' cp-ai-msg-error' : '');
+        div.textContent = text;
+        thread.appendChild(div);
+        thread.scrollTop = thread.scrollHeight;
+    }
+
+    function flashApplied(el){
+        if (!el) { return; }
+        el.classList.add('cp-ai-flash');
+        window.setTimeout(function(){ el.classList.remove('cp-ai-flash'); }, 1600);
+    }
+
+    function ask(message, mode){
+        var msg = (message || '').trim();
+        if (!msg) { return; }
+        addMsg('user', msg, false);
+        sendBtn.disabled = true;
+        var fd = new URLSearchParams({
+            message: msg,
+            mode: mode || 'chat',
+            state: JSON.stringify(collectState()),
+            csrf_token: csrfToken()
+        });
+        fetch(base + '/admin/commission-plans/ai-coach', {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(function(resp){
+            return resp.json().then(function(json){ return { status: resp.status, json: json }; });
+        }).then(function(r){
+            sendBtn.disabled = false;
+            var json = r.json || {};
+            if (json.success && json.suggestion) {
+                suggestion = json.suggestion;
+                applyBtn.style.display = '';
+                addMsg('ai', 'Design toh ho gaya! Numbers ready hain — "Apply to form" dabo. Phir form review karke Create karo.', false);
+            } else if (json.success && json.answer) {
+                addMsg('ai', json.answer, false);
+            } else {
+                addMsg('ai', json.error || 'Kuch gadbad hui. Dobara try karo.', true);
+            }
+        }).catch(function(){
+            sendBtn.disabled = false;
+            addMsg('ai', 'AI se connect nahi ho pa raha. Har field ke neeche help text hai — wahan se padho.', true);
+        });
+    }
+
+    sendBtn.addEventListener('click', function(){
+        var v = input.value; input.value = ''; ask(v, 'chat');
+    });
+    input.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') { e.preventDefault(); var v = input.value; input.value = ''; ask(v, 'chat'); }
+    });
+
+    chips.addEventListener('click', function(e){
+        var btn = e.target.closest('.cp-ai-chip');
+        if (!btn) { return; }
+        var q = btn.getAttribute('data-q');
+        var mode = btn.getAttribute('data-mode') || 'chat';
+        ask(q, mode);
+    });
+
+    applyBtn.addEventListener('click', function(){
+        if (!suggestion) { return; }
+        var changed = [];
+        var simpleKeys = ['global_cap_pct','track_a_pct','track_b_pct','track_c_pct','royalty_pool_pct','same_level_override_gen1','same_level_override_gen2','plan_name','plan_type','effective_date','description'];
+        for (var s = 0; s < simpleKeys.length; s++) {
+            var k = simpleKeys[s];
+            if (suggestion[k] === undefined) { continue; }
+            var el = document.querySelector('[name="' + k + '"]');
+            if (el) { el.value = suggestion[k]; changed.push(el); }
+        }
+        if (Array.isArray(suggestion.levels)) {
+            suggestion.levels.forEach(function(row, i){
+                if (!Array.isArray(row)) { return; }
+                for (var j = 2; j <= 8; j++) {
+                    var v = row[j];
+                    var cell = document.querySelector('[name="levels[' + i + '][' + j + ']"]');
+                    if (cell) { cell.value = v; changed.push(cell); }
+                }
+            });
+        }
+        changed.forEach(flashApplied);
+        applyBtn.style.display = 'none';
+        addMsg('ai', changed.length + ' fields update ho gayi hain. Review karke tabhi "Create Draft Plan" karo — values badal ke ho sakti hain.', false);
+    });
+
+    resetBtn.addEventListener('click', function(){
+        thread.innerHTML = '';
+        suggestion = null;
+        applyBtn.style.display = 'none';
+    });
+})();
+</script>

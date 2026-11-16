@@ -419,4 +419,251 @@ class CommissionPlanController extends AdminController
         $result = $this->simulator->simulateSale($saleAmount, $planId, $rankIdx);
         echo json_encode($result);
     }
+
+    /* ── AI PLAN COACH ──────────────────────────────────────────────── */
+
+    /**
+     * AI Plan Coach: answer questions about the commission form, or design a whole
+     * plan for the admin. Domain-scoped prompt, chat endpoint rate-limited, no keys leaked.
+     */
+    public function aiCoach()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $raw = file_get_contents('php://input');
+        $input = json_decode($raw, true);
+        if (!is_array($input)) {
+            parse_str($raw, $parsedPost);
+            $input = $parsedPost;
+        }
+
+        $message = trim((string)($input['message'] ?? ''));
+        $mode    = (string)($input['mode'] ?? 'chat');
+        $state   = [];
+        $stateJson = (string)($input['state'] ?? '');
+        if ($stateJson !== '') {
+            $decoded = json_decode($stateJson, true);
+            if (is_array($decoded)) {
+                $state = $decoded;
+            }
+        }
+
+        if ($message === '') {
+            $this->jsonResponse(['success' => false, 'error' => 'Kuch likhein — question type karein.'], 400);
+            return;
+        }
+        if (mb_strlen($message) > 800) {
+            $message = mb_substr($message, 0, 800);
+        }
+
+        if ($mode === 'design') {
+            $prompt = $this->buildDesignPrompt();
+            $engine = 'none';
+            try {
+                $result = \App\Services\AI\FreeAIEngines::getInstance()->generate(
+                    $prompt . "\n\nRequest: " . $message . "\n\nJSON:",
+                    ['max_tokens' => 1100, 'temperature' => 0.4],
+                    'chat'
+                );
+                $text = trim((string)($result['text'] ?? ''));
+                $engine = $result['engine'] ?? 'unknown';
+            } catch (\Throwable $e) {
+                error_log('aiCoach design error: ' . $e->getMessage());
+                $text = '';
+            }
+            $suggestion = $this->parseDesignSuggestion($text);
+            if ($suggestion !== null) {
+                $this->jsonResponse(['success' => true, 'suggestion' => $suggestion, 'engine' => $engine]);
+                return;
+            }
+            $this->jsonResponse([
+                'success' => true,
+                'answer'  => $text,
+                'note'    => 'Design output JSON format me nahi aaya — manu tab tak suggested values help text se set karo.',
+                'engine'  => $engine,
+            ]);
+            return;
+        }
+
+        $text = '';
+        $engine = null;
+        try {
+            $prompt = $this->buildCoachPrompt($message, $state);
+            $result = \App\Services\AI\FreeAIEngines::getInstance()->generate(
+                $prompt,
+                ['max_tokens' => 650, 'temperature' => 0.7],
+                'chat'
+            );
+            $text = trim((string)($result['text'] ?? ''));
+            $engine = $result['engine'] ?? null;
+        } catch (\Throwable $e) {
+            error_log('aiCoach error: ' . $e->getMessage());
+        }
+
+        if ($text === '') {
+            $text = "AI abhi unavailable hai — har field ke neeche help text hai, wahan se padho. Ya 2 minute baad try karo.";
+        }
+        $this->jsonResponse(['success' => true, 'answer' => $text, 'engine' => $engine]);
+    }
+
+    /** System prompt for the free-form coach chat. */
+    private function buildCoachPrompt(string $message, array $state): string
+    {
+        $stateText = $this->renderState($state);
+
+        return <<<TXT
+You are "APS Plan Coach" — an AI expert inside the APS Dream Home admin panel. The admin (CEO / network owner) is creating a commission plan for the real-estate plot business and is NOT an expert — answer like you're over WhatsApp, in Hinglish (Hindi+English mix), SHORT (max 3-4 sentences), and ALWAYS give a CONCRETE recommendation when asked "kya rakhein / kya karein / kya sahi hai".
+
+Company context:
+- Townships (Gorakhpur / Kushinagar / Lucknow / Varanasi): Suryoday Colony & Raghunath Nagri (~250 booked each), Budh Bihar Colony, Lakeview Residency.
+- Rank ladder is fixed: Associate → Sr. Associate → BDM → Sr. BDM → Vice President → President → Site Manager.
+- The trigger is a booking/sale — every booking pays commission from THIS plan's numbers.
+- Plan is saved as draft → activate later (Plans List → Activate button). When active, MLM engine snapshots THIS plan; every booking's direct/team/bonus math uses these exact values.
+- Cap math: Global Cap 20% of ₹15,00,000 = ₹3,00,000 maximum total commission the company pays on that sale, no matter what slabs say.
+
+Field dictionary (use exactly these names):
+- plan_name: display name (e.g. "Standard Plan v2 — April 2026")
+- plan_code: UPPERCASE unique code (e.g. STD, 2026-RE) — audit/logging uses this
+- plan_type: hybrid (recommended: direct + team overrides), unilevel, binary, matrix
+- effective_date: payouts switch to new plan on this date (format YYYY-MM-DD)
+- description: one-line why this plan changed
+- global_cap_pct: HARD cap on TOTAL commission cost per sale. Typical 10-25. Default 20.
+- track_a_pct: slab-difference (upper-slab minus junior-slab) differential paid to senior upline on a sale. Typical 10-20. Must be <= global_cap_pct. Default 15.
+- track_b_pct: roll-up override paid to the upline manager on the team's sale, typically 1-5. Default 3.
+- track_c_pct: milestone/GBV bonus % — one-time booster for crossing GBV. Default 2.
+- royalty_pool_pct: company-funded pool shared across network monthly. Default 2.
+- same_level_override_gen1: % paid when YOUR direct recruit reaches your same rank. Default 2.
+- same_level_override_gen2: same for gen-2 recruit, usually half of gen1. Default 1.
+- levels[]: 7 rows [name, order, direct_commission, team_commission, level_bonus, matching_bonus, leadership_bonus, performance_bonus, monthly_target(₹ GBV)]
+  direct ascending: 5/7/10/12/15/18/20; team ascending: 2/3/4/5/6/7/8; GBV ascending: ₹10L / ₹35L / ₹70L / ₹1.5Cr / ₹3Cr / ₹5Cr / ₹999Cr (₹1,00,00,000 = ₹1 crore)
+- monthly_target = GBV (Group Business Volume) — minimum monthly group sales to HOLD the rank; ₹1,00,00,000 = ₹1 crore (Site Manager = ₹5 crore).
+
+If asked to DESIGN a whole plan, recommend exactly this safe starter:
+direct 5/7/10/12/15/18/20, team 2/3/4/5/6/7/8, level_bonus 0/2/3/4/5/6/7, matching 0/5/8/10/12/15/18, leadership 0/0/1/2/3/4/5, performance 0/0/0/1/2/3/5, GBV 1000000/3500000/7000000/15000000/30000000/50000000/999999999, global_cap 20, track_a 15, track_b 3, track_c 2, royalty 2, G1 2, G2 1 — and say "activate karne se pehle owner se approve karwa lo".
+
+Current form state (may be partial):
+{$stateText}
+
+Question: {$message}
+Answer:
+TXT;
+    }
+
+    /** Prompt for design mode — output must be parseable JSON. */
+    private function buildDesignPrompt(): string
+    {
+        return <<<TXT
+You are "APS Plan Coach". Design a NEW compensation plan for APS Dream Home real-estate plot business. Respond with EXACTLY ONE valid JSON object — no commentary, no markdown fences, no text before or after.
+
+Schema (every key required):
+{"global_cap_pct":20, "track_a_pct":15, "track_b_pct":3, "track_c_pct":2, "royalty_pool_pct":2, "same_level_override_gen1":2, "same_level_override_gen2":1, "plan_name":"Standard Plan v1", "plan_type":"hybrid", "effective_date":"YYYY-MM-DD", "description":"one line", "levels":[["Associate",1,5,2,0,0,0,0,1000000],["Sr. Associate",2,7,3,2,5,0,0,3500000],["BDM",3,10,4,3,8,1,0,7000000],["Sr. BDM",4,12,5,4,10,2,1,15000000],["Vice President",5,15,6,5,12,3,2,30000000],["President",6,18,7,6,15,4,3,50000000],["Site Manager",7,20,8,7,18,5,5,999999999]]}
+
+Constraints:
+- global_cap_pct: number 5..30 (float 0.5 step)
+- track_a_pct: number <= global_cap_pct
+- track_b_pct, track_c_pct: number 0..10
+- royalty_pool_pct, same_level_override_gen1, same_level_override_gen2: number 0..10
+- effective_date: YYYY-MM-DD format
+- levels: exactly 7 rows, ascending order 1..7, ascending direct_commission, ascending team_commission, ascending monthly_target (numbers)
+- plan_code NOT required
+
+Request:
+
+TXT;
+    }
+
+    /** Render the current form state compactly for the AI. */
+    private function renderState(array $state): string
+    {
+        if (!$state) {
+            return "(blank form — admin hasn't touched anything yet)";
+        }
+        $lines = [];
+        foreach ($state as $k => $v) {
+            $k = (string)$k;
+            if (is_array($v)) {
+                $pairs = [];
+                foreach ($v as $i => $row) {
+                    if (is_array($row)) {
+                        $pairs[] = "levels[{$i}][" . implode(',', $row) . "]";
+                    }
+                }
+                $lines[] = $k . ': ' . implode(' | ', $pairs);
+            } elseif (is_string($v)) {
+                $lines[] = "{$k}: " . (mb_strlen($v) > 120 ? mb_substr($v, 0, 120) . '…' : $v);
+            }
+        }
+        return $lines ? implode("\n", $lines) : '(blank form)';
+    }
+
+    /**
+     * Parse the design-mode JSON output. Lenient on shape, strict on values.
+     * Returns array keyed by form names, or null if unusable.
+     */
+    private function parseDesignSuggestion(string $text): ?array
+    {
+        $text = trim($text);
+        // strip code fences if the model added them anyway
+        $text = preg_replace('/^```(?:json)?\s*|\s*```$/im', '', $text);
+        $start = strpos($text, '{');
+        $end = strrpos($text, '}');
+        if ($start === false || $end === false || $end <= $start) {
+            return null;
+        }
+        $json = substr($text, $start, $end - $start + 1);
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        $numeric = ['global_cap_pct', 'track_a_pct', 'track_b_pct', 'track_c_pct', 'royalty_pool_pct', 'same_level_override_gen1', 'same_level_override_gen2'];
+        $suggestion = [];
+        foreach ($numeric as $key) {
+            if (isset($data[$key]) && is_numeric($data[$key])) {
+                $suggestion[$key] = max(0, min(100, (float)$data[$key]));
+            }
+        }
+        if (isset($data['plan_name']) && is_string($data['plan_name'])) {
+            $suggestion['plan_name'] = mb_substr(trim($data['plan_name']), 0, 120);
+        }
+        if (isset($data['plan_type']) && is_string($data['plan_type'])) {
+            $valid = ['hybrid', 'unilevel', 'binary', 'matrix'];
+            $type = strtolower(trim($data['plan_type']));
+            $suggestion['plan_type'] = in_array($type, $valid, true) ? $type : 'hybrid';
+        }
+        if (isset($data['effective_date']) && is_string($data['effective_date'])) {
+            $ts = strtotime($data['effective_date'] . ' 00:00:00');
+            $suggestion['effective_date'] = $ts ? date('Y-m-d', $ts) : date('Y-m-d');
+        }
+        if (isset($data['description']) && is_string($data['description'])) {
+            $suggestion['description'] = mb_substr(trim($data['description']), 0, 200);
+        }
+
+        if (isset($data['levels']) && is_array($data['levels'])) {
+            $levels = [];
+            foreach (array_slice($data['levels'], 0, 7) as $i => $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $out = [];
+                for ($j = 0; $j <= 8; $j++) {
+                    $v = $row[$j] ?? null;
+                    if ($j === 0) {
+                        $out[] = mb_substr(preg_replace('/[^A-Za-z0-9\.\-\s]/', '', (string)$v), 0, 60);
+                    } elseif ($j === 1) {
+                        $out[] = max(1, min(30, (int)$v));
+                    } else {
+                        $out[] = is_numeric($v) ? max(0, min($j === 8 ? 1000000000 : 100, (float)$v)) : 0;
+                    }
+                }
+                $levels[] = $out;
+            }
+            if ($levels) {
+                $suggestion['levels'] = $levels;
+            }
+        }
+
+        return $suggestion ?: null;
+    }
 }

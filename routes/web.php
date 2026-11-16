@@ -5102,6 +5102,8 @@ $router->get('/admin/commission/reconciliation', 'App\\Http\\Controllers\\Admin\
 $router->get('/admin/commission-plans',                        'App\\Http\\Controllers\\Admin\\CommissionPlanController@index');
 $router->get('/admin/commission-plans/create',                 'App\\Http\\Controllers\\Admin\\CommissionPlanController@create');
 $router->post('/admin/commission-plans/store',                 'App\\Http\\Controllers\\Admin\\CommissionPlanController@store');
+$router->post('/admin/commission-plans/ai-coach',               'App\\Http\\Controllers\\Admin\\CommissionPlanController@aiCoach')
+    ->middleware('App\\Middleware\\AjaxRateLimitMiddleware');
 $router->get('/admin/commission-plans/edit/{id}',              'App\\Http\\Controllers\\Admin\\CommissionPlanController@edit');
 $router->post('/admin/commission-plans/update/{id}',           'App\\Http\\Controllers\\Admin\\CommissionPlanController@update');
 $router->post('/admin/commission-plans/clone/{id}',            'App\\Http\\Controllers\\Admin\\CommissionPlanController@cloneVersion');

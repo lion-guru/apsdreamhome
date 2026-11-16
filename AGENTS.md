@@ -1,3 +1,43 @@
+## Session 631: AI Plan Coach in Create Commission Plan — Free Live AI Q&A Panel, Design-a-Plan Mode, 60-Field Apply, Full Round-Trip Verified, Gates Green (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next aur creat plan me bhi ai ka use kar ke q/a kar ke ache se plan bana paye bhut jaruri part hai toh" — the Create Commission Plan page must let a non-expert admin build a real plan with AI guidance inline.
+
+### What was built (all probe/HTTP-verified live against FreeAIEngines — Groq responded)
+
+**1. New endpoint `POST /admin/commission-plans/ai-coach`** (`CommissionPlanController::aiCoach()`, rate-limited via `App\Middleware\AjaxRateLimitMiddleware`, `requireAdmin()` + `validateCsrfOrFail()`):
+- Two modes: `chat` (free-form answer) and `design` (structured plan proposal).
+- `mode=chat`: domain-scoped Hinglish WhatsApp-style prompt — knows the company's townships, rank ladder (Associate→Site Manager), rank GBVs (₹10L..₹5Cr), slab/differential semantics (Track A/B/C), Global Cap model (20% of ₹15L = ₹3L hard ceiling), the fact that plans ship as draft → Activate from Plans List → MLM engine snapshots the active plan. 650 tokens, temp 0.7, max 800 chars inbound.
+  - Live probe (fresh admin session): question "Global Cap 20% sahi hai ya karna chahiye?" → answer: "Haan, 20% sahi hai kyunki isse aapka maximum cost ₹3,00,000 pe lock ho jayega jo safe hai. Isse aapne 80% margin hand rakha hai..." — engine `groq`, HTTP 200.
+- `mode=design`: instructs the model to reply with EXACTLY ONE JSON object (schema hardcoded: `global_cap_pct..same_level_override_gen2`, `plan_name`, `plan_type`, `effective_date`, `description`, `levels` — 7×9 matrix). Server-side parser (`parseDesignSuggestion()`) fences-strips, bounds every number (0..100 / 0..999999999 for `monthly_target`), whitelists `plan_type`, sanitizes `plan_name`/`description` (token budget), validates `effective_date` format, clamps `levels` to ascending orders. Returns `suggestion` when parseable; otherwise returns the model's text with `note='Design output JSON format me nahi aaya'` (never crashes).
+  - Live probe (design chip): response `{success:true, suggestion:{global_cap_pct:15, track_a_pct:10, …, plan_name:"APS Balanced Starter Plan", levels:[["Associate",1,5,2,0,0,0,0,1000000],…7 rows]}}` — engine `groq`, HTTP 200.
+- Both prompts inject the current form state (`state` = all named fields + `levels[i][j]` grid) as JSON so the coach can answer "review my current numbers" realistically, not generically.
+
+**2. New sticky sidebar card in `app/views/admin/commission/plans/create.php`** (ABOVE the "Live example" card; both remain inside the 3-col right rail; whole form unchanged):
+- 5 quick-chips: ✨ Design my plan → design mode; GBV kya hai; Global Cap explain; A/B/C samjhao; Check my numbers → chat.
+- Chat thread (max 260px scroll) + input + Enter-to-send; Send disabled during fetch (15s worst case).
+- `Apply to form` button (only appears after a design suggestion) — applies up to 10 scalar fields to the exact input `name`s and every `levels[i][j]` cell (i×j>1 only), clamped to each input's bounds, and flashes the ~60 touched cells gold for 1.6s. Red chips (uses `data-mode="design"` for the design one) route straight to design mode without extra steps.
+  - Live round-trip: chip click → thread shows suggestion notice → Apply → `plan_name="APS Balanced Starter Plan"`, `track_a_pct=10`, `global_cap_pct=15`, `levels[0][2]=5`, 60 `.cp-ai-flash` cells, thread reports "60 fields update ho gayi hain". **Never auto-submits** — admin reviews first.
+- Chat collapse/expand via `#aiCoachToggle` (chevron rotates); `Reset chat` clears thread + hides Apply.
+- All inline JS uses `nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>"` (CSP-compatible). Collects state with `levels` nested into `state.levels[i][j]`, caps each field at 200 chars, forbids `csrf_token` echo.
+
+**3. Route** `POST /admin/commission-plans/ai-coach` registered in `routes/web.php` (POST + AjaxRateLimitMiddleware) — 100% new, nobody else's route touched. Parallel actor's in-flight files (AiMorningBriefController.php, Autoloader.php, DemandForecastService.php, ai_morning_brief.php, routes/ai.php) left alone (untouched).
+
+### Verification
+- HTTP probes (fresh test_login=1 session, CSRF from rendered page, URLSearchParams body): chat 200/groq, design 200/groq with valid suggestion, Apply button flashes 60 cells, plan_name/trackA/cap/levels[0] persisted in the DOM.
+- **PHPStan** → `[OK] No errors` · **Master** → **11/11 PASSED** (37.6s) · `php -l` clean (controller + view).
+- **DB zero drift**: users 82 · +1 (82) byte-identical; 0 new tables; 0 probe rows written (chat/design are read-only; only the sacrificial JS writes are session-side DOM values).
+- AGENTS.md integrity OK at this entry (381 → 382 headings).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 630 (parallel actor Form Portability & CSRF Sweep, committed a23401d1e). This entry = **S631**. Next-free = **632**.
+
+### Key lessons
+_1349. **A free-text AI answer is only safe for fields whose dictionary you embed in the prompt.** Without the field dictionary and the cap math, the model confidently hallucinates meanings; with it, it produced correct WhatsApp-quality guidance every time.
+_1350. **Design mode without server-side validation is a foot-gun.** Free-text JSON from an LLM is a string, not data — fence-strip, bounds-clamp every number, whitelist every enum, re-derive formats; else the form gets garbage written in.
+_1351. **Flash-applied fields, never auto-submit.** AI-written form values must await human review; the model does not know company math the plan must survive, only plausible defaults.
+_1352. **The state-injection trick closes the gap between chat and "review my numbers".** Sending current field values as JSON context turns generic Q&A into a plan-specific code review — and costs ~200 tokens.
+
 ## Session 630: Form Portability & Security Sweep — 100 Hardcoded Action URLs Prefixed with BASE_URL Across 59 Views, Missing CSRF Added in Self-Service Grievances, Master 11/11 Green (2026-11-16)
 
 ### Trigger
