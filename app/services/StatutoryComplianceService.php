@@ -115,7 +115,7 @@ class StatutoryComplianceService
         $challans = $this->fetchAll("
             SELECT quarter, challan_no, challan_date, tds_amount, deposited_date
             FROM tds_challans
-            WHERE employee_id = ? AND financial_year = ?{$this->tenantSql()}
+            WHERE employee_id = ? AND financial_year = ?{$this->tenantWhere()}
             ORDER BY quarter, challan_date
         ", array_merge([$employeeId, $financialYear], $this->tVal()));
 

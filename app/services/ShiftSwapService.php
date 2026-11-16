@@ -186,7 +186,7 @@ class ShiftSwapService
             $this->execute("
                 UPDATE shift_swap_requests
                 SET status = 'approved', responded_at = NOW(), responded_by = ?
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$employeeId, $swapId], $this->tVal()));
 
             return ['success' => true, 'message' => 'Shift swap approved'];
@@ -198,7 +198,7 @@ class ShiftSwapService
             $this->execute("
                 UPDATE shift_swap_requests
                 SET status = 'rejected', responded_at = NOW(), responded_by = ?, rejection_reason = ?
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$employeeId, $rejectionReason, $swapId], $this->tVal()));
 
             return ['success' => true, 'message' => 'Shift swap rejected'];
@@ -215,7 +215,7 @@ class ShiftSwapService
             $this->execute("
                 UPDATE shift_swap_requests
                 SET status = 'cancelled', responded_at = NOW(), responded_by = ?
-                WHERE id = ?{$this->tenantSql()}
+                WHERE id = ?{$this->tenantWhere()}
             ", array_merge([$employeeId, $swapId], $this->tVal()));
 
             return ['success' => true, 'message' => 'Shift swap cancelled'];

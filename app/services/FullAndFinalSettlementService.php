@@ -233,7 +233,7 @@ class FullAndFinalSettlementService
     {
         return $this->fetchOne("
             SELECT * FROM salary_structures 
-            WHERE employee_id=? AND status='active'{$this->tenantSql()}
+            WHERE employee_id=? AND status='active'{$this->tenantWhere()}
             ORDER BY effective_date DESC LIMIT 1
         ", array_merge([$employeeId], $this->tVal()));
     }

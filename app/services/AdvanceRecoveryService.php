@@ -88,11 +88,11 @@ class AdvanceRecoveryService
      */
     public function approveAdvance(int $advanceId, int $approvedBy): bool
     {
-        $advance = $this->fetchOne("SELECT * FROM employee_advances WHERE id=?{$this->tenantSql()}", array_merge([$advanceId], $this->tVal()));
+        $advance = $this->fetchOne("SELECT * FROM employee_advances WHERE id=?{$this->tenantWhere()}", array_merge([$advanceId], $this->tVal()));
         if (!$advance) throw new \Exception('Advance not found');
         if ($advance['status'] !== 'pending') return false;
 
-        $sql = "UPDATE employee_advances SET status='active', approved_by=?, approved_at=NOW() WHERE id=? AND status='pending'{$this->tenantSql()}";
+        $sql = "UPDATE employee_advances SET status='active', approved_by=?, approved_at=NOW() WHERE id=? AND status='pending'{$this->tenantWhere()}";
         $params = [$approvedBy, $advanceId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
 

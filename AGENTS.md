@@ -1,3 +1,34 @@
+## Session 670: Portability Fix — 257 Root-Absolute href/action/src Across 117 Views Now Prepend `<?= BASE_URL ?>`; Subfolder Installs Resolve All Internal Links; Master 11/11 (2026-11-17)
+
+### Trigger
+Continuation of the S665-S669 view-audit lane. The audit flagged ~300 root-absolute `href="/"` / `action="/"` / `src="/"` attributes across ~120 views — every one breaks internal navigation on any subfolder XAMPP install serving the app at `/apsdreamhome` (links resolve to web-root, not the app).
+
+### What was found &amp; fixed
+1. **Byte-safe scripted sweep across all of `app/views`** — regex `/(\s)(href|action|src)="\/(?!\/)/` → `$1$2="<?= BASE_URL ?>/`, matching only the three HTML attributes when not already protocol-relative or BASE_URL-interpolated. **257 replacements across 117 view files**, including wallet/transactions (12), saas_home (9), solar_desk (7), contracts_amc (6), legal-colony-pipeline admin views (many), agent portal, security-dashboard-family pages, notification templates, payment/initiate etc.
+2. **`data-*` attributes untouched** by design — they match on a `\s` boundary preceded by hyphen, e.g. `data-action="/"` does NOT match `action="/"` since the whitespace boundary check requires a space before the attribute name, not a hyphen. Correct: JS-built URLs there are absolute and intentional.
+3. **All 129 modified view files lint-clean** (117 mine + 8 parallel-actor HR service files in the tree); full-rescan confirms **0 remaining root-absolute attributes in any of the 117 touched views**.
+4. **Parallel actor's in-flight `app/services/*.php` (S666-S669 HR lane) untouched and unstaged** — staged by path-named `git add app/views/`, then `git restore --staged app/services/` confirmed before commit.
+
+### Verification
+- `php -l` on all 117 files — 0 failures · **Master 11/11 PASSED** (69.97s) · **git commit** `dd6e29c68` pushed.
+- No schema changes, no routes, no DB writes; views-only.
+- Whole-tree parallel churn during this round (HR services) co-existed without co-commit.
+
+### Honest notes
+- `<img src="...">` and `<form action="...">` paths that were already BASE_URL-aware were untouched; the sweep only rewrote the root-absolute outliers.
+- Some of the touched views ARE NOT directly reachable from any controller (audit called them "orphan views"; many are in parked categories like `admin/labour_law_compliance`) — they are made portable for when they are wired, not claimed as live features.
+- The 308-class figure from the original audit was over-counted (257 in subfolder-relevant attributes; the rest were JS strings inline or in JS-built URLs, both intentionally left absolute).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **669** (parallel actor, Leave Encashment closed E2E). This entry = **S670**. Next-free = **671**.
+
+### Key lessons
+_1453. **Portability is a mechanical class of defect with a mechanical class of fix** — 257 near-identical root-absolute attributes across 117 files can be found and closed with one regex; the audit value is not the fix, it's the guaranteed clean residual scan (0 root-absolute attrs left in any of the 117 touched files).
+_1454. **`git add app/views/` + `git restore --staged app/services/` is the honest split for mixed trees** — parallel actors share the view and service directories; staging by top-level directory + explicitly unstaging the other actor's directory works without touching their files.
+_1455. **Rescan to zero before writing "done"** — the first scan covers 257; the second scan (same regex on edited files) covers everything the fixer might have missed; both need to say zero.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · decision on 34 dead orphan views (wire vs archive).
 ## Session 669: Leave Encashment Closed End-to-End — Nested-Transaction Wallet Credit Found Broken (Savepoint Semantics Built Into Database Layer), Encashment INSERT Placeholders, Dead `max_encashable_days` (2026-11-17)
 
 ### Trigger

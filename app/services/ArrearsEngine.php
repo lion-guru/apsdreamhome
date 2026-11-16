@@ -80,7 +80,7 @@ class ArrearsEngine
             $existing = $this->fetchOne("
                 SELECT * FROM salary_payments 
                 WHERE employee_id=? AND payment_month=? AND payment_year=? AND payment_status='paid'
-                {$this->tenantSql()}
+                {$this->tenantWhere()}
             ", array_merge([$employeeId, $currentMonth, $currentYear], $this->tVal()));
 
             if ($existing) {
@@ -223,7 +223,7 @@ class ArrearsEngine
         
         return $this->fetchOne("
             SELECT * FROM salary_structures 
-            WHERE employee_id=? AND status='active' AND effective_date < ?{$this->tenantSql()}
+            WHERE employee_id=? AND status='active' AND effective_date < ?{$this->tenantWhere()}
             ORDER BY effective_date DESC LIMIT 1
         ", array_merge([$employeeId, $date], $this->tVal()));
     }

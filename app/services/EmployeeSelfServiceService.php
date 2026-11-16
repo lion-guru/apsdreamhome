@@ -30,7 +30,7 @@ class EmployeeSelfServiceService
     {
         return $this->fetchOne("
             SELECT * FROM employee_tax_regime 
-            WHERE employee_id=? AND financial_year=?{$this->tenantSql()}
+            WHERE employee_id=? AND financial_year=?{$this->tenantWhere()}
         ", array_merge([$employeeId, $financialYear], $this->tVal()));
     }
 
@@ -73,7 +73,7 @@ class EmployeeSelfServiceService
     {
         $declarations = $this->fetchAll("
             SELECT * FROM employee_investment_declarations 
-            WHERE employee_id=? AND financial_year=?{$this->tenantSql()}
+            WHERE employee_id=? AND financial_year=?{$this->tenantWhere()}
             ORDER BY section, created_at
         ", array_merge([$employeeId, $financialYear], $this->tVal()));
 
@@ -95,7 +95,7 @@ class EmployeeSelfServiceService
         try {
             // Delete existing for this year
             $tid = $this->tenantId();
-            $this->execute("DELETE FROM employee_investment_declarations WHERE employee_id=? AND financial_year=?{$this->tenantSql()}", 
+            $this->execute("DELETE FROM employee_investment_declarations WHERE employee_id=? AND financial_year=?{$this->tenantWhere()}", 
                 array_merge([$employeeId, $financialYear], $this->tVal()));
 
             // Insert new declarations
@@ -172,13 +172,13 @@ class EmployeeSelfServiceService
     public function getForm16List(int $employeeId): array
     {
         // Canonical id space is employees.id (callers pass users.id).
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
         return $this->fetchAll("
             SELECT f.*,
                    CASE WHEN f.file_path IS NOT NULL THEN 1 ELSE 0 END as available
             FROM employee_form16 f
-            WHERE f.employee_id=?{$this->tenantSql()}
+            WHERE f.employee_id=?{$this->tenantWhere()}
             ORDER BY f.financial_year DESC
         ", array_merge([$emp['id']], $this->tVal()));
     }
@@ -189,7 +189,7 @@ class EmployeeSelfServiceService
     public function generateForm16(int $employeeId, int $financialYear): array
     {
         // Callers pass users.id; statutory + PDFs key on employees.id.
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return ['success' => false, 'message' => 'Employee record not found'];
         $eid = (int)$emp['id'];
 
@@ -222,12 +222,12 @@ class EmployeeSelfServiceService
     public function getPayslipHistory(int $employeeId, int $limit = 24): array
     {
         // Get employee table ID
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
 
         return $this->fetchAll("
             SELECT * FROM employee_payslips 
-            WHERE employee_id=? AND status IN ('approved','paid'){$this->tenantSql()}
+            WHERE employee_id=? AND status IN ('approved','paid'){$this->tenantWhere()}
             ORDER BY period_year DESC, period_month DESC
             LIMIT ?
         ", array_merge([$emp['id']], $this->tVal(), [$limit]));
@@ -250,21 +250,21 @@ class EmployeeSelfServiceService
     public function getLeaveBalances(int $employeeId, int $year = null): array
     {
         $year = $year ?? date('Y');
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
 
         return $this->fetchAll("
             SELECT lb.*, lt.name as leave_type_name, lt.code as leave_type_code, lt.color
             FROM employee_leave_balances lb
             LEFT JOIN leave_types lt ON lb.leave_type_id = lt.id
-            WHERE lb.employee_id=? AND lb.year=?{$this->tenantSql()}
+            WHERE lb.employee_id=? AND lb.year=?{$this->tenantWhere()}
             ORDER BY lt.name
         ", array_merge([$emp['id'], $year], $this->tVal()));
     }
 
     public function applyLeave(int $employeeId, array $data): array
     {
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return ['success' => false, 'message' => 'Employee record not found'];
 
         $startDate = $data['start_date'] ?? '';
@@ -298,14 +298,14 @@ class EmployeeSelfServiceService
 
     public function getLeaveHistory(int $employeeId, int $limit = 50): array
     {
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
 
         return $this->fetchAll("
             SELECT el.*, lt.name as leave_type_name, lt.color
             FROM employee_leaves el
             LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
-            WHERE el.employee_id=?{$this->tenantSql()}
+            WHERE el.employee_id=?{$this->tenantWhere()}
             ORDER BY el.created_at DESC
             LIMIT ?
         ", array_merge([$emp['id']], $this->tVal(), [$limit]));
@@ -317,7 +317,7 @@ class EmployeeSelfServiceService
 
     public function submitReimbursement(int $employeeId, array $data): array
     {
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return ['success' => false, 'message' => 'Employee record not found'];
 
         $tid = $this->tenantId();
@@ -353,12 +353,12 @@ class EmployeeSelfServiceService
 
     public function getReimbursementHistory(int $employeeId, int $limit = 50): array
     {
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
 
         return $this->fetchAll("
             SELECT * FROM employee_reimbursements 
-            WHERE employee_id=?{$this->tenantSql()}
+            WHERE employee_id=?{$this->tenantWhere()}
             ORDER BY created_at DESC
             LIMIT ?
         ", array_merge([$emp['id']], $this->tVal(), [$limit]));
@@ -409,7 +409,7 @@ class EmployeeSelfServiceService
 
     public function changePassword(int $employeeId, string $currentPassword, string $newPassword): array
     {
-        $user = $this->fetchOne("SELECT password FROM users WHERE id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $user = $this->fetchOne("SELECT password FROM users WHERE id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$user || !password_verify($currentPassword, $user['password'])) {
             return ['success' => false, 'message' => 'Current password is incorrect'];
         }
@@ -419,7 +419,7 @@ class EmployeeSelfServiceService
         }
 
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
-        $this->execute("UPDATE users SET password=?, updated_at=NOW() WHERE id=?{$this->tenantSql()}", 
+        $this->execute("UPDATE users SET password=?, updated_at=NOW() WHERE id=?{$this->tenantWhere()}", 
             array_merge([$hash, $employeeId], $this->tVal()));
 
         return ['success' => true, 'message' => 'Password changed successfully'];
@@ -431,7 +431,7 @@ class EmployeeSelfServiceService
 
     public function getAttendance(int $employeeId, string $month = null): array
     {
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
 
         $month = $month ?? date('Y-m');
@@ -439,14 +439,14 @@ class EmployeeSelfServiceService
             SELECT attendance_date as date, check_in_time as check_in, check_out_time as check_out, 
                    hours_worked as hours, status, late_minutes, overtime_hours
             FROM employee_attendance 
-            WHERE employee_id=? AND DATE_FORMAT(attendance_date, '%Y-%m') = ?{$this->tenantSql()}
+            WHERE employee_id=? AND DATE_FORMAT(attendance_date, '%Y-%m') = ?{$this->tenantWhere()}
             ORDER BY attendance_date DESC
         ", array_merge([$emp['id'], $month], $this->tVal()));
     }
 
     public function getAttendanceStats(int $employeeId, string $month = null): array
     {
-        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return [];
 
         $month = $month ?? date('Y-m');
@@ -459,7 +459,7 @@ class EmployeeSelfServiceService
                 SUM(COALESCE(hours_worked,0)) as total_hours,
                 SUM(COALESCE(overtime_hours,0)) as total_overtime
             FROM employee_attendance 
-            WHERE employee_id=? AND DATE_FORMAT(attendance_date, '%Y-%m') = ?{$this->tenantSql()}
+            WHERE employee_id=? AND DATE_FORMAT(attendance_date, '%Y-%m') = ?{$this->tenantWhere()}
         ", array_merge([$emp['id'], $month], $this->tVal()));
 
         return $stats ?? ['present'=>0,'absent'=>0,'half_day'=>0,'late'=>0,'total_hours'=>0,'total_overtime'=>0];

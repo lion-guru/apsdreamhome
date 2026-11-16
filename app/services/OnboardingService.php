@@ -69,7 +69,7 @@ class OnboardingService
             SELECT oc.*, t.name as template_name
             FROM onboarding_checklists oc
             LEFT JOIN onboarding_templates t ON oc.template_id = t.id
-            WHERE oc.employee_id = ?{$this->tenantSql()}
+            WHERE oc.employee_id = ?{$this->tenantWhere()}
             ORDER BY oc.assigned_at ASC
         ", array_merge([$employeeId], $this->tVal()));
     }

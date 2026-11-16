@@ -291,7 +291,7 @@ class EmployeeService
      */
     public function syncFromUser(int $userId): bool
     {
-        $user = $this->fetchOne("SELECT * FROM users WHERE id=?{$this->tenantSql()}", array_merge([$userId], $this->tVal()));
+        $user = $this->fetchOne("SELECT * FROM users WHERE id=?{$this->tenantWhere()}", array_merge([$userId], $this->tVal()));
         if (!$user) return false;
 
         $this->execute("
