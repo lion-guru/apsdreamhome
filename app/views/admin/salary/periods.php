@@ -3,7 +3,7 @@ $page_title = $page_title ?? 'Payroll Periods';
 $periods = $periods ?? [];
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0"><i class="fas fa-calendar-lock me-2"></i><?= htmlspecialchars($page_title) ?></h4>
+    <h4 class="mb-0"><i class="fas fa-lock me-2"></i><?= htmlspecialchars($page_title) ?></h4>
     <a href="<?= BASE_URL ?>/admin/salary" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Salary</a>
 </div>
 <div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Locked periods block payslip generation and payments. The auto-lock cron locks open periods older than 2 months. Reopen a locked period (never closed ones) to allow corrections.</div>

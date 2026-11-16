@@ -182,7 +182,7 @@ $perPage = $per_page ?? 20;
 <!-- Activity Feed Widget -->
 <div class="card border-0 shadow-sm mb-4" id="activityFeedWidget">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h2 class="mb-0 fs-5"><i class="fas fa-activity me-2 text-primary"></i>Recent Activity</h2>
+        <h2 class="mb-0 fs-5"><i class="fas fa-bolt me-2 text-primary"></i>Recent Activity</h2>
         <div class="d-flex gap-2">
             <button class="btn btn-sm btn-outline-secondary" onclick="toggleActivityFeed()" id="activityToggleBtn" aria-label="Toggle activity feed">
                 <i class="fas fa-chevron-up" id="activityToggleIcon"></i>

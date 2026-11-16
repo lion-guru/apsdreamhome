@@ -58,7 +58,7 @@ $p = $property ?? [];
                     <div class="col-md-3">
                         <div class="card border position-relative">
                             <img src="<?= htmlspecialchars($src ?? '')?>" alt="Property Image <?= $idx + 1 ?>" class="card-img-top" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                            <div class="d-none align-items-center justify-content-center bg-light"><i class="fas fa-broken-image fa-2x text-muted"></i></div>
+                            <div class="d-none align-items-center justify-content-center bg-light"><i class="fas fa-image fa-2x text-muted"></i></div>
                             <div class="card-body p-2 text-center d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Image #<?= $idx + 1 ?></small>
                                 <form method="POST" action="<?= BASE_URL ?>/admin/resell-properties/images/<?= $id ?>/delete" class="d-inline" data-aps-confirm="Remove this image?">

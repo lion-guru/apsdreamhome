@@ -28,7 +28,7 @@ $holiday_types = $holiday_types ?? [];
 
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white">
-                <h5 class="mb-0 fw-semibold"><i class="fas fa-calendar-edit me-2"></i>Holiday Details</h5>
+                <h5 class="mb-0 fw-semibold"><i class="fas fa-pen-to-square me-2"></i>Holiday Details</h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">

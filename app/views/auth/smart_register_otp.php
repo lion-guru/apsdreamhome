@@ -148,12 +148,12 @@ $maskedPhone = $phone ? substr($phone, 0, 2) . '****' . substr($phone, -2) : '**
                 <input type="hidden" name="otp" id="otpHidden" value="">
 
                 <div class="otp-inputs">
-                    <input type="tel" class="otp-input" maxlength="1" data-index="0" autofocus>
-                    <input type="tel" class="otp-input" maxlength="1" data-index="1">
-                    <input type="tel" class="otp-input" maxlength="1" data-index="2">
-                    <input type="tel" class="otp-input" maxlength="1" data-index="3">
-                    <input type="tel" class="otp-input" maxlength="1" data-index="4">
-                    <input type="tel" class="otp-input" maxlength="1" data-index="5">
+                    <input type="tel" class="otp-input" maxlength="1" data-index="0" autofocus aria-label="OTP digit 1">
+                    <input type="tel" class="otp-input" maxlength="1" data-index="1" aria-label="OTP digit 2">
+                    <input type="tel" class="otp-input" maxlength="1" data-index="2" aria-label="OTP digit 3">
+                    <input type="tel" class="otp-input" maxlength="1" data-index="3" aria-label="OTP digit 4">
+                    <input type="tel" class="otp-input" maxlength="1" data-index="4" aria-label="OTP digit 5">
+                    <input type="tel" class="otp-input" maxlength="1" data-index="5" aria-label="OTP digit 6">
                 </div>
 
                 <button type="submit" class="btn-verify" id="verifyBtn" disabled>

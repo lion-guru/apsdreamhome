@@ -257,7 +257,7 @@
     <?php if (!empty($extras['noc'])): ?>
       <div class="col-md-6">
         <div class="card aps-cp-card h-100">
-          <div class="aps-cp-card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-shield-check me-1"></i> NOC</h2></div>
+          <div class="aps-cp-card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-shield-halved me-1"></i> NOC</h2></div>
           <div class="card-body">
             <span class="badge bg-<?= ($extras['noc']['status'] ?? '') === 'approved' ? 'success' : 'warning' ?>"><?= ucfirst($extras['noc']['status'] ?? 'pending') ?></span>
           </div>

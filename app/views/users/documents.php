@@ -53,7 +53,7 @@ function docTypeLabel($type) {
         <div class="col-6 col-md-3">
             <div class="card emp-doc-stat shadow-sm">
                 <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-files-o"></i></div>
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-copy"></i></div>
                     <div><div class="fw-bold fs-4"><?= $stats['total'] ?></div><div class="text-muted small">Total</div></div>
                 </div>
             </div>

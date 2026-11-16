@@ -19,7 +19,7 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center h-100">
                 <div class="card-body py-5">
-                    <i class="fas fa-wifi-slash fa-3x text-warning mb-3"></i>
+                    <i class="fas fa-circle-exclamation fa-3x text-warning mb-3"></i>
                     <h5>Offline Support</h5>
                     <p class="small text-muted">Browse cached properties even without internet</p>
                     <i class="fas fa-check-circle text-success"></i> <small>Enabled</small>

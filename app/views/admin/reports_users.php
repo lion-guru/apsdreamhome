@@ -82,7 +82,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-activity me-2"></i>User Activity</h2>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-bolt me-2"></i>User Activity</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

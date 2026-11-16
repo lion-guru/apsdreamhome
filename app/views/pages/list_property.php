@@ -84,7 +84,7 @@ LPHEAD;
                 <p class="lp-lead mb-0"><?= __('list_property_hero_lead') ?></p>
                 <div class="lp-stats">
                     <div class="lp-stat"><i class="fas fa-stopwatch"></i><div><b><?= __('list_property_stat_time', null, '1 Minute') ?></b><small><?= __('list_property_stat_time_sub', null, 'to list your property') ?></small></div></div>
-                    <div class="lp-stat"><i class="fas fa-badge-check"></i><div><b><?= __('list_property_stat_leads', null, 'Verified Buyers') ?></b><small><?= __('list_property_stat_leads_sub', null, 'genuine enquiries only') ?></small></div></div>
+                    <div class="lp-stat"><i class="fas fa-circle-check"></i><div><b><?= __('list_property_stat_leads', null, 'Verified Buyers') ?></b><small><?= __('list_property_stat_leads_sub', null, 'genuine enquiries only') ?></small></div></div>
                     <div class="lp-stat"><i class="fas fa-headset"></i><div><b><?= __('list_property_stat_help', null, 'Free Assistance') ?></b><small><?= __('list_property_stat_help_sub', null, 'help with photos & price') ?></small></div></div>
                 </div>
             </div>

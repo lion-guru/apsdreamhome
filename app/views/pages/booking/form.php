@@ -92,19 +92,19 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_full_name', 'Full Legal Name') ?></label>
-                                <input type="text" class="form-control bg-light fw-bold" value="<?= htmlspecialchars((string)($user['name'] ?? '')) ?>" readonly>
+                                <input type="text" class="form-control bg-light fw-bold" value="<?= htmlspecialchars((string)($user['name'] ?? '')) ?>" readonly aria-label="<?= __('book_full_name', 'Full Legal Name') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_email', 'Email Address') ?></label>
-                                <input type="email" class="form-control bg-light" value="<?= htmlspecialchars((string)($user['email'] ?? '')) ?>" readonly>
+                                <input type="email" class="form-control bg-light" value="<?= htmlspecialchars((string)($user['email'] ?? '')) ?>" readonly aria-label="<?= __('book_email', 'Email Address') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_phone', 'Registered Mobile') ?></label>
-                                <input type="text" class="form-control bg-light" value="<?= htmlspecialchars((string)($user['phone'] ?? $user['mobile'] ?? '')) ?>" readonly>
+                                <input type="text" class="form-control bg-light" value="<?= htmlspecialchars((string)($user['phone'] ?? $user['mobile'] ?? '')) ?>" readonly aria-label="<?= __('book_phone', 'Mobile Number') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_user_id', 'Customer Account ID') ?></label>
-                                <input type="text" class="form-control bg-light" value="#<?= (int)($user['id'] ?? 0) ?>" readonly>
+                                <input type="text" class="form-control bg-light" value="#<?= (int)($user['id'] ?? 0) ?>" readonly aria-label="<?= __('book_customer_id', 'Customer ID') ?>">
                             </div>
                         </div>
                     </div>

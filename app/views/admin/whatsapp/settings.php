@@ -141,7 +141,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                 </div>
                 <div class="card-body py-2">
                     <a href="<?php echo e($base); ?>/admin/whatsapp/templates" class="btn btn-outline-primary btn-sm w-100 mb-2">
-                        <i class="fas fa-template me-1"></i> Manage Templates
+                        <i class="fas fa-layer-group me-1"></i> Manage Templates
                     </a>
                     <a href="https://developers.facebook.com/docs/whatsapp/cloud-api" target="_blank" class="btn btn-outline-info btn-sm w-100 mb-2">
                         <i class="fas fa-external-link-alt me-1"></i> Meta Cloud API Docs

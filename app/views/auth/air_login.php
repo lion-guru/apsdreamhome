@@ -99,7 +99,7 @@ $base = BASE_URL;
             <div class="benefits-subtitle">Login to your APS Dream Home account without a password — just your email or phone number.</div>
 
             <div class="benefit-item">
-                <div class="benefit-icon"><i class="fas fa-shield-check"></i></div>
+                <div class="benefit-icon"><i class="fas fa-shield-halved"></i></div>
                 <div class="benefit-text">
                     <h4>Instant OTP</h4>
                     <p>Receive a one-time password on your registered email or phone. No password needed.</p>

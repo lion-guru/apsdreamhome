@@ -3,7 +3,7 @@
         <h1 class="h3 mb-0"><i class="fas fa-boxes-stacked me-2"></i>Material Inventory &amp; Usage</h1>
         <div>
             <a href="<?= BASE_URL ?>/admin/projects/progress" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Project Progress</a>
-            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#usageModal"><i class="fas fa-box-arrow-in-down me-1"></i>Log Usage</button>
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#usageModal"><i class="fas fa-inbox me-1"></i>Log Usage</button>
         </div>
     </div>
 
@@ -225,7 +225,7 @@
                 <form method="post" action="<?= BASE_URL ?>/admin/construction/material-inventory/log-usage">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class="fas fa-box-arrow-in-down me-2"></i>Log Material Usage</h5>
+                        <h5 class="modal-title"><i class="fas fa-inbox me-2"></i>Log Material Usage</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">

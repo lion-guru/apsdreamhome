@@ -94,7 +94,7 @@ ob_start();
                                     <li><i class="fas fa-shield-alt text-primary me-2"></i><?php echo __('pp_s4_password', [], 'Secure password hashing and authentication'); ?></li>
                                     <li><i class="fas fa-database text-primary me-2"></i><?php echo __('pp_s4_audit', [], 'Regular security audits and updates'); ?></li>
                                     <li><i class="fas fa-user-shield text-primary me-2"></i><?php echo __('pp_s4_access', [], 'Access controls and employee training'); ?></li>
-                                    <li><i class="fas fa-backup text-primary me-2"></i><?php echo __('pp_s4_backup', [], 'Regular data backups and recovery systems'); ?></li>
+                                    <li><i class="fas fa-hard-drive text-primary me-2"></i><?php echo __('pp_s4_backup', [], 'Regular data backups and recovery systems'); ?></li>
                                 </ul>
                             </div>
                         </section>

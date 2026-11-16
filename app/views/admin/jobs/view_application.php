@@ -3,7 +3,7 @@
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title"><i class="fas fa-file-user me-2"></i>Application Details</h3>
+                <h3 class="page-title"><i class="fas fa-pen-to-square me-2"></i>Application Details</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/jobs">Jobs</a></li>
@@ -17,7 +17,7 @@
         </div>
     </div>
     <?php if (empty($application)): ?>
-        <div class="text-center py-5 text-muted"><i class="fas fa-file-user fa-4x d-block mb-3"></i><h5>Application not found</h5></div>
+        <div class="text-center py-5 text-muted"><i class="fas fa-pen-to-square fa-4x d-block mb-3"></i><h5>Application not found</h5></div>
     <?php else: ?>
     <div class="row g-4">
         <div class="col-md-4">

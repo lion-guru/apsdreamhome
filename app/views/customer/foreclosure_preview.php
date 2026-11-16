@@ -173,8 +173,8 @@ $base = BASE_URL ?? '';
     <!-- UPI Apps -->
     <div class="d-flex gap-2 justify-content-center mb-3 no-print">
         <a class="btn btn-outline-primary btn-sm" href="<?= htmlspecialchars($upi['upi_string'] ?? '') ?>" target="_blank"><i class="fab fa-google-pay me-1"></i>GPay</a>
-        <a class="btn btn-outline-primary btn-sm" href="<?= htmlspecialchars($upi['upi_string'] ?? '') ?>" target="_blank"><i class="fab fa-phonepe me-1"></i>PhonePe</a>
-        <a class="btn btn-outline-primary btn-sm" href="<?= htmlspecialchars($upi['upi_string'] ?? '') ?>" target="_blank"><i class="fab fa-paytm me-1"></i>Paytm</a>
+        <a class="btn btn-outline-primary btn-sm" href="<?= htmlspecialchars($upi['upi_string'] ?? '') ?>" target="_blank"><i class="fab fa-indian-rupee-sign me-1"></i>PhonePe</a>
+        <a class="btn btn-outline-primary btn-sm" href="<?= htmlspecialchars($upi['upi_string'] ?? '') ?>" target="_blank"><i class="fab fa-indian-rupee-sign me-1"></i>Paytm</a>
         <button class="btn btn-outline-success btn-sm" onclick="downloadQR()"><i class="fas fa-download me-1"></i>Download QR</button>
     </div>
 

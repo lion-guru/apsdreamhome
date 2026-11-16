@@ -493,7 +493,7 @@ $statusBadgeMap = [
 <?php $ots_banner = $ots_banner ?? null; if (!empty($ots_banner)): ?>
 <div class="alert alert-success d-flex justify-content-between align-items-center flex-wrap gap-2" style="margin:12px 0;">
     <div>
-        <strong><i class="fas fa-badge-percent me-1"></i><?= htmlspecialchars($ots_banner['scheme_name'] ?? 'OTS') ?></strong>
+        <strong><i class="fas fa-percent me-1"></i><?= htmlspecialchars($ots_banner['scheme_name'] ?? 'OTS') ?></strong>
         <span class="small">— pay overdue in full by <?= htmlspecialchars($ots_banner['end_date'] ?? '') ?> and save <strong>₹<?= number_format((float)($ots_banner['waived'] ?? 0)) ?></strong> in penalties.</span>
         <?php if ((float)($ots_banner['overdue_principal'] ?? 0) > 0 || (float)($ots_banner['overdue_penalty'] ?? 0) > 0): ?>
             <div class="small">Your overdue: ₹<?= number_format((float)$ots_banner['overdue_principal']) ?> + ₹<?= number_format((float)$ots_banner['overdue_penalty']) ?> penalty → <strong>OTS payoff ₹<?= number_format((float)$ots_banner['payoff']) ?></strong></div>

@@ -14,7 +14,7 @@ $leadQualified = $leadQualified ?? [];
 ?>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h2 class="mb-0"><i class="fas fa-file-chart-line me-2 text-primary"></i>AI Reports</h2>
+        <h2 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>AI Reports</h2>
         <a href="<?= BASE_URL ?>/admin/ai" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back to AI</a>
     </div>
 

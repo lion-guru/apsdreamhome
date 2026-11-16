@@ -8,7 +8,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
-        <h4 class="mb-1"><i class="fas fa-badge-percent me-2"></i>OTS Schemes</h4>
+        <h4 class="mb-1"><i class="fas fa-percent me-2"></i>OTS Schemes</h4>
         <p class="text-muted mb-0">One-time settlement &amp; festival penalty waivers<?= $active ? ' — <span class="badge bg-success">LIVE: ' . $e($active['scheme_name']) . ' (' . $e($active['waiver_percentage']) . '% till ' . $e($active['end_date']) . ')</span>' : '' ?></p>
     </div>
 </div>

@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <ul class="nav nav-tabs mb-4" id="analyzerTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="tab-slow" data-bs-toggle="tab" data-bs-target="#slow-queries" type="button">
-                <i class="fas fa-turtle me-1"></i> Slow Queries
+                <i class="fas fa-hourglass-half me-1"></i> Slow Queries
             </button>
             <li class="nav-item" role="presentation">
             <button class="nav-link" id="tab-tables" data-bs-toggle="tab" data-bs-target="#table-stats" type="button">

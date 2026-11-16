@@ -31,7 +31,7 @@ $data = $data ?? [];
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="<?= BASE_URL ?>/admin/analytics">
-                            <i class="fas fa-analytics me-2"></i>Analytics
+                            <i class="fas fa-chart-column me-2"></i>Analytics
                         </a>
                     </li>
                 </ul>

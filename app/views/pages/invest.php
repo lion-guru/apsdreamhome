@@ -19,7 +19,7 @@
             <div class="col-md-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body text-center p-4">
-                        <i class="fas fa-trending-up fa-3x text-success mb-3"></i>
+                        <i class="fas fa-arrow-trend-up fa-3x text-success mb-3"></i>
                         <h5><?= __('invest_high_returns') ?></h5>
                         <p class="text-muted"><?= __('invest_high_returns_desc') ?></p>
                     </div>

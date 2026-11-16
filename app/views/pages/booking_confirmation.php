@@ -111,7 +111,7 @@ foreach ($statusSteps as $i => $step) {
         <!-- Right Sidebar -->
         <div class="col-lg-4">
             <div class="conf-card">
-                <h5 class="fw-bold mb-3"><i class="fas fa-quick"></i> <?= __('booking_quick_actions') ?></h5>
+                <h5 class="fw-bold mb-3"><i class="fas fa-bolt"></i> <?= __('booking_quick_actions') ?></h5>
                 <div class="d-grid gap-2">
                     <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-primary">
                         <i class="fas fa-tachometer-alt"></i> <?= __('breadcrumb_dashboard') ?>

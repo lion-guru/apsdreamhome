@@ -108,17 +108,17 @@ $ranks = [
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($ranks as $r): ?>
+                        <?php foreach ($ranks as $i => $r): ?>
                         <tr>
-                            <td ><?= $r[1] ?></td>
-                            <td ><?= $r[0] ?></td>
-                            <td><input type="number" value="<?= $r[2] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[3] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[4] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[5] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[6] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[7] ?>" step="0.5" min="0" max="100"></td>
-                            <td><input type="number" value="<?= $r[8] ?>" step="100000" min="0" ></td>
+                            <td ><?= $r[1] ?><input type="hidden" name="levels[<?= $i ?>][1]" value="<?= $r[1] ?>"></td>
+                            <td ><?= $r[0] ?><input type="hidden" name="levels[<?= $i ?>][0]" value="<?= htmlspecialchars($r[0]) ?>"></td>
+                            <td><input type="number" aria-label="Direct commission % for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][2]" value="<?= $r[2] ?>" step="0.5" min="0" max="100"></td>
+                            <td><input type="number" aria-label="Team commission % for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][3]" value="<?= $r[3] ?>" step="0.5" min="0" max="100"></td>
+                            <td><input type="number" aria-label="Level bonus % for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][4]" value="<?= $r[4] ?>" step="0.5" min="0" max="100"></td>
+                            <td><input type="number" aria-label="Matching bonus % for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][5]" value="<?= $r[5] ?>" step="0.5" min="0" max="100"></td>
+                            <td><input type="number" aria-label="Leadership bonus % for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][6]" value="<?= $r[6] ?>" step="0.5" min="0" max="100"></td>
+                            <td><input type="number" aria-label="Performance bonus % for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][7]" value="<?= $r[7] ?>" step="0.5" min="0" max="100"></td>
+                            <td><input type="number" aria-label="Monthly GBV threshold for <?= htmlspecialchars($r[0]) ?>" name="levels[<?= $i ?>][8]" value="<?= $r[8] ?>" step="100000" min="0" ></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

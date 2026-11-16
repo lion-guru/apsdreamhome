@@ -290,7 +290,7 @@ $base = BASE_URL ?? '';
                                             <?php endforeach; ?>
                                         </p>
                                         <?php if ($jo['stamp_saving'] !== null && (float)$jo['stamp_saving'] > 0): ?>
-                                            <p class="small text-success fw-semibold mb-0"><i class="fas fa-badge-percent me-1"></i>Female concession active — saving approx ₹<?= number_format((float)$jo['stamp_saving']) ?> on stamp duty.</p>
+                                            <p class="small text-success fw-semibold mb-0"><i class="fas fa-percent me-1"></i>Female concession active — saving approx ₹<?= number_format((float)$jo['stamp_saving']) ?> on stamp duty.</p>
                                         <?php endif; ?>
                                     </div>
                                 </div>

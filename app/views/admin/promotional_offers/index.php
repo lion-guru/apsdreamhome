@@ -120,7 +120,7 @@ $today = date('Y-m-d');
                                     <div>
                                         <span class="fw-bold text-dark"><?= htmlspecialchars($o['title'] ?? '') ?></span>
                                         <?php if (!empty($o['festival_name'])): ?>
-                                            <span class="badge bg-warning text-dark ms-1"><i class="fas fa-sparkles me-1"></i><?= htmlspecialchars($o['festival_name']) ?></span>
+                                            <span class="badge bg-warning text-dark ms-1"><i class="fas fa-wand-magic me-1"></i><?= htmlspecialchars($o['festival_name']) ?></span>
                                         <?php endif; ?>
                                         <?php if (!empty($o['description'])): ?>
                                             <div class="text-muted small" style="max-width:320px;"><?= htmlspecialchars(mb_substr($o['description'], 0, 90)) ?>...</div>

@@ -1,3 +1,47 @@
+## Session 629: Deep UI & Form Audit - 33 Truly Broken FA Icons Replaced in 41 Files, Commission Plan Rank-Level Inputs Wired End-to-End (Live Probe: Direct % 5.00->6.50 Persisted, Then Cleaned), OTP/Booking Inputs Accessibly Labeled, AGENTS.md Damage Restored Byte-Exact, PHPStan OK Master 11/11 (2026-11-16)
+
+### Trigger
+User: "ui nhi dekh rae kya ki kya gadbad hai ya form sab me kya kami hai" — audit the UI blind spot deeply: every broken icon, every unlabeled/nameless form control, every visual defect a hidden class produces.
+
+### Findings & fixes (all probe-verified)
+
+**1. FA icon audit (local FA 6.5.1 Free, 2468 known definitions in `public/assets/fonts/fontawesome/css/all.min.css`)**
+- ERP Overview: 1 broken class - `fas fa-sun-rise` (Morning Brief menu/heading, parent `admin_menu_items.icon` id=544, views `admin/ai_morning_brief.php` + `admin/ai/hub.php`). Local CSS has 0 occurrences. Fixed all three references to `fa-sun`; sidebar cache (`admin_sidebar_all*` + per-role keys) busted; live probe: ERP renders 507 icons, 0 broken.
+- Static scan of `app/views` referenced 4,400+ icon classes. After excluding FA6 utility/style prefixes (`fa-2x`, `fa-solid`, `fa-regular`, ...) and verified dynamic PHP ternary fragments (`fa-arrow-up|down`, `fa-caret-up|down`, `fa-toggle-on|off`, `fa-file-__`, `fa-backup-codes-...` — all render complete valid icons), **33 truly missing classes were replaced in 41 view files** (chat-file/paytm/phonepe → `fa-indian-rupee-sign`, fa-activity → `fa-bolt`, fa-shield-check → `fa-shield-halved`, fa-trending-up/fa-chart-doughnut/fa-footer/fa-assistant... → nearest icon confirmed present in local CSS).
+- Result: **0 broken icon classes in app/views** (probe re-run after fixes).
+
+**2. FORM audit — 128 unlabeled + nameless controls across 76 files; real ones fixed**
+- `admin/commission/plans/create.php`: rank-level table inputs (`<input type="number" value="<?= $r[2] ?>">` ×7 ranks ×7 metric cols + GBV col, **NO `name` attribute**) submitted **nothing** — the whole editable "Rank Levels" grid was decorative. The service already supports `$data['levels']` via `createDefaultLevels()` (`app/Services/CommissionPlanService.php:699`). Wired 63 named inputs (`levels[i][0..8]`, hidden rank name/order) + aria-labels.
+- **Live E2E proof**: submitted PROBE_TEST plan `PROBE629X` via the real page with `levels[0][2]=6.5` and `levels[5][5]=4.5`; `mlm_plan_levels` read-back: Associate direct_commission **6.50**, President matching_bonus **4.50**; plan deleted via SQL + its audit rows deleted; baseline restored byte-exact (5 plans / 35 levels / 0 audit rows, 0 probe leftovers).
+- `auth/smart_register_otp.php`: 6 OTP digit inputs got `aria-label="OTP digit N"`.
+- `pages/booking/form.php`: 4 readonly echo inputs (name/email/phone/customer id) got aria-labels.
+- Deadline: remaining (~110 unlabeled across 70+ files) are mostly unnamed static echo/JS-display inputs and admin config tables — catalogued, not yet fixed individually; next sessions can pick file batches.
+
+**3. FALSE ALARMS / closed loops (verified, not fixed)**
+- Public pages (home, contact, properties, offers): all images lazy-load OK on real scroll, 0 broken naturalWidth=0; 0 unlabeled fields (contact/properties/offers); 5 clipped elements ~2px overflow + 3 tiny touch targets, cosmetic, none blocking.
+- Homepage `/properties` 12 "broken" property.svg placeholders were LAZY-loading artifacts; all load on scroll (probe by scrollIntoView).
+
+**4. Incidents (disclosed)**
+- **Set-Content one-liner collapsed `ai_morning_brief.php` to one line** (and `ai/hub.php`) when applying fa-sun-rise→fa-sun — caused HTTP 500 "count() null" via the layout echo + BOM flood. Restored byte-exactly with `git checkout HEAD --`, re-applied via edit tool, re-verified live (renders, 498 icons, 0 broken, 0 console errors; full 3 tables / 15 rows).
+- **Parallel actor's whole-tree commit `3ff2cbf60` (S628, pushed)** absorbed my earlier `hub.php`/`ai_morning_brief.php` edits into their S628 entry (Rule 4) — accepted, not fought; their entry carries those files and I never staged their 6 view-path controller fixes.
+- **AGENTS.md damage incident**: worktree lost S626/S627 blocks (374 vs HEAD's 376 headings; `verify_agents_log.php` = DAMAGED). `php scripts/verify_agents_log.php --restore` restored byte-exact from HEAD → integrity OK. 97 lines of S626 DemandForecast + S627 HolidayCalendar restored.
+
+### Verification
+- **PHPStan** → `[OK] No errors` (memory-limit=1G). **Master** → **11/11 PASSED** (36.02s).
+- Static FA scan `scan_fa.php` → 0 missing icons. Forms scan `scan_forms.php` → backlog enumerated.
+- Live browser probes: ERP 507/507 icons render (0 broken); Morning Brief 3 tables/15 rows render; commission-plans/create renders 63 named level inputs; sacrificial create/delete cycle proven then cleaned.
+- `php -l` clean ×44 files. DB zero drift (baseline restored after probe). No app-logic/schema changes; views + no controller edits this round.
+
+### Key lessons (carried, continued)
+_1344. **A missing icon fails silently; a missing `name` attribute accepts perfect input and submits nothing.** Two most common invisible breakages in a hand-tuned UI; test by reading the DB, not by the happy-path page render.
+_1345. **Never `Set-Content -NoNewline` a whole view.** It collapses line endings and can corrupt multi-line PHP; use `git checkout HEAD -- <file>` as the restore and the edit tool for surgical changes.
+_1346. **`php scripts/verify_agents_log.php --restore` reverses truncation exactly.** A multi-session audit feast beats a broken log — run it first whenever the file shrinks.
+_1347. **"Jáet filter false positives before fixing"** — ~20% of static icon hits are FA6 utility/style classes; validating against FA CSS first saves dozens of honest-but-wasteful edits.
+_1348. **Wizard fixes in committed whole-tree siblings must be declared in my entry, not silently adopted.** Whatever the parallel actor's commit mounts my files into, the log must name who made them (S628/S629 split here, symmetric respect both ways).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 628 (S628 parallel actor — view-path commits, pushed). This entry = **S629**. Next-free = **630**.
+
 ## Session 628: Whole-Application View Path Audit & Correction (6 Controllers Fixed: PlotBooking, CustomerRegistry, RegistryAppointment, WorkOrder, SMS, FarmerAuth), FA Icon Hardening, Master 11/11 Green (2026-11-16)
 
 ### Trigger

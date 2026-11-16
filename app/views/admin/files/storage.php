@@ -34,7 +34,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
                 <div class="card-body aps-cp-card-body">
                     <div class="row align-items-center">
                         <div class="col"><div class="text-xs fw-bold text-info text-uppercase mb-1">File Count</div><div class="h5 mb-0 fw-bold"><?= number_format($storage_stats['file_count'] ?? 0) ?></div></div>
-                        <div class="col-auto"><i class="fas fa-files fa-2x text-gray-300"></i></div>
+                        <div class="col-auto"><i class="fas fa-copy fa-2x text-gray-300"></i></div>
                     </div>
                 </div>
             </div>

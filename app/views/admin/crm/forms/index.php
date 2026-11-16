@@ -46,7 +46,7 @@
                             </div>
                             <p class="text-muted mb-2"><?= htmlspecialchars(mb_strimwidth($f['description'] ?? '', 0, 80, '...')) ?></p>
                             <div class="d-flex gap-2 mb-2">
-                                <span class="badge bg-primary-subtle text-primary-emphasis"><i class="fas fa-fields me-1"></i><?= count($fields) ?> fields</span>
+                                <span class="badge bg-primary-subtle text-primary-emphasis"><i class="fas fa-table-columns me-1"></i><?= count($fields) ?> fields</span>
                                 <?php if (!empty($settings['auto_assign'])): ?>
                                     <span class="badge bg-success-subtle text-success-emphasis"><i class="fas fa-user-check me-1"></i>Auto-assign</span>
                                 <?php endif; ?>

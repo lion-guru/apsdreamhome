@@ -5,7 +5,7 @@
         <a href="<?= BASE_URL ?>/admin/iot/automation/form" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Rule</a>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-rules me-2"></i>Automation Rules</h5></div>
+        <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Automation Rules</h5></div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">

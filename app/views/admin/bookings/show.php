@@ -888,7 +888,7 @@ $extraHead = '<style>
 
                         <div class="col-md-4">
                             <label for="rack_no" class="form-label fw-semibold">
-                                <i class="fas fa-cabinet-filing text-secondary me-1"></i> रैक/अलमारी संख्या (Rack / Almirah No.)
+                                <i class="fas fa-archive text-secondary me-1"></i> रैक/अलमारी संख्या (Rack / Almirah No.)
                             </label>
                             <input aria-label="Rack no" type="text" id="rack_no" name="physical_rack_no" class="form-control" placeholder="उदा: Cabinet-2">
                         </div>

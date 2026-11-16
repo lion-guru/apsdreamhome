@@ -7,7 +7,7 @@ $colonies = $colonies ?? [];
 $base = BASE_URL ?? '';
 $catIcons = [
     'roads' => 'fa-road', 'drainage' => 'fa-water', 'electricity' => 'fa-bolt',
-    'boundary' => 'fa-fence', 'water' => 'fa-droplet', 'landscaping' => 'fa-tree', 'other' => 'fa-hammer',
+    'boundary' => 'fa-border-all', 'water' => 'fa-droplet', 'landscaping' => 'fa-tree', 'other' => 'fa-hammer',
 ];
 $statusColors = ['completed' => 'success', 'in_progress' => 'primary', 'on_hold' => 'warning', 'not_started' => 'secondary', 'cancelled' => 'dark'];
 ?>

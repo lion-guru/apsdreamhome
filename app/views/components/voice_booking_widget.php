@@ -15,7 +15,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
     <div id="vbwPanel" class="vbw-panel" hidden>
         <div class="vbw-header">
             <div class="vbw-title">
-                <i class="fas fa-assistant"></i>
+                <i class="fas fa-headset"></i>
                 <span>AI Voice Booking</span>
             </div>
             <button id="vbwClose" class="vbw-close" type="button" aria-label="Close">&times;</button>

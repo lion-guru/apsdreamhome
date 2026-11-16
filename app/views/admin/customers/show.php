@@ -46,7 +46,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="legal-tab" data-bs-toggle="tab" data-bs-target="#legal" type="button" role="tab" aria-controls="legal" aria-selected="false">
-                        <i class="fas fa-file-meh me-2"></i> Legal Documents
+                        <i class="fas fa-folder-open me-2"></i> Legal Documents
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -289,7 +289,7 @@
                 <div class="tab-pane fade" id="legal" role="tabpanel" aria-labelledby="legal-tab">
                     <div class="row g-4">
                         <div class="col-12">
-                            <h5><i class="fas fa-file-meh me-2"></i> Legal Documents</h5>
+                            <h5><i class="fas fa-folder-open me-2"></i> Legal Documents</h5>
                         </div>
                         <div class="row g-3">
                             <?php if (empty($legal_docs)): ?>

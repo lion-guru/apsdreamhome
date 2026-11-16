@@ -50,7 +50,7 @@
     </div>
     <div class="col-md-4">
         <div class="card shadow-sm h-100">
-            <div class="card-header aps-cp-card-header"><i class="fas fa-chart-doughnut me-2"></i>Lead Sources by Interest</div>
+            <div class="card-header aps-cp-card-header"><i class="fas fa-chart-pie me-2"></i>Lead Sources by Interest</div>
             <div class="card-body aps-cp-card-body">
                 <canvas id="leadSourceChart" height="180"></canvas>
             </div>

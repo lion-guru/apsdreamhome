@@ -254,7 +254,7 @@ function timeAgo($dt) {
     <div class="alert alert-info border-0 shadow-sm d-flex align-items-start gap-3 mb-4" style="background:linear-gradient(135deg,#eff6ff 0%,#f0f9ff 100%);border-left:4px solid #3b82f6 !important">
         <i class="fas fa-robot fa-2x text-primary mt-1"></i>
         <div class="flex-grow-1">
-            <strong><i class="fas fa-sparkles me-1"></i>AI Summary</strong>
+            <strong><i class="fas fa-wand-magic me-1"></i>AI Summary</strong>
             <p class="mb-2 mt-1"><?= htmlspecialchars($aiSummary) ?></p>
             <div class="d-flex gap-2 flex-wrap">
                 <?php foreach ($aiNext as $act): ?>

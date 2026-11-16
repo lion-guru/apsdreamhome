@@ -116,7 +116,7 @@ $resolved = $resolved ?? 0;
                         <tr>
                             <td class="ps-4"><?php echo $i + 1; ?></td>
                             <td><strong><?php echo $d['title'] ?? ''; ?></strong></td>
-                            <td><small><?php echo $d['party_a'] ?? ''; ?> <i class="fas fa-vs text-muted mx-1"></i> <?php echo $d['party_b'] ?? ''; ?></small></td>
+                            <td><small><?php echo $d['party_a'] ?? ''; ?> <i class="fas fa-scale-balanced text-muted mx-1"></i> <?php echo $d['party_b'] ?? ''; ?></small></td>
                             <td><span class="badge bg-info-subtle text-info rounded-pill px-3"><?php echo $d['dispute_type'] ?? '-'; ?></span></td>
                             <td>
                                 <span class="badge bg-<?php echo ($d['status'] ?? '') === 'open' ? 'warning' : (($d['status'] ?? '') === 'resolved' ? 'success' : 'primary'); ?>-subtle text-<?php echo ($d['status'] ?? '') === 'open' ? 'warning' : (($d['status'] ?? '') === 'resolved' ? 'success' : 'primary'); ?> rounded-pill px-3">

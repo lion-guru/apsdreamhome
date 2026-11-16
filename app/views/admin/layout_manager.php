@@ -109,7 +109,7 @@ $settings = $settings ?? [
                         <!-- Footer Content -->
                         <div class="col-md-6">
                             <div class="layout-section p-4">
-                                <h4><i class="fas fa-footer me-2"></i>Footer Content</h4>
+                                <h4><i class="fas fa-layer-group me-2"></i>Footer Content</h4>
                                 <textarea aria-label="Footer content" class="form-control code-editor" name="footer_content" rows="6" placeholder="HTML content for footer"><?php echo htmlspecialchars($settings['footer_content'] ?? ''); ?></textarea>
                                 <small class="text-muted">
                                     <i class="fas fa-code me-1"></i>

@@ -132,11 +132,11 @@ if (!function_exists('navUrl')) {
                                                      <span><?php echo __('Featured'); ?></span>
                                                  </a>
                                                     <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?status=new">
-                                                        <i class="fas fa-sparkles mega-icon-teal"></i>
+                                                        <i class="fas fa-wand-magic mega-icon-teal"></i>
                                                         <span><?php echo __('New Launch'); ?></span>
                                                     </a>
                                                     <a class="mega-item" href="<?php echo BASE_URL; ?>/properties?status=verified">
-                                                        <i class="fas fa-shield-check mega-icon-blue"></i>
+                                                        <i class="fas fa-shield-halved mega-icon-blue"></i>
                                                         <span><?php echo __('Verified'); ?></span>
                                                     </a>
 
