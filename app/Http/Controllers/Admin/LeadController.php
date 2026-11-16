@@ -182,11 +182,20 @@ class LeadController extends AdminController
                 }
             } catch (\Throwable $e) { error_log('LeadController::store department request error: ' . $e->getMessage()); }
 
-            // Auto-assign if no assigned_to was provided
+            // Auto-assign if no assigned_to was provided — smart skill-based routing first,
+            // fall back to legacy round-robin/least-burdened if skill data is insufficient.
             if (empty($_POST['assigned_to']) && !empty($result['lead_id'])) {
                 try {
-                    $assignSvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
-                    $assignSvc->assignLead((int)$result['lead_id']);
+                    $smartSvc = new \App\Services\AI\SmartLeadAssignmentService(\App\Core\Database\Database::getInstance());
+                    $smartResult = $smartSvc->assignLead((int)$result['lead_id'], 'smart');
+                    if ($smartResult['success'] ?? false) {
+                        error_log("LeadController::store smart-assign lead #{$result['lead_id']} to user #{$smartResult['assigned_to']} score={$smartResult['score']}");
+                    } else {
+                        // Fall back to legacy assignment when skill data is insufficient
+                        $legacySvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+                        $legacySvc->assignLead((int)$result['lead_id']);
+                        error_log("LeadController::store smart-assign skipped (no skill data), used legacy round-robin for lead #{$result['lead_id']}");
+                    }
                 } catch (\Throwable $e) {
                     error_log('LeadController::store auto-assign error: ' . $e->getMessage());
                 }
