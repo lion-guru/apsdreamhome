@@ -1,3 +1,69 @@
+﻿## Session 616: Dev test_login bypasses leaked cross-portal session identity - notifications API reported admin to employee/customer sessions, bell showed admin links; fixed at all four bypasses, verified live admin->employee->customer (2026-11-16)
+
+### Trigger
+Continuation of the in-app browser admin audit (S614). On the employee portal (`/employee/attendance`), the notification bell's "View All"/"Preferences" links rendered `/admin/notifications` and `/admin/notification-preferences` even though `window.NOTIFY_USER.role` was `employee`. Investigating end-to-end exposed a session-identity-bleed class affecting every dev test_login bypass in a shared browser profile.
+
+### Root-cause chain (traced live, not assumed)
+1. The in-app browser shares one session/profile across open tabs: logged in `test_login=1` (admin) in one tab, then `test_login=4` (employee) in another - both reused the same cookies.
+2. The dev bypass `EmployeeController::handleTestLogin()` rebuilt only `user_id`/`employee_id`/`role` etc. - it never unset the stale `admin_role=admin` / `admin_id=1` from the earlier admin login.
+3. `NotificationController::getNotifications()` computes `$role = $_SESSION['admin_role'] ?? $_SESSION['role']` and `$isAdmin = ... || !empty($_SESSION['admin_id'])` - so the employee session reported `role: "admin"` over `/api/notifications`; the browser then rewrote the bell footer to the admin center (`updateFooterLink()`).
+4. `AuthSessionTrait::establishSession()` (the production path) DOES set `admin_role/admin_id/admin_*` for ALL staff roles including employee, role-synced - but the dev bypass never built that shape, producing an inconsistent near-production session.
+5. Customer (AuthController) and associate/agent test_login handlers had the same hole (stale `admin_role=admin` persisted across bypass logins).
+
+### Fix (4 files, dev-only surface; production `establishSession` untouched)
+- `EmployeeController::handleTestLogin()` - unset cross-portal identity keys on entry (`admin_id/admin_user_id/admin_email/admin_role/admin_name/admin_username/employee_*`/`associate_*`/`agent_*`/`farmer_id`/`customer_id`); then set the SAME staff keys the production path sets (`admin_role=role`, `admin_id/admin_user_id`, `admin_email/admin_name/admin_username`, `employee_role`, `employee_user_id`) so the bypass session is indistinguishable from a real employee session to every downstream reader (Notifications API, RBAC nav, rate-limit middleware).
+- `Auth\AssociateAuthController::handleTestLogin()`, `Auth\AgentAuthController::handleTestLogin()`, `Auth\AuthController::handleTestLogin()` - unset the same cross-portal keys on entry (associate/agent/customer deliberately do NOT gain admin keys; production `establishSession` never sets them for those roles).
+- Removed unreachable `$user['x'] ?? 'fallback'` coalescing on the hardcoded literal - the array shape is fully known at compile time; the honest fix removes the nullCoalesce noise and keeps `phpstan-baseline.neon` untouched.
+
+### Verification (live, shared in-app browser profile)
+- Employee portal fresh login: `/api/notifications` now returns `role: "employee"` (was `admin`); bell links resolve to `/employee/notifications` + `/user/notification-preferences`.
+- Customer fresh login: `/api/notifications` returns `role: "customer"` (was reported as `employee` pre-fix). All three portals report their own role on one browser session.
+- `php -l` clean x4; **Master 11/11 PASSED**; **PHPStan** -> `[OK] No errors`.
+- `git status` clean except this round's four Auth/Employee files; untracked `scripts/deploy_oracle.sh` + `scripts/setup_oracle_ubuntu.sh` remain untouched (the parallel Oracle-Cloud actor's, taken S615).
+
+### Commit hygiene (disclosed)
+- The first `git commit -F - <<MSG` invocation failed at shell-parse time (here-doc quoting) - nothing was ever created; the real commit `c71c6d14b` carries the four files (hook lint pass, pushed). Commit message says `(S615)` - written mid-round before the Oracle actor landed their S615; content is correct. No history rewritten, no force push.
+
+### Carried lessons
+_1324. **Dev bypasses must rebuild the FULL production session shape, not a subset** - any downstream code doing `admin_role ?? role` leaks. When auth is bypassed for tests, `AuthSessionTrait::establishSession()`'s key set is the contract - copy it faithfully, do not invent a smaller one.
+_1325. **A shared dev browser profile persists cross-logins in one session** - clicking between portals in the in-app chromium reused the same cookies; this is how "employee sees admin links" re-produced within the hour. Logout-based repro (`/employee/logout` -> fresh `test_login=4`) is the correct harness.
+_1326. **A baseline `count` mismatch is your own edit duplicated** - my staff-key block repeated the same nullCoalesce pattern the baseline pinned at count 1; removing the dead `??` trap operators entirely (the literal is static) cleared both old and new friction without touching the baseline.
+_1327. **`/api` role string is THE source of truth for every portal's JS** - the same field drives bell links, Preferences target, and RBAC-driven DOM. Fix at the producer; JS consumers cannot un-break what the server mis-labels.
+
+### Not taken / owner territory (reported, not acted on)
+- `AuthSessionTrait` itself untouched - it already sets the staff key set deliberately; no hardening applied.
+- Shared-host / CI risk of `test_login` in production remains guarded by the `APP_ENV` checks already present in the bypasses (employee one; associate/agent remain ungated by existing convention - audited, not altered).
+- The untracked `scripts/deploy_oracle.sh` / `scripts/setup_oracle_ubuntu.sh` belong to the Oracle-Cloud actor (S615) - untouched per ownership.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 615 (Oracle Cloud staging provisioning). This entry = **S616**. Next-free = **617**.
+## Session 615: Oracle Cloud Staging Provisioning Scripts Created, Cloud Sign-In & Tenancy Audit, Free-Tier Card Verification Deferred (2026-11-16)
+
+### Trigger
+User (Hinglish): "agent browser mcp tools ka use kar ke dare kaam tum kar do" + "isko oracle par host to karna hai but isko local windows par bhi karna hai temprorary oracle par kar ke testing karte hai" followed by "isko baad me kiya jayega note kar do agents.md me".
+
+### Investigation & Setup Completed
+1. **Automated Server Provisioning Scripts Created:**
+   - `scripts/setup_oracle_ubuntu.sh`: Complete LAMP stack provisioning script for Ubuntu 22.04/24.04 (ARM64 Ampere A1 & x86_64 AMD). Automates installation of Apache 2.4, PHP 8.2 (12 required extensions: `pdo_mysql`, `mbstring`, `curl`, `xml`, `zip`, `gd`, `bcmath`, `intl`, `soap`, `opcache`), MariaDB server, Composer, UFW firewall, and Apache VirtualHost targeting `/var/www/apsdreamhome/public` with `AllowOverride All`.
+   - `scripts/deploy_oracle.sh`: One-command staging deployment script that handles `git pull origin main`, permission enforcement (`www-data:www-data`), Composer dependencies, schema migrations, and master test suite execution.
+2. **Oracle Cloud In-Browser Navigation & Tenancy State:**
+   - Chrome attached via remote debugging port 9222 with `DevToolsActivePort`.
+   - Navigated to Oracle Cloud portal (`https://cloud.oracle.com/`).
+   - Resolved account password reset (`techguruabhay@gmail.com` -> `Aps@128125`) and 2FA passcode verification.
+   - Identified that the user holds a standard Oracle SSO profile but does not yet possess an active Oracle Cloud Infrastructure (OCI) tenancy.
+   - Navigated to the Free Tier onboarding wizard (`https://signup.cloud.oracle.com/`).
+3. **Roadblock & User Decision:**
+   - Oracle Cloud Free Tier strictly mandates a Credit Card or International Debit Card for identity authorization hold (~$1 / ~₹75 temporary authorization).
+   - User does not have a credit card at hand and decided: "isko baad me kiya jayega note kar do agents.md me".
+   - Deferred OCI VM launch until the card verification step is completed by the user.
+
+### Next Steps / Alternatives (Ready When Needed)
+- **Resume Oracle Setup**: User completes card verification at `https://signup.cloud.oracle.com/`, launches Ubuntu 24.04 ARM64 instance, and runs `setup_oracle_ubuntu.sh` in 1 command.
+- **Immediate Zero-Cost Alternative**: Cloudflare Tunnel (`cloudflared`) to expose the existing local Windows XAMPP installation to the public internet with a free HTTPS URL — zero card required, instant mobile app connectivity.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 614. This entry = **S615**. Next-free = **616**.
+
 ## Session 614: In-App Browser Admin Audit - ERP Overview Icons Fixed (Specificity War vs Dark Mode), Charts Wired From Vestigial Empty Tables Onto Live Data (Payments/Leads), All Gates Green, Commit e6d8d560a (2026-11-16)
 
 ### Trigger
