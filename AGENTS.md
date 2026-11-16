@@ -12735,3 +12735,40 @@ _1388. **Sweep the log, fix the one live crash, and say what you did NOT fix.** 
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+## Session 653: Lead Detail Page Gained Flash Rendering — Score-Churn Click Feedback & Every Lead Action Was Silently Swallowed Into Session, Now Surfaces As dismissible Bootstrap Alerts (2026-11-16)
+
+### Trigger
+My S643 owner-notes flagged "lead `score-churn` re-score flash double-render if noticed (cosmetic)". Investigated honestly: there is no double-render on the Morning Brief page; the real defect is the opposite — `app/views/admin/leads/show.php` never read session flash keys AT ALL. Every `LeadController::setFlash()` for this page (assign, status change, re-score, create, restore, trash) vanished into `$_SESSION` with zero UI output.
+
+### What was built
+`app/views/admin/leads/show.php` — flash block added immediately below the opening container (above the Lead Header):
+- `$this->getFlash('success')` / `getFlash('error')` / `getFlash('info')` — consumed once, exactly the pattern the AI Morning Brief uses (S632), so no double-render anywhere.
+- Dismissible `alert-success` / `alert-danger` / `alert-info` with `btn-close` — consistent with existing admin chrome.
+
+Nothing else changed. The admin layout renders no flash block of its own, so this is the only consumer.
+
+### Verification (probe-first, honest)
+- `php -l` clean · **PHPStan [OK] No errors** (whole mixed tree) · **Master → 11/11 PASSED** (37.38s) · **AGENTS.md integrity OK**.
+- End-to-end CSRF POST: `/admin/leads/49985/score-churn` → 302 → follow-up GET renders **`alert-success`** containing **`Churn risk scored: high (55/100)`** — verified live. Previously: zero feedback of any kind.
+- No DB writes; no schema; no money tables; no new routes (the POST route existed since S635).
+- Staged-set verified before commit: exactly one file (`app/views/admin/leads/show.php`).
+
+### Why this matters
+Lead detail is the single most-edited page in the admin portal. Every one of ~30 `setFlash()` calls in `LeadController` was writing into a session black hole that nothing rendered — an entire class of "the click worked but nothing told me" failures the UI silently swallowed.
+
+### Honest notes
+- This fixes the *display* defect only. It does not add undo/rollback; the flash text is the same text the controller already wrote.
+- The no-render defect predates my work (present since the view's original generation) — attribution is the page, not a team.
+- Parallel actor's in-flight customer-portal files, `RecruitmentController.php` and `routes/web.php` NOT touched by me.
+- Commit pushed per repo convention (`pre-commit` hook auto-pushes; `git push origin HEAD` reports everything up-to-date).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **652** (parallel actor, AGENTS.md integrity surgery). This entry = **S653**. Next-free = **654**.
+
+### Key lessons
+_1398. **A flash write with no flash read is a silent black hole — every UI session note matters only if a view consumes it.** Check the read side of every `$_SESSION` write.
+_1399. **Double-counting a defect's symptoms (double-render) wastes a round; probe the opposite failure mode before fixing.** The actual bug was the zero-render branch, and it took one grep to find.
+_1400. **One file, one purpose, one commit.** The fix is 19 lines of view; it landed alone, staged alone, verified alone.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
