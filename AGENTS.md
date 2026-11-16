@@ -1,3 +1,39 @@
+## Session 665: Raw Flash Echo Family Eliminated Across 46 Clean Views (77 Escapes) + 2 Attribute XSS Closed - All Swept Into Parallel Actor's Whole-Tree S663 Commit, Master 11/11 (2026-11-17)
+
+### Trigger
+Continuation of the S654/S655/S659/S662 flash-family lane. A systematic byte-level audit over all of `app/views/**/*.php` found every unescaped `<?= $_SESSION['flash_success'/etc'] ?>` echo. 82 total, of which 46 files were workspace-clean (this lane) and 2 were in the parallel actor's dirty lane (`legal-colony-pipeline/detail.php`, `plots/import.php` - correctly skipped).
+
+### What was done
+1. **Byte-safe scanner + fixer** (`raw_flash_scan.php` + `fix_flash.php`): regex with a preg_replace_callback over raw file bytes, escaping EVERY raw flash echo as `<?= htmlspecialchars((string)($_SESSION['key'] ?? ''), ENT_QUOTES, 'UTF-8') ?>`. 82 unescaped echoes found -> 46/46 files ASCI/lighed, 77 replacements; post-fix scan shows **0 unescaped** echoes in workspace-tracked views (remaining 5 hits are the 2 parallel-actor lane files, untouched).
+2. **2 attribute-context XSS closed** in the same lane:
+   - `app/views/admin/recurring_journal_entries/show.php:56` - `<?= $_GET['status'] ?? 'active' ?>` inside `<a href="?status=...">` -> `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
+   - `app/views/admin/salary/arrears_preview.php:236` - `<?= $_POST[$field] ?? ... ?>` inside hidden `<input value=...>` -> `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')`.
+3. **46/46 files lint-clean** via `php -l` (scripted, 0 failures); **master 11/11 PASSED** on the mixed tree (with S662/S663/S664 parallel-actor content included, 38.13s).
+4. **Live probes** (admin session, manual cookie chain; PHP-curl cannot write jars in this environment): `/admin/recurring-journal-entries` 200 needle YES · `/admin/tenants` 200 YES · `/admin/departments` 200 YES · `/admin/support-tickets` 200 YES · `/admin/legal-colony-pipeline/start-acquisition` 200 YES (Acquisition) · `milestones|analytics` for colony 1/6/7 -> 200 with needle YES and **0 Warning:/Notice:** in served bytes · `milestones/999` (invalid) -> 302 by design.
+
+### Attribution (honest)
+All 46 flash-escaped files AND the 2 attribute-XSS fixes were swept into the parallel actor's whole-tree `500745b46` (S663, "fix(admin): sanitize 29 double-wrapped views... (S663)") commit - `git show --name-only 500745b46` confirms 46/46 + 2/2 present. This session's work landed and is on `origin/main`, under their commit. The byte-level escaping, the scanner, the clean-vs-dirty lane split, the lint/probe verification, and the 82->0 sweep are this session's work; the commit authorship is theirs. Same convention as S628 (S643-lane files absorbed by S642 whole-tree commit). Not re-claimed; logged for the record.
+
+### Verification
+- PHPStan [OK] · Master 11/11 PASSED · `php -l` 46/46 + 2/2 clean · probe pages 200 with needles, zero PHP warnings in served bodies · AGENTS.md integrity OK at base.
+- DB: zero writes; no migrations; no routes; no schema; views-only.
+
+### Honest notes
+- 2 parallel-actor lane files (`legal-colony-pipeline/detail.php`, `admin/plots/import.php`) STILL contain 5 raw flash echoes; they were left untouched per lane-ownership rule.
+- My earlier S661 line-edit claim to the "2 attribute XSS" here is the same fix the parallel actor's S663 log lists as theirs; this entry records who actually made it and does not duplicate the claim.
+- 2 speculative probe URLs (`/admin/legal-colony-pipeline/analytics`, `/legal_pages`) 404 because routes don't exist at those exact paths; the real parametrized routes probe 200 with zero warnings - recorded so nobody re-flags them as bugs.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading in file at this entry = **664** (parallel actor, RERA fabrication sweep). This entry = **S665**. Next-free = **666**.
+
+### Key lessons
+_1436. **Raw flash echoes are invisible without a byte-level lint pass** - `<?= $_SESSION['success'] ?>` sits one character away from honest code; only a same-line escape-detection scanner finds them all.
+_1437. **Check lane ownership BEFORE every edit in a shared tree** - workspace-clean vs dirty split (46/2) is what kept the parallel actor's files untouched and the sweep committable.
+_1438. **Regex+callback on raw bytes is the only reliable mass-escape** - quoted attribute names, semi-colons, trailing `; unset($_SESSION[...])` all dissolve cleanly into ENT_QUOTES-wrapped output.
+_1439. **Whole-tree commit absorption is the norm in this repo** - land byte-clean work, verify needles live, then accept absorption into the sibling actor's commit and log it here; the AGENTS.md entry is the only durable attribution.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17).
 ## Session 664: RERA Fabrication Sweep Finished — 7 Public Claims Removed, /plots-availability Was Dead-For-Forever (View Name Hyphen Mismatch) Found & Fixed, Offline Chatbot Corpus Probed Honest End-to-End, All Absorbed Into Parallel Actor's S663 Staged Whole-Tree Commit, Gates Green (2026-11-17)
 
 ### Trigger
