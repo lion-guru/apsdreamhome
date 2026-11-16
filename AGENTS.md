@@ -12419,3 +12419,40 @@ _1385. **Every error log line names its exact line number — read it, don't gre
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16) · lead `score-churn` re-score flash double-render if noticed (cosmetic).
+## Session 645: Live Error-Log Crash Sweep — Everything in the Log Is Stale (Lead show.php 500 Was the One Live Bug, Fixed S643), Master 11/11 (2026-11-16)
+
+### Trigger
+Follow-through on S643: sweep the ENTIRE recent `logs/php_error.log` for remaining crash-class signatures (1054 / 1146 / 1265 / 1364 / 1052 / 4025 / show500 / Uncaught TypeError) to find any live breakage left by the parallel actor's recent waves.
+
+### Method & verdict (every class traced, code + live schema checked)
+| Signature | Occurrence window | Verdict |
+|---|---|---|
+| `count(): Argument #1 ... in ai_morning_brief.php:1 / hub.php:1` (14:31–14:34) | during the morning's own deploy window | **stale** — both pages probe HTTP 200 with needles (Morning Brief 409 KB / Hub 389 KB); no live call sites |
+| `HolidayCalendarService` trait-fatal storm (14:12, ~70 hits) | pre-dates the parallel actor's S627 rewrite | **stale** — current file is the fixed trait-ised version |
+| `job_applications ... created_at / position` 1054 (14:12) | morning window | **stale** — `JobsAdminController`, `EmployeeDashboardController`, `HRManagerController` already read only `id/tenant_id/name/phone/email/message/file_path` |
+| `sdc.registration_fee` 1054 | stamp-duty verification page | **stale** — live column is `registration_fee_rate` / `registration_fee_amount`; current code reads `registration_fee_amount` |
+| `mlm_ranks ORDER BY rank_order` 1054 (16:41:17) | afternoon window | **not found anywhere in live code** (grep empty) — no caller remains; the only `mlm_ranks` reference is by primary key |
+| `event_type` / `security_events` | morning window | **stale** — current `SecurityEnhancementService` inserts/reads `event_type` consistently (verified column exists in the table used by the current code) |
+| **`show500: Unsupported operand types: string / int` (show.php:772, 15:50–16:11, 6 hits)** | **live this morning** | **FIXED in S643 (`ad8ef5e29`)** — lead detail renders 200 for leads 49985/49960/49937/11034; no new hits since the fix |
+
+**Method note:** page probes (fresh test_login=2 session) with byte counts + needles, not status-only checks; schema verified with live `SHOW COLUMNS`; code verified with `Select-String` over `app/`, `routes/`, `scripts/`, `testing/`.
+
+### What was NOT done / out of scope
+- SMTP authentication failure (`EmailService: Send failed`) — live but config/environment, not code; credentials were already flagged owner territory.
+- `ADMIN-GATE: blocked GET /admin/erp role=...` — expected zero-trust behavior of the admin gate, not an error.
+- The untracked `widen_dead_stub_columns_s640.php` migration(s) and `app/views/customer/*` noise are the parallel actor's in-flight work.
+
+### Verification
+- Pages: `/admin/ai-morning-brief` 409,251 B · `/admin/ai/hub` 389,055 B · `/admin/mlm/ranks` 411,590 B · `/admin/recruitment/jobs` · `/admin/legal/verifications` — all 200, no error markers.
+- **Master → 11/11 PASSED** (33.9s) · **AGENTS.md integrity OK** (395 headings before this entry) · no code changes in this session — verification-only round.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **644** (parallel actor, stale 20% cap copy interpolation). This entry = **S645**. Next-free = **646**.
+
+### Key lessons
+_1386. **A log line's timestamp + a live code check decide whether it's a bug — not its scary volume.** ~70 trait-fatal lines and dozens of 1054s all resolved to already-fixed code; only the show.php:772 line survived both checks and got the fix.
+_1387. **Probe with needles, never with status codes.** Every "stale" verdict above was made by reading actual page bytes plus the schema — status 200 alone would have been as unconvincing as an error count.
+_1388. **Sweep the log, fix the one live crash, and say what you did NOT fix.** An empty sweep is also a result — but only if you check each signature, or you ship false reassurance.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
