@@ -999,7 +999,11 @@ class MLMCommissionEngine
             foreach ($entries as $e) {
                 $totalPct += (float)$e['pct'];
             }
-            $maxCapPct = 20.0; // Hard cap from mlm_settings.global_cap_pct
+            $planSnapshot = $this->getActivePlanSnapshot();
+            $maxCapPct = 20.0; // Fallback only — the live active plan owns this number whenever set.
+            if ($planSnapshot && isset($planSnapshot['global_cap_pct']) && (float)$planSnapshot['global_cap_pct'] > 0) {
+                $maxCapPct = (float)$planSnapshot['global_cap_pct'];
+            }
             if ($totalPct > $maxCapPct) {
                 // Scale down proportionally
                 $scale = $maxCapPct / $totalPct;
@@ -1010,8 +1014,7 @@ class MLMCommissionEngine
                 unset($e);
             }
 
-            // Insert each entry into mlm_commission_ledger
-            $planSnapshot = $this->getActivePlanSnapshot();
+            // Insert each entry into mlm_commission_ledger (reuse the plan snapshot already fetched above)
             $ins = $this->db->prepare("
                 INSERT INTO mlm_commission_ledger
                     (beneficiary_user_id, source_user_id, commission_type, level, amount, status, property_id, sale_amount, commission_percentage, notes, booking_id, receipt_id, hold_until, created_at,
@@ -1090,6 +1093,11 @@ class MLMCommissionEngine
             $sellerInfo = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
+        $explainCapPct = 20.0; // Fallback only — live active plan owns this when set.
+        $activePlan = $this->getActivePlanSnapshot();
+        if ($activePlan && isset($activePlan['global_cap_pct']) && (float)$activePlan['global_cap_pct'] > 0) {
+            $explainCapPct = (float)$activePlan['global_cap_pct'];
+        }
         $distribution = [
             'sale_amount'          => $saleAmount,
             'seller'               => [
@@ -1102,7 +1110,7 @@ class MLMCommissionEngine
             'upline_overrides'     => [],
             'total_distributed_pct'=> $sourceRate,
             'total_distributed_amt'=> round($saleAmount * ($sourceRate / 100.0), 2),
-            'global_cap_pct'       => 20.0,
+            'global_cap_pct'       => $explainCapPct,
             'cap_exceeded'         => false,
             'cross_line_isolated'  => true,
         ];
@@ -1149,9 +1157,9 @@ class MLMCommissionEngine
             }
         }
 
-        if ($distribution['total_distributed_pct'] > 20.0) {
+        if ($distribution['total_distributed_pct'] > $explainCapPct) {
             $distribution['cap_exceeded'] = true;
-            $scale = 20.0 / $distribution['total_distributed_pct'];
+            $scale = $explainCapPct / $distribution['total_distributed_pct'];
             // Apply scale
             $distribution['seller']['direct_commission'] = round($distribution['seller']['direct_commission'] * $scale, 2);
             $distribution['seller']['rate_pct'] = round($distribution['seller']['rate_pct'] * $scale, 2);
@@ -1160,8 +1168,8 @@ class MLMCommissionEngine
                 $ov['gap_pct'] = round($ov['gap_pct'] * $scale, 2);
             }
             unset($ov);
-            $distribution['total_distributed_pct'] = 20.0;
-            $distribution['total_distributed_amt'] = round($saleAmount * 0.20, 2);
+            $distribution['total_distributed_pct'] = $explainCapPct;
+            $distribution['total_distributed_amt'] = round($saleAmount * ($explainCapPct / 100.0), 2);
         }
 
         $distribution['company_retained_pct'] = round(100.0 - $distribution['total_distributed_pct'], 2);

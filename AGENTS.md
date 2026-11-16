@@ -1,3 +1,33 @@
+## Session 634: Commission Engine Cap Hardcode Fixed — Global Cap Now Reads Active Plan Live, 20% Fallback Only, Both Money Paths Patched, Gates Green (2026-11-16)
+
+### Trigger
+Live preview work (S633) proved the engine's cap value was disconnected from what admin sets on the form — the UI said "clamped to X%" but the engine always clamped to a hardcoded 20.0 regardless of the plan.
+
+### Root cause
+Two hardcoded `20.0`s in `app/services/MLM/MLMCommissionEngine.php`:
+1. `calculateCommission()` cap enforcement (`$maxCapPct = 20.0; // Hard cap from mlm_settings.global_cap_pct`) — comment lied too; it never read any settings table.
+2. `explainDifferentialDistribution()` display + scale-down (`global_cap_pct => 20.0`, `if (total_distributed_pct > 20.0)`, `$scale = 20.0 / ...`, `$distribution['total_distributed_pct'] = 20.0`).
+
+The live active plan's `global_cap_pct` was already read at `mlm_commission_plans p ... WHERE status='active' ORDER BY version DESC` inside `getActivePlanSnapshot()` (line ~2200s) — the engine simply never consumed it for capping.
+
+### Fix applied
+1. **Cap block (`calculateCommission()`)**: hoisted `getActivePlanSnapshot()` ABOVE the cap check; `$maxCapPct` now = active plan's `global_cap_pct` when it is a positive float, else 20.0 fallback. The later `$planSnapshot = ...` re-fetch before the ledger INSERT was removed — single snapshot per iteration now (one fewer DB query per commission pass).
+2. **`explainDifferentialDistribution()`**: same live read (`$explainCapPct`) used for the (a) `global_cap_pct` display field, (b) the `cap_exceeded` comparison, (c) the proportional scale-down math, (d) the `total_distributed_pct` final line and (e) `total_distributed_amt = sale × cap%`.
+3. Zero schema/table changes, zero behavior change for today's `global_cap_pct = 20` plans — capping now owner-config property via the plan form (the exact field the S633 live preview renders).
+
+### Verification
+- Direct probe (fresh admin session, engine called with ₹15,00,000 / seller #1): `total_pct=18, total_amt=270000, cap_pct=20, cap_exceeded=false, overrides_count=0` — no regression; the explain endpoint now reports the live plan value.
+- **PHPStan** → `[OK] No errors` (1517 files). **Master** → **11/11 PASSED** (44.29s).
+- Parallel actor's in-flight files (LeadController.php, routes/web.php, leads/show.php, colony_progress.php, documents.php, SmartLeadAssignmentService.php, Autoloader.php) left alone — only `MLMCommissionEngine.php` staged this round.
+- DB zero drift.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 633 (mine, Live Distribution Preview). This entry = **S634**. Next-free = **635**.
+
+### Key lessons
+_1360. **A snapshot you build but never consume is dead weight — and a lie waiting.** The engine read the plan's cap in getActivePlanSnapshot() but clamped against a literal `20.0` — the snapshot was built purely for ledger metadata, never for enforcement. When you build a snapshot, ask who consumes each field; unconsumed fields are decisions deferred, forever.
+_1361. **Fallback hardcode must stay, but only as fallback.** Deleting the 20.0 entirely would crash un-provisioned tenants/plans; gating it behind `(float)$snapshot['global_cap_pct'] > 0` preserves a safe default while ownership moves to the plan form.
+_1362. **Same bug, two call sites, one class.** The cap hardcode existed in both the enforcement path and the explanation/display path — fixing only write-side would have produced UI showing 20 while the engine enforced something else (or vice versa). Every money invariant gets a shared source of truth — one statement per invariant, not one per file.
 ## Session 633: Live Distribution Preview Added To Commission Plan Create Page — Per-Rank Row Cost + Upline Slab-Differential Chain, Advisory Labels, Clamp-Aware Cap Messaging, Gates Green (2026-11-16)
 
 ### Trigger
