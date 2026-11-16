@@ -44,7 +44,23 @@ class PushNotificationController extends BaseApiController
 
     public function vapidPublicKey()
     {
-        $key = $_ENV['VAPID_PUBLIC_KEY'] ?? '';
-        $this->json(['publicKey' => $key]);
+        // Single source of truth: PushSender decodes the private config
+        // (dotted x.y or PEM-encoded env key) into the canonical uncompressed
+        // EC point, base64url-encoded. Raw $_ENV pass-through returns the
+        // internal dotted format clients cannot import as an EC key.
+        try {
+            $sender = new \App\Services\Communication\PushSender();
+            $key = $sender->getVapidPublicKey();
+        } catch (\Throwable $e) {
+            $this->json(['success' => false, 'error' => 'VAPID configuration error'], 503);
+            return;
+        }
+        if ($key === '') {
+            $this->json(['success' => false, 'error' => 'VAPID not configured'], 503);
+            return;
+        }
+        // Keep legacy 'publicKey' field for consumers already reading it;
+        // expose 'vapid_key' so this matches the web contract of /push/vapid-key.
+        $this->json(['success' => true, 'publicKey' => $key, 'vapid_key' => $key]);
     }
 }
