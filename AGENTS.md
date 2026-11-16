@@ -1,3 +1,23 @@
+## Session 612: Wording Integrity Sweep — "across India" → "across Uttar Pradesh" in 4 Files + 1 Legacy Site-String, All Public Routes HEAD/GET-Verified (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — final consistency pass on public-facing copy.
+
+### What was done
+Read-only census of every occurrence of "across India" and all inflated phrases (5000+, 500+, etc.) across `app/views/`, `lang/`, keeping an eye on editorial/asset context. Four sites: `pages/properties.php` (meta_description + lead), `pages/rent.php`, `app/views/emails/welcome.php`, `pages/team.php`, plus `views/languages/en.php` (`why_choose_us_subtitle` — legacy stack, unused but cited in QA). All reworded to "across Uttar Pradesh" or generic honest line.
+
+Inventory scan of all public routes for the flagship ones after the edits — every route serves 200 or correct 301/302, nothing regressed. Live probe of `/properties` confirms the new phrase is rendered and the old one is absent.
+
+### Verified end-to-end
+- `curl` 200 across: `/`, `/about`, `/properties`, `/offers`, `/colonies`, `/featured-properties`, `/rent`, `/faq`, `/contact`, `/tools` (301), `/emi-calculator` (301), `/home-loan-eligibility`, `/gst-calculator`, `/tools/plot-converter`, `/stamp-duty` (301), `/capital-gains-calculator`
+- `/pricing` correctly 302 → `/colonies` (S610 redirect holds)
+- `/properties` HTML: "across India" → 0 occurrences; "across Uttar Pradesh" → present
+- Parallel actor in-flight: `CustomerPassbookController.php` (unstaged), untouched.
+- No DB writes this session. Gates unchanged (PHPStan [OK], Master 11/11 green as at S611 re-run).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 611. This entry = **S612**. Next-free = **613**.
+
 ## Session 611: Stock-Unsplash Colony-Hero Hotlinks Removed — Honest Placeholders Now Render (2026-11-16)
 
 ### Trigger
