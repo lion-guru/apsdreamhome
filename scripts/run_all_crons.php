@@ -25,6 +25,7 @@
  *    16. Churn Prediction Refresh (scores up to 300 open leads into the
  *        recomputable lead_churn_predictions cache - keeps the admin
  *        Morning Brief AI Insight Panel + the lead-desk AI Council fresh)
+ *    17. AI Employee Worker (Aira->Vivaan->Sahil chain, dry-run unless --live)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% →' qualified site managers)
@@ -118,6 +119,7 @@ if ($statusOnly || $dryRun) {
         echo "   14. Fast-Start 30-Day Bonus Evaluation" . PHP_EOL;
         echo "   15. AI Health Check" . PHP_EOL;
         echo "   16. Churn Prediction Refresh (up to 300 open leads)" . PHP_EOL;
+        echo "   17. AI Employee Worker (dry-run unless --live)" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -608,6 +610,34 @@ try {
         } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'churn_refresh: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 17. AI EMPLOYEE WORKER (names AI staff: Aira->Vivaan->Sahil chain).
+        //     Drains pending tasks in bounded batches (3/employee, max 3
+        //     employees). Tasks write notes/drafts/notifications only - no
+        //     money, no assignments, no customer contact outside the CRM.
+        //     Dry-run by default in DEVELOPMENT; set --live to execute.
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}  AI Employee Worker (dry-run unless --live)" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $live = in_array('--live', $argv, true);
+            $empCmd = 'php ' . escapeshellarg($root . '/scripts/cron_ai_employee.php') . ' --tasks=3'
+                      . ($live ? '' : ' --dry-run')
+                      . ' 2>&1';
+            $empOut = [];
+            $empRc = 0;
+            exec($empCmd, $empOut, $empRc);
+            $log['ai_employee'] = ['status' => $live ? 'live' : 'dry-run', 'return_code' => $empRc];
+            echo ($live ? "  [OK] AI employee worker executed (live)" : "  [INFO] AI employee worker ran as dry-run (pass --live to enable)") . PHP_EOL;
+            foreach (array_slice($empOut, 0, 12) as $line) {
+                echo '  | ' . $line . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'ai_employee: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }

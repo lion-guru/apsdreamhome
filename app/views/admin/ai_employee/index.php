@@ -45,7 +45,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </form>
                         <form method="POST" action="<?= $base ?>/admin/ai-employee/<?= (int)$e['id'] ?>/run">
                             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                            <button class="btn btn-sm btn-success" type="submit" <?= ($e['status'] ?? '') !== 'active' ? 'disabled' : '' ?>>Run next</button>
+                            <button class="btn btn-sm btn-success" type="submit" <?= ($e['status'] ?? '') !== 'active' ? 'disabled' : '' ?><?= ($e['status'] ?? '') !== 'active' ? ' title="Employee is paused — activate to run tasks"' : '' ?>>Run next</button>
                         </form>
                     </td>
                 </tr>
@@ -64,7 +64,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <label class="form-label">Employee</label>
                 <select aria-label="Employee id" name="employee_id" class="form-select" required>
                     <?php foreach ($employees as $e): ?>
-                        <option value="<?= (int)$e['id'] ?>">Aira <?= htmlspecialchars($e['role'] ?? '') ?></option>
+                        <option value="<?= (int)$e['id'] ?>"><?= htmlspecialchars($e['name'] . ' — ' . ($e['role'] ?? 'agent')) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -96,7 +96,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <td><?= $q['lead_id'] ? '#' . (int)$q['lead_id'] : '-' ?></td>
                     <td><span class="badge bg-<?= in_array($q['status'], ['done']) ? 'success' : ($q['status'] === 'failed' ? 'danger' : 'warning') ?>"><?= htmlspecialchars($q['status'] ?? '') ?></span></td>
                     <td><?= htmlspecialchars($q['created_at'] ?? '') ?></td>
-                    <td><small><?= htmlspecialchars(substr((string)($q['result'] ?? ''), 0, 90)) ?></small></td>
+                    <td><details><summary><small><?= htmlspecialchars(mb_substr((string)($q['result'] ?? ''), 0, 90)) ?></small></summary><small class="text-muted d-block mt-1" style="white-space:normal;word-break:break-word"><?= htmlspecialchars((string)($q['result'] ?? '')) ?></small></details></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($queue)): ?>

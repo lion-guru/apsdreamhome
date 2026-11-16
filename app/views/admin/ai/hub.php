@@ -26,6 +26,17 @@ $isManager = in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin', [
         </div>
     </div>
 
+    <?php if (!empty($ai_degraded)): ?>
+    <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="fas fa-triangle-exclamation flex-shrink-0"></i>
+        <div>
+            <strong>AI engines degraded</strong> — the free LLM layer is currently unavailable,
+            so the public chatbot is answering from its offline corpus instead of live models.
+            <span class="small text-muted">Fresh check: <code>php scripts/cron_ai_health.php</code></span>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Health strip -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -70,6 +81,47 @@ $isManager = in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin', [
 
     <!-- Module grid -->
     <div class="row g-3">
+
+    <!-- Predictive AI -->
+    <div class="row g-3 mb-4">
+        <div class="col-12"><h5 class="text-muted mb-2"><i class="fas fa-wand-magic-sparkles me-1"></i> Predictive AI</h5></div>
+
+        <div class="col-md-4">
+            <a href="<?= $base ?>/admin/ai-morning-brief" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-fire-alt fa-2x text-danger mb-2"></i>
+                        <h5 class="card-title">Lead Churn Prediction</h5>
+                        <p class="card-text small text-muted"><?= (int)($churn_stats['high_critical'] ?? 0) ?> high/critical · <?= (int)($churn_stats['scored'] ?? 0) ?> leads scored. Which leads will go cold, who to call first.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="<?= $base ?>/admin/ai-morning-brief" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                        <h5 class="card-title">Colony Demand Forecast</h5>
+                        <p class="card-text small text-muted">30/60/90-day lead &amp; booking projections per colony; <?= (int)($low_stock_colonies ?? 0) ?> colony(ies) below 20% available stock.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="<?= $base ?>/admin/ai-morning-brief" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-user-check fa-2x text-success mb-2"></i>
+                        <h5 class="card-title">Smart Lead Assign</h5>
+                        <p class="card-text small text-muted"><?= (int)($unassigned_leads ?? 0) ?> unassigned open lead(s). Skill-weighted routing: who closes what, with a legacy fallback.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 
         <div class="col-12"><h5 class="text-muted mb-2"><i class="fas fa-brain me-1"></i> Core AI</h5></div>
 
@@ -201,7 +253,7 @@ $isManager = in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin', [
         <div class="col-12 mt-2"><h5 class="text-muted mb-2"><i class="fas fa-wand-magic-sparkles me-1"></i> AI Content &amp; Documents</h5></div>
 
         <div class="col-md-4">
-            <a href="<?= $base ?>/admin/legal/ai-generate" class="text-decoration-none">
+            <a href="<?= $base ?>/admin/legal/ai-composer" class="text-decoration-none">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body">
                         <i class="fas fa-file-signature fa-2x text-info mb-2"></i>
