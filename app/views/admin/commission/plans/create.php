@@ -117,7 +117,7 @@ $activePlanName = $activePlanName ?? null;
             <div class="cp-step"><div class="n">2</div><div><h6>Har ₹ sale ka budget kaise katega (Payout Controls)</h6><p>Ye 8 numbers decide karte hain ki company sale se kitna budget commission ke liye degi — associate-level math neeche Step 3 me hai.</p></div></div>
 
             <div class="cp-note" style="border-left-color:#ffd166">
-                <strong>Socho kaise:</strong> Plot ₹15,00,000 me becha. Company <span class="ex">Global Cap 20%</span> se zyada commission nahi de sakti — yani ₹3,00,000 ke andar direct + team + bonuses poore fit hone chahiye. Baaki numbers usi ₹3,00,000 ke beech split ke rules hain.
+                <strong>Socho kaise:</strong> Plot ₹15,00,000 me becha. Company <span class="ex">Global Cap <?= (float)($planCap ?? 20.0) ?>%</span> se zyada commission nahi de sakti — yani ₹<?= number_format((1500000 * (float)($planCap ?? 20.0)) / 100, 0) ?> ke andar direct + team + bonuses poore fit hone chahiye. Baaki numbers usi budget ke beech split ke rules hain.
             </div>
 
             <div class="row g-3 mb-2">
@@ -233,7 +233,7 @@ $activePlanName = $activePlanName ?? null;
                     </div>
                     <div class="d-flex flex-wrap gap-4 mt-2" style="font-size:.78rem">
                         <div>Selling rank payout: <b id="pvSellerPay" class="text-warning">₹0</b> (<span id="pvSellerPct">0%</span>)</div>
-                        <div>Upline slab differential: <b id="pvUplinePay" class="text-info">₹0</b> · chain = top slab (<span id="pvTopSlab">20%</span>) by construction</div>
+                        <div>Upline slab differential: <b id="pvUplinePay" class="text-info">₹0</b> · chain = top slab (<span id="pvTopSlab"><?= (float)($planCap ?? 20.0) ?>%</span>) by construction</div>
                         <div>Row-cost vs cap: <b id="pvCapStatus" class="text-info">—</b> <span class="text-muted">(rows above Global Cap = engine clamps, not an error)</span></div>
                     </div>
                 </div>
@@ -261,7 +261,7 @@ $activePlanName = $activePlanName ?? null;
             <div class="d-flex flex-wrap gap-1 mb-2" id="aiCoachChips">
                 <button type="button" class="cp-ai-chip" data-q="Poora plan design karo — balanced safe starter, company ke liye." data-mode="design">✨ Design my plan</button>
                 <button type="button" class="cp-ai-chip" data-q="GBV kya hai aur kaise decide karein? Site Manager kaise banta hai?">GBV kya hai</button>
-                <button type="button" class="cp-ai-chip" data-q="Global Cap 20% sahi hai ya kam karu? Explain karo company perspective se.">Global Cap explain</button>
+                <button type="button" class="cp-ai-chip" data-q="Global Cap <?= (float)($planCap ?? 20.0) ?>% sahi hai ya kam karu? Explain karo company perspective se.">Global Cap explain</button>
                 <button type="button" class="cp-ai-chip" data-q="Track A, B, C ka difference samjhao with an example sale of ₹15,00,000.">A/B/C samjhao</button>
                 <button type="button" class="cp-ai-chip" data-q="Mere current numbers review karo — kya sahi hai, kya risky hai?">Check my numbers</button>
             </div>
@@ -283,7 +283,8 @@ $activePlanName = $activePlanName ?? null;
             Direct commission (7%) → <b>₹1,05,000</b><br>
             Team override 3% (Track B) → team ne kiya<br>
             Agar seller VP tha (15%) to ladder choti hai<br>
-            Whole-budget cap 20% (₹3,00,000) kabhi nahi todhne ka rule embedded hai<br>
+            Whole-budget cap <?= (float)($planCap ?? 20.0) ?>% (&#8377;<?= number_format(1500000 * (float)($planCap ?? 20.0) / 100, 0) ?>) kabhi nahi todhne ka rule embedded hai
+
             Promotion se matching/performance bonus Step 3 ke slabs me se aata hai
         </div>
         <div class="mt-2"><b>GBV 1,00,00,000</b> = ₹1 crore/month — <b>Site Manager</b> rank yahi par hota hai — sab kuch isi table me dala ja sakta hai.</div>

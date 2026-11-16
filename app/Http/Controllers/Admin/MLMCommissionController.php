@@ -634,10 +634,16 @@ class MLMCommissionController extends AdminController
             $rankSlabs = $this->hybridEngine->loadRankSlabsFromDb();
         }
 
+        $activeSnapshot = $this->engine->getActivePlanSnapshot();
+        $planCap = ($activeSnapshot && isset($activeSnapshot['global_cap_pct']) && (float)$activeSnapshot['global_cap_pct'] > 0)
+            ? (float)$activeSnapshot['global_cap_pct']
+            : 20.0;
+
         $this->data = array_merge($this->data, [
             'page_title'   => 'MLM Payout Simulator',
             'page_heading' => 'Commission Payout Calculator',
             'rank_slabs'   => $rankSlabs,
+            'planCap'      => $planCap,
         ]);
 
         $this->render('admin/mlm/payout-simulator');

@@ -1,3 +1,35 @@
+## Session 644: Stale "20%" Global Cap Copy Interpolated live on Payout Simulator + Create Plan Page, Gates Green (2026-11-16)
+
+### Trigger
+Final sweep of the cap-interpolation family: the remaining three literals — `/admin/mlm/payout-simulator` intro copy and Create Plan's "Socho kaise" worked-example + "AI Explain" chip + whole-budget-cap line — all hardcoded 20% against an engine (S634) that now reads `global_cap_pct` from the active plan.
+
+### What was built
+1. **`Admin\MLMCommissionController::payoutSimulator()`** — resolves `$this->engine->getActivePlanSnapshot()` and passes `planCap` to the view via the same fallback pattern as the dashboard.
+2. **`app/views/admin/mlm/payout-simulator.php`** — intro paragraph: "Tracks A/B/C share a <planCap>% global cap (live from active plan)."
+3. **`Admin\CommissionPlanController::create()`** — before rendering the create view, resolves `getActivePlan()` from the existing `$this->planService`, computes `$planCap` (float, fallback 20.0), passes `compact('planCap')`.
+4. **`app/views/admin/commission/plans/create.php`** — three spots interpolated:
+   - "Socho kaise" note: cap % prints from `$planCap`; the rupee budget uses `number_format(1500000 * cap / 100)` (no crashed amount when cap changes).
+   - AI chip caption: `data-q="Global Cap <planCap>%..."`.
+   - "Whole-budget cap" live-example line: cap % and the rupee budget computed from `$planCap` (escaped `&#8377;` for the ₹ glyph so mojibake can never bite).
+   - `pvTopSlab` default seed also switches to `$planCap`.
+
+### Honest notes
+- NODB writes, NO endpoints changed, NO schema. Live example now shows correct math against the DIRECT plan's cap = 20 (unchanged math), while staying honest for any other active cap.
+- Mojibake elsewhere in the create file is pre-existing (two ₹-mojibake glyph pairs on lines 203-213 & 286 from the older file generation); left untouched.
+- Create page — `$planCap` is rendered by the view via `(float)` cast with inline fallback — guaranteed typed renders even if the active plan returns NULL (no active plan branch emits 20).
+
+### Verification
+- `php -l` clean ×4 · **Master → 11/11 PASSED** (59.74s) · PHPStan on my two controllers: 0 errors (pre-existing parallel actor `Front\CustomerPassbookController.php` errors untouched) · browser probe of `/admin/commission-plans/create?fresh=...` — renders with live plan name/path intact; console errors not regressed from parallel actor's S642 wave.
+- Parallel actor's in-flight files (CustomerPassbookController.php, Autoloader.php, customer/*, registry/*, solar/*, transfers/*) untouched; my staged set is only my four.
+- AGENTS.md integrity OK at this entry.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **642** (parallel actor, Customer Portal UI hardening); the **643** number was taken by a parallel actor mid-session (Lead Detail Score Breakdown fix), so this entry was renumbered to **S644**.. This entry = **S644**. Next-free = **645**.
+
+### Key lessons
+_1379. **"Example text" inside a form is always the stale sentence the user models their understanding on — interpolate it from the live value.** "Global Cap 20%" inside an explanation copy was training admins to forget cap is configurable.
+_1380. **Rupee literal estimates must be re-derived from cap, not hardcoded — `\$amount * cap / 100` inline.** ₹3,00,000 was valid only for 20%; a midpoint plan (15%/₹2,25,000) would have dragged math drift into a "how to plan" page.
+_1381. **Chip prompts feeding AI carry the same interpolation obligation — the AI answer inherits whatever cap wording the chip says.**
 ## Session 642: Customer Portal UI Layout & Portability Hardening — Duplicate DOCTYPE Stripped Across 6 Views, 27 Hardcoded Relative Hrefs Prefixed with BASE_URL, Autoloader Realpath Windows Normalization, PHPStan & Master 11/11 Green (2026-11-16)
 
 ### Trigger

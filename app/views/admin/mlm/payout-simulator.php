@@ -21,8 +21,8 @@ $csrf_token = $csrf_token ?? '';
     </div>
     <div class="aps-cp-card-body">
         <p class="text-muted mb-3">
-            Simulate the full commission breakdown for any sale amount. Tracks A/B/C share a 20% global cap.
-            The 2% royalty pool contribution is tracked separately.
+            Simulate the full commission breakdown for any sale amount. Tracks A/B/C share a <?= (float)($planCap ?? 20.0) ?>% global cap (live from active plan).
+            The royalty pool contribution is tracked separately.
         </p>
 
         <form id="simForm" class="row g-3 align-items-end mb-4">

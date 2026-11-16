@@ -35,7 +35,11 @@ class CommissionPlanController extends AdminController
     public function create()
     {
         $this->requireAdmin();
-        $this->render('admin/commission/plans/create', []);
+        $activePlanCaps = $this->planService->getActivePlan();
+        $planCap = ($activePlanCaps && isset($activePlanCaps['global_cap_pct']) && (float)$activePlanCaps['global_cap_pct'] > 0)
+            ? (float)$activePlanCaps['global_cap_pct']
+            : 20.0;
+        $this->render('admin/commission/plans/create', compact('planCap'));
     }
 
     /* ── STORE ── */
