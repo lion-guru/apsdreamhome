@@ -1,3 +1,41 @@
+## Session 623: Summernote Editors Silently Broken Since Deployment - Dual-jQuery Registry Loss + BS4-Tooltip Calls on a BS5 Stack - Fixed, Verified Live (18 Buttons, 0 Console Errors), Vendor Tracked (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — continuation of the jQuery-after-view remediation series (S618/S621). The S621 sweep moved `$('...').summernote(...)` initializers into `window.addEventListener('load')` but never verified the editors actually built.
+
+### Root Causes (verified live, not assumed)
+Two stacked silent-failure layers in `admin/news/create.php` and `admin/news/edit.php` (same family as `admin/pages/edit.php`):
+1. **Dual-jQuery registry loss**: the view loaded its own `jquery-3.6.0.min.js` and summernote registered itself on THAT instance — but `layouts/admin.php` loads `jquery-3.7.1.min.js` AFTER view content, **replacing global `window.jQuery`** before the deferred `load` handler ran. The handler guarded on `window.jQuery.fn.summernote` — which existed nowhere — so summernote never initialized. **The editors had been 0-button for their whole lifetime while appearing editable.**
+2. **BS4 tooltip calls on a BS5 stack**: summernote-bs4.min.js (and the BS5 build, nearly identical source) calls `n.attr({title, "aria-label"}).tooltip({container, trigger:"hover"})` — requiring a jQuery-based Bootstrap tooltip plugin. Admin layout ships `bootstrap.bundle.min.js` v5.3.0 (no jQuery plugins at all); the view-local jQuery 3.6.0 got **no** Bootstrap JS. Result: `TypeError: e.attr(...).tooltip is not a function` at every editor init.
+
+### Fix (all probe-verified, 3 pages × fresh logins)
+- Captured the view-local jQuery in `apsNewsJQ` before the layout replaces it; init guarded on `apsNewsJQ.fn.summernote` (S622 pattern).
+- `tooltip: false` in summernote options on all three editors (`news/create`, `news/edit`, `pages/edit`) — kills every `.tooltip()` call; 18 toolbar buttons build and render.
+- Vendored summernote 0.8.20 **bs5** build locally (`public/assets/js/vendor/summernote/summernote-bs5.min.{js,css}`) matching the BS5 admin stack; reused existing vendored `font/` assets (bs4 untouched — pages/edit.php still uses bs4 pair for parity with its CSS).
+- Removed dead CDN reference to `summernote@0.8.18/dist/summernote-bs4.min.js` (unreachable after S618 condition) in favour of the local BS5 pair.
+
+### Verification (live, in-app Chromium, fresh `?test_login=1` session)
+- `/admin/news/create` → **18 toolbar buttons, `.note-editor` present, 0 console errors**
+- `/admin/news/5/edit` → **18 toolbar buttons, 0 console errors**
+- `/admin/pages/edit/1` → **18 toolbar buttons, 0 console errors** (bs4 + `tooltip: false`)
+- **Master suite → 11/11 PASSED** (31.22s) · **PHPStan → `[OK] No errors`** · `php -l` clean ×3
+- DB zero drift: news article id=5 opened read-only; no writes.
+
+### Commit & push hygiene (disclosed)
+- `7545d1c05` — view files + guessed vendor staging; hook pushed it BUT .gitignore `vendor/` rule silently dropped my vendor pair (never tracked). **Caught within minutes post-push**; fixed by force-add following the S598 convention (`git add -f` — bs4 pair was already tracked that way).
+- `71c0eeac3` — `fix(vendor): track summernote bs5 build ... follows bs4 force-add convention` — bs5 JS+CSS now on `origin/main`. Both commits pushed.
+- Parallel actor also landed `ee9820351 (S621 view sweep)`, `5ab968ba6 (S619+S621 churn+assign AI services)`, `33affc52f (S622)` in the same window — none of my files touched by them except the whole-tree carry of my apsNewsJQ fix into S621's commit.
+- Incidental: first sed-style patch corrupted two files with literal backticks; repaired byte-clean before commit (edit tool, verified `php -l`).
+
+### Key lessons (carried, continued)
+_1325. **A "fixed" guard is not a booted widget**: S621 moved initializers into `load` but never verified the widget existed afterwards. Every deferred initializer must be asserted by element ID/class in-browser — the quiet editor was 0-button.
+_1326. **jQuery globals replaced by the layout**: any view-local jQuery silently yields to the layout's jQuery before `load` fires. Capture `window.jQuery` into a local var at view-parse time; never read the global in deferred handlers.
+_1327. **BS4-era plugins on a BS5 admin are never free**: `.tooltip()` (and any `fn.*` from Bootstrap 4) silently no-op or throw on a BS5 bundle. Audit every plugin call chain before assuming it survives the stack.
+_1328. **gitignore silently strips staged files**: `vendor/` ignored means `$ git add` "succeeds" on files never staged. Force-add per established convention and re-check `git ls-files` after every vendor-assets commit.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 622 (parallel actor). This entry = **S623**. Next-free = **624**.
+
 ## Session 622: Persistent MLM Rank Slabs 1054 Column Fix, High-Budget Lead Creation Undefined Role Cured, Voice Analytics & Vendor Schema Alignments, Lead Lifecycle E2E Verified (2026-11-16)
 
 ### Trigger
