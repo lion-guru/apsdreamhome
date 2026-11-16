@@ -72,6 +72,12 @@ class MLMCommissionController extends AdminController
         $stats = $this->engine->getDashboardStats();
         $rankBenefits = $this->engine->getRankBenefits();
         $cron = $this->engine->getRecentCronRuns(5);
+        $activeSnapshot = $this->engine->getActivePlanSnapshot();
+        $planCap = ($activeSnapshot && isset($activeSnapshot['global_cap_pct']) && (float)$activeSnapshot['global_cap_pct'] > 0)
+            ? (float)$activeSnapshot['global_cap_pct']
+            : 20.0;
+        $planGen1 = isset($activeSnapshot['same_level_override_gen1']) ? (float)$activeSnapshot['same_level_override_gen1'] : 2.0;
+        $planGen2 = isset($activeSnapshot['same_level_override_gen2']) ? (float)$activeSnapshot['same_level_override_gen2'] : 1.0;
 
         $this->data = array_merge($this->data, [
             'page_title'   => 'MLM Commission Dashboard',
@@ -79,6 +85,9 @@ class MLMCommissionController extends AdminController
             'stats'        => $stats,
             'rankBenefits' => $rankBenefits,
             'cron'         => $cron,
+            'planCap'      => $planCap,
+            'planGen1'     => $planGen1,
+            'planGen2'     => $planGen2,
         ]);
         return $this->render('admin/mlm/dashboard', $this->data);
     }

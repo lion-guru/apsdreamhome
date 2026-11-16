@@ -124,6 +124,55 @@ $byLevel    = (is_array($churnStats) && isset($churnStats['by_level']) && is_arr
         </div>
     </div>
 
+    <!-- Unassigned leads — Smart Routing Preview (advisory; zero writes on GET) -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header fw-bold bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="fas fa-compass text-success me-2"></i>Unassigned Leads — Smart Routing Preview <span class="badge bg-success text-dark ms-1">advisory</span></span>
+            <form method="POST" action="<?= $base ?>/admin/ai-morning-brief/run-smart-assignment" class="d-flex align-items-center gap-2 m-0" onsubmit="return confirm('Run bounded smart re-route (max 50 unassigned leads)?');">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                <button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-bolt me-1"></i>Auto-Assign Up to 50</button>
+            </form>
+        </div>
+        <div class="card-body">
+            <?php if (empty($unassigned_count)): ?>
+            <div class="text-muted small py-3 text-center"><i class="fas fa-check-circle text-success me-1"></i><strong>Pipeline clean — every open lead is assigned.</strong> The button re-scans unassigned leads (max 50 per click); nothing changes until you click it.</div>
+            <?php else: ?>
+            <div class="row g-3 align-items-center">
+                <div class="col-md-3 text-center">
+                    <div class="display-6 fw-bold text-success"><?= (int)($unassigned_count ?? 0) ?></div>
+                    <div class="small text-muted">open unassigned leads</div>
+                    <?php if (!empty($unassigned_oldest)): ?>
+                    <div class="small text-muted mt-1">oldest: <?= htmlspecialchars(date('d M', strtotime($unassigned_oldest))) ?></div>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-9">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead class="table-light"><tr><th>Lead</th><th>Source</th><th>Score</th><th>Best-fit (advisory)</th><th></th></tr></thead>
+                            <tbody>
+                                <?php foreach (($unassigned_preview ?? []) as $p): ?>
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold"><?= htmlspecialchars($p['name'] ?? '-') ?></div>
+                                        <small class="text-muted"><?= htmlspecialchars($p['phone'] ?? '') ?></small>
+                                    </td>
+                                    <td class="small"><?= htmlspecialchars($p['source'] ?? '') ?></td>
+                                    <td><span class="badge bg-<?= ($p['lead_score'] ?? 0) >= 70 ? 'success' : (($p['lead_score'] ?? 0) >= 40 ? 'warning' : 'secondary') ?>"><?= (int)($p['lead_score'] ?? 0) ?></span></td>
+                                    <td class="small"><?php if (!empty($p['best_fit_name'])): ?><?= htmlspecialchars($p['best_fit_name']) ?> <span class="text-muted">(<?= htmlspecialchars($p['best_fit_role'] ?? '') ?>) <?= number_format((float)($p['best_fit_score'] ?? 0), 1) ?></span><?php else: ?><span class="text-muted">no candidate ranked</span><?php endif; ?></td>
+                                    <td><a class="btn btn-sm btn-outline-primary" href="<?= $base ?>/admin/leads/show/<?= (int)($p['lead_id'] ?? 0) ?>">Open</a></td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php if (empty($unassigned_preview)): ?><tr><td colspan="5" class="text-center text-muted py-3">No details to show</td></tr><?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="small text-muted mt-1"><i class="fas fa-info-circle me-1"></i>Best-fit is advisory (6-factor composite: performance 25 / conversion 25 / response time 20 / workload 15 / specialization 10 / budget 5). Clicking Auto-Assign writes up to 50 assignments via the smart router with a `smart_assign` audit trail; manually-assigned and closed leads are never touched.</div>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- RIGHT: Top 5 leads to call -->
         <div class="col-lg-7">

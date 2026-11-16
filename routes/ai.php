@@ -87,6 +87,7 @@ $router->post('/admin/rag/reembed', 'App\\Http\\Controllers\\Admin\\RAGAdminCont
 // AI Morning Brief for Sales Director
 $router->get('/admin/ai-morning-brief', 'App\\Http\\Controllers\\Admin\\AiMorningBriefController@index');
 $router->post('/admin/ai-morning-brief/run-churn-analysis', 'App\\Http\\Controllers\\Admin\\AiMorningBriefController@runChurnAnalysis');
+$router->post('/admin/ai-morning-brief/run-smart-assignment', 'App\\Http\\Controllers\\Admin\\AiMorningBriefController@runSmartAssignment');
 
 // AI Training
 $router->get('/admin/ai-training', 'App\\Http\\Controllers\\Admin\\AdminAIController@training');

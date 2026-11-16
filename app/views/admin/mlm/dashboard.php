@@ -232,9 +232,9 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
             </div>
             <div class="aps-cp-card-body">
                 <div class="mb-2"><strong>Model:</strong> Differential (upline earns gap between their rate & downline's)</div>
-                <div class="mb-2"><strong>Global Cap:</strong> 20% per sale</div>
+                <div class="mb-2"><strong>Global Cap:</strong> <?= (float)($planCap ?? 20.0) ?>% per sale (live from active plan)</div>
                 <div class="mb-2"><strong>Depth:</strong> 7-level upline walk</div>
-                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> 2% Gen1 →' 1% Gen2 →' 0% Gen3+</div>
+                <div class="mb-2"><strong>Same-Rank Breakaway:</strong> <?= (float)($planGen1 ?? 2.0) ?>% Gen1, <?= (float)($planGen2 ?? 1.0) ?>% Gen2, 0% Gen3+ (live from active plan)</div>
                 <hr>
                 <div class="mb-1"><strong>Monthly Streams:</strong></div>
                 <ul class="list-unstyled ps-3">

@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\AdminController;
 use App\Services\AI\DemandForecastService;
 use App\Services\AI\LeadChurnPredictionService;
+use App\Services\AI\SmartLeadAssignmentService;
 
 class AiMorningBriefController extends AdminController
 {
@@ -132,6 +133,52 @@ class AiMorningBriefController extends AdminController
             $highRiskLeads = $churnSvc->getHighRiskLeads(6);
         } catch (\Throwable $e) { error_log('AiMorningBrief churn: ' . $e->getMessage()); }
 
+        // ── 8. Unassigned leads — smart routing advisory (zero writes on GET) ──
+        $unassignedCount = 0;
+        $unassignedOldest = null;
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT COUNT(*) AS c, MIN(created_at) AS oldest
+                 FROM leads
+                 WHERE assigned_to IS NULL
+                   AND deleted_at IS NULL
+                   AND status NOT IN ('closed_won','closed_lost','converted','dead','cancelled')"
+            );
+            $unassignedCount = (int)($row['c'] ?? 0);
+            $unassignedOldest = $row['oldest'] ?? null;
+        } catch (\Throwable $e) { error_log('AiMorningBrief unassignedCount: ' . $e->getMessage()); }
+
+        $unassignedPreview = [];
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT id, name, phone, source, status, lead_score, created_at
+                 FROM leads
+                 WHERE assigned_to IS NULL
+                   AND deleted_at IS NULL
+                   AND status NOT IN ('closed_won','closed_lost','converted','dead','cancelled')
+                 ORDER BY lead_score DESC, id DESC
+                 LIMIT 5"
+            );
+            if (!empty($rows)) {
+                $smartSvc = new SmartLeadAssignmentService($this->db);
+                foreach ($rows as $r) {
+                    $rec = $smartSvc->recommendForLead((int)$r['id'], 1);
+                    $best = (($rec['success'] ?? false) && !empty($rec['recommendations'])) ? $rec['recommendations'][0] : null;
+                    $unassignedPreview[] = [
+                        'lead_id' => (int) $r['id'],
+                        'name' => $r['name'] ?? '',
+                        'phone' => $r['phone'] ?? '',
+                        'source' => $r['source'] ?? '',
+                        'lead_score' => (int) ($r['lead_score'] ?? 0),
+                        'created_at' => $r['created_at'] ?? null,
+                        'best_fit_name' => $best['name'] ?? null,
+                        'best_fit_role' => $best['role'] ?? null,
+                        'best_fit_score' => isset($best['total_score']) ? round((float)$best['total_score'], 1) : null,
+                    ];
+                }
+            }
+        } catch (\Throwable $e) { error_log('AiMorningBrief unassignedPreview: ' . $e->getMessage()); }
+
         $data = [
             'page_title' => 'AI Morning Brief - Sales Director',
             'page_description' => 'Today\'s 3-minute brief: who to call, what to chase, what\'s at risk.',
@@ -145,9 +192,41 @@ class AiMorningBriefController extends AdminController
             'demand_forecast' => $demandForecast,
             'churn_stats' => $churnStats,
             'high_risk_leads' => $highRiskLeads,
+            'unassigned_count' => $unassignedCount,
+            'unassigned_oldest' => $unassignedOldest,
+            'unassigned_preview' => $unassignedPreview,
         ];
 
         $this->render('admin/ai_morning_brief', $data);
+    }
+
+    /**
+     * POST /admin/ai-morning-brief/run-smart-assignment
+     * Bounded smart re-route of unassigned open leads (max 50 per click).
+     * Admin-triggered ONLY — never runs on page load. Writes leads.assigned_to
+     * + crm_assignments (reason smart_assign). CSRF-gated.
+     */
+    public function runSmartAssignment()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $assigned = 0;
+            $failed = 0;
+            $total = 0;
+            $smartSvc = new SmartLeadAssignmentService($this->db);
+            $results = $smartSvc->autoAssignBatch(50);
+            $assigned = (int)($results['assigned'] ?? 0);
+            $failed = (int)($results['failed'] ?? 0);
+            $total = (int)($results['total'] ?? 0);
+            $this->setFlash('success', "Smart re-route complete: {$assigned} assigned, {$failed} failed, of {$total} unassigned scanned.");
+        } catch (\Throwable $e) {
+            error_log('AiMorningBrief runSmartAssignment: ' . $e->getMessage());
+            $this->setFlash('error', 'Smart re-route failed — see error log. No partial writes beyond what the batch already committed.');
+        }
+
+        $this->redirect('/admin/ai-morning-brief');
     }
 
     /**

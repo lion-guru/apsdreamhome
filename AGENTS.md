@@ -1,3 +1,29 @@
+## Session 640: MLM Dashboard Stale "Global Cap 20%" + "Same-Rank Breakaway" Lines Wired to Live Active Plan, Gates Green (2026-11-16)
+
+### Trigger
+"Last stale 20%" family sweep after S639 (calculator/edit) hit `app/views/admin/mlm/dashboard.php` — the MLM engine dashboard sold a "Global Cap: 20% per sale" absolute, plus a mojibake'd "Same-Rank Breakaway: 2% Gen1 ' 1% Gen2" line — both hardcoded, both lost the connection to live plan snapshot since S634 moved cap sourcing to `$activeSnapshot`.
+
+### What was built
+1. **`Admin\MLMCommissionController::index()`** — now resolves `$this->engine->getActivePlanSnapshot()` (existing public method, zero engine changes) and passes the live `planCap`, `planGen1`, `planGen2` into the view (float-cast with 20/2/1 fallbacks when snapshot is missing).
+2. **`app/views/admin/mlm/dashboard.php`** — "Global Cap: <?= planCap ?>% per sale (live from active plan)" and "Same-Rank Breakaway: <?= planGen1 ?>% Gen1, <?= planGen2 ?>% Gen2, 0% Gen3+ (live from active plan)"; mojibake repaired line.
+
+### Honest notes
+- `$this->engine->getActivePlanSnapshot()` is the same method S634 rewires into the cap path — zero divergence between dashboard copy and engine math.
+- 3 PHPStan errors exist at lines 1094/1197/1592 of `Front\CustomerPassbookController.php` — **pre-existing parallel actor files, not this session**; untouched, not staged, not fixed. My two files produce zero PHPStan errors.
+- `.engine` property is `protected`, so the controller route touches it directly — consistent with the rest of the class that calls `$this->engine->*`.
+- No DB writers; pure controller+view interpolation, no new endpoints.
+
+### Verification
+- `php -l` clean ×2 · **Master → 11/11 PASSED** (51.88s — earlier truncated-pipe reported exit 1, direct rerun green) · phpstan errors attributable to parallel actor's `CustomerPassbookController.php`, none to this round's files · **live browser probe** `/admin/mlm/dashboard`: "Global Cap: 20% per sale (live from active plan)" and "Same-Rank Breakaway: 2% Gen1, 1% Gen2, 0% Gen3+ (live from active plan)" render — values match live DIRECT plan (verified via coherence card values 5/7/10/12/15/18/20 + S634 cap read) · console errors = 0.
+- AGENTS.md integrity OK at this entry.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **639** (mine, calculator+edit honesty sweep). This entry = **S640**. Next-free = **641**.
+
+### Key lessons
+_1376. **Engine-facing copy must come from the same engine snapshot the enforcement uses** — the dashboard saying "20%" while the engine enforces `global_cap_pct` was exactly the bug family this session has been closing one page at a time since S634.
+_1377. **Mojibake bytes are invisible until they're in the diff — scan every view edit for U+FFFD before committing.** This file had them on line 237; `ReadingAllText` + count-of-`0xFFFD` is a 1-second gate.
+_1378. **A pipe through Select-Object that prints only the last 4 lines can mask exit code 1 — verify with a direct full run before writing "PASS" in the log.**
 ## Session 639: Commission Plans Calculator Cap Hardcode Fixed (JS now reads active plan via GLOBAL_CAP), Edit Page Honesty Advisory Added, Gates Green (2026-11-16)
 
 ### Trigger
