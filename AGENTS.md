@@ -1,3 +1,28 @@
+## Session 603: Legacy SMSController SMS Relay Closed — /api/sms/send-otp, /api/sms/verify-otp Gone, Plus Nested chart_of_accounts Duplicates Removed by Parallel Actor With Attribution, Master 11/11 (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — a continuation of the S602 census round, applying the same scrutiny to auth/SMS and duplicate-asset cleanup.
+
+### What was actually broken (probe-verified, all fixed/removed)
+
+**1. Legacy SMSController was a live unauthenticated SMS relay** — `SMSController::sendOTP()` (`app/Http/Controllers/SMSController.php`) was reachable via `POST /api/sms/send-otp` with no auth, no authorization check, no rate limiting. It did `require_once` + two `$router->post(...)` registrations in `routes/web.php`. It calls `$this->smsService->sendOTP($mobile)` to trigger real (billable) SMS sends; the whole OTP flow for modern auth uses `OTPService` / `OtpAuthController` — nothing in views, JS, mobile, or docs ever called these routes. `sms/dashboard.php` was also unreachable (SMSController render path had no route for the SMS dashboard view — dead view).
+- **Fix:** removed the `require_once` block and both route registrations from `routes/web.php`. `SMSController.php` now has zero HTTP route references (remote actor has since restored the file — kept; unrouted dead code).
+- **Test:** `POST /api/sms/send-otp` returns **404**; GET / and /api/health still 200; **Master 11/11 PASSED**.
+
+**2. Nested `admin/chart_of_accounts/chart_of_accounts/`** — a byte-identical duplicate directory of `admin/chart_of_accounts/` (create.php, edit.php, index.php all SHA256-identical to the parent) created accidental import-time duplication. I ran `git rm` on the three files; a parallel actor then committed the removals as `f92f62b29 chore(admin): remove stale nested chart_of_accounts/chart_of_accounts/ duplicates` with honest attribution, then restored `SMSController.php` in a later commit `340b9bdd6`. Both include honest framing; both pushed; my work and their work never conflict.
+
+**3. Poster test artifact** — `storage/app/posters/poster_2_455_teal.png` (untracked test output) removed from the worktree; `git status` clean except for parallel actor's files.
+
+### Incidents (disclosed, handled)
+- Parallel actor's `c70171316` accidentally deleted `SMSController.php` as part of a whole-tree commit; `340b9bdd6` restored it cleanly. My staged route removal survived untouched; file restored from git history byte-identical; no data lost because my intended removal was routes, not the class file.
+- My `git rm` on the 3 nested chart_of_accounts files was absorbed into the parallel actor's `f92f62b29` honestly attributed commit rather than my own commit — no harm, no conflict.
+
+### Verified end-to-end
+- `GET /` 200, `GET /api/health` 200, `POST /api/sms/send-otp` **404** (relay closed), Master **11/11 PASSED**.
+- No DB writes; no migrations; no routes to `/api/sms/verify-otp` or `/api/sms/send-otp` exist anywhere.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 602. This entry = S603. Next-free = **604**.
 ## Session 602: Whole-Surface Inline-Script Parse Census Fix — 0/2212 Views Unparseable, 12 admin pages rescued (PHP-in-JS rewritten properly, duplicate JS block removed, mojibake byte removed, unterminated template literal fixed, 7 sed-migration orphan `.catch` removed, PHP cast in JS removed, 2 bulk-import `)` closures repaired, PHPStan OK, Master 11/11 (2026-11-16)
 
 ### Trigger
