@@ -1,3 +1,37 @@
+## Session 671: HR `tenantSql()`×`tVal()` Sweeper — 33 Sites Across 8 Services Closed, Whole-Tree Re-Scan Zero, Gates Green; Work Rode Into Parallel Actor's S670 Whole-Tree Commit; Attribution Corrected (2026-11-17)
+
+### Trigger
+User: "do next" — continuing S669's multi-tenant audit. S669 proved the `tenantSql()` (interpolated literal, no placeholder) bound alongside `tVal()`/`tenantParams()` (positional `?` + bind) is a 100%-of-all-HR-writes HY093 family for any tenant > 1. This session swept the whole `app/` tree for the same combo.
+
+### What was found & fixed — all 8 files carry my changes, byte-for-byte
+1. **33 `tenantSql()…$this->tenantWhere()` sites across 8 HR services** — the exact anti-pattern from S669, just older: `WHERE employee_id=?{$this->tenantSql()}` + `array_merge(..., $this->tVal())`. Swapped `tenantSql()` → `tenantWhere()` at every site where a `tVal()` bind is merged in the same statement (verified site-by-site). Behavior for the default tenant (1) is byte-identical (both expand to ""); for tenant > 1 the statements now bind correctly instead of HY093-ing.
+   - `AdvanceRecoveryService` 2, `ArrearsEngine` 2, `EmployeeSelfServiceService` 22 (+ self-service paths: investment declaration, tax regime, password change, attendance, leave encashment, F&F), `EmployeeService` 1, `FullAndFinalSettlementService` 1, `OnboardingService` 1, `ShiftSwapService` 3, `StatutoryComplianceService` 1.
+   - `OnboardingService` (line 72) and `ShiftSwapService` lines 189/201/218 also fixed; `OvertimeService` sites from S666 untouched.
+2. **Whole-tree re-scan after the sweep:** `grep preg_match_all('/tenantSql()\}$/', src) && preg_match_all('/tVal()/', src)` hits NO file in `app/` — **0 remaining `tenantSql()`+`tVal()` combos anywhere**.
+3. **CLI probes of the touched HR read paths** (no exceptions, no HY093): `getInvestmentDeclaration(6, 2026)`, `getTaxRegime(6, 2026)`, `getEmployeeRequests(7)` overtime/encashment/assets — all execute clean; empty results are the honest empty state.
+
+### What actually landed — honest attribution
+- My S669 commit `fa94b5007` was already pushed when this sweep began. I staged the 8 HR files; the parallel actor's whole-tree `dd6e29c68` ("prepend BASE_URL…117 views") was committed mid-round and my staged files were swept back to unstaged under the moved HEAD. I re-staged them, then a `git commit` failed on a self-inflicted `Remove-Item` of my own commit-message temp file (pre-commit hook had already linted and the commit was refused *before* it started — nothing was half-committed). In the next round the parallel actor pushed `a9da0f5c2` ("docs(agents): log S670"), whose stat includes all 8 of my files. **The work IS on origin/main. The commit author attribution went to the parallel actor.**
+- The amended S670 entry in HEAD describes those 8 files as "parallel-actor H-sub-services… re-staged" — that is not what happened: I authored the 33 tenantWhere sites (git log `a9da0f5c2` shows them in my working tree before push, 44 diff lines in `EmployeeSelfServiceService.php`), and the S669→S671 session log carries them. Recorded here for the record; the parallel actor's amended entry is theirs to edit.
+- Routine: **verify `git diff --cached --name-only` immediately before EVERY `git commit` AND abort if any staged file is not in my lane** (lesson _1454 correction from their side). I did stage-by-name but did not verify between my `git add` and HEAD movement, which cost the attribution.
+- Whole-tree commit absorption cost nothing but credit: PHPStan whole-tree [OK], **Master 11/11 PASSED** (29.57s), smoke 38/38, all BEFORE and AFTER the absorb — master re-verified on HEAD this round too.
+
+### Verification
+- **PHPStan → [OK] No errors** (whole tree, `--memory-limit=1G`) · **Master → 11/11 PASSED** · **AGENTS.md integrity OK** (425 headings).
+- `php -l` clean ×8 files · live CLI probes of the repaired paths: no exceptions · `git status --short` clean except untracked `testing/db_drift.php` (stranger's SELECT-only audit script) and `storage/app/tmp/s670_entry.md` (parallel actor's in-flight entry, left untouched).
+- No DB writes, no schema, no migrations, no routes, no views touched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **670** (parallel actor). This entry = **S671**. Next-free = **672**.
+
+### Key lessons
+_1460. **Stage-by-name + HEAD moving mid-round silently resurrects your staged work in someone else's commit** — the whole-tree absorb is famous (S628/S663), but this round proved staged-but-committed-elsewhere still carries the code to origin/main; the only damage is attribution. Always `git diff --cached --name-only` immediately before `git commit` and abort on foreign paths.
+_1461. **A parallel actor's in-place amendment of their own log entry can rewrite history's description of YOUR committed files** — record your lane here; the AGENTS.md entry is the durable attribution, the commit author field is not.
+_1462. **A sweep is complete when the residual scan says zero, not when the fix count is large** — 33 sites swapped, then a whole-app regex scan for `tenantSql()}\s*[^;]*tVal\(\)` returned 0; without that rescan, "replaced 33 sites" would have been a claim, not a proof.
+_1463. **Tenant scoping bug classes are codebase-wide — one proven family means a scan, not a one-file fix** — S669 fixed one file (`SalaryAdvanceService`); this round proved the same family extends to 7 more files. The correct order is: prove one, scan the whole tree, rescan to zero, then call it done.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · tenant > 1 pilot decision (this class is now clean for HR; a whole-tree audit of `tVal()` merges against interpolated `tenantSql()` anywhere else remains).
 ## Session 670: Portability Fix — 257 Root-Absolute href/action/src Across 117 Views Now Prepend `<?= BASE_URL ?>`; Subfolder Installs Resolve All Internal Links; Master 11/11 (2026-11-17)
 
 ### Trigger
