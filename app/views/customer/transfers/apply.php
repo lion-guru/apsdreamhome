@@ -36,7 +36,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <!-- Application Form -->
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
-                <form method="POST" action="/customer/plot-transfers/apply">
+                <form method="POST" action="<?= BASE_URL ?>/customer/plot-transfers/apply">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                     <input type="hidden" name="booking_id" value="<?= (int)$booking['id'] ?>">
 

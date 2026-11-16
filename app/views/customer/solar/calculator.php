@@ -179,7 +179,7 @@ $is_logged_in = $is_logged_in ?? false;
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="/customer/solar/apply">
+        <form method="POST" action="<?= BASE_URL ?>/customer/solar/apply">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="system_capacity_kw" id="formKw" value="3.0">
             <input type="hidden" name="monthly_bill" id="formBill" value="3500">

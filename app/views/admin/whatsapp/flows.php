@@ -82,7 +82,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <form method="POST" action="/admin/whatsapp/flows/toggle/<?= (int)$f['id'] ?>" class="d-inline">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/whatsapp/flows/toggle/<?= (int)$f['id'] ?>" class="d-inline">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                         <button type="submit" class="btn btn-sm btn-link p-0 text-decoration-none">
                                             <?php if ($f['is_active']): ?>
@@ -94,7 +94,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                     </form>
                                 </td>
                                 <td class="text-end">
-                                    <form method="POST" action="/admin/whatsapp/flows/delete/<?= (int)$f['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this flow rule?');">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/whatsapp/flows/delete/<?= (int)$f['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this flow rule?');">
                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Flow">
                                             <i class="fas fa-trash"></i>
@@ -114,7 +114,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <div class="modal fade" id="newFlowModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="POST" action="/admin/whatsapp/flows/store">
+            <form method="POST" action="<?= BASE_URL ?>/admin/whatsapp/flows/store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">

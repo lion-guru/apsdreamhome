@@ -61,7 +61,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Filter Bar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
-            <form method="GET" action="/admin/township-security" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/township-security" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
                     <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -231,7 +231,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <!-- Modal: New Guard Roster -->
 <div class="modal fade" id="newRosterModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/township-security/roster" class="modal-content border-0 shadow">
+        <form method="POST" action="<?= BASE_URL ?>/admin/township-security/roster" class="modal-content border-0 shadow">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title"><i class="fas fa-user-shield me-2"></i>Schedule Guard Shift Roster</h5>
@@ -312,7 +312,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <!-- Modal: New Incident -->
 <div class="modal fade" id="newIncidentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/township-security/incident" class="modal-content border-0 shadow">
+        <form method="POST" action="<?= BASE_URL ?>/admin/township-security/incident" class="modal-content border-0 shadow">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Log Security / Patrol Incident</h5>
@@ -393,7 +393,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <!-- Modal: Resolve Incident -->
 <div class="modal fade" id="resolveIncidentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="/admin/township-security/resolve" class="modal-content border-0 shadow">
+        <form method="POST" action="<?= BASE_URL ?>/admin/township-security/resolve" class="modal-content border-0 shadow">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
             <input type="hidden" name="incident_id" id="resolveIncidentId">
             <div class="modal-header bg-success text-white">

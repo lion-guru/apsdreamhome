@@ -1,3 +1,27 @@
+## Session 630: Form Portability & Security Sweep — 100 Hardcoded Action URLs Prefixed with BASE_URL Across 59 Views, Missing CSRF Added in Self-Service Grievances, Master 11/11 Green (2026-11-16)
+
+### Trigger
+Deep form submission & routing audit. When testing forms in subfolder/staging environments (`/apsdreamhome`), hardcoded absolute action URLs (`action="/admin/..."`, `action="/customer/..."`, etc.) bypass the application subdirectory and submit directly to web server root (`http://localhost/admin/...`), causing 404 Not Found failures. Additionally, scanned for POST forms lacking CSRF protection.
+
+### Root Causes & Fixes Applied
+1. **100 Hardcoded Action Paths Prefixed (`action="/..."` -> `action="<?= BASE_URL ?>/..."` across 59 Views):**
+   - Scanned all view forms. 59 views hardcoded server-root actions without `<?= BASE_URL ?>` (e.g. CCTV audits, civil work orders, commercial leases, land acquisitions, SRO registry booking, fleet driver trips, township grievances, solar requests, plot demarcations, and leave applications).
+   - In subfolder environments (like standard XAMPP `/apsdreamhome`), every submission to `/admin/...` or `/customer/...` hit `http://localhost/` instead of `http://localhost/apsdreamhome/`, causing 404 errors.
+   - **Fix:** Systematically transformed all 100 hardcoded action attributes across 59 view files to prepend `<?= BASE_URL ?>`, matching the 4,815 other portable links and routes across the project.
+2. **Missing CSRF Tokens Cured in Employee Self-Service Grievance Forms:**
+   - `app/views/employee/self_service/grievance_create.php`: POST form for filing grievances lacked `csrf_token` input entirely, triggering 403 Forbidden for any employee filing a complaint. Added `<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">`.
+   - `app/views/employee/self_service/grievance_close.php`: Rating & resolution closure POST form lacked `csrf_token`. Added CSRF token.
+   - `app/views/employee/self_service/grievance_detail.php`: Clarification/response reply POST form lacked `csrf_token`. Added CSRF token.
+
+### Verification & Quality Gates
+- **PHP Syntax Check (`php -l`):** 62 touched PHP files all passed syntax check (`SUCCESS: All 62 touched PHP files passed php -l lint check!`).
+- **PHPStan Static Analysis:** 1517/1517 files analyzed -> `[OK] No errors` (`--memory-limit=1G`).
+- **Master Test Suite Runner:** **11/11 Test Suites PASSED** (47.66s, 100% HEALTHY).
+- **Zero DB Drift:** Verified users (82), bookings (23), leads (994), transactions (5), ledger (359), email queue (14) — 100% clean.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 629. This entry = **S630**. Next-free = **631**.
+
 ## Session 629: Deep UI & Form Audit - 33 Truly Broken FA Icons Replaced in 41 Files, Commission Plan Rank-Level Inputs Wired End-to-End (Live Probe: Direct % 5.00->6.50 Persisted, Then Cleaned), OTP/Booking Inputs Accessibly Labeled, AGENTS.md Damage Restored Byte-Exact, PHPStan OK Master 11/11 (2026-11-16)
 
 ### Trigger

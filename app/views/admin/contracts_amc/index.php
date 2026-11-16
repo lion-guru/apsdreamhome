@@ -201,7 +201,7 @@
                       <a href="/admin/contracts-amc/<?= (int)$c['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                       <a href="/admin/contracts-amc/<?= (int)$c['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
                       <?php if ($c['status'] === 'active' || $c['status'] === 'expiring_soon' || $c['status'] === 'expired'): ?>
-                        <form method="POST" action="/admin/contracts-amc/<?= (int)$c['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$c['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
                           <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                           <button type="submit" class="btn btn-outline-success" title="Renew"><i class="fas fa-sync"></i></button>
                         </form>

@@ -53,7 +53,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Filter Toolbar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-3">
-            <form method="GET" action="/admin/construction-approvals" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/construction-approvals" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <label for="filter_colony" class="visually-hidden">Township Colony</label>
                     <select aria-label="Colony id" name="colony_id" id="filter_colony" class="form-select form-select-sm">
@@ -178,7 +178,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <!-- Inspect Modal -->
                                         <div class="modal fade" id="inspectModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <form method="POST" action="/admin/construction-approvals/inspect/<?= $row['id'] ?>">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/construction-approvals/inspect/<?= $row['id'] ?>">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                     <div class="modal-content text-start">
                                                         <div class="modal-header">
@@ -211,7 +211,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <!-- Approve Modal -->
                                         <div class="modal fade" id="approveModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <form method="POST" action="/admin/construction-approvals/approve/<?= $row['id'] ?>">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/construction-approvals/approve/<?= $row['id'] ?>">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                     <div class="modal-content text-start">
                                                         <div class="modal-header">
@@ -241,7 +241,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <!-- Reject Modal -->
                                         <div class="modal fade" id="rejectModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <form method="POST" action="/admin/construction-approvals/reject/<?= $row['id'] ?>">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/construction-approvals/reject/<?= $row['id'] ?>">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                     <div class="modal-content text-start">
                                                         <div class="modal-header">

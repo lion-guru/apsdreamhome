@@ -15,7 +15,7 @@
           <h5 class="mb-0">AI Property Valuation Generator</h5>
         </div>
         <div class="card-body">
-          <form id="valuationForm" method="POST" action="/admin/property-valuations/generate">
+          <form id="valuationForm" method="POST" action="<?= BASE_URL ?>/admin/property-valuations/generate">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             
             <div class="mb-3">

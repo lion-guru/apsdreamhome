@@ -16,7 +16,7 @@
                             <h3 class="card-title">Update Exchange Rate</h3>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="/admin/multi-currency/update/<?php echo (int)$rate['id']; ?>" id="editRateForm">
+                            <form method="post" action="<?= BASE_URL ?>/admin/multi-currency/update/<?php echo (int)$rate['id']; ?>" id="editRateForm">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                 <div class="row">
                                     <div class="col-md-6">

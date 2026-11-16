@@ -18,7 +18,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
             <p><strong>Survey Token:</strong> <?= htmlspecialchars($item['survey_token'] ?? '') ?></p>
         </div>
     </div>
-    <form method="post" action="/admin/feedback-pipeline/<?= (int)$item['id'] ?>/status">
+    <form method="post" action="<?= BASE_URL ?>/admin/feedback-pipeline/<?= (int)$item['id'] ?>/status">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Status</label>

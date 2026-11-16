@@ -32,7 +32,7 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
         </div>
         <div>
             <?php if (strtolower($leave['status'] ?? '') === 'pending'): ?>
-                <form method="POST" action="/employee/leaves/<?= (int)$leave['id'] ?>/cancel" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this leave application?')">
+                <form method="POST" action="<?= BASE_URL ?>/employee/leaves/<?= (int)$leave['id'] ?>/cancel" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this leave application?')">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <button type="submit" class="btn btn-outline-danger"><i class="fas fa-times me-1"></i>Cancel Leave</button>
                 </form>
@@ -145,7 +145,7 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
                         <div class="text-center fw-semibold">Pending Approval</div>
                         <div class="text-center text-muted small">Waiting for manager to review</div>
                         <div class="mt-3 text-center">
-                            <form method="POST" action="/employee/leaves/<?= (int)$leave['id'] ?>/cancel" onsubmit="return confirm('Cancel this leave application?')">
+                            <form method="POST" action="<?= BASE_URL ?>/employee/leaves/<?= (int)$leave['id'] ?>/cancel" onsubmit="return confirm('Cancel this leave application?')">
                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times me-1"></i>Cancel Application</button>
                             </form>

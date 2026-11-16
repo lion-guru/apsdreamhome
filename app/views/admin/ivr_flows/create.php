@@ -22,7 +22,7 @@ $page_title = $page_title ?? 'Create IVR Flow';
                 <h5 class="mb-0">Flow Details</h5>
             </div>
             <div class="card-body">
-                <form method="POST" action="/admin/ivr-flows/store">
+                <form method="POST" action="<?= BASE_URL ?>/admin/ivr-flows/store">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     
                     <div class="mb-3">

@@ -21,7 +21,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         </div>
         <div>
             <!-- Status Update Form -->
-            <form method="POST" action="/admin/farmer-acquisitions/<?= (int)$acquisition['id'] ?>/status" class="d-inline-flex gap-2 align-items-center">
+            <form method="POST" action="<?= BASE_URL ?>/admin/farmer-acquisitions/<?= (int)$acquisition['id'] ?>/status" class="d-inline-flex gap-2 align-items-center">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <label for="deal_status_select" class="visually-hidden">Lifecycle Stage</label>
                 <select aria-label="Status" name="status" id="deal_status_select" class="form-select form-select-sm">
@@ -155,7 +155,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                     <!-- Disburse Payout Modal -->
                                     <div class="modal fade" id="payoutModal<?= $m['id'] ?>" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog">
-                                            <form method="POST" action="/admin/farmer-acquisitions/milestones/<?= $m['id'] ?>/disburse">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/farmer-acquisitions/milestones/<?= $m['id'] ?>/disburse">
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                 <input type="hidden" name="acquisition_id" value="<?= (int)$acquisition['id'] ?>">
                                                 <div class="modal-content text-start">

@@ -200,7 +200,7 @@ $pct = $order['completion_pct'] ?? 0;
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
                                         <?php if ($b['status'] === 'submitted'): ?>
-                                            <form method="POST" action="/admin/work-orders/<?= $order['id'] ?>/bills/<?= $b['id'] ?>/approve" class="d-inline" onsubmit="return confirm('Approve this RA bill for payout?');">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/work-orders/<?= $order['id'] ?>/bills/<?= $b['id'] ?>/approve" class="d-inline" onsubmit="return confirm('Approve this RA bill for payout?');">
                                                 <?= \App\Helpers\SecurityHelper::csrfField() ?>
                                                 <button type="submit" class="btn btn-outline-success btn-sm">
                                                     <i class="fas fa-check me-1"></i>Approve
@@ -219,7 +219,7 @@ $pct = $order['completion_pct'] ?? 0;
                             <!-- Disburse Payment Modal -->
                             <div class="modal fade" id="payModal<?= $b['id'] ?>" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog">
-                                    <form method="POST" action="/admin/work-orders/<?= $order['id'] ?>/bills/<?= $b['id'] ?>/disburse" class="modal-content">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/work-orders/<?= $order['id'] ?>/bills/<?= $b['id'] ?>/disburse" class="modal-content">
                                         <?= \App\Helpers\SecurityHelper::csrfField() ?>
                                         <div class="modal-header">
                                             <h5 class="modal-title fw-bold">Disburse Payout: Bill #<?= htmlspecialchars($b['bill_number']) ?></h5>
@@ -271,7 +271,7 @@ $pct = $order['completion_pct'] ?? 0;
 <!-- Modal: New RA Bill -->
 <div class="modal fade" id="newBillModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="/admin/work-orders/<?= $order['id'] ?>/bills/store" class="modal-content">
+        <form method="POST" action="<?= BASE_URL ?>/admin/work-orders/<?= $order['id'] ?>/bills/store" class="modal-content">
             <?= \App\Helpers\SecurityHelper::csrfField() ?>
             <div class="modal-header">
                 <h5 class="modal-title fw-bold"><i class="fas fa-file-invoice text-primary me-2"></i>Record Running Account (RA) Bill</h5>

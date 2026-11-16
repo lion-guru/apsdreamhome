@@ -9,7 +9,7 @@
     <div class="btn-group">
       <a href="/admin/contracts-amc/<?= (int)$contract['id'] ?>/edit" class="btn btn-outline-secondary"><i class="fas fa-edit me-1"></i> Edit</a>
       <?php if (in_array($contract['status'], ['active','expiring_soon','expired'])): ?>
-        <form method="POST" action="/admin/contracts-amc/<?= (int)$contract['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
+        <form method="POST" action="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$contract['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
           <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
           <button type="submit" class="btn btn-outline-success"><i class="fas fa-sync me-1"></i> Renew</button>
         </form>
@@ -137,7 +137,7 @@
               <i class="fas fa-edit me-2"></i> Edit Contract
             </a>
             <?php if (in_array($contract['status'], ['active','expiring_soon','expired'])): ?>
-              <form method="POST" action="/admin/contracts-amc/<?= (int)$contract['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
+              <form method="POST" action="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$contract['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <button type="submit" class="btn btn-success w-100">
                   <i class="fas fa-sync me-2"></i> Renew Contract

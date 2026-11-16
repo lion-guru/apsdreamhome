@@ -18,7 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <small class="text-muted">Real-time site-visit cab dispatch tracking, passenger pickup status, and vehicle occupancy.</small>
         </div>
         <div class="d-flex gap-2">
-            <form method="GET" action="/admin/site-visits/fleet/live-tracking" class="d-flex gap-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/site-visits/fleet/live-tracking" class="d-flex gap-2 align-items-center">
                 <input aria-label="Date" type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date) ?>" onchange="this.form.submit()">
             </form>
             <a href="/admin/site-visits/manifest?date=<?= urlencode($date) ?>" target="_blank" class="btn btn-outline-secondary btn-sm">

@@ -77,7 +77,7 @@ $steps = $steps ?? [];
                                                     data-bs-toggle="modal" data-bs-target="#editStepModal">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <form method="POST" action="/admin/ivr-flows/<?= $s['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this step?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/ivr-flows/<?= $s['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this step?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                 <button type="submit" class="btn btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
@@ -102,7 +102,7 @@ $steps = $steps ?? [];
                 <h5 class="modal-title">Add IVR Step</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/admin/ivr-flows/<?= $flow['id'] ?>/steps/store" id="stepForm">
+            <form method="POST" action="<?= BASE_URL ?>/admin/ivr-flows/<?= $flow['id'] ?>/steps/store" id="stepForm">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="flow_id" value="<?= $flow['id'] ?>">
                 <div class="modal-body">
@@ -140,7 +140,7 @@ $steps = $steps ?? [];
                 <h5 class="modal-title">Edit IVR Step</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/admin/ivr-flows/steps/update" id="editStepForm">
+            <form method="POST" action="<?= BASE_URL ?>/admin/ivr-flows/steps/update" id="editStepForm">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <input type="hidden" name="step_id" id="edit_step_id">
                 <div class="modal-body">

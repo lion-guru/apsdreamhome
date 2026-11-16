@@ -86,7 +86,7 @@ $current_status = $current_status ?? 'all';
     <!-- Filter Bar -->
     <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white">
         <div class="card-body p-3">
-            <form method="GET" action="/admin/plots/demarcation" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/plots/demarcation" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All Townships / Colonies</option>
@@ -206,7 +206,7 @@ $current_status = $current_status ?? 'all';
                                         <div class="modal fade" id="verifyModal<?= $dem['id'] ?>" tabindex="-1">
                                             <div class="modal-dialog">
                                                 <div class="modal-content text-start">
-                                                    <form method="POST" action="/admin/plots/demarcation/<?= $dem['id'] ?>/verify">
+                                                    <form method="POST" action="<?= BASE_URL ?>/admin/plots/demarcation/<?= $dem['id'] ?>/verify">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Verify Plot Demarcation</h5>
@@ -246,7 +246,7 @@ $current_status = $current_status ?? 'all';
 <div class="modal fade" id="newDemarcationModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="POST" action="/admin/plots/demarcation/store">
+            <form method="POST" action="<?= BASE_URL ?>/admin/plots/demarcation/store">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title"><i class="fas fa-map-marked-alt me-2"></i>Record Plot Demarcation & Geotags</h5>

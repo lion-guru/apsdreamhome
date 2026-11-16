@@ -163,7 +163,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <div class="modal fade" id="approveModal<?= $a['id'] ?>" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <form method="POST" action="/admin/commission-advances/<?= $a['id'] ?>/approve">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/commission-advances/<?= $a['id'] ?>/approve">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                             <div class="modal-header">
                                                 <h6 class="modal-title fw-bold">Approve Advance #<?= $a['id'] ?> — <?= htmlspecialchars($a['associate_name']) ?></h6>
@@ -195,7 +195,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <div class="modal fade" id="disburseModal<?= $a['id'] ?>" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <form method="POST" action="/admin/commission-advances/<?= $a['id'] ?>/disburse">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/commission-advances/<?= $a['id'] ?>/disburse">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                             <div class="modal-header">
                                                 <h6 class="modal-title fw-bold">Record Bank Disbursement #<?= $a['id'] ?></h6>
@@ -220,7 +220,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <div class="modal fade" id="rejectModal<?= $a['id'] ?>" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <form method="POST" action="/admin/commission-advances/<?= $a['id'] ?>/reject">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/commission-advances/<?= $a['id'] ?>/reject">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                             <div class="modal-header">
                                                 <h6 class="modal-title fw-bold">Reject Advance #<?= $a['id'] ?></h6>

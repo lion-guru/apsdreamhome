@@ -15,7 +15,7 @@ $colony = $colony ?? null;
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-dark text-white"><strong><i class="fas fa-cut me-1"></i> Plot Configuration</strong></div>
         <div class="card-body">
-          <form method="POST" action="/admin/legal-colony-pipeline/generate-plots">
+          <form method="POST" action="<?= BASE_URL ?>/admin/legal-colony-pipeline/generate-plots">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="colony_id" value="<?= $colony['id'] ?? 0 ?>">
 

@@ -170,6 +170,7 @@ $comments = $comments ?? [];
                     <!-- Add Comment Form -->
                     <?php if (!in_array($grievance['status'] ?? '', ['closed'])): ?>
                         <form method="POST" action="<?= BASE_URL ?>/employee/self-service/grievances/<?= $grievance['id'] ?>/comment">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                             <div class="mb-3">
                                 <label for="comment" class="form-label fw-semibold small text-dark">Add Clarification / Response</label>
                                 <textarea aria-label="Comment" name="comment" id="comment" rows="3" class="form-control rounded-2" required placeholder="Type your response or additional context here..."></textarea>

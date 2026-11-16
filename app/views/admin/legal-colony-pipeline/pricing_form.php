@@ -15,7 +15,7 @@ $colony = $colony ?? null;
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-dark text-white"><strong><i class="fas fa-calculator me-1"></i> Pricing Configuration</strong></div>
         <div class="card-body">
-          <form method="POST" action="/admin/legal-colony-pipeline/calculate-pricing">
+          <form method="POST" action="<?= BASE_URL ?>/admin/legal-colony-pipeline/calculate-pricing">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="colony_id" value="<?= $colony['id'] ?? 0 ?>">
 

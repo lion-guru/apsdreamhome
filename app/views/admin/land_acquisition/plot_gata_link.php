@@ -31,7 +31,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
 
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-3">
-            <form method="GET" action="/admin/land-plot-link" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/land-plot-link" class="row g-2 align-items-center">
                 <div class="col-md-5">
                     <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
                         <?php foreach ($colonies as $c): ?>
@@ -132,7 +132,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
                             <td><?= htmlspecialchars($pc['village'] ?? '') ?></td>
                             <td class="text-end"><?= number_format((float)($pc['area_acres'] ?? 0), 2) ?> / <?= number_format((float)($pc['area_bigha'] ?? 0), 2) ?></td>
                             <td style="min-width:220px">
-                                <form method="POST" action="/admin/land-plot-link/owner" class="d-flex gap-1">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/land-plot-link/owner" class="d-flex gap-1">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                     <input type="hidden" name="colony_id" value="<?= $colony_id ?>">
                                     <input type="hidden" name="parcel_id" value="<?= (int)$pc['id'] ?>">
@@ -172,7 +172,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
                     <?php if (!$unlinked): ?>
                         <p class="text-muted small mb-0">Sab available plots parcel-linked hain. (Booked/sold ka link freeze hai.)</p>
                     <?php else: ?>
-                    <form method="POST" action="/admin/land-plot-link/link-plot" class="row g-2">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/land-plot-link/link-plot" class="row g-2">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                         <input type="hidden" name="colony_id" value="<?= $colony_id ?>">
                         <div class="col-md-5">

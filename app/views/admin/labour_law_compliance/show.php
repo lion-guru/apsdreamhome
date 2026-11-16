@@ -20,7 +20,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
             <p><strong>Remarks:</strong> <?= htmlspecialchars($item['remarks'] ?? '') ?></p>
         </div>
     </div>
-    <form method="post" action="/admin/labour-law-compliance/update-status/<?= (int)$item['id'] ?>">
+    <form method="post" action="<?= BASE_URL ?>/admin/labour-law-compliance/update-status/<?= (int)$item['id'] ?>">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Status</label>
@@ -49,7 +49,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <button type="submit" class="btn btn-primary">Update Status</button>
     </form>
-    <form method="post" action="/admin/labour-law-compliance/<?= (int)$item['id'] ?>/delete" class="mt-3">
+    <form method="post" action="<?= BASE_URL ?>/admin/labour-law-compliance/<?= (int)$item['id'] ?>/delete" class="mt-3">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>

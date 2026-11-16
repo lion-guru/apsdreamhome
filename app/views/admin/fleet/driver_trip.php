@@ -89,7 +89,7 @@ $status = $trip['status'] ?? 'scheduled';
     <!-- Quick Trip Lifecycle Controls -->
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-body">
-            <form method="POST" action="/driver/trip/<?= (int)$trip['id'] ?>/trip-status">
+            <form method="POST" action="<?= BASE_URL ?>/driver/trip/<?= (int)$trip['id'] ?>/trip-status">
                 <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
                 <?php if ($status === 'scheduled'): ?>
                     <button type="submit" name="action" value="start" class="btn btn-primary w-100 py-2 fw-bold">
@@ -145,7 +145,7 @@ $status = $trip['status'] ?? 'scheduled';
                 </div>
 
                 <!-- Status Toggles Form -->
-                <form method="POST" action="/driver/trip/<?= (int)$trip['id'] ?>/passenger/<?= (int)$p['site_visit_id'] ?>/status" class="d-flex gap-2 mt-2">
+                <form method="POST" action="<?= BASE_URL ?>/driver/trip/<?= (int)$trip['id'] ?>/passenger/<?= (int)$p['site_visit_id'] ?>/status" class="d-flex gap-2 mt-2">
                     <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
                     
                     <button type="submit" name="status" value="picked_up" class="btn btn-sm <?= $ps === 'picked_up' ? 'btn-success' : 'btn-outline-success' ?> status-btn flex-fill">

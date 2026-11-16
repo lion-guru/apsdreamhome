@@ -173,7 +173,7 @@ $appointment = $appointment ?? [];
                         <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><i class="fas fa-check-circle text-primary me-2"></i>Confirm SRO Date Slot</h2>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="/admin/registry-appointments/<?= $appointment['id'] ?>/confirm">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/registry-appointments/<?= $appointment['id'] ?>/confirm">
                             <?= \App\Helpers\SecurityHelper::csrfField() ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Confirmed SRO Date <span class="text-danger">*</span></label>
@@ -206,7 +206,7 @@ $appointment = $appointment ?? [];
                         <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><i class="fas fa-stamp text-success me-2"></i>Record Registry Deed Completion</h2>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="/admin/registry-appointments/<?= $appointment['id'] ?>/complete" enctype="multipart/form-data">
+                        <form method="POST" action="<?= BASE_URL ?>/admin/registry-appointments/<?= $appointment['id'] ?>/complete" enctype="multipart/form-data">
                             <?= \App\Helpers\SecurityHelper::csrfField() ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Official Deed / Bahi # <span class="text-danger">*</span></label>

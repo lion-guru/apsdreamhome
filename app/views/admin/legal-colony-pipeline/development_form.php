@@ -21,7 +21,7 @@ $costs  = $costs ?? [];
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-dark text-white"><strong><i class="fas fa-plus me-1"></i> Record Development Cost</strong></div>
         <div class="card-body">
-          <form method="POST" action="/admin/legal-colony-pipeline/store-cost">
+          <form method="POST" action="<?= BASE_URL ?>/admin/legal-colony-pipeline/store-cost">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <input type="hidden" name="colony_id" value="<?= $colony['id'] ?? 0 ?>">
 

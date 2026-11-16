@@ -70,7 +70,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Filter Toolbar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body p-3">
-            <form method="GET" action="/admin/township-grievances" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/township-grievances" class="row g-2 align-items-center">
                 <div class="col-md-3">
                     <label for="filter_colony" class="visually-hidden">Township Colony</label>
                     <select aria-label="Colony id" name="colony_id" id="filter_colony" class="form-select form-select-sm">
@@ -220,7 +220,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <!-- Assign Modal -->
                                         <div class="modal fade" id="assignModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <form method="POST" action="/admin/township-grievances/assign/<?= $row['id'] ?>">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/township-grievances/assign/<?= $row['id'] ?>">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                     <div class="modal-content text-start">
                                                         <div class="modal-header">
@@ -253,7 +253,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <!-- Resolve Modal -->
                                         <div class="modal fade" id="resolveModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <form method="POST" action="/admin/township-grievances/resolve/<?= $row['id'] ?>">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/township-grievances/resolve/<?= $row['id'] ?>">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                     <div class="modal-content text-start">
                                                         <div class="modal-header">

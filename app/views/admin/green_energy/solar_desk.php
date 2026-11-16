@@ -168,7 +168,7 @@ $current_status = $current_status ?? null;
                                         <div class="modal fade" id="updateModal<?= $req['id'] ?>" tabindex="-1">
                                             <div class="modal-dialog">
                                                 <div class="modal-content text-start">
-                                                    <form method="POST" action="/admin/green-energy/solar/<?= $req['id'] ?>/update">
+                                                    <form method="POST" action="<?= BASE_URL ?>/admin/green-energy/solar/<?= $req['id'] ?>/update">
                                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Update Solar Application #<?= htmlspecialchars($req['request_token']) ?></h5>

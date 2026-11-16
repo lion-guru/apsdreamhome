@@ -41,6 +41,7 @@ $priorities = $priorities ?? [];
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="<?= BASE_URL ?>/employee/self-service/grievances/create">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="row g-3">
                             <!-- Category -->
                             <div class="col-md-6">

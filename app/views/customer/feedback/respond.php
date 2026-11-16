@@ -5,7 +5,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
 <div class="container-fluid">
     <h1 class="h3 mb-3">Customer Feedback</h1>
     <?php if ($item): ?>
-    <form method="post" action="/feedback/respond/<?= htmlspecialchars($token) ?>">
+    <form method="post" action="<?= BASE_URL ?>/feedback/respond/<?= htmlspecialchars($token) ?>">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Rating</label>

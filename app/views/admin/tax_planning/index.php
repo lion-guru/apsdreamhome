@@ -26,7 +26,7 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
         <div class="container-fluid">
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <form method="get" action="/admin/tax-planning">
+                    <form method="get" action="<?= BASE_URL ?>/admin/tax-planning">
                         <div class="input-group">
                             <select aria-label="Fy" name="fy" class="form-control">
                                 <?php

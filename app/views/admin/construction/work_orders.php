@@ -85,7 +85,7 @@ $current_status = $current_status ?? 'all';
     <!-- Filter Bar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-2">
-            <form method="GET" action="/admin/work-orders" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/work-orders" class="row g-2 align-items-center">
                 <div class="col-md-4">
                     <label for="filterColony" class="form-label small fw-semibold text-muted mb-0">Colony / Township</label>
                     <select aria-label="Colony id" name="colony_id" id="filterColony" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -204,7 +204,7 @@ $current_status = $current_status ?? 'all';
 <!-- Modal: New Work Order -->
 <div class="modal fade" id="newOrderModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/work-orders/store" class="modal-content">
+        <form method="POST" action="<?= BASE_URL ?>/admin/work-orders/store" class="modal-content">
             <?= \App\Core\Security\CSRF::generateTokenField() ?>
             <div class="modal-header">
                 <h5 class="modal-title fw-bold"><i class="fas fa-file-contract text-primary me-2"></i>Issue Civil Construction Work Order</h5>

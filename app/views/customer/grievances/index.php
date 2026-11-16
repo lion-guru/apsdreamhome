@@ -103,7 +103,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                             <!-- Rating Modal -->
                                             <div class="modal fade" id="ratingModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog">
-                                                    <form method="POST" action="/customer/township-grievances/close/<?= $row['id'] ?>">
+                                                    <form method="POST" action="<?= BASE_URL ?>/customer/township-grievances/close/<?= $row['id'] ?>">
                                                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                         <div class="modal-content text-start">
                                                             <div class="modal-header">

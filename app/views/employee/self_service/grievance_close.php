@@ -77,6 +77,7 @@ $grievance = $grievance ?? [];
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" action="<?= BASE_URL ?>/employee/self-service/grievances/<?= $grievance['id'] ?>/close">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="text-center py-3 mb-3">
                             <label class="form-label d-block text-muted small fw-semibold text-uppercase mb-2">Select Your Rating</label>
                             <div class="star-rating justify-content-center">

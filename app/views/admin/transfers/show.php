@@ -163,7 +163,7 @@ $st = $transfer['status'] ?? 'requested';
                             <p class="small text-muted mb-2">
                                 Approves application, generates official NOC registration code, and allows seller/buyer to execute formal transfer agreement.
                             </p>
-                            <form method="POST" action="/admin/plot-transfers/<?= (int)$transfer['id'] ?>/approve">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/plot-transfers/<?= (int)$transfer['id'] ?>/approve">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                 <div class="mb-2">
                                     <label class="form-label small fw-semibold">Transfer Fee (₹)</label>
@@ -189,7 +189,7 @@ $st = $transfer['status'] ?? 'requested';
                             <p class="small text-muted mb-2">
                                 Transfers plot record & booking in the database to <strong><?= htmlspecialchars($transfer['new_buyer_name']) ?></strong>.
                             </p>
-                            <form method="POST" action="/admin/plot-transfers/<?= (int)$transfer['id'] ?>/execute" onsubmit="return confirm('Confirm ownership handover to new buyer? This will update the plot and booking allottee in the live database.');">
+                            <form method="POST" action="<?= BASE_URL ?>/admin/plot-transfers/<?= (int)$transfer['id'] ?>/execute" onsubmit="return confirm('Confirm ownership handover to new buyer? This will update the plot and booking allottee in the live database.');">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                 <button type="submit" class="btn btn-primary btn-sm w-100 fw-bold py-2">
                                     <i class="fas fa-exchange-alt me-1"></i>Execute Ownership Transfer
@@ -213,7 +213,7 @@ $st = $transfer['status'] ?? 'requested';
                                 <i class="fas fa-times-circle me-1"></i>Reject Request
                             </button>
                             <div class="collapse mt-2" id="rejectCollapse">
-                                <form method="POST" action="/admin/plot-transfers/<?= (int)$transfer['id'] ?>/reject">
+                                <form method="POST" action="<?= BASE_URL ?>/admin/plot-transfers/<?= (int)$transfer['id'] ?>/reject">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                     <div class="mb-2">
                                         <textarea aria-label="Rejection reason" name="rejection_reason" class="form-control form-control-sm" rows="2" placeholder="Specify reason for rejection..." required></textarea>

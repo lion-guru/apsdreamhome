@@ -42,7 +42,7 @@ unset($_SESSION['import_errors']);
                     <h5 class="card-title mb-0"><i class="fas fa-file-import me-2"></i>Import Plots from CSV</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="/admin/plots/import" enctype="multipart/form-data">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/plots/import" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
                         <div class="mb-3">
@@ -109,7 +109,7 @@ unset($_SESSION['import_errors']);
                     <h5 class="card-title mb-0"><i class="fas fa-file-export me-2"></i>Export Plots to CSV</h5>
                 </div>
                 <div class="card-body">
-                    <form method="GET" action="/admin/plots/export">
+                    <form method="GET" action="<?= BASE_URL ?>/admin/plots/export">
                         <div class="mb-3">
                             <label for="export_colony_id" class="form-label">Filter by Colony (Optional)</label>
                             <select aria-label="Colony id" name="colony_id" id="export_colony_id" class="form-select">

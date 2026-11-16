@@ -16,7 +16,7 @@
                             <h3 class="card-title">New Currency Pair</h3>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="/admin/multi-currency/store" id="addRateForm">
+                            <form method="post" action="<?= BASE_URL ?>/admin/multi-currency/store" id="addRateForm">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                 <div class="row">
                                     <div class="col-md-4">

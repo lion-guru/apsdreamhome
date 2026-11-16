@@ -68,7 +68,7 @@ $flows = $flows ?? [];
                                             <a href="/admin/ivr-flows/<?= $f['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="/admin/ivr-flows/<?= $f['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this flow?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/ivr-flows/<?= $f['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this flow?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                 <button type="submit" class="btn btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button>
                                             </form>

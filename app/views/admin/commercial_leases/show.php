@@ -150,7 +150,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <!-- Collect Payment Modal -->
                                         <div class="modal fade" id="payModal<?= $inv['id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <form method="POST" action="/admin/commercial-leases/invoices/<?= $inv['id'] ?>/pay">
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/commercial-leases/invoices/<?= $inv['id'] ?>/pay">
                                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                                     <input type="hidden" name="lease_id" value="<?= (int)$lease['id'] ?>">
                                                     <div class="modal-content text-start">
@@ -200,7 +200,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <!-- Generate Monthly Rent Invoice Modal -->
 <div class="modal fade" id="generateInvoiceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="/admin/commercial-leases/<?= (int)$lease['id'] ?>/invoice">
+        <form method="POST" action="<?= BASE_URL ?>/admin/commercial-leases/<?= (int)$lease['id'] ?>/invoice">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
             <div class="modal-content">
                 <div class="modal-header">

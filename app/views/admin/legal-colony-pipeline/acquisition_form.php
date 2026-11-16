@@ -12,7 +12,7 @@ $colony = $colony ?? null;
 
   <div class="card border-0 shadow-sm">
     <div class="card-body">
-      <form method="POST" action="/admin/legal-colony-pipeline/store-acquisition">
+      <form method="POST" action="<?= BASE_URL ?>/admin/legal-colony-pipeline/store-acquisition">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
 
         <div class="row g-3">

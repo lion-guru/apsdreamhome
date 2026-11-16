@@ -55,7 +55,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Filter Bar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
-            <form method="GET" action="/admin/township-horticulture" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/township-horticulture" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
                     <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -149,7 +149,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <!-- Modal: New Horticulture Log -->
 <div class="modal fade" id="newHorticultureModal" tabindex="-1" aria-labelledby="newHortModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/township-horticulture/store" class="modal-content border-0 shadow">
+        <form method="POST" action="<?= BASE_URL ?>/admin/township-horticulture/store" class="modal-content border-0 shadow">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="newHortModalLabel"><i class="fas fa-tree me-2"></i>Record Park Horticulture &amp; Tree Census</h5>

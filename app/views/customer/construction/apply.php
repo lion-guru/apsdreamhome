@@ -18,7 +18,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-4">
-                    <form method="POST" action="/customer/construction/apply">
+                    <form method="POST" action="<?= BASE_URL ?>/customer/construction/apply">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 
                         <h5 class="fw-bold text-primary mb-3">1. Select Plot & Booking</h5>

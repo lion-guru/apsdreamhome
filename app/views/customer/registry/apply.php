@@ -38,7 +38,7 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
             <h5 class="fw-bold mb-3 text-dark"><i class="fas fa-gavel text-danger me-2"></i>Schedule Sub-Registrar Office (SRO) Appointment</h5>
             <p class="text-muted small mb-4">Please submit your preferred dates, jurisdiction SRO office, and 2 witness details for deed preparation.</p>
 
-            <form method="POST" action="/customer/registry-appointments/book">
+            <form method="POST" action="<?= BASE_URL ?>/customer/registry-appointments/book">
                 <?= \App\Helpers\SecurityHelper::csrfField() ?>
                 <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
 

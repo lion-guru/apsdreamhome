@@ -163,7 +163,7 @@ function lvDays($d) { return (int)$d; }
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <?php if (strtolower($l['status'] ?? '') === 'pending'): ?>
-                                            <form method="POST" action="/employee/leaves/<?= (int)$l['id'] ?>/cancel" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this leave application?')">
+                                            <form method="POST" action="<?= BASE_URL ?>/employee/leaves/<?= (int)$l['id'] ?>/cancel" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this leave application?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancel">
                                                     <i class="fas fa-times"></i>
@@ -189,7 +189,7 @@ function lvDays($d) { return (int)$d; }
                 <h5 class="modal-title fw-bold" id="applyLeaveModalLabel"><i class="fas fa-calendar-plus me-2 text-primary"></i>Apply for Leave</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="/employee/leaves/apply">
+            <form method="POST" action="<?= BASE_URL ?>/employee/leaves/apply">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="modal-body">
                     <div class="row g-3">

@@ -69,7 +69,7 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h3 class="card-title">Exchange Rates</h3>
                             <div>
-                                <form method="post" action="/admin/multi-currency/refresh" id="refreshForm" class="d-inline">
+                                <form method="post" action="<?= BASE_URL ?>/admin/multi-currency/refresh" id="refreshForm" class="d-inline">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                     <button type="submit" class="btn btn-sm btn-info"><i class="fas fa-sync-alt"></i> Refresh All</button>
                                 </form>

@@ -69,7 +69,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             You currently have an active advance under repayment. You can apply for a new advance once the existing balance is fully recovered.
                         </div>
                     <?php else: ?>
-                        <form method="POST" action="/associate/advances/apply">
+                        <form method="POST" action="<?= BASE_URL ?>/associate/advances/apply">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Requested Amount (₹) <span class="text-danger">*</span></label>

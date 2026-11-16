@@ -4,7 +4,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
 ?>
 <div class="container-fluid">
     <h1 class="h3 mb-3">Add Labour Law Compliance</h1>
-    <form method="post" action="/admin/labour-law-compliance/store">
+    <form method="post" action="<?= BASE_URL ?>/admin/labour-law-compliance/store">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Law Name</label>

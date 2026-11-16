@@ -18,7 +18,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-4">
-                    <form method="POST" action="/customer/township-grievances/create">
+                    <form method="POST" action="<?= BASE_URL ?>/customer/township-grievances/create">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
 
                         <div class="mb-3">

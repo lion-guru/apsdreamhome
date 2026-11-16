@@ -55,7 +55,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Filter Bar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3">
-            <form method="GET" action="/admin/township-cctv" class="row g-2 align-items-center">
+            <form method="GET" action="<?= BASE_URL ?>/admin/township-cctv" class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label small text-muted mb-1">Filter by Township Colony</label>
                     <select aria-label="Colony id" name="colony_id" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -155,7 +155,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <!-- Modal: New CCTV Audit -->
 <div class="modal fade" id="newCctvModal" tabindex="-1" aria-labelledby="newCctvModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/township-cctv/store" class="modal-content border-0 shadow">
+        <form method="POST" action="<?= BASE_URL ?>/admin/township-cctv/store" class="modal-content border-0 shadow">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="newCctvModalLabel"><i class="fas fa-video me-2"></i>Record Central CCTV System Audit</h5>

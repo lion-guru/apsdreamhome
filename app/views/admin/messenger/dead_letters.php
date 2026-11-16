@@ -16,7 +16,7 @@
 </table>
 
 <h2>Failed Messages</h2>
-<form method="post" action="/admin/messenger/dead-letters/cleanup" onsubmit="return confirm('Cleanup old messages?')">
+<form method="post" action="<?= BASE_URL ?>/admin/messenger/dead-letters/cleanup" onsubmit="return confirm('Cleanup old messages?')">
   <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '') ?>">
   <button type="submit">Cleanup Old (> <?= $retentionDays ?> days)</button>
 </form>
@@ -34,8 +34,8 @@
   <td><?= $m['created_at'] ?></td>
   <td><code><?= htmlspecialchars(substr((string)$m['body'], 0, 200)) ?>…</code></td>
   <td>
-    <form method="post" action="/admin/messenger/dead-letters/<?= $m['id'] ?>/retry" style="display:inline"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '') ?>"><button type="submit">Retry</button></form>
-    <form method="post" action="/admin/messenger/dead-letters/<?= $m['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete message #<?= $m['id'] ?>?')"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '') ?>"><button type="submit">Delete</button></form>
+    <form method="post" action="<?= BASE_URL ?>/admin/messenger/dead-letters/<?= $m['id'] ?>/retry" style="display:inline"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '') ?>"><button type="submit">Retry</button></form>
+    <form method="post" action="<?= BASE_URL ?>/admin/messenger/dead-letters/<?= $m['id'] ?>/delete" style="display:inline" onsubmit="return confirm('Delete message #<?= $m['id'] ?>?')"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf ?? $_SESSION['csrf_token'] ?? '') ?>"><button type="submit">Delete</button></form>
   </td>
 </tr>
 <?php endforeach; ?>

@@ -4,7 +4,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
 ?>
 <div class="container-fluid">
     <h1 class="h3 mb-3">Dispatch Feedback Survey</h1>
-    <form method="post" action="/admin/feedback-pipeline/store">
+    <form method="post" action="<?= BASE_URL ?>/admin/feedback-pipeline/store">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Source Type</label>
