@@ -1090,7 +1090,17 @@ EOT;
     private function saveConversation($sessionId, $message, $response, $userContext)
     {
         try {
-            // ai_conversations.user_id references users(id) — a stale session may
+            // Bind the JS-generated conversation id to this PHP session so that
+            // only the browser that produced the conversation can retrieve its
+            // rows later — anything else gets an empty history, never a leak.
+            if (!isset($_SESSION['ai_history_ids']) || !is_array($_SESSION['ai_history_ids'])) {
+                $_SESSION['ai_history_ids'] = [];
+            }
+            if (!in_array($sessionId, $_SESSION['ai_history_ids'], true)) {
+                $_SESSION['ai_history_ids'][] = $sessionId;
+            }
+
+            // ai_conversations.user_id references users(id) - a stale session may
             // carry a deleted account's id; never insert an orphan (FK 1452).
             $userId = null;
             $ctxId = $userContext['id'] ?? null;
@@ -1117,6 +1127,19 @@ EOT;
         header('Content-Type: application/json');
 
         $sessionId = $_GET['session_id'] ?? session_id();
+
+        // Privacy gate: only return conversation rows whose session_id this
+        // PHP session ever created (see saveConversation). Anything else is
+        // deliberately answered with an empty history — never someone else's
+        // chat, even by-guess.
+        $owned = [];
+        if (isset($_SESSION['ai_history_ids']) && is_array($_SESSION['ai_history_ids'])) {
+            $owned = $_SESSION['ai_history_ids'];
+        }
+        if (empty($sessionId) || !in_array($sessionId, $owned, true)) {
+            echo json_encode(['success' => true, 'history' => []]);
+            exit;
+        }
 
         try {
             $history = $this->db->fetchAll(
