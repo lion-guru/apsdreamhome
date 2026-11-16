@@ -131,6 +131,9 @@ class CodeReviewAgent
             $n = $i + 1;
             $t = trim($ln);
             if ($t === '' || strpos($t, '//') === 0 || strpos($t, '*') === 0) continue;
+            // Skip detector-definition lines (this analyzer's own regex/message strings can
+            // self-match its rules — e.g. "catch (Exception" inside a preg_match pattern).
+            if (strpos($ln, 'preg_match(') !== false || strpos($ln, '$this->hit(') !== false) continue;
 
             // D1: catch (Exception without `use Exception` in a namespaced file (S595 family)
             if (!$hasUseException && preg_match('/catch\s*\(\s*(\\\?Exception)\b/', $ln)
