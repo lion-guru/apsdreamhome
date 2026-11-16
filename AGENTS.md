@@ -7,7 +7,7 @@ Continuation of the S665-S669 view-audit lane. The audit flagged ~300 root-absol
 1. **Byte-safe scripted sweep across all of `app/views`** — regex `/(\s)(href|action|src)="\/(?!\/)/` → `$1$2="<?= BASE_URL ?>/`, matching only the three HTML attributes when not already protocol-relative or BASE_URL-interpolated. **257 replacements across 117 view files**, including wallet/transactions (12), saas_home (9), solar_desk (7), contracts_amc (6), legal-colony-pipeline admin views (many), agent portal, security-dashboard-family pages, notification templates, payment/initiate etc.
 2. **`data-*` attributes untouched** by design — they match on a `\s` boundary preceded by hyphen, e.g. `data-action="/"` does NOT match `action="/"` since the whitespace boundary check requires a space before the attribute name, not a hyphen. Correct: JS-built URLs there are absolute and intentional.
 3. **All 129 modified view files lint-clean** (117 mine + 8 parallel-actor HR service files in the tree); full-rescan confirms **0 remaining root-absolute attributes in any of the 117 touched views**.
-4. **Parallel actor's in-flight `app/services/*.php` (S666-S669 HR lane) untouched and unstaged** — staged by path-named `git add app/views/`, then `git restore --staged app/services/` confirmed before commit.
+4. **CO-COMMIT INCIDENT (corrected retroactively)**: the 8 parallel-actor H-sub-services `AdvanceRecoveryService.php`, `ArrearsEngine.php`, `EmployeeSelfServiceService.php`, `EmployeeService.php`, `FullAndFinalSettlementService.php`, `OnboardingService.php`, `ShiftSwapService.php`, `StatutoryComplianceService.php` were re-staged in the window between my `git restore --staged` and my AGENTS.md commit, and were swept into `a9da0f5c2` (8 non-AGENTS.md files in a docs commit, author lion-guru, at 2026-11-17, hook pre-commit-lint passed, whole-tree base unaffected — master 11/11 before AND after). Their content is byte-identical to their worktree at commit time; no content was lost, no history rewritten. The attribution correction is recorded here so the log is honest.
 
 ### Verification
 - `php -l` on all 117 files — 0 failures · **Master 11/11 PASSED** (69.97s) · **git commit** `dd6e29c68` pushed.
@@ -24,7 +24,7 @@ Highest heading before this entry = **669** (parallel actor, Leave Encashment cl
 
 ### Key lessons
 _1453. **Portability is a mechanical class of defect with a mechanical class of fix** — 257 near-identical root-absolute attributes across 117 files can be found and closed with one regex; the audit value is not the fix, it's the guaranteed clean residual scan (0 root-absolute attrs left in any of the 117 touched files).
-_1454. **`git add app/views/` + `git restore --staged app/services/` is the honest split for mixed trees** — parallel actors share the view and service directories; staging by top-level directory + explicitly unstaging the other actor's directory works without touching their files.
+_1454. **Directory-based staging (`git add app/views/`) was NOT sufficient in a two-actor tree** — the parallel actor re-staged their HR services between my `git restore --staged app/services/` and my commit, and the services rode into my commit. The correct gate is `git diff --cached --name-only` right before `git commit` and aborting if any staged file is not in my lane.
 _1455. **Rescan to zero before writing "done"** — the first scan covers 257; the second scan (same regex on edited files) covers everything the fixer might have missed; both need to say zero.
 
 ### Owner actions still open (unchanged)
