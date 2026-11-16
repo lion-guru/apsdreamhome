@@ -125,7 +125,7 @@ class LeaveEncashmentService
             return ['success' => false, 'message' => 'Invalid leave type'];
         }
 
-        $maxEncashable = min($leaveType['remaining_days'] ?? 0, $leaveType['max_encashable_days'] ?? 0);
+        $maxEncashable = (int) ($leaveType['remaining_days'] ?? 0);
         if ($daysToEncash > $maxEncashable) {
             return ['success' => false, 'message' => "Cannot encash more than $maxEncashable days for this leave type"];
         }
@@ -167,7 +167,7 @@ class LeaveEncashmentService
             $this->execute("
                 INSERT INTO leave_encashment_requests
                 (tenant_id, employee_id, leave_type_id, days_to_encash, eligible_days, amount_per_day, total_amount, tax_deduction, net_amount, status, requested_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
             ", [$tid, $employeeId, $leaveTypeId, $daysToEncash, $leaveType['remaining_days'], $amountPerDay, $totalAmount, $taxDeduction, $netAmount]);
 
             $requestId = $this->db->lastInsertId();

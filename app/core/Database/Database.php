@@ -234,18 +234,47 @@ class Database
         return $this->execute($sql, $params)->rowCount();
     }
 
+    /**
+     * Transaction depth. Outer beginTransaction() uses a real transaction;
+     * inner calls (e.g. wallet credit inside payEncashment) become SAVEPOINTs
+     * so nested callers can't fatal with "There is already an active transaction"
+     * and inner rollbacks only undo the nested work.
+     */
+    private int $txnDepth = 0;
+
     public function beginTransaction()
     {
+        if ($this->txnDepth > 0) {
+            $this->txnDepth++;
+            $name = 'aps_sp_' . $this->txnDepth;
+            $this->pdo->exec("SAVEPOINT {$name}");
+            return true;
+        }
+        $this->txnDepth = 1;
         return $this->pdo->beginTransaction();
     }
 
     public function commit()
     {
+        if ($this->txnDepth > 1) {
+            $name = 'aps_sp_' . $this->txnDepth;
+            $this->pdo->exec("RELEASE SAVEPOINT {$name}");
+            $this->txnDepth--;
+            return true;
+        }
+        $this->txnDepth = 0;
         return $this->pdo->commit();
     }
 
     public function rollBack()
     {
+        if ($this->txnDepth > 1) {
+            $name = 'aps_sp_' . $this->txnDepth;
+            $this->pdo->exec("ROLLBACK TO SAVEPOINT {$name}");
+            $this->txnDepth--;
+            return true;
+        }
+        $this->txnDepth = 0;
         return $this->pdo->rollBack();
     }
 
