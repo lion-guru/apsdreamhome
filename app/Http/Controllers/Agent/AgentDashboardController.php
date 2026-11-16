@@ -732,11 +732,11 @@ return [
         $total = 0;
         try {
             $commissions = $this->db->fetchAll(
-                "SELECT * FROM mlm_commission_ledger WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
+                "SELECT * FROM mlm_commission_ledger WHERE beneficiary_user_id = ? ORDER BY created_at DESC LIMIT 50",
                 [$userId]
             ) ?: [];
             $total = (int)$this->db->fetchColumn(
-                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE user_id = ?",
+                "SELECT COALESCE(SUM(amount), 0) FROM mlm_commission_ledger WHERE beneficiary_user_id = ?",
                 [$userId]
             );
         } catch (\Throwable $e) { error_log('Agent commissions error: ' . $e->getMessage()); }
