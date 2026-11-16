@@ -178,10 +178,11 @@ $employees = $employees ?? [];
 </div>
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-// DataTables initialization if needed
-$(document).ready(function() {
-    if ($.fn.DataTable && $('#onboardingTable').length) {
-        $('#onboardingTable').DataTable({
+// DataTables initialization if needed. jQuery loads AFTER view content
+// (layouts/admin.php line ~955), so defer to the load event, not document.ready.
+window.addEventListener('load', function() {
+    if (window.jQuery && window.$.fn && window.$.fn.DataTable && document.querySelector('#onboardingTable')) {
+        window.$('#onboardingTable').DataTable({
             pageLength: 10,
             order: [[3, 'asc']],
             columnDefs: [{ orderable: false, targets: [4] }]
