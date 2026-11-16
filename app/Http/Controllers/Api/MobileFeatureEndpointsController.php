@@ -702,33 +702,63 @@ class MobileFeatureEndpointsController extends BaseController
         $tdsTotal = 0;
         foreach ($tdsRecords as $r) {
             $grossTotal += (float)($r['gross_amount'] ?? 0);
-            $tdsTotal += (float)($r['total_tds'] ?? 0);
+            $tdsTotal += (float)($r['tds_amount'] ?? 0);
         }
 
-        if ($grossTotal <= 0) {
-            $grossTotal = 345000.00;
-            $tdsTotal = 17250.00; // 5% TDS under 194H
+        // FY + quarter buckets derived from REAL records - nothing invented
+        $fyStartY = (int)date('m') >= 4 ? (int)date('Y') : (int)date('Y') - 1;
+        $fyLabel = 'FY ' . $fyStartY . '-' . str_pad((string)(($fyStartY + 1) % 100), 2, '0', STR_PAD_LEFT);
+        $fyStart = $fyStartY . '-04-01';
+        $fyEnd = ($fyStartY + 1) . '-03-31';
+
+        $quarterDefs = ['Q1 (Apr - Jun)', 'Q2 (Jul - Sep)', 'Q3 (Oct - Dec)', 'Q4 (Jan - Mar)'];
+        $byQ = [];
+        foreach ($tdsRecords as $r) {
+            $d = $r['transaction_date'] ?? null;
+            if (!$d || $d < $fyStart || $d > $fyEnd) continue;
+            $m = (int)substr($d, 5, 2);
+            if ($m >= 4 && $m <= 6) { $q = $quarterDefs[0]; } elseif ($m >= 7 && $m <= 9) { $q = $quarterDefs[1]; } elseif ($m >= 10) { $q = $quarterDefs[2]; } else { $q = $quarterDefs[3]; }
+            if (!isset($byQ[$q])) $byQ[$q] = ['gross' => 0.0, 'tds' => 0.0, 'status' => 'Pending', 'challans' => []];
+            $byQ[$q]['gross'] += (float)($r['gross_amount'] ?? 0);
+            $byQ[$q]['tds'] += (float)($r['tds_amount'] ?? 0);
+            if (!empty($r['deposit_challan'])) $byQ[$q]['challans'][] = $r['deposit_challan'];
+            if (in_array($r['status'] ?? '', ['deposited', 'filed', 'verified'], true)) $byQ[$q]['status'] = 'Deposited';
+        }
+        $quarterly = [];
+        foreach ($quarterDefs as $qLabel) {
+            $d = $byQ[$qLabel] ?? null;
+            $quarterly[] = [
+                'quarter' => $qLabel,
+                'fy' => $fyLabel,
+                'gross' => $d ? round($d['gross'], 2) : 0.0,
+                'tds_deducted' => $d ? round($d['tds'], 2) : 0.0,
+                'status' => $d ? $d['status'] : 'No records',
+                'challan' => $d && !empty($d['challans']) ? implode(', ', array_slice($d['challans'], 0, 4)) : 'Pending',
+            ];
         }
 
-        $quarterly = [
-            ['quarter' => 'Q1 (Apr - Jun)', 'fy' => '2025-26', 'gross' => 85000, 'tds_deducted' => 4250, 'status' => 'Deposited (Form 16A Issued)', 'challan' => 'CHL-60192'],
-            ['quarter' => 'Q2 (Jul - Sep)', 'fy' => '2025-26', 'gross' => 120000, 'tds_deducted' => 6000, 'status' => 'Deposited (Form 16A Issued)', 'challan' => 'CHL-71829'],
-            ['quarter' => 'Q3 (Oct - Dec)', 'fy' => '2025-26', 'gross' => 90000, 'tds_deducted' => 4500, 'status' => 'Deposited (Form 16A Issued)', 'challan' => 'CHL-89102'],
-            ['quarter' => 'Q4 (Jan - Mar)', 'fy' => '2025-26', 'gross' => 50000, 'tds_deducted' => 2500, 'status' => 'Filing In Progress', 'challan' => 'Pending']
-        ];
+        // Real company name from company_settings; TAN is genuinely not configured - never invented
+        $deductorName = 'APS Dream Home';
+        try {
+            $row = $this->pdo->query("SELECT company_name FROM company_settings LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+            if ($row && !empty($row['company_name'])) $deductorName = $row['company_name'];
+        } catch (\Throwable $e) { /* company_settings unavailable */ }
+
+        // Latest record's rate wins; unknown when no records exist
+        $tdsRate = !empty($tdsRecords) ? (float)($tdsRecords[0]['tds_rate'] ?? 0) : null;
 
         $this->jsonResponse([
             'success' => true,
             'data' => [
-                'financial_year' => 'FY 2025-26',
-                'deductor_tan' => 'LKNA12345B',
-                'deductor_name' => 'APS Dream Home Developers Pvt. Ltd.',
-                'section' => '194H (Commission / Brokerage)',
-                'tds_rate_pct' => 5.0,
+                'financial_year' => $fyLabel,
+                'deductor_tan' => null, // not configured in company_settings / service_configs yet - owner action
+                'deductor_name' => $deductorName,
+                'section' => ($tdsRecords[0]['tds_section'] ?? '194H') . ' (Commission / Brokerage)',
+                'tds_rate_pct' => $tdsRate,
                 'summary' => [
-                    'gross_commission' => $grossTotal,
-                    'total_tds_deducted' => $tdsTotal,
-                    'net_commission_paid' => $grossTotal - $tdsTotal
+                    'gross_commission' => round($grossTotal, 2),
+                    'total_tds_deducted' => round($tdsTotal, 2),
+                    'net_commission_paid' => round($grossTotal - $tdsTotal, 2)
                 ],
                 'quarterly_breakdown' => $quarterly,
                 'form_16a_download_url' => '/associate/tds'

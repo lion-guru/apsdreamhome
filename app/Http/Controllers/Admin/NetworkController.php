@@ -340,7 +340,7 @@ class NetworkController extends AdminController
     private function getRankRequirements(): array
     {
         try {
-            $sql = "SELECT * FROM rank_requirements ORDER BY rank_order ASC";
+            $sql = "SELECT * FROM rank_requirements ORDER BY created_at DESC LIMIT 25";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Throwable $e) {
             $this->loggingService->error("Get Rank Requirements error: " . $e->getMessage());
@@ -374,7 +374,9 @@ class NetworkController extends AdminController
     private function getRanks(): array
     {
         try {
-            $sql = "SELECT * FROM mlm_ranks ORDER BY rank_order ASC";
+            $sql = "SELECT rank_name, rank_order, direct_sale_pct, min_qualifying_volume, perks AS benefits
+                    FROM mlm_rank_benefits
+                    ORDER BY rank_order ASC";
             return $this->db->fetchAll($sql) ?: [];
         } catch (\Throwable $e) {
             $this->loggingService->error("Get Ranks error: " . $e->getMessage());

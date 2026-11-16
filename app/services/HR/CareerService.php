@@ -583,8 +583,8 @@ class CareerService
     public function getAvailablePositions()
     {
         try {
-            // Get distinct positions from applications
-            $sql = "SELECT DISTINCT position FROM job_applications WHERE status != 'rejected' ORDER BY position";
+            // Positions come from the live jobs table (job_applications has no position column)
+            $sql = "SELECT DISTINCT title AS position FROM jobs WHERE status = 'active' ORDER BY position";
             $positions = $this->db->fetchAll($sql);
 
             return [

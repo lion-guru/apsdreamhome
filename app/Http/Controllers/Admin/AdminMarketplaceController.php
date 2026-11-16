@@ -44,8 +44,8 @@ class AdminMarketplaceController extends AdminController
                     'featured' => (int)($this->db->query("SELECT COUNT(*) FROM user_properties WHERE is_featured = 1 AND status = 'approved'")->fetchColumn()),
                     'urgent' => (int)($this->db->query("SELECT COUNT(*) FROM user_properties WHERE is_urgent = 1 AND status = 'approved'")->fetchColumn()),
                     'premium' => (int)($this->db->query("SELECT COUNT(*) FROM user_properties WHERE is_premium = 1 AND status = 'approved'")->fetchColumn()),
-                    'packages_active' => (int)($this->db->query("SELECT COUNT(*) FROM user_packages WHERE status = 'active'")->fetchColumn()),
-                    'package_revenue' => (float)($this->db->query("SELECT COALESCE(SUM(amount_paid),0) FROM user_packages WHERE status != 'cancelled'")->fetchColumn()),
+                    'packages_active' => (int)($this->db->query("SELECT COUNT(*) FROM user_packages WHERE is_active = 1")->fetchColumn()),
+                    'package_revenue' => (float)($this->db->query("SELECT COALESCE(SUM(amount_paid),0) FROM user_packages WHERE payment_status = 'completed'")->fetchColumn()),
                 ];
                 $featuredListings = $this->db->query("SELECT up.*, u.name as seller_name FROM user_properties up LEFT JOIN users u ON up.user_id = u.id WHERE up.is_featured = 1 AND up.status = 'approved' ORDER BY up.updated_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC);
                 $urgentListings = $this->db->query("SELECT up.*, u.name as seller_name FROM user_properties up LEFT JOIN users u ON up.user_id = u.id WHERE up.is_urgent = 1 AND up.status = 'approved' ORDER BY up.updated_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC);

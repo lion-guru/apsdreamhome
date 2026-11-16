@@ -25,32 +25,33 @@ class TdsService
     {
         $tid = TenantContext::getId();
 
-        $section = $data['tds_section'] ?? $this->autoDetectTdsSection($data['entity_type'] ?? '');
+        $section = $data['tds_section'] ?? $data['section_code'] ?? $this->autoDetectTdsSection($data['entity_type'] ?? '');
         $rate = (float)($data['tds_rate'] ?? $this->getTdsRateForSection($section, $data['entity_type'] ?? ''));
         $amount = (float)($data['amount'] ?? 0);
-        $tdsAmount = round($amount * $rate / 100, 2);
+        $tdsAmount = isset($data['tds_amount']) && (float)$data['tds_amount'] > 0
+            ? (float)$data['tds_amount']
+            : round($amount * $rate / 100, 2);
 
+        // Map the record form (tds-record.php) onto the live tds_register schema.
         $payload = [
-            'deductee_type'        => $data['deductee_type'] ?? 'vendor',
-            'deductee_user_id'     => !empty($data['deductee_user_id']) ? (int)$data['deductee_user_id'] : null,
-            'deductee_name'        => $data['deductee_name'] ?? null,
-            'deductee_pan'         => strtoupper($data['deductee_pan'] ?? ''),
-            'tds_section'          => $section,
-            'amount_paid'          => $amount,
-            'tds_rate'             => $rate,
-            'tds_amount'           => $tdsAmount,
-            'payment_date'         => $data['payment_date'] ?? date('Y-m-d'),
-            'deduction_date'       => $data['deduction_date'] ?? date('Y-m-d'),
-            'challan_number'       => $data['challan_number'] ?? null,
-            'challan_date'         => $data['challan_date'] ?? null,
-            'bsr_code'             => $data['bsr_code'] ?? null,
-            'deposit_status'       => $data['deposit_status'] ?? 'pending',
-            'deposit_date'         => $data['deposit_date'] ?? null,
-            'quarter'              => $data['quarter'] ?? $this->getCurrentQuarter(),
-            'financial_year'       => $data['financial_year'] ?? $this->getCurrentFinancialYear(),
-            'certificate_number'   => null,
+            'tds_section'        => $section,
+            'transaction_date'   => $data['tds_date'] ?? $data['payment_date'] ?? $data['transaction_date'] ?? date('Y-m-d'),
+            'deductee_user_id'   => !empty($data['deductee_user_id']) ? (int)$data['deductee_user_id'] : null,
+            'deductee_name'      => $data['deductee_name'] ?? null,
+            'deductee_pan'       => strtoupper($data['deductee_pan'] ?? ''),
+            'gross_amount'       => $amount,
+            'tds_rate'           => $rate,
+            'tds_amount'         => $tdsAmount,
+            'deposit_challan'    => $data['challan_number'] ?? null,
+            'bsr_code'           => $data['bsr_code'] ?? null,
+            'remarks'            => $data['remarks'] ?? null,
+            'status'             => !empty($data['deposited_in_bank']) ? 'deposited' : 'pending',
+            'deposit_date'       => !empty($data['deposited_in_bank']) ? ($data['deposit_date'] ?? date('Y-m-d')) : null,
+            'quarter'            => $data['quarter'] ?? $this->getCurrentQuarter(),
+            'financial_year'     => $data['financial_year'] ?? $this->getCurrentFinancialYear(),
+            'certificate_number' => null,
             'certificate_issued_at'=> null,
-            'tenant_id'            => TenantContext::getId(),
+            'tenant_id'          => TenantContext::getId(),
         ];
         $this->db->insert('tds_register', $payload);
         return (int)$this->db->lastInsertId();
@@ -106,20 +107,16 @@ class TdsService
             $where .= " AND quarter = ?";
             $params[] = $filters['quarter'];
         }
-        if (!empty($filters['deductee_type'])) {
-            $where .= " AND deductee_type = ?";
-            $params[] = $filters['deductee_type'];
-        }
         if (!empty($filters['deposit_status'])) {
-            $where .= " AND deposit_status = ?";
+            $where .= " AND status = ?";
             $params[] = $filters['deposit_status'];
         }
         if (!empty($filters['from_date'])) {
-            $where .= " AND payment_date >= ?";
+            $where .= " AND transaction_date >= ?";
             $params[] = $filters['from_date'];
         }
         if (!empty($filters['to_date'])) {
-            $where .= " AND payment_date <= ?";
+            $where .= " AND transaction_date <= ?";
             $params[] = $filters['to_date'];
         }
         if (!empty($filters['deductee_pan'])) {

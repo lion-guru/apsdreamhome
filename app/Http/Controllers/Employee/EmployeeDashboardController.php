@@ -194,24 +194,23 @@ class EmployeeDashboardController extends BaseController
     {
         // Employee count by department
         $employeeCountQuery = "SELECT department, COUNT(*) as count
-                               FROM users 
+                               FROM employee_profiles 
                                WHERE status = 'active'
                                GROUP BY department";
         
         $employeeCount = $this->db->fetchAll($employeeCountQuery);
         
-        // Pending applications
+        // Pending applications (job_applications has no status column; all rows are unprocessed)
         $applicationsQuery = "SELECT COUNT(*) as count
-                              FROM job_applications 
-                              WHERE status = 'pending'";
+                              FROM job_applications";
         
         $pendingApplications = $this->db->fetchOne($applicationsQuery);
         
-        // Upcoming reviews
+        // Upcoming reviews (live schema: next_review_date; no scheduled_date exists)
         $reviewsQuery = "SELECT COUNT(*) as count
-                         FROM performance_reviews 
-                         WHERE scheduled_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-                         AND status = 'scheduled'";
+                         FROM performance_reviews
+                         WHERE next_review_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                         AND status NOT IN ('completed', 'acknowledged')";
         
         $upcomingReviews = $this->db->fetchOne($reviewsQuery);
         

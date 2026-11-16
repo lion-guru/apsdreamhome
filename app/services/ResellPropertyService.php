@@ -153,25 +153,24 @@ class ResellPropertyService
     public function recordAnalytics(int $propertyId, string $event, array $data = []): array
     {
         $tid = $this->tenantId();
-        $extraCol = $tid > 1 ? ', tenant_id' : '';
-        $extraVal = $tid > 1 ? ', ?' : '';
-        $st = $this->pdo->prepare("INSERT INTO property_analytics (property_id, event_type, event_data, ip_address, user_agent, created_at{$extraCol}) VALUES (:p, :e, :d, :ip, :ua, NOW(){$extraVal})");
-        $params = [':p' => $propertyId, ':e' => $event, ':d' => json_encode($data, JSON_UNESCAPED_UNICODE), ':ip' => $_SERVER['REMOTE_ADDR'] ?? '', ':ua' => $_SERVER['HTTP_USER_AGENT'] ?? ''];
-        if ($tid > 1) $params[':tid'] = $tid;
-        $st->execute($params);
+        // Live property_analytics is a metric time-series (metric_type / metric_value);
+        // event names become metric_type, each call counts one hit.
+        $stmt = $this->pdo->prepare("INSERT INTO property_analytics (property_id, metric_type, metric_value, tenant_id, created_at) VALUES (?, ?, 1, ?, NOW())");
+        $stmt->execute([$propertyId, substr($event, 0, 50), $tid]);
         return ['ok' => true];
     }
 
     public function getAnalytics(int $propertyId, int $days = 30): array
     {
         $tid = $this->tenantId();
-        $sql = "SELECT event_type, COUNT(*) as count, DATE(created_at) as day FROM property_analytics WHERE property_id = :p AND created_at > DATE_SUB(NOW(), INTERVAL :days DAY)" . ($tid > 1 ? " AND tenant_id = ?" : "") . " GROUP BY event_type, day ORDER BY day DESC";
-        $params = [':p' => $propertyId, ':days' => $days];
+        $sql = "SELECT metric_type AS event_type, COUNT(*) as count, DATE(created_at) as day
+                FROM property_analytics
+                WHERE property_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)" . ($tid > 1 ? " AND tenant_id = ?" : "") . "
+                GROUP BY metric_type, day ORDER BY day DESC";
+        $params = [$propertyId, (int)$days];
         if ($tid > 1) $params[] = $tid;
         $st = $this->pdo->prepare($sql);
-        foreach ($params as $k => $v) { if (is_int($k)) { $st->execute(array_values($params)); break; } else $st->bindValue($k, $v); }
-        if ($tid > 1) $st->execute(array_values($params));
-        else $st->execute(array_values($params));
+        $st->execute($params);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 

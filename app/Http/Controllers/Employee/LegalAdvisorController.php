@@ -852,7 +852,7 @@ class LegalAdvisorController extends BaseController
                     c.name as customer_name,
                     c.phone as customer_phone,
                     sdc.stamp_duty_amount,
-                    sdc.registration_fee,
+                    sdc.registration_fee_amount,
                     sdc.total_amount,
                     sdc.status as calc_status,
                     sdc.created_at as calc_created

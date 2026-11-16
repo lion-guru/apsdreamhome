@@ -500,7 +500,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $salaryService = new LeadershipSalaryService();
             $db = Database::getInstance()->getConnection();
             $activeTrackers = $db->query("SELECT COUNT(*) as c FROM salary_tracker WHERE status = 'active'")->fetch()['c'] ?? 0;
-            $totalPaid = $db->query("SELECT COALESCE(SUM(amount_paid),0) as c FROM salary_tracker WHERE status = 'paid'")->fetch()['c'] ?? 0;
+            $totalPaid = $db->query("SELECT COALESCE(SUM(monthly_payout),0) as c FROM salary_tracker WHERE status = 'completed'")->fetch()['c'] ?? 0;
             $result = [
                 'active_trackers' => $activeTrackers,
                 'total_paid' => $totalPaid,
