@@ -1,3 +1,39 @@
+## Session 672: Privacy Hole Found & Closed — SmartAIController@history Leaked Any Visitor's Full Chat to Any Guest Who Guessed a session_id; Bind-Write-And-Check Gate Added, Verified Live; Gates Green (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the trust/privacy lane for the AI surface. This round audits the one guest-reachable endpoint the smoke runner covers (`/api/ai/history`).
+
+### What was found (a real privacy bug, exploitable by any unauthenticated visitor)
+`SmartAIController@history()` accepted `$_GET['session_id']` and returned the full chat log (`message`, `response`, `created_at`) for ANY session id — no ownership check, no token, no hash. Anyone could read any visitor's conversation, including any phone/email/address a buyer typed into the chat. The public widget's own history fetch (boot-time) was the designed consumer; without the gate, that same door served everyone.
+
+### The fix (one controller, two changes)
+1. **`saveConversation()` now binds the JS-generated id to the PHP session**: `$_SESSION['ai_history_ids'][] = $sessionId` on first write (is_array guarded, in_array deduped).
+2. **`history()` now verifies ownership**: read the requested `session_id`, compare against `$_SESSION['ai_history_ids']` — outside the whitelist → **`[]`, never someone else's chat**.
+
+No new routes; no schema; no mobile impact (mobile never calls this endpoint); no auth bypass for logged-in users; widget boots unchanged.
+
+### Verification (live, real cookies)
+- php -l clean · **PHPStan → [OK] No errors** · **Master → 11/11 PASSED** (47.21s).
+- **Own browser's id → real history returns** (asserted live; reply itself was RERA-honest, same as public answer).
+- **Alien/unknown id → `{"success":true,"history":[]}`**.
+- Commit `95add9009` on `origin/main` — exactly one file staged, verified via `git diff --cached --name-only`. `testing/scan_bugs.php` (another lane's scratch) untouched.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **670 / 671** at the top. This entry = **S672**. Next-free = **673**.
+
+### Honest notes
+- `/api/ai/feedback` stays unauthenticated by design (thumbs up/down writes to `ai_learning_data` tagged to a self-claimed id; stores nothing readable). Guests can tag a row to any session id; no read path exists. Not a privacy leak; left unchanged.
+- `ai_conversations` retains anonymous rows on the dev sandbox — tracked dev noise, not a leak vector.
+- Master 10/11 flap (withdrawal probe) is load-dependent and healed; gates green on this commit.
+
+### Key lessons
+_1464. **An endpoint that returns chat history without an ownership check is a phone booth with no door** — any GET with a guessed session_id reads anyone's conversation. Bind the JS-generated id to the PHP session at write time (saveConversation), verify ownership at read time (history), and answer foreigners with an honest empty array.
+_1465. **"Access is a read" — audit every endpoint that returns conversation/PII-like content even if it looks internal** — /api/ai/history was invisible to smoke probes (all checks returned 200-with-needles); only the code read named the leak.
+_1466. **Live probes prove access-control; code review finds candidates** — the two curl probes (own id → row, alien id → []) turned a plausible finding into a verified gate.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views (wire vs archive decision).
+
 ## Session 671: HR `tenantSql()`×`tVal()` Sweeper — 33 Sites Across 8 Services Closed, Whole-Tree Re-Scan Zero, Gates Green; Work Rode Into Parallel Actor's S670 Whole-Tree Commit; Attribution Corrected (2026-11-17)
 
 ### Trigger
