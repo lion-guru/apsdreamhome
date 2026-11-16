@@ -72,8 +72,9 @@
     </div>
 </div>
 
+<link href="<?= BASE_URL ?>/assets/js/vendor/summernote/summernote-bs5.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/summernote/summernote-bs5.min.js"></script>
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     // Capture the jQuery this script ran on (the view's 3.6.0, which summernote
     // registers on). layouts/admin.php loads jQuery 3.7.1 AFTER view content,
@@ -83,6 +84,7 @@
         var jq = apsNewsJQ;
         if (jq && jq.fn && jq.fn.summernote) {
             jq('.summernote').summernote({
+                tooltip: false,
                 height: 300,
                 toolbar: [
                     ['style', ['style']],

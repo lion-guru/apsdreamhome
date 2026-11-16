@@ -187,6 +187,7 @@
 var pageJquery = jQuery;
 pageJquery(function() {
     pageJquery('#pageContent').summernote({
+        tooltip: false,
         height: 500,
         toolbar: [
             ['style', ['style']],
