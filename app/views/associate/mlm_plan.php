@@ -11,6 +11,9 @@ $mlm_settings = $mlm_settings ?? [];
 $user_commission_total = $user_commission_total ?? 0;
 $user_team_size = $user_team_size ?? 0;
 $base = defined('BASE_URL') ? BASE_URL : '';
+$plan = $plan ?? null;
+$planCapPct = (isset($plan['global_cap_pct']) && (float)$plan['global_cap_pct'] > 0) ? (float)$plan['global_cap_pct'] : 20.0;
+$planCapText = rtrim(rtrim(number_format($planCapPct, 1), '0'), '.');
 
 $rankDisplayNames = [
     'associate' => __('assoc_rank_associate', [], 'Associate'),
@@ -170,7 +173,6 @@ foreach ($rank_benefits as $rb) {
                     $upline2 = (int)($exampleSale * max(0, $bdmRate - $srAssocRate) / 100);
                     $upline3 = (int)($exampleSale * max(0, $srBdmRate - $bdmRate) / 100);
                     $total = $agentComm + $upline1 + $upline2 + $upline3;
-                    $cap = (int)($exampleSale * 0.20);
                     ?>
                     <strong class="small text-muted"><?= __('assoc_mlm_example', [], 'EXAMPLE: Associate sells plot for ₹15,00,000') ?></strong>
                     <table class="table table-sm mt-2 mb-0">
@@ -184,10 +186,10 @@ foreach ($rank_benefits as $rb) {
                         <?php if ($upline3 > 0): ?>
                         <tr><td><?= __('assoc_mlm_ex_upline3', [], 'Upline L3 (Sr. BDM') ?> — <?= $srBdmRate ?>% âˆ' <?= $bdmRate ?>% = <?= $srBdmRate - $bdmRate ?>%)</td><td class="text-end fw-bold">₹<?= number_format($upline3) ?></td></tr>
                         <?php endif; ?>
-                        <tr class="table-primary"><td><strong><?= __('assoc_mlm_total_capped', [], 'Total Commission (capped at 20%)') ?></strong></td><td class="text-end fw-bold">₹<?= number_format($total) ?></td></tr>
+                        <tr class="table-primary"><td><strong><?= __('assoc_mlm_total_capped', ['cap' => $planCapText], 'Total Commission (capped at ' . $planCapText . '%)') ?></strong></td><td class="text-end fw-bold">₹<?= number_format($total) ?></td></tr>
                     </table>
                 </div>
-                <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_a_note', [], 'Upline earns the <strong>difference</strong> between their rank rate and the downline\'s rate. Total per sale is capped at 20%.') ?></small>
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i><?= __('assoc_mlm_track_a_note', ['cap' => $planCapText], 'Upline earns the <strong>difference</strong> between their rank rate and the downline\'s rate. Total per sale is capped at ' . $planCapText . '%.') ?></small>
             </div>
         </div>
         <div class="col-md-6">
@@ -355,10 +357,12 @@ foreach ($rank_benefits as $rb) {
                 <tbody>
                     <?php
                     $rankIcons = ['fa-user','fa-user-tie','fa-briefcase','fa-chart-bar','fa-gem','fa-crown','fa-star'];
+                    $rankSlugMap = ['Ass.' => 'associate', 'Sr. Ass.' => 'senior_associate', 'BDM' => 'bdm', 'Sr. BDM' => 'sr_bdm', 'V.P.' => 'vice_president', 'President' => 'president', 'Site Manager' => 'site_manager'];
+                    $currentSlug = strtolower((string)($user_profile['level'] ?? 'associate'));
                     foreach ($rank_benefits as $i => $rb):
-                        $rankKey = strtolower($rb['rank_name'] ?? '');
-                        $displayName = $rankDisplayNames[$rankKey] ?? ucwords(str_replace('_', ' ', $rb['rank_name'] ?? ''));
-                        $isCurrent = (strtolower(str_replace(' ', '_', $current_rank)) === $rankKey);
+                        $rankKey = $rankSlugMap[$rb['rank_name'] ?? ''] ?? strtolower(str_replace([' ', '.'], ['_', ''], (string)($rb['rank_name'] ?? '')));
+                        $displayName = $rankDisplayNames[$rankKey] ?? ucwords(str_replace('_', ' ', $rankKey));
+                        $isCurrent = ($currentSlug === $rankKey);
                         $rowClass = $isCurrent ? 'table-primary fw-bold' : '';
                         $colorCode = $rb['color_code'] ?? '#6c757d';
                         $perks = json_decode($rb['perks'] ?? '{}', true);
@@ -465,7 +469,7 @@ foreach ($rank_benefits as $rb) {
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3"><?= __('assoc_mlm_faq3_q', [], 'Is there a cap on earnings?') ?></button>
                 </h2>
                 <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#mlmFaqs">
-                    <div class="accordion-body"><?= __('assoc_mlm_faq3_a', [], 'Yes, the total commission per sale is capped at 20% of the sale value. This cap ensures sustainability while still providing excellent earning potential. The 2% Royalty Pool for VP+ ranks is outside this cap.') ?></div>
+                    <div class="accordion-body"><?= __('assoc_mlm_faq3_a', ['cap' => $planCapText], 'Yes, the total commission per sale is capped at ' . $planCapText . '% of the sale value. This cap ensures sustainability while still providing excellent earning potential. The 2% Royalty Pool for VP+ ranks is outside this cap.') ?></div>
                 </div>
             </div>
             <div class="accordion-item">

@@ -1,3 +1,109 @@
+## Session 649: Associate MLM Plan Page — Controller Rewired To Live Per-User MLM Data (Hero/Rank/Team/Referral Blocks Render), Stale "capped at 20%" Copy Interpolated From Active Plan, PHPStan Nit Fixed, 11/11 (2026-11-16)
+
+### Trigger
+Follow-through from the commission-family stale-literal sweep: `app/views/associate/mlm_plan.php` (public "Commission Plan" page for the Associate portal) was rendering ONLY its marketing copy — the worked ₹15,00,000 example, hero, "Your Rank/Your Team/Direct Referrals/Lifetime Sales/Progress to" blocks, rank-ladder table highlight and the referral-link card were all silently skipped because `TeamController::mlmPlan()` passed the wrong variable names (`plan`/`levels`/`ranks` vs the view's `current_plan`/`rank_benefits`/`user_profile`/etc.), `mlm_network_tree` team counts and direct referrals were never passed, and `$_SESSION['referral_code']` was never seeded — so the page lied by omission for every associate.
+
+### What was built
+1. **`Associate\TeamController::mlmPlan()` — full rewrite.** Now passes real per-user data:
+   - Active plan (`mlm_commission_plans WHERE status='active' ORDER BY version DESC`) as `$plan` + `current_plan` (plan_name for the hero badge).
+   - `levels` from `mlm_plan_levels` (ordered), `rank_benefits` (`is_active=1`, `rank_order`).
+   - Associate profile from `associate_profiles` (`referral_code` seeded into `$_SESSION` so the view's referral-link block works).
+   - Level→display-name mapping (associate→Associate … site_manager→Site Manager) + current slug from profile; next-rank row picked from `mlm_rank_benefits` via `rank_order === current_index + 2`.
+   - **Team size** = full unilevel subtree via recursive `mlm_network_tree WHERE parent_id IN (...)` (capped at 10,000 nodes — bounded, safe).
+   - **Direct referrals** = root-level `parent_id = ?` count.
+   - **Commission total** from canonical `mlm_commission_ledger.beneficiary_user_id`.
+   - `user_profile` (referral_code / level / direct_referrals / lifetime_sales / commission_earned) + `user_commission_total` + `user_team_size` — the exact names the view consumes.
+2. **Stale "capped at 20%" literals interpolated from the live plan** — the worked example, the "Total Commission (capped at…)" row, the Track-A note and FAQ#3 no longer hardcode 20%: the view derives `$planCapPct` from `$plan['global_cap_pct']` (ACTIVE plan, not the form) with the same 20.0 fallback; the ₹15L example prints the plan's own cap.
+3. **Lang `{cap}` placeholders** — `assoc_mlm_total_capped`, `assoc_mlm_track_a_note`, `assoc_mlm_faq3_a` in BOTH `lang/en.php` and `lang/hi.php` rewritten to single-brace `{cap}` (the live `__()` implementation is `TranslationService::replaceParams` with single-brace `strtr` — discovered on first probe: `{{cap}}` rendered as literal `{20}`).
+4. **"YOU ARE HERE" rank highlight fixed** — view compared `strtolower(current_rank)` (`associate`) against the DB enum rank_name (`Ass.`) — never matched. `$rankSlugMap` maps `'Ass.'→associate`, `'Sr. Ass.'→senior_associate`, `'BDM'→bdm`, `'Sr. BDM'→sr_bdm`, `'V.P.'→vice_president`, `'President'→president`, `'Site Manager'→site_manager`; `$isCurrent` now compares canonical slugs from `user_profile['level']` vs mapped slug — `tr.table-primary` renders for the associate today (verified live: `current-row: Total Commission (capped at 20%) ₹180,000` when DIRECT cap = 20 — the displayed 20% IS the plan's live value, not a literal).
+5. **PHPStan nit (my own line) fixed** — `$currentRank = $displayNames[$currentSlug] ?? ucfirst($currentSlug);` flagged "offset never-read right side" since the seven slugs cover all keys; removed the unreachable fallback (`$displayNames[$currentSlug]` direct).
+
+### Verification
+- `php -l` clean ×5 (TeamController, mlm_plan, en.php, hi.php) · FFFD scan clean · **Master → 11/11 PASSED** (34.74s) · **PHPStan on my controller → [OK] No errors**.
+- **Live browser probe** `/associate/mlm-plan` as associate (`test_login=5`, "Agent One"): console errors = 0; page renders full per-user MLM state — hero badge "Active Plan", Your Rank block, Team Size block, Direct Referrals, Progress-to-next-rank block, Referral Link card; current-rank row highlighted (`tr.table-primary`); worked example renders; NO `{cap}`/`{{cap}}` placeholder leaks.
+- DB read-only; zero writes this round.
+- **Parallel-actor race disclosed honestly:** this entry was first numbered S648 and prepended in the same window a parallel actor wrote their own S648 (Post-Mega-Commit Verification Round). Their whole-tree file surgery dropped my entry from AGENTS.md entirely (heading lost, pre-existing S648 block present twice at lines 1 & 33 of the file). My temp scratch file was ALSO overwritten by a same-named parallel-actor temp file. The full text (this entry) was retyped from the conversation record and reinserted as S649 — no content was reconstructed from theirs; the lost item is this log entry only, code/vetting untouched.
+- **AGENTS.md integrity** re-checked after reinsert: 399+1 headings.
+
+### Honest notes
+- `mlm_plan.php` worked example still marker-side prints the ₹ glyph as `?` in the raw byte view (pre-existing mojibake from the file's legacy generation) but renders as ₹ in-browser (verified `has-rupee-glyph`) — cosmetic byte-level artifact, left as-is per S634/S612 lessons.
+- `$userProfile` does not echo name/email/phone (privacy-respecting stub, matching the original skeleton) — by design.
+- Next-rank `$rankOrder === curIdx + 2` mapping assumes 1-based sequential rank orders in `mlm_rank_benefits` (live: 1..7 yes 1..7).
+- Parallel actor's two identical S648 Post-Mega-Commit Verification Round copies remain in the file (their text, twice) — NOT deduplicated by me; reported here for the record.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **648** (parallel actor, Post-Mega-Commit Verification Round, present TWICE in file — lines 1 & 33). This entry = **S649**. Next-free = **650**.
+
+### Key lessons
+_1397. **A view that expects `$user_profile`/`$current_plan` and a controller that passes `plan`/`ranks` renders ONLY the static copy — the failure is invisible unless you probe the rendered DOM for the personal blocks.** Diff variable-by-variable against the view's `?? `-defaults; a silently-absent hero is a controller-variable-name bug.
+_1398. **`strtolower(display_name) === strtolower(rank_name)` can never match when the DB enum uses abbreviations (`Ass.`, `V.P.`).** Map enum → canonical slug in ONE place (`$rankSlugMap`) and compare slugs.
+_1399. **`{{cap}}` looks right but renders as `{20}` when only single-brace `{cap}` substitution is wired.** Read the ACTUAL `replaceParams` implementation before assuming placeholder grammar.
+_1400. **Temp-name collisions between parallel actors silently clobber scratch files** — keep entry text in the message itself, or retype from the conversation; never trust a temp file to survive a race.
+_1401. **A whole-tree overwrite can drop your just-prepended AGENTS.md entry without an error** — always re-grep for your own entry heading after any sibling actor writes the log; reinsert renumbered, never edit their copies in place.
+## Session 648: Post-Mega-Commit Verification Round — All Gates Green, AI Pages All 200, Transient "500" on Non-existent Route Proved Flaky, Master 11/11 Held (2026-11-16)
+
+### Trigger
+After the parallel actor's S646 silent-failure sweep landed (2 migrations + 11 code paths + 1 fabrication removal), this round re-verified the entire stack to be sure their migrations did not break any AI advisory page, any finance/HR page, or the master suite — and to confirm the current state honestly.
+
+### What was verified live (this round)
+1. **Master suite** — ran fresh `php testing/master_test_runner.php` → **11/11 PASSED** (47.62s, 100% HEALTHY).
+2. **All AI advisory pages probed HTTP 200** (fresh `test_login=2`, one session):
+   - `/admin/dashboard` (ERP Overview) 403,211 B (baseline) · `/admin/ai-morning-brief` 416,316 B · `/admin/ai/hub` 395,936 B · `/admin/ai-management/lead-scores` 488,280 B · `/admin/leads/49985` 460,888 B (h1 "Sanjay Bansal") · `/admin/finance/tds` 387,195 B · `/admin/network/ranks` 392,141 B.
+   - `/admin/recuritment/jobs` initially showed HTTP 500 transient (fresh-login-round cluster hiccup) — re-probe produced 388,508 B, 200 — **transient load artifact, not a code regression** (matches parallel actor's own lesson _1392).
+3. **php_error.log** — only one 16-Nov row matching 42S22 (`mlm_ranks.rank_order` 16:41:17) — pre-dates S646 fix by two minutes; already corrected to `mlm_rank_benefits.rank_order` by parallel actor's NetworkController (verified: `mlm_rank_benefits` carries `rank_order` column live, 7 rows 1-7).
+4. **AGENTS.md integrity** — OK at this entry (397 headings).
+5. **Own committed state** — S638 (smart assign in lead creation) and S641 (Morning Brief advisory panel) fully pushed: `d49938817`, `8fef641de`, `667be37d5`, `80fe77d02`.
+
+### Honest notes
+- The `/admin/recuritment/jobs` 500 was my own probe artifact under transient load — NOT parallel actor's code, NOT a live regression. Re-probe confirmed 200/388,508 bytes both routes.
+- No code changed this round — verification only. Parallel actor's in-flight migrations + files untouched across the whole round (`git status --porcelain`: only their paths).
+- No schema changes, no DB writes, no queries beyond `SHOW COLUMNS`-style probes.
+- PHPStan is RED only on `TeamController.php:186` — parallel actor's in-flight work, NOT mine, explicitly left alone.
+- This round confirmed parallel actor S646 (TDS fabrication removal, widen_dead_stub_columns_s640 widen_stamp_duty_calculations_s645) is applied — `schema_migrations` ids 6 and 7 recorded as executed.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **647** (parallel actor, cross-actor gate check). This entry = **S648**. Next-free = **649**.
+
+### Key lessons (carried, continued)
+_1394. **Push the smoke once; re-run once; never report a 500 from a single probe.** The companion probe re-loaded `/admin/recuritment/jobs` under the same session — 200/388,508 bytes — proving the earlier 500 was cluster-level transition, not parallel actor's commit.
+_1395. **A verification round is only useful if every page it covers is honest bytes seen.** Status code 200 alone is not proof — byte counts + h1 markers + needles are.
+_1396. **Parallel-actor churn can produce transient per-page 500s without associated log errors.** `get_error_log` caught zero new entries around the probe window — the log itself is the definitive witness.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+
+## Session 648: Post-Mega-Commit Verification Round — All Gates Green, AI Pages All 200, Transient "500" on Non-existent Route Proved Flaky, Master 11/11 Held (2026-11-16)
+
+### Trigger
+After the parallel actor's S646 silent-failure sweep landed (2 migrations + 11 code paths + 1 fabrication removal), this round re-verified the entire stack to be sure their migrations did not break any AI advisory page, any finance/HR page, or the master suite — and to confirm the current state honestly.
+
+### What was verified live (this round)
+1. **Master suite** — ran fresh `php testing/master_test_runner.php` → **11/11 PASSED** (47.62s, 100% HEALTHY).
+2. **All AI advisory pages probed HTTP 200** (fresh `test_login=2`, one session):
+   - `/admin/dashboard` (ERP Overview) 403,211 B (baseline) · `/admin/ai-morning-brief` 416,316 B · `/admin/ai/hub` 395,936 B · `/admin/ai-management/lead-scores` 488,280 B · `/admin/leads/49985` 460,888 B (h1 "Sanjay Bansal") · `/admin/finance/tds` 387,195 B · `/admin/network/ranks` 392,141 B.
+   - `/admin/recuritment/jobs` initially showed HTTP 500 transient (fresh-login-round cluster hiccup) — re-probe produced 388,508 B, 200 — **transient load artifact, not a code regression** (matches parallel actor's own lesson _1392).
+3. **php_error.log** — only one 16-Nov row matching 42S22 (`mlm_ranks.rank_order` 16:41:17) — pre-dates S646 fix by two minutes; already corrected to `mlm_rank_benefits.rank_order` by parallel actor's NetworkController (verified: `mlm_rank_benefits` carries `rank_order` column live, 7 rows 1-7).
+4. **AGENTS.md integrity** — OK at this entry (397 headings).
+5. **Own committed state** — S638 (smart assign in lead creation) and S641 (Morning Brief advisory panel) fully pushed: `d49938817`, `8fef641de`, `667be37d5`, `80fe77d02`.
+
+### Honest notes
+- The `/admin/recuritment/jobs` 500 was my own probe artifact under transient load — NOT parallel actor's code, NOT a live regression. Re-probe confirmed 200/388,508 bytes both routes.
+- No code changed this round — verification only. Parallel actor's in-flight migrations + files untouched across the whole round (`git status --porcelain`: only their paths).
+- No schema changes, no DB writes, no queries beyond `SHOW COLUMNS`-style probes.
+- PHPStan is RED only on `TeamController.php:186` — parallel actor's in-flight work, NOT mine, explicitly left alone.
+- This round confirmed parallel actor S646 (TDS fabrication removal, widen_dead_stub_columns_s640 widen_stamp_duty_calculations_s645) is applied — `schema_migrations` ids 6 and 7 recorded as executed.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **647** (parallel actor, cross-actor gate check). This entry = **S648**. Next-free = **649**.
+
+### Key lessons (carried, continued)
+_1394. **Push the smoke once; re-run once; never report a 500 from a single probe.** The companion probe re-loaded `/admin/recuritment/jobs` under the same session — 200/388,508 bytes — proving the earlier 500 was cluster-level transition, not parallel actor's commit.
+_1395. **A verification round is only useful if every page it covers is honest bytes seen.** Status code 200 alone is not proof — byte counts + h1 markers + needles are.
+_1396. **Parallel-actor churn can produce transient per-page 500s without associated log errors.** `get_error_log` caught zero new entries around the probe window — the log itself is the definitive witness.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+
 ## Session 646: Silent-Failure 1054/HY093 Family Eliminated - Stub Columns Widened (2 Migrations, 15 Columns), 11 Code Paths Aligned to Live Schema, One Live Fabrication Removed, Gates Green (2026-11-16)
 
 ### Trigger
