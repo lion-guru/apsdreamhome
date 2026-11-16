@@ -17,7 +17,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <small class="text-muted">Configure interactive keywords, quick replies, and automated real estate workflows.</small>
         </div>
         <div class="d-flex gap-2">
-            <a href="/admin/whatsapp/logs" class="btn btn-outline-primary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/whatsapp/logs" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-stream me-1"></i>Live Chat Logs
             </a>
             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#newFlowModal">

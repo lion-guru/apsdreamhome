@@ -54,6 +54,6 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
             <textarea aria-label="Remarks" name="remarks" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
-        <a href="/admin/labour-law-compliance" class="btn btn-secondary">Cancel</a>
+        <a href="<?= BASE_URL ?>/admin/labour-law-compliance" class="btn btn-secondary">Cancel</a>
     </form>
 </div>

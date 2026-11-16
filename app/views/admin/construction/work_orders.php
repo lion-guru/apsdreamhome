@@ -107,7 +107,7 @@ $current_status = $current_status ?? 'all';
                     </select>
                 </div>
                 <div class="col-md-4 text-end pt-3">
-                    <a href="/admin/work-orders" class="btn btn-outline-secondary btn-sm">Reset</a>
+                    <a href="<?= BASE_URL ?>/admin/work-orders" class="btn btn-outline-secondary btn-sm">Reset</a>
                 </div>
             </form>
         </div>
@@ -184,10 +184,10 @@ $current_status = $current_status ?? 'all';
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/work-orders/<?= $o['id'] ?>" class="btn btn-outline-primary" title="View & Manage RA Bills">
+                                        <a href="<?= BASE_URL ?>/admin/work-orders/<?= $o['id'] ?>" class="btn btn-outline-primary" title="View & Manage RA Bills">
                                             <i class="fas fa-folder-open me-1"></i>Manage Bills
                                         </a>
-                                        <a href="/admin/work-orders/<?= $o['id'] ?>/print" target="_blank" class="btn btn-outline-secondary" title="Print Work Order Letterhead">
+                                        <a href="<?= BASE_URL ?>/admin/work-orders/<?= $o['id'] ?>/print" target="_blank" class="btn btn-outline-secondary" title="Print Work Order Letterhead">
                                             <i class="fas fa-print"></i>
                                         </a>
                                     </div>

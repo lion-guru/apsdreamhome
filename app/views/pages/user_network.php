@@ -71,7 +71,7 @@ try {
         <div class="col-12 mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <h2><i class="fas fa-sitemap me-2 text-primary"></i><?php echo __('network_title', [], 'My Network'); ?></h2>
-                <a href="/user/dashboard" class="btn btn-outline-secondary">
+                <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i><?php echo __('network_back_dashboard', [], 'Back to Dashboard'); ?>
                 </a>
             </div>
@@ -83,7 +83,7 @@ try {
             <div class="alert alert-info">
                 <h5><i class="fas fa-info-circle me-2"></i><?php echo __('network_mlm_not_enabled', [], 'MLM Program Not Enabled'); ?></h5>
                 <p><?php echo __('network_mlm_not_enabled_desc', [], 'Contact support to enable MLM features for your account and start earning from referrals!'); ?></p>
-                <a href="/contact" class="btn btn-primary"><?php echo __('network_contact_support', [], 'Contact Support'); ?></a>
+                <a href="<?= BASE_URL ?>/contact" class="btn btn-primary"><?php echo __('network_contact_support', [], 'Contact Support'); ?></a>
             </div>
         </div>
         <?php else: ?>

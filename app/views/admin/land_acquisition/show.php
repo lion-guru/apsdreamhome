@@ -11,7 +11,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Breadcrumb & Nav -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a href="/admin/farmer-acquisitions" class="text-decoration-none text-muted small">
+            <a href="<?= BASE_URL ?>/admin/farmer-acquisitions" class="text-decoration-none text-muted small">
                 <i class="fas fa-arrow-left me-1"></i>Back to Land Acquisition Desk
             </a>
             <h4 class="mb-0 fw-bold mt-1">
@@ -146,7 +146,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                 <i class="fas fa-paper-plane me-1"></i>Disburse Payout
                                             </button>
                                         <?php else: ?>
-                                            <a href="/admin/farmer-acquisitions/milestones/<?= $m['id'] ?>/voucher" target="_blank" class="btn btn-outline-primary">
+                                            <a href="<?= BASE_URL ?>/admin/farmer-acquisitions/milestones/<?= $m['id'] ?>/voucher" target="_blank" class="btn btn-outline-primary">
                                                 <i class="fas fa-print me-1"></i>Print Voucher
                                             </a>
                                         <?php endif; ?>

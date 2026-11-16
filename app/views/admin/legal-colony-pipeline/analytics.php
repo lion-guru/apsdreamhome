@@ -31,17 +31,17 @@ function inr($n) { return '₹' . number_format($n); }
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small">
+      <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small">
         <i class="fas fa-arrow-left me-1"></i> Back to Colony
       </a>
       <h2 class="mb-1"><i class="fas fa-chart-line me-2 text-success"></i>Colony Analytics</h2>
       <small class="text-muted"><?= htmlspecialchars($colony['name'] ?? '') ?> — <?= htmlspecialchars($colony['location'] ?? '') ?></small>
     </div>
     <div>
-      <a href="/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-primary btn-sm">
+      <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-primary btn-sm">
         <i class="fas fa-balance-scale me-1"></i> Compare All Colonies
       </a>
-      <a href="/admin/legal-colony-pipeline/milestones/<?= $colony['id'] ?? 0 ?>" class="btn btn-outline-danger btn-sm">
+      <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/milestones/<?= $colony['id'] ?? 0 ?>" class="btn btn-outline-danger btn-sm">
         <i class="fas fa-tasks me-1"></i> RERA Milestones
       </a>
     </div>

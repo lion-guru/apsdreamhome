@@ -30,7 +30,7 @@ $dem = $dem ?? [];
 
     <!-- Print Action Bar -->
     <div class="no-print d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-        <a href="/admin/plots/demarcation" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/admin/plots/demarcation" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back to Demarcation Desk
         </a>
         <button onclick="window.print()" class="btn btn-success btn-sm">

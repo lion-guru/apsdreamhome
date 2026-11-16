@@ -82,7 +82,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <?php if ($current_colony || $current_status !== 'all'): ?>
                     <div class="col-md-2">
-                        <a href="/admin/construction-approvals" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
+                        <a href="<?= BASE_URL ?>/admin/construction-approvals" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -169,7 +169,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                     <i class="fas fa-ban me-1"></i>Reject
                                                 </button>
                                             <?php else: ?>
-                                                <a href="/admin/construction-approvals/permit/<?= $row['id'] ?>" target="_blank" class="btn btn-outline-primary">
+                                                <a href="<?= BASE_URL ?>/admin/construction-approvals/permit/<?= $row['id'] ?>" target="_blank" class="btn btn-outline-primary">
                                                     <i class="fas fa-print me-1"></i>Permit NOC
                                                 </a>
                                             <?php endif; ?>

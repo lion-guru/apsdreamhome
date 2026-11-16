@@ -11,7 +11,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Breadcrumb & Nav -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a href="/admin/commercial-leases" class="text-decoration-none text-muted small">
+            <a href="<?= BASE_URL ?>/admin/commercial-leases" class="text-decoration-none text-muted small">
                 <i class="fas fa-arrow-left me-1"></i>Back to Commercial Leases
             </a>
             <h4 class="mb-0 fw-bold mt-1">
@@ -142,7 +142,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                     <i class="fas fa-money-bill-wave me-1"></i>Collect
                                                 </button>
                                             <?php endif; ?>
-                                            <a href="/admin/commercial-leases/invoices/<?= $inv['id'] ?>/print" target="_blank" class="btn btn-outline-primary">
+                                            <a href="<?= BASE_URL ?>/admin/commercial-leases/invoices/<?= $inv['id'] ?>/print" target="_blank" class="btn btn-outline-primary">
                                                 <i class="fas fa-print me-1"></i>Print
                                             </a>
                                         </div>

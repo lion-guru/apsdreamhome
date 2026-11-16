@@ -52,7 +52,7 @@
 
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Update Template</button>
-                                <a href="/admin/notification-management/templates" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="<?= BASE_URL ?>/admin/notification-management/templates" class="btn btn-outline-secondary">Cancel</a>
                             </div>
                         </form>
                     <?php endif; ?>

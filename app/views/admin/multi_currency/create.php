@@ -58,7 +58,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Rate</button>
-                                <a href="/admin/multi-currency" class="btn btn-secondary">Cancel</a>
+                                <a href="<?= BASE_URL ?>/admin/multi-currency" class="btn btn-secondary">Cancel</a>
                             </form>
                         </div>
                     </div>

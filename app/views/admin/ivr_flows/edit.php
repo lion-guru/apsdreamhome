@@ -13,10 +13,10 @@ $steps = $steps ?? [];
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0"><i class="fas fa-edit me-2 text-primary"></i>Edit IVR Flow: <?= htmlspecialchars($flow['name'] ?? '') ?></h4>
             <div>
-                <a href="/admin/ivr-flows/<?= $flow['id'] ?>/steps" class="btn btn-outline-primary me-2">
+                <a href="<?= BASE_URL ?>/admin/ivr-flows/<?= $flow['id'] ?>/steps" class="btn btn-outline-primary me-2">
                     <i class="fas fa-list me-1"></i>Manage Steps
                 </a>
-                <a href="/admin/ivr-flows" class="btn btn-secondary">Back to Flows</a>
+                <a href="<?= BASE_URL ?>/admin/ivr-flows" class="btn btn-secondary">Back to Flows</a>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@ $steps = $steps ?? [];
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i>Update Flow
                     </button>
-                    <a href="/admin/ivr-flows" class="btn btn-secondary ms-2">Cancel</a>
+                    <a href="<?= BASE_URL ?>/admin/ivr-flows" class="btn btn-secondary ms-2">Cancel</a>
                 </form>
             </div>
         </div>

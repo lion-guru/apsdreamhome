@@ -2,7 +2,7 @@
 $colony = $colony ?? null;
 ?>
 <div class="container-fluid py-4">
-  <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
   <h2 class="mb-4"><i class="fas fa-stamp me-2 text-danger"></i>Phase 4: RERA Registration</h2>
 
   <?php if (!empty($_SESSION['flash_error'])): ?>
@@ -63,7 +63,7 @@ $colony = $colony ?? null;
         <hr class="border-secondary">
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-danger"><i class="fas fa-stamp me-1"></i> Register RERA</button>
-          <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="btn btn-outline-secondary">Cancel</a>
+          <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="btn btn-outline-secondary">Cancel</a>
         </div>
       </form>
     </div>

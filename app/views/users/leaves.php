@@ -159,7 +159,7 @@ function lvDays($d) { return (int)$d; }
                                     <td><small class="text-muted"><?= htmlspecialchars(mb_strimwidth($l['reason'] ?? '—', 0, 60, '...')) ?></small></td>
                                     <td><?= lvStatusBadge($l['status'] ?? 'pending') ?></td>
                                     <td class="text-end pe-3">
-                                        <a href="/employee/leaves/<?= (int)$l['id'] ?>" class="btn btn-sm btn-outline-primary" title="View Details">
+                                        <a href="<?= BASE_URL ?>/employee/leaves/<?= (int)$l['id'] ?>" class="btn btn-sm btn-outline-primary" title="View Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <?php if (strtolower($l['status'] ?? '') === 'pending'): ?>

@@ -2,7 +2,7 @@
 $colony = $colony ?? null;
 ?>
 <div class="container-fluid py-4">
-  <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
   <h2 class="mb-4"><i class="fas fa-file-contract me-2 text-warning"></i>Phase 1: Start Land Acquisition</h2>
 
   <?php if (!empty($_SESSION['flash_error'])): ?>
@@ -46,7 +46,7 @@ $colony = $colony ?? null;
 
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-warning"><i class="fas fa-save me-1"></i> Start Acquisition</button>
-          <a href="/admin/legal-colony-pipeline" class="btn btn-outline-secondary">Cancel</a>
+          <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline" class="btn btn-outline-secondary">Cancel</a>
         </div>
       </form>
     </div>

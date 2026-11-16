@@ -98,7 +98,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Filter</button>
-                    <a href="/employee/user-properties" class="btn btn-sm btn-outline-secondary">Clear</a>
+                    <a href="<?= BASE_URL ?>/employee/user-properties" class="btn btn-sm btn-outline-secondary">Clear</a>
                 </div>
             </form>
         </div>
@@ -144,7 +144,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                             <?php endif; ?>
                         </div>
                         <div class="card-footer bg-transparent border-top-0 d-flex gap-2">
-                            <a href="/properties/<?= $p['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary flex-grow-1"><i class="fas fa-eye me-1"></i>View</a>
+                            <a href="<?= BASE_URL ?>/properties/<?= $p['id'] ?? 0 ?>" class="btn btn-sm btn-outline-primary flex-grow-1"><i class="fas fa-eye me-1"></i>View</a>
                             <?php if (strtolower($p['status'] ?? '') === 'pending'): ?>
                                 <form method="POST" action="<?= BASE_URL ?>/employee/user-properties/action" class="d-inline flex-grow-1">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">

@@ -14,7 +14,7 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/accounting">Accounting</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/accounting">Accounting</a></li>
                         <li class="breadcrumb-item active">Tax Planning</li>
                     </ol>
                 </div>

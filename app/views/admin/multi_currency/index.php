@@ -12,7 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/accounting">Accounting</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/accounting">Accounting</a></li>
                         <li class="breadcrumb-item active">Multi-Currency</li>
                     </ol>
                 </div>
@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                                     <button type="submit" class="btn btn-sm btn-info"><i class="fas fa-sync-alt"></i> Refresh All</button>
                                 </form>
-                                <a href="/admin/multi-currency/create" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add Rate</a>
+                                <a href="<?= BASE_URL ?>/admin/multi-currency/create" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add Rate</a>
                             </div>
                         </div>
                         <div class="card-body p-0">
@@ -114,7 +114,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-right">
-                                            <a href="/admin/multi-currency/edit/<?php echo (int)$r['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                            <a href="<?= BASE_URL ?>/admin/multi-currency/edit/<?php echo (int)$r['id']; ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                             <button class="btn btn-sm btn-outline-danger" onclick="deleteRate(<?php echo (int)$r['id']; ?>)"><i class="fas fa-trash"></i></button>
                                         </td>
                                     </tr>

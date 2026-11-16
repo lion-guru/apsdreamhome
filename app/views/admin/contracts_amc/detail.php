@@ -7,14 +7,14 @@
       <small class="text-muted">#<?= (int)$contract['id'] ?> · <?= htmlspecialchars($contract['contract_number']) ?></small>
     </div>
     <div class="btn-group">
-      <a href="/admin/contracts-amc/<?= (int)$contract['id'] ?>/edit" class="btn btn-outline-secondary"><i class="fas fa-edit me-1"></i> Edit</a>
+      <a href="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$contract['id'] ?>/edit" class="btn btn-outline-secondary"><i class="fas fa-edit me-1"></i> Edit</a>
       <?php if (in_array($contract['status'], ['active','expiring_soon','expired'])): ?>
         <form method="POST" action="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$contract['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
           <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
           <button type="submit" class="btn btn-outline-success"><i class="fas fa-sync me-1"></i> Renew</button>
         </form>
       <?php endif; ?>
-      <a href="/admin/contracts-amc" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Back</a>
+      <a href="<?= BASE_URL ?>/admin/contracts-amc" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Back</a>
     </div>
   </div>
 
@@ -133,7 +133,7 @@
         </div>
         <div class="card-body">
           <div class="d-grid gap-2">
-            <a href="/admin/contracts-amc/<?= (int)$contract['id'] ?>/edit" class="btn btn-outline-primary">
+            <a href="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$contract['id'] ?>/edit" class="btn btn-outline-primary">
               <i class="fas fa-edit me-2"></i> Edit Contract
             </a>
             <?php if (in_array($contract['status'], ['active','expiring_soon','expired'])): ?>
@@ -145,11 +145,11 @@
               </form>
             <?php endif; ?>
             <?php if ($contract['party_id']): ?>
-              <a href="/admin/users/<?= (int)$contract['party_id'] ?>" class="btn btn-outline-info" target="_blank">
+              <a href="<?= BASE_URL ?>/admin/users/<?= (int)$contract['party_id'] ?>" class="btn btn-outline-info" target="_blank">
                 <i class="fas fa-user me-2"></i> View Party Profile
               </a>
             <?php endif; ?>
-            <a href="/admin/contracts-amc" class="btn btn-outline-secondary">
+            <a href="<?= BASE_URL ?>/admin/contracts-amc" class="btn btn-outline-secondary">
               <i class="fas fa-list me-2"></i> All Contracts
             </a>
           </div>

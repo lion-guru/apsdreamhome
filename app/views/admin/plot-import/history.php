@@ -5,7 +5,7 @@ $history = $history ?? [];
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Import History</h1>
-        <a href="/admin/plots/import" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/admin/plots/import" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i> Back to Import
         </a>
     </div>

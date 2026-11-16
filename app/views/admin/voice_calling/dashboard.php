@@ -15,13 +15,13 @@ $recentCalls = $recentCalls ?? [];
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0"><i class="fas fa-phone-volume me-2 text-primary"></i>AI Voice Calling Dashboard</h4>
             <div>
-                <a href="/admin/voice-calling/provider-config" class="btn btn-outline-primary me-2">
+                <a href="<?= BASE_URL ?>/admin/voice-calling/provider-config" class="btn btn-outline-primary me-2">
                     <i class="fas fa-cog me-1"></i>Provider Config
                 </a>
-                <a href="/admin/ivr-flows" class="btn btn-outline-secondary me-2">
+                <a href="<?= BASE_URL ?>/admin/ivr-flows" class="btn btn-outline-secondary me-2">
                     <i class="fas fa-sitemap me-1"></i>IVR Flows
                 </a>
-                <a href="/admin/voice-analytics" class="btn btn-primary">
+                <a href="<?= BASE_URL ?>/admin/voice-analytics" class="btn btn-primary">
                     <i class="fas fa-chart-line me-1"></i>Analytics
                 </a>
             </div>
@@ -51,13 +51,13 @@ $recentCalls = $recentCalls ?? [];
                                         data-provider="<?= htmlspecialchars($p['service_name']) ?>">
                                     <i class="fas fa-play me-1"></i>Test
                                 </button>
-                                <a href="/admin/voice-calling/provider-config?provider=<?= urlencode($p['service_name']) ?>" 
+                                <a href="<?= BASE_URL ?>/admin/voice-calling/provider-config?provider=<?= urlencode($p['service_name']) ?>" 
                                    class="btn btn-sm btn-outline-secondary">
                                     <i class="fas fa-edit me-1"></i>Config
                                 </a>
                             </div>
                         <?php else: ?>
-                            <a href="/admin/voice-calling/provider-config?provider=<?= urlencode($p['service_name']) ?>" 
+                            <a href="<?= BASE_URL ?>/admin/voice-calling/provider-config?provider=<?= urlencode($p['service_name']) ?>" 
                                class="btn btn-sm btn-primary w-100">
                                 <i class="fas fa-plus me-1"></i>Add Credentials
                             </a>
@@ -177,7 +177,7 @@ $recentCalls = $recentCalls ?? [];
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="fas fa-history me-1"></i>Recent Calls</h5>
-                <a href="/admin/ai-calling/call-logs" class="btn btn-sm btn-outline-primary">View All</a>
+                <a href="<?= BASE_URL ?>/admin/ai-calling/call-logs" class="btn btn-sm btn-outline-primary">View All</a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($recentCalls)): ?>

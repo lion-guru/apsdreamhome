@@ -56,10 +56,10 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
             <p class="text-muted mb-0 small"><?= $stats['total'] ?> activities recorded</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="/employee/activities" class="btn btn-sm <?= !$filter ? 'btn-primary' : 'btn-outline-secondary' ?>">All</a>
-            <a href="/employee/activities?type=login" class="btn btn-sm <?= $filter === 'login' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
-            <a href="/employee/activities?type=task" class="btn btn-sm <?= $filter === 'task' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-tasks me-1"></i>Tasks</a>
-            <a href="/employee/activities?type=attendance" class="btn btn-sm <?= $filter === 'attendance' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-calendar-check me-1"></i>Attendance</a>
+            <a href="<?= BASE_URL ?>/employee/activities" class="btn btn-sm <?= !$filter ? 'btn-primary' : 'btn-outline-secondary' ?>">All</a>
+            <a href="<?= BASE_URL ?>/employee/activities?type=login" class="btn btn-sm <?= $filter === 'login' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+            <a href="<?= BASE_URL ?>/employee/activities?type=task" class="btn btn-sm <?= $filter === 'task' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-tasks me-1"></i>Tasks</a>
+            <a href="<?= BASE_URL ?>/employee/activities?type=attendance" class="btn btn-sm <?= $filter === 'attendance' ? 'btn-primary' : 'btn-outline-secondary' ?>"><i class="fas fa-calendar-check me-1"></i>Attendance</a>
         </div>
     </div>
 
@@ -208,9 +208,9 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
                     <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-filter me-2 text-primary"></i>Quick Filter</h2>
                 </div>
                 <div class="card-body d-flex flex-wrap gap-2">
-                    <a href="/employee/activities" class="emp-act-type-btn <?= !$filter ? 'active' : '' ?>">All</a>
+                    <a href="<?= BASE_URL ?>/employee/activities" class="emp-act-type-btn <?= !$filter ? 'active' : '' ?>">All</a>
                     <?php foreach ($stats['types'] as $type => $count): ?>
-                        <a href="/employee/activities?type=<?= urlencode($type) ?>" class="emp-act-type-btn <?= $filter === $type ? 'active' : '' ?>"><?= ucfirst(htmlspecialchars($type ?? '')) ?></a>
+                        <a href="<?= BASE_URL ?>/employee/activities?type=<?= urlencode($type) ?>" class="emp-act-type-btn <?= $filter === $type ? 'active' : '' ?>"><?= ucfirst(htmlspecialchars($type ?? '')) ?></a>
                     <?php endforeach; ?>
                 </div>
             </div>

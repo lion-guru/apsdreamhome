@@ -6,7 +6,7 @@
                 <h1 class="h2 mb-0">
                     <i class="fas fa-file-alt"></i> Notification Templates
                 </h1>
-                <a href="/admin/notification-management/templates/create" class="btn btn-primary">
+                <a href="<?= BASE_URL ?>/admin/notification-management/templates/create" class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i> Create Template
                 </a>
             </div>

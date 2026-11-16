@@ -3,7 +3,7 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Import Leads from CSV</h1>
-    <a href="/admin/leads" class="btn btn-outline-secondary">
+    <a href="<?= BASE_URL ?>/admin/leads" class="btn btn-outline-secondary">
       <i class="fas fa-arrow-left"></i> Back to Leads
     </a>
   </div>

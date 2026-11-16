@@ -7,7 +7,7 @@
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
         <i class="fas fa-filter"></i> Filters
       </button>
-      <a href="/admin/property-valuations/generate" class="btn btn-success">
+      <a href="<?= BASE_URL ?>/admin/property-valuations/generate" class="btn btn-success">
         <i class="fas fa-plus"></i> Generate New
       </a>
     </div>
@@ -95,7 +95,7 @@
                   <td><?= htmlspecialchars($report['generated_by_name'] ?? 'System') ?></td>
                   <td><?= date('M d, Y', strtotime($report['generated_at'] ?? 'now')) ?></td>
                   <td>
-                    <a href="/admin/property-valuations/view/<?= $report['id'] ?>" class="btn btn-sm btn-outline-primary">
+                    <a href="<?= BASE_URL ?>/admin/property-valuations/view/<?= $report['id'] ?>" class="btn btn-sm btn-outline-primary">
                       <i class="fas fa-eye"></i> View
                     </a>
                   </td>

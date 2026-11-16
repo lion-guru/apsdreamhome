@@ -34,5 +34,5 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
-    <a href="/admin/feedback-pipeline" class="btn btn-secondary mt-3">Back</a>
+    <a href="<?= BASE_URL ?>/admin/feedback-pipeline" class="btn btn-secondary mt-3">Back</a>
 </div>

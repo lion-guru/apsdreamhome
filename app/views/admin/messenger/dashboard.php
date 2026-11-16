@@ -13,7 +13,7 @@
 
 <h2>Dead Letter Summary</h2>
 <p>Total Failed: <?= $stats['total_failed'] ?> | Oldest: <?= $stats['oldest_failure'] ?? '-' ?> | Newest: <?= $stats['newest_failure'] ?? '-' ?></p>
-<p><a href="/admin/messenger/dead-letters">Open Dead Letter Queue →</a></p>
+<p><a href="<?= BASE_URL ?>/admin/messenger/dead-letters">Open Dead Letter Queue →</a></p>
 
 <h2>Failed by Transport/Class</h2>
 <table border="1" cellpadding="6">

@@ -35,7 +35,7 @@ $qrCodeUrl = $qrCodeUrl ?? '';
     </div>
     <div class="text-center mt-3">
         <button class="btn btn-primary" onclick="window.print()">Print ID Card</button>
-        <a href="/agent/dashboard" class="btn btn-secondary">Back</a>
+        <a href="<?= BASE_URL ?>/agent/dashboard" class="btn btn-secondary">Back</a>
     </div>
 </div>
 </body>

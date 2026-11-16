@@ -232,7 +232,7 @@ $dpMap = ['operational_ready' => 'Operational Ready ✅', 'battery_weak' => 'Bat
 <div class="no-print" style="text-align:center; margin:20px;">
     <button onclick="window.print()" style="padding:10px 30px; background:#7b1a1a; color:#fff; border:none; border-radius:6px; font-size:14px; cursor:pointer;">🖨️ Print Certificate</button>
     &nbsp;
-    <a href="/admin/township-fire-safety" style="padding:10px 20px; background:#6c757d; color:#fff; border-radius:6px; text-decoration:none; font-size:14px;">← Back to Fire Safety Desk</a>
+    <a href="<?= BASE_URL ?>/admin/township-fire-safety" style="padding:10px 20px; background:#6c757d; color:#fff; border-radius:6px; text-decoration:none; font-size:14px;">← Back to Fire Safety Desk</a>
 </div>
 </body>
 </html>

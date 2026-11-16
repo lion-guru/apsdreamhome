@@ -27,7 +27,7 @@ $item = $item ?? [];
             <p><strong>Notes:</strong> <?= htmlspecialchars($item['notes'] ?? '') ?></p>
         </div>
     </div>
-    <a href="/agent/bookings" class="btn btn-secondary mt-3">Back</a>
+    <a href="<?= BASE_URL ?>/agent/bookings" class="btn btn-secondary mt-3">Back</a>
 </div>
 </body>
 </html>

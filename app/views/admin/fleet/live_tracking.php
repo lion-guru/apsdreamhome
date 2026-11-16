@@ -21,10 +21,10 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <form method="GET" action="<?= BASE_URL ?>/admin/site-visits/fleet/live-tracking" class="d-flex gap-2 align-items-center">
                 <input aria-label="Date" type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date) ?>" onchange="this.form.submit()">
             </form>
-            <a href="/admin/site-visits/manifest?date=<?= urlencode($date) ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/site-visits/manifest?date=<?= urlencode($date) ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-print me-1"></i>Print Manifest
             </a>
-            <a href="/admin/site-visits/fleet" class="btn btn-outline-primary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/site-visits/fleet" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-arrow-left me-1"></i>Fleet Dashboard
             </a>
         </div>
@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <h5 class="fw-bold text-muted">No scheduled trips for <?= date('d M Y', strtotime($date)) ?></h5>
                     <p class="text-muted small">Schedule a trip from the fleet manager to track vehicle dispatch and pickups.</p>
                     <div>
-                        <a href="/admin/site-visits/fleet/trips" class="btn btn-primary btn-sm">Schedule New Trip</a>
+                        <a href="<?= BASE_URL ?>/admin/site-visits/fleet/trips" class="btn btn-primary btn-sm">Schedule New Trip</a>
                     </div>
                 </div>
             </div>

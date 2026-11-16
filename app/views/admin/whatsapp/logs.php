@@ -16,7 +16,7 @@ $logs = $logs ?? [];
             <small class="text-muted">Real-time incoming customer inquiries and automated bot responses.</small>
         </div>
         <div class="d-flex gap-2">
-            <a href="/admin/whatsapp/flows" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/whatsapp/flows" class="btn btn-outline-secondary btn-sm">
                 <i class="fab fa-whatsapp me-1"></i>Manage Bot Flows
             </a>
             <button onclick="location.reload();" class="btn btn-primary btn-sm">

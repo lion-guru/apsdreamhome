@@ -45,7 +45,7 @@ $page_title = 'Call Recordings';
                         <td><?= (int)($item['duration_seconds'] ?? 0) ?></td>
                         <td><?= htmlspecialchars($item['customer_response'] ?? '') ?></td>
                         <td><?= htmlspecialchars($item['created_at'] ?? '') ?></td>
-                        <td><a href="/admin/crm/call-recordings/show/<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">Play</a></td>
+                        <td><a href="<?= BASE_URL ?>/admin/crm/call-recordings/show/<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">Play</a></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

@@ -15,7 +15,7 @@ $components = $data['components'] ?? [];
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/admin/reports/financial">Financial Reports</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/reports/financial">Financial Reports</a></li>
                         <li class="breadcrumb-item active">Fund Flow</li>
                     </ol>
                 </div>

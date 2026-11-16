@@ -8,7 +8,7 @@
                     <p class="text-muted">Comparing <?= htmlspecialchars($propertiesCount, ENT_QUOTES, 'UTF-8') ?> properties side-by-side</p>
                 </div>
                 <div class="btn-group">
-                    <a href="/compare" class="btn btn-outline-secondary">
+                    <a href="<?= BASE_URL ?>/compare" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Back to Selection
                     </a>
                     <button type="button" class="btn btn-outline-primary" onclick="shareComparison()">
@@ -187,7 +187,7 @@
                 </ul>
 
                 <div class="card-footer bg-white">
-                    <a href="/properties/<?= $property['id'] ?>" class="btn btn-outline-primary btn-sm w-100">
+                    <a href="<?= BASE_URL ?>/properties/<?= $property['id'] ?>" class="btn btn-outline-primary btn-sm w-100">
                         <i class="fas fa-eye me-2"></i>View Details
                     </a>
                 </div>
@@ -288,10 +288,10 @@
                                     <td class="fw-bold"><i class="fas fa-cog me-2"></i>Action</td>
                                     <?php foreach ($properties as $property): ?>
                                     <td>
-                                        <a href="/properties/<?= $property['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?= BASE_URL ?>/properties/<?= $property['id'] ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye me-1"></i>View
                                         </a>
-                                        <a href="/enquiry?property_id=<?= $property['id'] ?>" class="btn btn-sm btn-outline-success">
+                                        <a href="<?= BASE_URL ?>/enquiry?property_id=<?= $property['id'] ?>" class="btn btn-sm btn-outline-success">
                                             <i class="fas fa-phone me-1"></i>Enquire
                                         </a>
                                     </td>

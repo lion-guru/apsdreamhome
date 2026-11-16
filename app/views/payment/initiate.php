@@ -82,7 +82,7 @@
                             <textarea aria-label="Description" class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <a href="/payment" class="btn btn-secondary">
+                            <a href="<?= BASE_URL ?>/payment" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

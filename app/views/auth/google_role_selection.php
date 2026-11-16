@@ -253,7 +253,7 @@
         </div>
 
         <div class="text-center mt-3">
-            <a href="/login" class="text-muted text-decoration-none">
+            <a href="<?= BASE_URL ?>/login" class="text-muted text-decoration-none">
                 <i class="fas fa-arrow-left me-1"></i>Back to Login
             </a>
         </div>

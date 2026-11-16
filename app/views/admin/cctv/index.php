@@ -66,7 +66,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </select>
                 </div>
                 <div class="col-md-6 d-flex align-items-end justify-content-end">
-                    <a href="/admin/township-cctv" class="btn btn-outline-secondary btn-sm"><i class="fas fa-undo me-1"></i> Reset</a>
+                    <a href="<?= BASE_URL ?>/admin/township-cctv" class="btn btn-outline-secondary btn-sm"><i class="fas fa-undo me-1"></i> Reset</a>
                 </div>
             </form>
         </div>
@@ -139,7 +139,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                     <span class="text-muted small"><?= htmlspecialchars($l['technician_phone'] ?? '') ?></span>
                                 </td>
                                 <td class="text-end pe-3">
-                                    <a href="/admin/township-cctv/print?id=<?= $l['id'] ?>" target="_blank" class="btn btn-sm btn-outline-secondary" title="Print CCTV Audit Slip">
+                                    <a href="<?= BASE_URL ?>/admin/township-cctv/print?id=<?= $l['id'] ?>" target="_blank" class="btn btn-sm btn-outline-secondary" title="Print CCTV Audit Slip">
                                         <i class="fas fa-print"></i>
                                     </a>
                                 </td>

@@ -8,8 +8,8 @@ include __DIR__ . '/../layouts/base.php';
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb glass-breadcrumb p-2 px-3">
-            <li class="breadcrumb-item"><a href="/" class="text-white-50">Home</a></li>
-            <li class="breadcrumb-item"><a href="/properties" class="text-white-50">Properties</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" class="text-white-50">Home</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/properties" class="text-white-50">Properties</a></li>
             <li class="breadcrumb-item active text-white" aria-current="page"><?php echo htmlspecialchars($property['title'] ?? ''); ?></li>
         </ol>
     </nav>

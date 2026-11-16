@@ -59,10 +59,10 @@ $base = BASE_URL ?? '/apsdreamhome';
                     </div>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                        <a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>" class="btn btn-primary btn-lg">
+                        <a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>" class="btn btn-primary btn-lg">
                             <i class="fas fa-eye me-2"></i>View Booking Details
                         </a>
-                        <a href="/user/dashboard" class="btn btn-outline-secondary btn-lg">
+                        <a href="<?= BASE_URL ?>/user/dashboard" class="btn btn-outline-secondary btn-lg">
                             <i class="fas fa-home me-2"></i>Go to Dashboard
                         </a>
                     </div>

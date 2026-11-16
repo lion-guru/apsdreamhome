@@ -9,8 +9,8 @@ $current_page = 'saas_home';
         <div class="hero-badge"><i class="fas fa-rocket"></i> India's #1 Real Estate CRM Platform</div>
         <h1>Run Your Entire Business on <span>One Platform</span></h1>
         <p>CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.</        <div class="hero-buttons">
-            <a href="/tenant-signup" class="btn btn-primary"><i class="fas fa-play"></i> Start Free Trial</a>
-            <a href="/pricing" class="btn btn-outline"><i class="fas fa-tag"></i> View Pricing</a>
+            <a href="<?= BASE_URL ?>/tenant-signup" class="btn btn-primary"><i class="fas fa-play"></i> Start Free Trial</a>
+            <a href="<?= BASE_URL ?>/pricing" class="btn btn-outline"><i class="fas fa-tag"></i> View Pricing</a>
         </div>
     </div>
 </section>
@@ -132,7 +132,7 @@ $current_page = 'saas_home';
                 <li><i class="fas fa-check"></i> <?= (int)($plan['storage_limit_mb'] ?? 0) ?> MB Storage</li>
                 <li><i class="fas fa-check"></i> Email & SMS Support</li>
             </ul>
-            <a href="/tenant-signup?plan=<?= (int)($plan['id'] ?? 1) ?>" class="btn btn-primary btn-full">Get Started</a>
+            <a href="<?= BASE_URL ?>/tenant-signup?plan=<?= (int)($plan['id'] ?? 1) ?>" class="btn btn-primary btn-full">Get Started</a>
         </div>
         <?php endforeach; ?>
     </div>
@@ -167,17 +167,17 @@ $current_page = 'saas_home';
 <section class="cta-section">
     <h2>Ready to Transform Your Business?</h2>
     <p>Start your 14-day free trial. No credit card required. Set up in 5 minutes.</p>
-    <a href="/tenant-signup" class="btn btn-white"><i class="fas fa-rocket"></i> Start Free Trial</a>
+    <a href="<?= BASE_URL ?>/tenant-signup" class="btn btn-white"><i class="fas fa-rocket"></i> Start Free Trial</a>
 </section>
 
 <!-- Footer -->
 <footer class="footer">
     <div class="footer-links">
-        <a href="/pricing">Pricing</a>
-        <a href="/tenant-signup">Sign Up</a>
-        <a href="/login">Login</a>
-        <a href="/privacy">Privacy Policy</a>
-        <a href="/contact">Contact Us</a>
+        <a href="<?= BASE_URL ?>/pricing">Pricing</a>
+        <a href="<?= BASE_URL ?>/tenant-signup">Sign Up</a>
+        <a href="<?= BASE_URL ?>/login">Login</a>
+        <a href="<?= BASE_URL ?>/privacy">Privacy Policy</a>
+        <a href="<?= BASE_URL ?>/contact">Contact Us</a>
     </div>
     <p>&copy; <?= date('Y') ?> APS CRM. All rights reserved. Built with <i class="fas fa-heart"></i> in India.</p>
 </footer>

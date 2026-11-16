@@ -35,13 +35,13 @@ foreach ($colonies as $c) {
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <a href="/admin/legal-colony-pipeline" class="text-decoration-none text-muted small">
+      <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline" class="text-decoration-none text-muted small">
         <i class="fas fa-arrow-left me-1"></i> Back to Pipeline
       </a>
       <h2 class="mb-1"><i class="fas fa-balance-scale me-2 text-primary"></i>Colony Analytics Comparison</h2>
       <small class="text-muted">Compare health, revenue, cost, and profit across all colonies</small>
     </div>
-    <a href="/admin/legal-colony-pipeline/health" class="btn btn-sm btn-outline-danger">
+    <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/health" class="btn btn-sm btn-outline-danger">
       <i class="fas fa-heartbeat me-1"></i> Health Dashboard
     </a>
   </div>
@@ -211,10 +211,10 @@ foreach ($colonies as $c) {
                   <span class="badge <?= $marginClass ?> fs-6"><?= $margin ?>%</span>
                 </td>
                 <td class="text-center">
-                  <a href="/admin/legal-colony-pipeline/analytics/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="Analytics">
+                  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/analytics/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="Analytics">
                     <i class="fas fa-chart-line"></i>
                   </a>
-                  <a href="/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Detail">
+                  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Detail">
                     <i class="fas fa-eye"></i>
                   </a>
                 </td>
@@ -432,10 +432,10 @@ document.addEventListener('DOMContentLoaded', function() {
                   <span class="badge <?= $marginClass ?> fs-6"><?= $margin ?>%</span>
                 </td>
                 <td class="text-center">
-                  <a href="/admin/legal-colony-pipeline/analytics/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="Analytics">
+                  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/analytics/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary" title="Analytics">
                     <i class="fas fa-chart-line"></i>
                   </a>
-                  <a href="/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Detail">
+                  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Detail">
                     <i class="fas fa-eye"></i>
                   </a>
                 </td>

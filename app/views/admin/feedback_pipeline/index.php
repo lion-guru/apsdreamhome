@@ -4,7 +4,7 @@ $page_title = 'Customer Feedback Pipeline';
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="h3 mb-0">Customer Feedback Pipeline</h1>
-        <a href="/admin/feedback-pipeline/create" class="btn btn-primary">Dispatch Survey</a>
+        <a href="<?= BASE_URL ?>/admin/feedback-pipeline/create" class="btn btn-primary">Dispatch Survey</a>
     </div>
     <div class="row mb-3">
         <div class="col-md-3"><div class="card"><div class="card-body"><strong>Total</strong><div><?= (int)$stats['total'] ?></div></div></div></div>
@@ -37,7 +37,7 @@ $page_title = 'Customer Feedback Pipeline';
                         <td><?= htmlspecialchars($item['status'] ?? '') ?></td>
                         <td><?= htmlspecialchars((string)($item['rating'] ?? '')) ?></td>
                         <td><?= htmlspecialchars($item['sent_at'] ?? '') ?></td>
-                        <td><a href="/admin/feedback-pipeline/show/<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                        <td><a href="<?= BASE_URL ?>/admin/feedback-pipeline/show/<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

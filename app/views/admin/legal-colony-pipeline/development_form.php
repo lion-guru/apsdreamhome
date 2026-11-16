@@ -3,7 +3,7 @@ $colony = $colony ?? null;
 $costs  = $costs ?? [];
 ?>
 <div class="container-fluid py-4">
-  <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
   <h2 class="mb-4"><i class="fas fa-hard-hat me-2 text-secondary"></i>Phase 5: Development Costs</h2>
 
   <?php if (!empty($_SESSION['flash_success'])): ?>

@@ -48,7 +48,7 @@
                                             <td><?= $session['property_count'] ?> properties</td>
                                             <td><?= date('M d, Y', strtotime($session['created_at'])) ?></td>
                                             <td>
-                                                <a href="/compare/load/<?= $session['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                                <a href="<?= BASE_URL ?>/compare/load/<?= $session['id'] ?>" class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-eye"></i> View
                                                 </a>
                                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteSession(<?= $session['id'] ?>)">

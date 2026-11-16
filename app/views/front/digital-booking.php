@@ -119,14 +119,14 @@ $base = BASE_URL ?? '/apsdreamhome';
                                 <small class="text-muted">Document #: <?= htmlspecialchars($doc['document_number'] ?? '') ?></small>
                                 <div class="mt-3">
                                     <?php if (!$signed): ?>
-                                        <a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>/document/<?= $doc['id'] ?>" class="btn btn-sm btn-primary w-100">
+                                        <a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>/document/<?= $doc['id'] ?>" class="btn btn-sm btn-primary w-100">
                                             <i class="fas fa-pen me-1"></i>Sign Document
                                         </a>
                                     <?php else: ?>
-                                        <a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>/document/<?= $doc['id'] ?>" class="btn btn-sm btn-outline-primary w-100">
+                                        <a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>/document/<?= $doc['id'] ?>" class="btn btn-sm btn-outline-primary w-100">
                                             <i class="fas fa-eye me-1"></i>View Signed Document
                                         </a>
-                                        <a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>/download/<?= $doc['id'] ?>" class="btn btn-sm btn-outline-secondary w-100 mt-1">
+                                        <a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>/download/<?= $doc['id'] ?>" class="btn btn-sm btn-outline-secondary w-100 mt-1">
                                             <i class="fas fa-download me-1"></i>Download PDF
                                         </a>
                                     <?php endif; ?>

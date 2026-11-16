@@ -35,13 +35,13 @@ $items = $items ?? [];
                     <td><?= htmlspecialchars($item['visitor_name'] ?? '') ?></td>
                     <td><?= htmlspecialchars($item['visit_date'] ?? '') ?></td>
                     <td><?= htmlspecialchars($item['status'] ?? '') ?></td>
-                    <td><a href="/agent/site-visits/<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                    <td><a href="<?= BASE_URL ?>/agent/site-visits/<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    <a href="/agent/dashboard" class="btn btn-secondary">Back</a>
+    <a href="<?= BASE_URL ?>/agent/dashboard" class="btn btn-secondary">Back</a>
 </div>
 </body>
 </html>

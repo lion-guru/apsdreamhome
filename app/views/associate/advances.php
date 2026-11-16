@@ -18,7 +18,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </h3>
             <p class="text-muted mb-0">Apply for advances against your upcoming sales commissions with seamless automatic deduction.</p>
         </div>
-        <a href="/associate/dashboard" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Associate Dashboard
         </a>
     </div>

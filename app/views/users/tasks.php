@@ -71,7 +71,7 @@ if ($filter && $filter !== 'all') {
     <!-- Stats Row -->
     <div class="row g-2 mb-3">
         <div class="col">
-            <a href="/employee/tasks" class="card emp-task-stat <?= !$filter || $filter === 'all' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+            <a href="<?= BASE_URL ?>/employee/tasks" class="card emp-task-stat <?= !$filter || $filter === 'all' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
                 <div class="card-body py-2 px-3 text-center">
                     <div class="stat-num text-dark"><?= $stats['total'] ?></div>
                     <div class="text-muted small">All</div>
@@ -79,7 +79,7 @@ if ($filter && $filter !== 'all') {
             </a>
         </div>
         <div class="col">
-            <a href="/employee/tasks?status=pending" class="card emp-task-stat <?= $filter === 'pending' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+            <a href="<?= BASE_URL ?>/employee/tasks?status=pending" class="card emp-task-stat <?= $filter === 'pending' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
                 <div class="card-body py-2 px-3 text-center">
                     <div class="stat-num text-warning"><?= $stats['pending'] ?></div>
                     <div class="text-muted small">Pending</div>
@@ -87,7 +87,7 @@ if ($filter && $filter !== 'all') {
             </a>
         </div>
         <div class="col">
-            <a href="/employee/tasks?status=in+progress" class="card emp-task-stat <?= $filter === 'in progress' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+            <a href="<?= BASE_URL ?>/employee/tasks?status=in+progress" class="card emp-task-stat <?= $filter === 'in progress' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
                 <div class="card-body py-2 px-3 text-center">
                     <div class="stat-num text-info"><?= $stats['in_progress'] ?></div>
                     <div class="text-muted small">In Progress</div>
@@ -95,7 +95,7 @@ if ($filter && $filter !== 'all') {
             </a>
         </div>
         <div class="col">
-            <a href="/employee/tasks?status=completed" class="card emp-task-stat <?= $filter === 'completed' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+            <a href="<?= BASE_URL ?>/employee/tasks?status=completed" class="card emp-task-stat <?= $filter === 'completed' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
                 <div class="card-body py-2 px-3 text-center">
                     <div class="stat-num text-success"><?= $stats['completed'] ?></div>
                     <div class="text-muted small">Done</div>
@@ -103,7 +103,7 @@ if ($filter && $filter !== 'all') {
             </a>
         </div>
         <div class="col">
-            <a href="/employee/tasks?status=overdue" class="card emp-task-stat <?= $filter === 'overdue' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
+            <a href="<?= BASE_URL ?>/employee/tasks?status=overdue" class="card emp-task-stat <?= $filter === 'overdue' ? 'active shadow-sm' : 'shadow-none' ?> text-decoration-none">
                 <div class="card-body py-2 px-3 text-center">
                     <div class="stat-num text-danger"><?= $stats['overdue'] ?></div>
                     <div class="text-muted small">Overdue</div>

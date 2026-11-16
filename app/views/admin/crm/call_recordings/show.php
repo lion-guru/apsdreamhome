@@ -14,5 +14,5 @@ $page_title = 'Call Recording Detail';
             <audio controls src="<?= htmlspecialchars($item['recording_url']) ?>" style="width:100%"></audio>
         </div>
     </div>
-    <a href="/admin/crm/call-recordings" class="btn btn-secondary">Back</a>
+    <a href="<?= BASE_URL ?>/admin/crm/call-recordings" class="btn btn-secondary">Back</a>
 </div>

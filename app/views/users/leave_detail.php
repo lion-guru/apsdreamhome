@@ -24,7 +24,7 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
         <div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a href="/employee/leaves" class="text-decoration-none">Leave Management</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/employee/leaves" class="text-decoration-none">Leave Management</a></li>
                     <li class="breadcrumb-item active">Leave #<?= (int)($leave['id'] ?? 0) ?></li>
                 </ol>
             </nav>
@@ -37,7 +37,7 @@ function ldDateTime($d) { return $d ? date('d M Y, h:i A', strtotime($d)) : '—
                     <button type="submit" class="btn btn-outline-danger"><i class="fas fa-times me-1"></i>Cancel Leave</button>
                 </form>
             <?php endif; ?>
-            <a href="/employee/leaves" class="btn btn-outline-secondary ms-2"><i class="fas fa-arrow-left me-1"></i>Back</a>
+            <a href="<?= BASE_URL ?>/employee/leaves" class="btn btn-outline-secondary ms-2"><i class="fas fa-arrow-left me-1"></i>Back</a>
         </div>
     </div>
 

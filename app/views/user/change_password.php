@@ -49,7 +49,7 @@ if (!defined('BASE_URL')) {
                     </form>
 
                     <div class="text-center mt-3">
-                        <a href="/profile" class="text-decoration-none">← Back to Profile</a>
+                        <a href="<?= BASE_URL ?>/profile" class="text-decoration-none">← Back to Profile</a>
                     </div>
                 </div>
             </div>

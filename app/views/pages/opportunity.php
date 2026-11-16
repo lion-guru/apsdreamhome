@@ -376,8 +376,8 @@
             <?= __('opp_cta_desc', [], 'Grow your network, build a career, and earn commissions. Register as a partner today.') ?>
         </p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="/associate/register" class="btn btn-premium btn-lg"><?= __('opp_cta_register', [], 'Register as Partner') ?></a>
-            <a href="/contact" class="btn btn-outline-light btn-lg rounded-3"><?= __('opp_cta_contact', [], 'Contact Us') ?></a>
+            <a href="<?= BASE_URL ?>/associate/register" class="btn btn-premium btn-lg"><?= __('opp_cta_register', [], 'Register as Partner') ?></a>
+            <a href="<?= BASE_URL ?>/contact" class="btn btn-outline-light btn-lg rounded-3"><?= __('opp_cta_contact', [], 'Contact Us') ?></a>
         </div>
     </div>
 </section>

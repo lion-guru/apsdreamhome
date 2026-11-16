@@ -7,7 +7,7 @@
 
   <div class="row mb-3">
     <div class="col-12">
-      <a href="/admin/leads" class="btn btn-outline-secondary">
+      <a href="<?= BASE_URL ?>/admin/leads" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left"></i> Back to Leads
       </a>
     </div>

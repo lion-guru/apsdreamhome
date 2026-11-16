@@ -15,7 +15,7 @@ $st = $transfer['status'] ?? 'requested';
     <!-- Breadcrumb & Nav -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <a href="/admin/plot-transfers" class="text-decoration-none text-muted small">
+            <a href="<?= BASE_URL ?>/admin/plot-transfers" class="text-decoration-none text-muted small">
                 <i class="fas fa-arrow-left me-1"></i>Back to Transfers Desk
             </a>
             <h4 class="mb-0 fw-bold mt-1">
@@ -27,7 +27,7 @@ $st = $transfer['status'] ?? 'requested';
         </div>
         <div class="d-flex gap-2">
             <?php if (!empty($transfer['noc_number'])): ?>
-                <a href="/admin/plot-transfers/noc/<?= (int)$transfer['id'] ?>" target="_blank" class="btn btn-outline-success">
+                <a href="<?= BASE_URL ?>/admin/plot-transfers/noc/<?= (int)$transfer['id'] ?>" target="_blank" class="btn btn-outline-success">
                     <i class="fas fa-print me-1"></i>Print Official NOC
                 </a>
             <?php endif; ?>

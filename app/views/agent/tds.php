@@ -50,7 +50,7 @@ $summary = $summary ?? ['entries' => 0, 'gross' => 0, 'tds' => 0, 'total' => 0];
             </tbody>
         </table>
     </div>
-    <a href="/agent/dashboard" class="btn btn-secondary">Back</a>
+    <a href="<?= BASE_URL ?>/agent/dashboard" class="btn btn-secondary">Back</a>
 </div>
 </body>
 </html>

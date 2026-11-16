@@ -111,7 +111,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <?php if ($current_colony || $current_category !== 'all' || $current_status !== 'all'): ?>
                     <div class="col-md-1">
-                        <a href="/admin/township-grievances" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
+                        <a href="<?= BASE_URL ?>/admin/township-grievances" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
                     </div>
                 <?php endif; ?>
             </form>

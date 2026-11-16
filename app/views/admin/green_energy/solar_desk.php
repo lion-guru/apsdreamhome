@@ -18,7 +18,7 @@ $current_status = $current_status ?? null;
             <p class="text-muted small mb-0">Rooftop solar applications, central (MNRE) & UP state subsidies, PVVNL net-metering sanctions & vendor commissioning.</p>
         </div>
         <div>
-            <a href="/customer/solar-calculator" target="_blank" class="btn btn-outline-warning text-dark">
+            <a href="<?= BASE_URL ?>/customer/solar-calculator" target="_blank" class="btn btn-outline-warning text-dark">
                 <i class="fas fa-calculator me-1"></i>Launch Solar Calculator
             </a>
         </div>
@@ -69,12 +69,12 @@ $current_status = $current_status ?? null;
         <div class="card-body p-3">
             <div class="d-flex flex-wrap gap-2 align-items-center">
                 <span class="fw-bold small text-muted me-2">Filter Status:</span>
-                <a href="/admin/green-energy/solar" class="btn btn-sm <?= empty($current_status) ? 'btn-dark' : 'btn-outline-secondary' ?>">All</a>
-                <a href="/admin/green-energy/solar?status=inquiry" class="btn btn-sm <?= $current_status === 'inquiry' ? 'btn-primary' : 'btn-outline-secondary' ?>">Inquiries</a>
-                <a href="/admin/green-energy/solar?status=site_feasibility" class="btn btn-sm <?= $current_status === 'site_feasibility' ? 'btn-warning' : 'btn-outline-secondary' ?>">Site Feasibility</a>
-                <a href="/admin/green-energy/solar?status=subsidy_approved" class="btn btn-sm <?= $current_status === 'subsidy_approved' ? 'btn-info' : 'btn-outline-secondary' ?>">Subsidy Approved</a>
-                <a href="/admin/green-energy/solar?status=discom_sanctioned" class="btn btn-sm <?= $current_status === 'discom_sanctioned' ? 'btn-primary' : 'btn-outline-secondary' ?>">DISCOM Sanctioned</a>
-                <a href="/admin/green-energy/solar?status=installed" class="btn btn-sm <?= $current_status === 'installed' ? 'btn-success' : 'btn-outline-secondary' ?>">Commissioned</a>
+                <a href="<?= BASE_URL ?>/admin/green-energy/solar" class="btn btn-sm <?= empty($current_status) ? 'btn-dark' : 'btn-outline-secondary' ?>">All</a>
+                <a href="<?= BASE_URL ?>/admin/green-energy/solar?status=inquiry" class="btn btn-sm <?= $current_status === 'inquiry' ? 'btn-primary' : 'btn-outline-secondary' ?>">Inquiries</a>
+                <a href="<?= BASE_URL ?>/admin/green-energy/solar?status=site_feasibility" class="btn btn-sm <?= $current_status === 'site_feasibility' ? 'btn-warning' : 'btn-outline-secondary' ?>">Site Feasibility</a>
+                <a href="<?= BASE_URL ?>/admin/green-energy/solar?status=subsidy_approved" class="btn btn-sm <?= $current_status === 'subsidy_approved' ? 'btn-info' : 'btn-outline-secondary' ?>">Subsidy Approved</a>
+                <a href="<?= BASE_URL ?>/admin/green-energy/solar?status=discom_sanctioned" class="btn btn-sm <?= $current_status === 'discom_sanctioned' ? 'btn-primary' : 'btn-outline-secondary' ?>">DISCOM Sanctioned</a>
+                <a href="<?= BASE_URL ?>/admin/green-energy/solar?status=installed" class="btn btn-sm <?= $current_status === 'installed' ? 'btn-success' : 'btn-outline-secondary' ?>">Commissioned</a>
             </div>
         </div>
     </div>

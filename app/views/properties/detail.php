@@ -149,9 +149,9 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 <div class="pd-hero">
     <div class="container hero-content">
         <div class="pd-breadcrumb mb-2">
-            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="<?= BASE_URL ?>/"><i class="fas fa-home"></i> Home</a>
             <span class="sep"><i class="fas fa-chevron-right"></i></span>
-            <a href="/properties">Properties</a>
+            <a href="<?= BASE_URL ?>/properties">Properties</a>
             <span class="sep"><i class="fas fa-chevron-right"></i></span>
             <span class="current"><?= htmlspecialchars($property['title'] ?? $property['name'] ?? 'Property') ?></span>
         </div>
@@ -417,7 +417,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
             <div class="card-body-padded">
                 <?php foreach (array_slice($related, 0, 4) as $rel): ?>
-                    <a href="/property/<?= $rel['id'] ?>" class="pd-related-item">
+                    <a href="<?= BASE_URL ?>/property/<?= $rel['id'] ?>" class="pd-related-item">
                         <?php
                         $relRaw = trim((string)($rel['image'] ?? ''));
                         if (empty($relRaw) || $relRaw === 'undefined' || $relRaw === 'null') {
@@ -515,7 +515,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
     </div>
     <h3 >Property Not Found</h3>
     <p >The property you're looking for doesn't exist or has been removed.</p>
-    <a href="/properties" class="btn px-4">
+    <a href="<?= BASE_URL ?>/properties" class="btn px-4">
         <i class="fas fa-search me-1"></i> Browse Properties
     </a>
 </div>

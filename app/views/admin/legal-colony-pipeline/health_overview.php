@@ -7,7 +7,7 @@ $colonies = $data['colonies'] ?? [];
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <a href="/admin/legal-colony-pipeline" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+      <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
       <h2 class="mb-1"><i class="fas fa-heartbeat me-2 text-danger"></i>Colony Health Dashboard</h2>
       <small class="text-muted">Automated health scoring across 7 pipeline stages</small>
     </div>
@@ -81,7 +81,7 @@ $colonies = $data['colonies'] ?? [];
         <?php endforeach; ?>
       </div>
     </div>
-    <a href="/admin/legal-colony-pipeline/health/alerts" class="btn btn-sm btn-outline-danger ms-3" id="alertDetailsBtn" title="View alert details" aria-label="Open">
+    <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/health/alerts" class="btn btn-sm btn-outline-danger ms-3" id="alertDetailsBtn" title="View alert details" aria-label="Open">
       <i class="fas fa-external-link-alt"></i>
     </a>
   </div>
@@ -159,13 +159,13 @@ $colonies = $data['colonies'] ?? [];
           </div>
           <div class="card-footer bg-transparent border-top">
             <div class="d-flex gap-2">
-              <a href="/admin/legal-colony-pipeline/detail/<?= $colony['colony_id'] ?>" class="btn btn-sm btn-outline-primary flex-fill">
+              <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['colony_id'] ?>" class="btn btn-sm btn-outline-primary flex-fill">
                 <i class="fas fa-eye me-1"></i> Pipeline
               </a>
-              <a href="/admin/colony-feasibility/<?= $colony['colony_id'] ?>" class="btn btn-sm btn-outline-success flex-fill">
+              <a href="<?= BASE_URL ?>/admin/colony-feasibility/<?= $colony['colony_id'] ?>" class="btn btn-sm btn-outline-success flex-fill">
                 <i class="fas fa-calculator me-1"></i> Feasibility
               </a>
-              <a href="/admin/legal-colony-pipeline/analytics/<?= $colony['colony_id'] ?>" class="btn btn-sm btn-outline-info flex-fill">
+              <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/analytics/<?= $colony['colony_id'] ?>" class="btn btn-sm btn-outline-info flex-fill">
                 <i class="fas fa-chart-bar me-1"></i> Analytics
               </a>
             </div>

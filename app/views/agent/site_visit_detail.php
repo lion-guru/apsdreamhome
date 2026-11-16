@@ -25,7 +25,7 @@ $item = $item ?? [];
             <p><strong>Feedback:</strong> <?= htmlspecialchars($item['feedback'] ?? '') ?></p>
         </div>
     </div>
-    <a href="/agent/site-visits" class="btn btn-secondary mt-3">Back</a>
+    <a href="<?= BASE_URL ?>/agent/site-visits" class="btn btn-secondary mt-3">Back</a>
 </div>
 </body>
 </html>

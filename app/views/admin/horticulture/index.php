@@ -66,7 +66,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </select>
                 </div>
                 <div class="col-md-6 d-flex align-items-end justify-content-end">
-                    <a href="/admin/township-horticulture" class="btn btn-outline-secondary btn-sm"><i class="fas fa-undo me-1"></i> Reset</a>
+                    <a href="<?= BASE_URL ?>/admin/township-horticulture" class="btn btn-outline-secondary btn-sm"><i class="fas fa-undo me-1"></i> Reset</a>
                 </div>
             </form>
         </div>

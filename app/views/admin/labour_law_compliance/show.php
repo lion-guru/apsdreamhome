@@ -53,5 +53,5 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
-    <a href="/admin/labour-law-compliance" class="btn btn-secondary mt-3">Back</a>
+    <a href="<?= BASE_URL ?>/admin/labour-law-compliance" class="btn btn-secondary mt-3">Back</a>
 </div>

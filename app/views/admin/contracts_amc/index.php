@@ -3,7 +3,7 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Contracts & AMC Tracker</h1>
-    <a href="/admin/contracts-amc/create" class="btn btn-tenant-primary">
+    <a href="<?= BASE_URL ?>/admin/contracts-amc/create" class="btn btn-tenant-primary">
       <i class="fas fa-plus me-1"></i> New Contract/AMC
     </a>
   </div>
@@ -109,7 +109,7 @@
           <button type="submit" class="btn btn-tenant-primary w-100"><i class="fas fa-filter me-1"></i> Filter</button>
         </div>
         <div class="col-md-1 d-flex align-items-end">
-          <a href="/admin/contracts-amc" class="btn btn-outline-secondary w-100" aria-label="Close"><i class="fas fa-times"></i></a>
+          <a href="<?= BASE_URL ?>/admin/contracts-amc" class="btn btn-outline-secondary w-100" aria-label="Close"><i class="fas fa-times"></i></a>
         </div>
       </form>
     </div>
@@ -126,7 +126,7 @@
           <i class="aps-cp-empty-icon fas fa-file-contract"></i>
           <h5>No contracts found</h5>
           <p class="text-muted">Click "New Contract/AMC" to create your first contract</p>
-          <a href="/admin/contracts-amc/create" class="btn btn-tenant-primary mt-2">Create Contract</a>
+          <a href="<?= BASE_URL ?>/admin/contracts-amc/create" class="btn btn-tenant-primary mt-2">Create Contract</a>
         </div>
       <?php else: ?>
         <div class="table-responsive">
@@ -149,7 +149,7 @@
                 <tr>
                   <td><?= (int)$c['id'] ?></td>
                   <td>
-                    <a href="/admin/contracts-amc/<?= (int)$c['id'] ?>" class="text-decoration-none fw-bold">
+                    <a href="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$c['id'] ?>" class="text-decoration-none fw-bold">
                       <?= htmlspecialchars($c['contract_number'] ?? '') ?>
                     </a>
                   </td>
@@ -198,8 +198,8 @@
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm">
-                      <a href="/admin/contracts-amc/<?= (int)$c['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
-                      <a href="/admin/contracts-amc/<?= (int)$c['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
+                      <a href="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$c['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
+                      <a href="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$c['id'] ?>/edit" class="btn btn-outline-secondary" title="Edit"><i class="fas fa-edit"></i></a>
                       <?php if ($c['status'] === 'active' || $c['status'] === 'expiring_soon' || $c['status'] === 'expired'): ?>
                         <form method="POST" action="<?= BASE_URL ?>/admin/contracts-amc/<?= (int)$c['id'] ?>/renew" class="d-inline" onsubmit="return confirm('Renew this contract?')">
                           <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

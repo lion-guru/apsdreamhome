@@ -8,7 +8,7 @@ unset($_SESSION['import_errors']);
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Bulk Import/Export Plots</h1>
         <div>
-            <a href="/admin/plots/import-history" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/plots/import-history" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-history me-1"></i> Import History
             </a>
         </div>
@@ -65,7 +65,7 @@ unset($_SESSION['import_errors']);
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-upload me-1"></i> Import CSV
                         </button>
-                        <a href="/admin/plots/template" class="btn btn-outline-success">
+                        <a href="<?= BASE_URL ?>/admin/plots/template" class="btn btn-outline-success">
                             <i class="fas fa-download me-1"></i> Download Template
                         </a>
                     </form>

@@ -130,12 +130,12 @@ foreach ($plots as $plot) {
                     <div class="col-lg-6">
                         <h5 class="fw-bold mb-3"><?= __('plots_avail_map_heading', [], 'Colony Layout Map') ?></h5>
                         <div class="text-center">
-                            <img loading="lazy" src="/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('plots_avail_map_alt', [], 'Suryoday Colony Map') ?>" class="plot-map-img mb-3 border img-fluid">
+                            <img loading="lazy" src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('plots_avail_map_alt', [], 'Suryoday Colony Map') ?>" class="plot-map-img mb-3 border img-fluid">
                             <div class="alert alert-info py-2 small">
                                 <i class="fas fa-info-circle me-2"></i><?= __('plots_avail_map_desc', [], 'Map numbering matches the table. For an interactive experience, contact our sales team.') ?>
                             </div>
                             <div class="d-grid gap-2">
-                                <a href="/contact" class="btn btn-primary py-3">
+                                <a href="<?= BASE_URL ?>/contact" class="btn btn-primary py-3">
                                     <i class="fas fa-calendar-check me-2"></i><?= __('plots_avail_schedule_visit', [], 'Schedule a Site Visit') ?>
                                 </a>
                                 <a href="tel:+917007444842" class="btn btn-outline-secondary py-2">

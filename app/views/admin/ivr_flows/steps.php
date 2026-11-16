@@ -13,10 +13,10 @@ $steps = $steps ?? [];
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0"><i class="fas fa-list-ol me-2 text-primary"></i>Steps for: <?= htmlspecialchars($flow['name'] ?? '') ?></h4>
             <div>
-                <a href="/admin/ivr-flows/<?= $flow['id'] ?>/edit" class="btn btn-outline-secondary me-2">
+                <a href="<?= BASE_URL ?>/admin/ivr-flows/<?= $flow['id'] ?>/edit" class="btn btn-outline-secondary me-2">
                     <i class="fas fa-edit me-1"></i>Edit Flow
                 </a>
-                <a href="/admin/ivr-flows" class="btn btn-secondary">Back to Flows</a>
+                <a href="<?= BASE_URL ?>/admin/ivr-flows" class="btn btn-secondary">Back to Flows</a>
             </div>
         </div>
     </div>

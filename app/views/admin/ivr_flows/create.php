@@ -10,7 +10,7 @@ $page_title = $page_title ?? 'Create IVR Flow';
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0"><i class="fas fa-plus me-2 text-primary"></i>Create IVR Flow</h4>
-            <a href="/admin/ivr-flows" class="btn btn-secondary">Back to Flows</a>
+            <a href="<?= BASE_URL ?>/admin/ivr-flows" class="btn btn-secondary">Back to Flows</a>
         </div>
     </div>
 </div>
@@ -49,7 +49,7 @@ $page_title = $page_title ?? 'Create IVR Flow';
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-1"></i>Create Flow
                     </button>
-                    <a href="/admin/ivr-flows" class="btn btn-secondary ms-2">Cancel</a>
+                    <a href="<?= BASE_URL ?>/admin/ivr-flows" class="btn btn-secondary ms-2">Cancel</a>
                 </form>
             </div>
         </div>

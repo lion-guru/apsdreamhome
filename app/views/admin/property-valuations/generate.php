@@ -3,7 +3,7 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Generate Property Valuation</h1>
-    <a href="/admin/property-valuations" class="btn btn-outline-secondary">
+    <a href="<?= BASE_URL ?>/admin/property-valuations" class="btn btn-outline-secondary">
       <i class="fas fa-arrow-left"></i> Back to Reports
     </a>
   </div>

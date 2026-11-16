@@ -16,11 +16,11 @@ $pct = $order['completion_pct'] ?? 0;
 <div class="container-fluid py-4">
     <!-- Breadcrumb & Back -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="/admin/work-orders" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/admin/work-orders" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back to Work Orders
         </a>
         <div class="d-flex gap-2">
-            <a href="/admin/work-orders/<?= $order['id'] ?>/print" target="_blank" class="btn btn-outline-dark btn-sm">
+            <a href="<?= BASE_URL ?>/admin/work-orders/<?= $order['id'] ?>/print" target="_blank" class="btn btn-outline-dark btn-sm">
                 <i class="fas fa-print me-1"></i>Print Official Work Order
             </a>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newBillModal">

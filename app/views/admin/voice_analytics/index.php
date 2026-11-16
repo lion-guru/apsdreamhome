@@ -22,7 +22,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
             <h4 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Voice Calling Analytics</h4>
             <div class="btn-group" role="group">
                 <?php foreach (['24h','7d','30d','90d'] as $r): ?>
-                <a href="/admin/voice-analytics?range=<?= $r ?>" 
+                <a href="<?= BASE_URL ?>/admin/voice-analytics?range=<?= $r ?>" 
                    class="btn btn-outline-<?= $range === $r ? 'primary' : 'secondary' ?> btn-sm">
                     <?= $r ?>
                 </a>

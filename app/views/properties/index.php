@@ -67,7 +67,7 @@ include __DIR__ . '/../layouts/base.php';
                         <span class="text-<?php echo $property['status'] == 'ready-to-move' ? 'success' : 'warning'; ?> small fw-bold uppercase">
                             — <?php echo ucfirst(str_replace('-', ' ', $property['status'])); ?>
                         </span>
-                        <a href="/properties/<?php echo e($property['id']); ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
+                        <a href="<?= BASE_URL ?>/properties/<?php echo e($property['id']); ?>" class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</a>
                     </div>
                 </div>
             </div>

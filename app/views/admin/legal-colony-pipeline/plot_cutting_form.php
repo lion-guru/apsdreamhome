@@ -2,7 +2,7 @@
 $colony = $colony ?? null;
 ?>
 <div class="container-fluid py-4">
-  <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
   <h2 class="mb-4"><i class="fas fa-vector-square me-2 text-primary"></i>Phase 3: Legal Plot Cutting</h2>
 
   <?php if (!empty($_SESSION['flash_error'])): ?>

@@ -43,7 +43,7 @@ $receiptUrl = $bookingId > 0 ? $baseUrl . '/pdf/download/receipt/' . $bookingId 
         <?php endif; ?>
 
         <div class="action-row">
-            <a href="/user/bookings" class="btn-primary">
+            <a href="<?= BASE_URL ?>/user/bookings" class="btn-primary">
                 <i class="fas fa-list"></i> <?php echo __('payment_success_view_bookings', [], 'View My Bookings'); ?>
             </a>
             <?php if ($receiptUrl): ?>
@@ -51,7 +51,7 @@ $receiptUrl = $bookingId > 0 ? $baseUrl . '/pdf/download/receipt/' . $bookingId 
                 <i class="fas fa-file-pdf"></i> <?php echo __('payment_success_download_receipt', [], 'Download Receipt'); ?>
             </a>
             <?php endif; ?>
-            <a href="/" class="btn-secondary">
+            <a href="<?= BASE_URL ?>/" class="btn-secondary">
                 <i class="fas fa-home"></i> <?php echo __('payment_success_continue_browsing', [], 'Continue Browsing'); ?>
             </a>
         </div>

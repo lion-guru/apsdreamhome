@@ -39,10 +39,10 @@ $orderId = $order_id ?? '';
         </div>
 
         <div class="action-row">
-            <a href="/user/bookings" class="btn-primary">
+            <a href="<?= BASE_URL ?>/user/bookings" class="btn-primary">
                 <i class="fas fa-redo"></i> <?php echo __('payment_failed_try_again', [], 'Try Again'); ?>
             </a>
-            <a href="/" class="btn-secondary">
+            <a href="<?= BASE_URL ?>/" class="btn-secondary">
                 <i class="fas fa-home"></i> <?php echo __('payment_failed_back_home', [], 'Back to Home'); ?>
             </a>
         </div>

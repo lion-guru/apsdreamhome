@@ -51,6 +51,6 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
             <textarea aria-label="Description" name="description" class="form-control"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Dispatch</button>
-        <a href="/admin/feedback-pipeline" class="btn btn-secondary">Cancel</a>
+        <a href="<?= BASE_URL ?>/admin/feedback-pipeline" class="btn btn-secondary">Cancel</a>
     </form>
 </div>

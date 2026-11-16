@@ -107,7 +107,7 @@ $current_status = $current_status ?? 'all';
                     </select>
                 </div>
                 <div class="col-md-4 text-end">
-                    <a href="/admin/plots/demarcation" class="btn btn-sm btn-outline-secondary">
+                    <a href="<?= BASE_URL ?>/admin/plots/demarcation" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-redo me-1"></i>Reset
                     </a>
                 </div>
@@ -192,7 +192,7 @@ $current_status = $current_status ?? 'all';
                                     </td>
                                     <td class="text-end pe-3">
                                         <div class="btn-group btn-group-sm">
-                                            <a href="/admin/plots/demarcation/<?= $dem['id'] ?>/print" target="_blank" class="btn btn-outline-primary" title="Print Demarcation Certificate">
+                                            <a href="<?= BASE_URL ?>/admin/plots/demarcation/<?= $dem['id'] ?>/print" target="_blank" class="btn btn-outline-primary" title="Print Demarcation Certificate">
                                                 <i class="fas fa-print me-1"></i>Certificate
                                             </a>
                                             <?php if ($dem['pillar_status'] !== 'verified'): ?>

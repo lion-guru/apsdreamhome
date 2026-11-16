@@ -94,8 +94,8 @@ try {
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/properties">Properties</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/properties">Properties</a></li>
                     <li class="breadcrumb-item active"><?php echo htmlspecialchars($property['title'] ?? ''); ?></li>
                 </ol>
             </nav>
@@ -413,7 +413,7 @@ try {
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <span class="fw-bold">₹<?php echo number_format($related['price']); ?></span>
-                                <a href="/property-details.php?id=<?php echo e($related['id']); ?>" class="btn btn-primary btn-sm">View Details</a>
+                                <a href="<?= BASE_URL ?>/property-details.php?id=<?php echo e($related['id']); ?>" class="btn btn-primary btn-sm">View Details</a>
                             </div>
                         </div>
                     </div>

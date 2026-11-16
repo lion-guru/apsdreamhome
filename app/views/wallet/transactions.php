@@ -178,17 +178,17 @@
             <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>Filter Transactions</h5>
             <div>
                 <span class="fw-bold me-2">Type:</span>
-                <a href="/wallet/transactions?type=credit" class="filter-btn <?php echo $type === 'credit' ? 'active' : ''; ?>">Credit</a>
-                <a href="/wallet/transactions?type=debit" class="filter-btn <?php echo $type === 'debit' ? 'active' : ''; ?>">Debit</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?type=credit" class="filter-btn <?php echo $type === 'credit' ? 'active' : ''; ?>">Credit</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?type=debit" class="filter-btn <?php echo $type === 'debit' ? 'active' : ''; ?>">Debit</a>
             </div>
             <div class="mt-2">
                 <span class="fw-bold me-2">Category:</span>
-                <a href="/wallet/transactions?filter=all" class="filter-btn <?php echo $filter === 'all' ? 'active' : ''; ?>">All</a>
-                <a href="/wallet/transactions?filter=referral" class="filter-btn <?php echo $filter === 'referral' ? 'active' : ''; ?>">Referral</a>
-                <a href="/wallet/transactions?filter=commission" class="filter-btn <?php echo $filter === 'commission' ? 'active' : ''; ?>">Commission</a>
-                <a href="/wallet/transactions?filter=bonus" class="filter-btn <?php echo $filter === 'bonus' ? 'active' : ''; ?>">Bonus</a>
-                <a href="/wallet/transactions?filter=emi_transfer" class="filter-btn <?php echo $filter === 'emi_transfer' ? 'active' : ''; ?>">EMI Transfer</a>
-                <a href="/wallet/transactions?filter=withdrawal" class="filter-btn <?php echo $filter === 'withdrawal' ? 'active' : ''; ?>">Withdrawal</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?filter=all" class="filter-btn <?php echo $filter === 'all' ? 'active' : ''; ?>">All</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?filter=referral" class="filter-btn <?php echo $filter === 'referral' ? 'active' : ''; ?>">Referral</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?filter=commission" class="filter-btn <?php echo $filter === 'commission' ? 'active' : ''; ?>">Commission</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?filter=bonus" class="filter-btn <?php echo $filter === 'bonus' ? 'active' : ''; ?>">Bonus</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?filter=emi_transfer" class="filter-btn <?php echo $filter === 'emi_transfer' ? 'active' : ''; ?>">EMI Transfer</a>
+                <a href="<?= BASE_URL ?>/wallet/transactions?filter=withdrawal" class="filter-btn <?php echo $filter === 'withdrawal' ? 'active' : ''; ?>">Withdrawal</a>
             </div>
         </div>
     </div>
@@ -250,7 +250,7 @@
         <?php if ($totalPages > 1): ?>
             <div class="pagination">
                 <?php if ($currentPage > 1): ?>
-                    <a href="/wallet/transactions?page=<?php echo $currentPage - 1; ?>&filter=<?php echo e($filter); ?>&type=<?php echo $type; ?>">
+                    <a href="<?= BASE_URL ?>/wallet/transactions?page=<?php echo $currentPage - 1; ?>&filter=<?php echo e($filter); ?>&type=<?php echo $type; ?>">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 <?php else: ?>
@@ -261,12 +261,12 @@
                     <?php if ($i == $currentPage): ?>
                         <span class="active"><?php echo e($i); ?></span>
                     <?php else: ?>
-                        <a href="/wallet/transactions?page=<?php echo e($i); ?>&filter=<?php echo $filter; ?>&type=<?php echo $type; ?>"><?php echo e($i); ?></a>
+                        <a href="<?= BASE_URL ?>/wallet/transactions?page=<?php echo e($i); ?>&filter=<?php echo $filter; ?>&type=<?php echo $type; ?>"><?php echo e($i); ?></a>
                     <?php endif; ?>
                 <?php endfor; ?>
 
                 <?php if ($currentPage < $totalPages): ?>
-                    <a href="/wallet/transactions?page=<?php echo $currentPage + 1; ?>&filter=<?php echo e($filter); ?>&type=<?php echo $type; ?>">
+                    <a href="<?= BASE_URL ?>/wallet/transactions?page=<?php echo $currentPage + 1; ?>&filter=<?php echo e($filter); ?>&type=<?php echo $type; ?>">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 <?php else: ?>
@@ -280,7 +280,7 @@
                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
                 <h4>No Transactions Found</h4>
                 <p class="text-muted">You don't have any transactions yet.</p>
-                <a href="/wallet" class="btn btn-primary mt-3">Go to Wallet</a>
+                <a href="<?= BASE_URL ?>/wallet" class="btn btn-primary mt-3">Go to Wallet</a>
             </div>
         </div>
     <?php endif; ?>

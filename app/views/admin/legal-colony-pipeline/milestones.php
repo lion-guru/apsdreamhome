@@ -67,7 +67,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small">
+      <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small">
         <i class="fas fa-arrow-left me-1"></i> Back to Colony
       </a>
       <h2 class="mb-1"><i class="fas fa-tasks me-2 text-danger"></i>RERA Milestone Tracker</h2>
@@ -79,7 +79,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
     </div>
     <div>
       <?php if (!$rera): ?>
-        <a href="/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?? 0 ?>" class="btn btn-warning">
+        <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?? 0 ?>" class="btn btn-warning">
           <i class="fas fa-stamp me-1"></i> Register RERA First
         </a>
       <?php endif; ?>
@@ -93,7 +93,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
         <i class="fas fa-stamp fa-4x text-muted opacity-25 mb-3"></i>
         <h4 class="text-muted">RERA Not Registered Yet</h4>
         <p class="text-muted mb-3">Register RERA for this colony to start tracking milestones.</p>
-        <a href="/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?? 0 ?>" class="btn btn-primary">
+        <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?? 0 ?>" class="btn btn-primary">
           <i class="fas fa-stamp me-1"></i> Register RERA
         </a>
       </div>

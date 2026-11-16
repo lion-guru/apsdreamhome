@@ -8,7 +8,7 @@ $base = BASE_URL ?? '/apsdreamhome';
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>">Booking <?= htmlspecialchars($booking['booking_number'] ?? '') ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>">Booking <?= htmlspecialchars($booking['booking_number'] ?? '') ?></a></li>
                     <li class="breadcrumb-item active">Document</li>
                 </ol>
             </nav>
@@ -69,10 +69,10 @@ $base = BASE_URL ?? '/apsdreamhome';
                 <?php else: ?>
                 <div class="card-footer bg-light">
                     <div class="d-flex gap-2">
-                        <a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>/download/<?= $document['id'] ?>" class="btn btn-primary">
+                        <a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>/download/<?= $document['id'] ?>" class="btn btn-primary">
                             <i class="fas fa-download me-1"></i>Download Signed PDF
                         </a>
-                        <a href="/booking/digital/<?= urlencode($booking['booking_number']) ?>" class="btn btn-outline-secondary">
+                        <a href="<?= BASE_URL ?>/booking/digital/<?= urlencode($booking['booking_number']) ?>" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Back to Booking
                         </a>
                     </div>

@@ -19,10 +19,10 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <small class="text-muted">Oversee advance requests, approve disbursement, and monitor automatic commission payout recovery.</small>
         </div>
         <div class="d-flex gap-2">
-            <a href="/admin/finance/payouts" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/finance/payouts" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-wallet me-1"></i>Associate Payouts
             </a>
-            <a href="/admin/finance/cash-drawer" class="btn btn-outline-primary btn-sm">
+            <a href="<?= BASE_URL ?>/admin/finance/cash-drawer" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-cash-register me-1"></i>Cash Drawer
             </a>
         </div>
@@ -59,7 +59,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Status Tabs -->
     <div class="d-flex gap-2 mb-3">
         <?php foreach (['all' => 'All Advances', 'pending' => 'Pending Review', 'approved' => 'Approved', 'disbursed' => 'Disbursed (Active)', 'repaid' => 'Fully Repaid', 'rejected' => 'Rejected'] as $stKey => $stLabel): ?>
-            <a href="/admin/commission-advances?status=<?= $stKey ?>" class="btn btn-sm <?= $current_status === $stKey ? 'btn-primary' : 'btn-outline-secondary' ?>">
+            <a href="<?= BASE_URL ?>/admin/commission-advances?status=<?= $stKey ?>" class="btn btn-sm <?= $current_status === $stKey ? 'btn-primary' : 'btn-outline-secondary' ?>">
                 <?= $stLabel ?>
             </a>
         <?php endforeach; ?>

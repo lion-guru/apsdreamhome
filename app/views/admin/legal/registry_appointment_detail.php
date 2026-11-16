@@ -9,11 +9,11 @@ $appointment = $appointment ?? [];
 <div class="container-fluid py-4">
     <!-- Back & Actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="/admin/registry-appointments" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/admin/registry-appointments" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back to Registry Desk
         </a>
         <div class="d-flex gap-2">
-            <a href="/admin/registry-appointments/<?= $appointment['id'] ?>/slip" target="_blank" class="btn btn-outline-dark btn-sm">
+            <a href="<?= BASE_URL ?>/admin/registry-appointments/<?= $appointment['id'] ?>/slip" target="_blank" class="btn btn-outline-dark btn-sm">
                 <i class="fas fa-print me-1"></i>Print SRO Gatepass & Checklist
             </a>
         </div>

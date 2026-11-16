@@ -2,8 +2,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Financial Reports</h1>
         <div>
-            <a href="/admin/reports/financial/export?type=profit_loss&format=csv" class="btn btn-sm btn-outline-secondary">Export CSV</a>
-            <a href="/admin/reports/financial/export?type=profit_loss&format=excel" class="btn btn-sm btn-outline-secondary">Export Excel</a>
+            <a href="<?= BASE_URL ?>/admin/reports/financial/export?type=profit_loss&format=csv" class="btn btn-sm btn-outline-secondary">Export CSV</a>
+            <a href="<?= BASE_URL ?>/admin/reports/financial/export?type=profit_loss&format=excel" class="btn btn-sm btn-outline-secondary">Export Excel</a>
         </div>
     </div>
 

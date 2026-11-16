@@ -25,7 +25,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
             <p class="text-muted small mb-0"><?= htmlspecialchars($colony['name'] ?? '') ?> &mdash; kaun plot kis gata me, gata kis kisan ka, kitna paisa gaya / baki</p>
         </div>
         <div>
-            <a href="/admin/farmer-acquisitions" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Bainama Desk</a>
+            <a href="<?= BASE_URL ?>/admin/farmer-acquisitions" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Bainama Desk</a>
         </div>
     </div>
 

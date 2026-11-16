@@ -4,7 +4,7 @@
 <div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0"><?= $isEdit ? 'Edit' : 'Create' ?> Contract / AMC</h1>
-    <a href="/admin/contracts-amc" class="btn btn-outline-secondary">
+    <a href="<?= BASE_URL ?>/admin/contracts-amc" class="btn btn-outline-secondary">
       <i class="fas fa-arrow-left me-1"></i> Back
     </a>
   </div>
@@ -145,7 +145,7 @@
               <button type="submit" class="btn btn-tenant-primary">
                 <i class="fas fa-save me-1"></i> <?= $isEdit ? 'Update Contract' : 'Create Contract' ?>
               </button>
-              <a href="/admin/contracts-amc" class="btn btn-outline-secondary">Cancel</a>
+              <a href="<?= BASE_URL ?>/admin/contracts-amc" class="btn btn-outline-secondary">Cancel</a>
             </div>
           </form>
         </div>

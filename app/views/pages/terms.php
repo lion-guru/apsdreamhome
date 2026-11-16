@@ -41,7 +41,7 @@
                 <p>Terms and conditions content is being updated. Please check back later.</p>
             <?php endif; ?>
         </div>
-        <a href="/" class="back-link"><i class="fas fa-arrow-left me-1"></i> Back to Home</a>
+        <a href="<?= BASE_URL ?>/" class="back-link"><i class="fas fa-arrow-left me-1"></i> Back to Home</a>
     </div>
 </main>
 </body>

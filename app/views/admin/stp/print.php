@@ -232,7 +232,7 @@ $reuseLabel = $reuseLabelMap[$log['water_reuse_purpose'] ?? ''] ?? ucwords(str_r
 <div class="no-print" style="text-align:center; margin:20px;">
     <button onclick="window.print()" style="padding:10px 30px; background:#1a5276; color:#fff; border:none; border-radius:6px; font-size:14px; cursor:pointer;">🖨️ Print Certificate</button>
     &nbsp;
-    <a href="/admin/township-stp" style="padding:10px 20px; background:#6c757d; color:#fff; border-radius:6px; text-decoration:none; font-size:14px;">← Back to STP Desk</a>
+    <a href="<?= BASE_URL ?>/admin/township-stp" style="padding:10px 20px; background:#6c757d; color:#fff; border-radius:6px; text-decoration:none; font-size:14px;">← Back to STP Desk</a>
 </div>
 </body>
 </html>

@@ -102,7 +102,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <?php if (!empty($project['gallery_images'])): ?>
                         <img src="<?= htmlspecialchars($project['gallery_images'][0] ?? $project['gallery_images']) ?>" class="img-fluid rounded shadow" alt="<?= htmlspecialchars($project['project_name'] ?? '') ?>" id="mainImage" loading="lazy">
                     <?php else: ?>
-                        <img loading="lazy" src="/assets/images/placeholder/property.svg"
+                        <img loading="lazy" src="<?= BASE_URL ?>/assets/images/placeholder/property.svg"
                              class="img-fluid rounded shadow" alt="No Image Available"
                              id="mainImage">
                     <?php endif; ?>
@@ -538,7 +538,7 @@ function openGallery(index) {
     images.forEach((image, i) => {
         const div = document.createElement('div');
         div.className = `carousel-item ${i === index ? 'active' : ''}`;
-        div.innerHTML = `<img loading="lazy" src="/uploads/projects/${image}" class="d-block w-100 img-fluid" alt="Gallery Image ${i + 1}">`;
+        div.innerHTML = `<img loading="lazy" src="<?= BASE_URL ?>/uploads/projects/${image}" class="d-block w-100 img-fluid" alt="Gallery Image ${i + 1}">`;
         galleryImages.appendChild(div);
     });
 

@@ -87,7 +87,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <?php if ($current_colony || $current_status !== 'all'): ?>
                     <div class="col-md-2">
-                        <a href="/admin/commercial-leases" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
+                        <a href="<?= BASE_URL ?>/admin/commercial-leases" class="btn btn-outline-secondary btn-sm w-100">Reset</a>
                     </div>
                 <?php endif; ?>
             </form>
@@ -168,7 +168,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end pe-3">
-                                        <a href="/admin/commercial-leases/<?= $lease['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?= BASE_URL ?>/admin/commercial-leases/<?= $lease['id'] ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-file-invoice-dollar me-1"></i>Rent Ledger
                                         </a>
                                     </td>

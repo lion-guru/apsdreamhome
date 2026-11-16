@@ -2,7 +2,7 @@
 $colony = $colony ?? null;
 ?>
 <div class="container-fluid py-4">
-  <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+  <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
   <h2 class="mb-4"><i class="fas fa-tag me-2 text-success"></i>Phase 6: Apply Pricing</h2>
 
   <?php if (!empty($_SESSION['flash_error'])): ?>
@@ -52,7 +52,7 @@ $colony = $colony ?? null;
             <hr class="border-secondary">
             <div class="d-flex gap-2">
               <button type="submit" class="btn btn-success"><i class="fas fa-calculator me-1"></i> Calculate & Apply</button>
-              <a href="/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="btn btn-outline-secondary">Cancel</a>
+              <a href="<?= BASE_URL ?>/admin/legal-colony-pipeline/detail/<?= $colony['id'] ?? 0 ?>" class="btn btn-outline-secondary">Cancel</a>
             </div>
           </form>
         </div>

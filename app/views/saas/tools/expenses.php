@@ -5,7 +5,7 @@
             <p class="text-muted">Manage your business expenses, labor payments, and material costs in one place.</p>
         </div>
         <div class="col-md-4 text-end">
-            <a href="/admin/expenses/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/admin/expenses/create" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i> Add Expense
             </a>
         </div>
@@ -67,7 +67,7 @@
                                         </span>
                                     </td>
                                     <td class="text-end pe-3">
-                                        <a href="/admin/expenses?highlight=<?= (int)($expense['id'] ?? 0) ?>" class="btn btn-sm btn-link text-decoration-none">View Details</a>
+                                        <a href="<?= BASE_URL ?>/admin/expenses?highlight=<?= (int)($expense['id'] ?? 0) ?>" class="btn btn-sm btn-link text-decoration-none">View Details</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

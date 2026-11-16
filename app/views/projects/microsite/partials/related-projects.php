@@ -14,7 +14,7 @@ $items = array_slice($related, 0, 3);
                 <p class="section-subtitle">Explore other developments in <?php echo h($cityLabel); ?>.</p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <a href="/projects" class="btn btn-outline-primary">View All Projects</a>
+                <a href="<?= BASE_URL ?>/projects" class="btn btn-outline-primary">View All Projects</a>
             </div>
         </div>
         <div class="row g-4">
@@ -38,7 +38,7 @@ $items = array_slice($related, 0, 3);
                     </div>
                     <div class="card-footer bg-transparent border-0">
                         <?php if (!empty($item['project_code'])): ?>
-                        <a href="/projects/<?php echo urlencode($item['project_code']); ?>/microsite" class="btn btn-sm btn-primary">View Microsite</a>
+                        <a href="<?= BASE_URL ?>/projects/<?php echo urlencode($item['project_code']); ?>/microsite" class="btn btn-sm btn-primary">View Microsite</a>
                         <?php endif; ?>
                     </div>
                 </div>

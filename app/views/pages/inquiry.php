@@ -44,7 +44,7 @@ $current_page = 'inquiry';
                             <textarea aria-label="Message" class="form-control" id="message" name="message" rows="5" required></textarea>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <a href="/" class="btn btn-secondary"><?= __('contact_form_cancel') ?></a>
+                            <a href="<?= BASE_URL ?>/" class="btn btn-secondary"><?= __('contact_form_cancel') ?></a>
                             <button type="submit" class="btn btn-primary"><?= __('inquiry_submit_btn') ?></button>
                         </div>
                     </form>
@@ -53,9 +53,9 @@ $current_page = 'inquiry';
                         <input aria-label="Terms consent" class="form-check-input" type="checkbox" name="terms_consent" id="terms_consent" required>
                         <label class="form-check-label small text-muted" for="terms_consent">
                             I have read, understood, and unconditionally agree to the
-                            <a href="/cancellation-policy" target="_blank" class="text-primary text-decoration-underline">Cancellation Policy</a>,
-                            <a href="/refund-policy" target="_blank" class="text-primary text-decoration-underline">Refund Policy</a>, and
-                            <a href="/terms-conditions" target="_blank" class="text-primary text-decoration-underline">Master Agreement Terms</a>.
+                            <a href="<?= BASE_URL ?>/cancellation-policy" target="_blank" class="text-primary text-decoration-underline">Cancellation Policy</a>,
+                            <a href="<?= BASE_URL ?>/refund-policy" target="_blank" class="text-primary text-decoration-underline">Refund Policy</a>, and
+                            <a href="<?= BASE_URL ?>/terms-conditions" target="_blank" class="text-primary text-decoration-underline">Master Agreement Terms</a>.
                         </label>
                         <div class="invalid-feedback">You must accept the legal terms and cancellation policy to proceed.</div>
                     </div>

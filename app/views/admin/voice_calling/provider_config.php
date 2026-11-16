@@ -51,7 +51,7 @@ $keyHints = [
                 <?php if (empty($provider)): ?>
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        Select a provider from the menu or <a href="/admin/service-configs">go to Service Configs</a> to manage all providers.
+                        Select a provider from the menu or <a href="<?= BASE_URL ?>/admin/service-configs">go to Service Configs</a> to manage all providers.
                     </div>
                 <?php else: ?>
                     <form method="POST" action="<?= BASE_URL . '/admin/service-configs/update' ?>">
@@ -59,7 +59,7 @@ $keyHints = [
                         <?php if (!$allRows): ?>
                             <div class="alert alert-warning">
                                 No configuration rows seeded for <strong><?= htmlspecialchars($provider) ?></strong> yet.
-                                Create them from <a href="/admin/service-configs">Service Configs</a> first, then return here to set the values.
+                                Create them from <a href="<?= BASE_URL ?>/admin/service-configs">Service Configs</a> first, then return here to set the values.
                             </div>
                         <?php endif; ?>
                         <div class="row">
@@ -104,7 +104,7 @@ $keyHints = [
                             Secrets are stored AES-256 encrypted (<code>enc:v1:</code>). A blank secret field keeps the current value — the existing value is never printed here.
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Configuration</button>
-                        <a href="/admin/voice-calling" class="btn btn-secondary ms-2">Back to Dashboard</a>
+                        <a href="<?= BASE_URL ?>/admin/voice-calling" class="btn btn-secondary ms-2">Back to Dashboard</a>
                     </form>
                 <?php endif; ?>
             </div>
@@ -132,7 +132,7 @@ $keyHints = [
                     <li>Webhook: <code>/api/voice/twilio</code></li>
                 </ul>
                 <h6 class="mt-3">Test before going live</h6>
-                <p class="small text-muted mb-2">Set <strong>test_mode = 1</strong> first, place a test call, check that the voice_call_logs row appears in <a href="/admin/voice-calling">Voice Dashboard</a>, then flip to 0 when happy.</p>
+                <p class="small text-muted mb-2">Set <strong>test_mode = 1</strong> first, place a test call, check that the voice_call_logs row appears in <a href="<?= BASE_URL ?>/admin/voice-calling">Voice Dashboard</a>, then flip to 0 when happy.</p>
                 <h6 class="mt-2">Ngrok for Local Testing</h6>
                 <pre class="small bg-light p-2 rounded"><code>ngrok http 80</code></pre>
                 <p class="small text-muted mb-0">Use the HTTPS URL from ngrok as the webhook base in the provider portal.</p>

@@ -65,7 +65,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                     <i class="fas fa-home mr-2"></i>
                     Featured Properties
                 </h1>
-                <a href="/properties" class="btn btn-outline-primary">
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-primary">
                     <i class="fas fa-th-list mr-2"></i>View All Properties
                 </a>
             </div>
@@ -81,7 +81,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <i class="fas fa-home fa-4x text-muted mb-4"></i>
                         <h4 class="text-muted">No featured properties found</h4>
                         <p class="text-muted mb-4">No properties have been featured yet.</p>
-                        <a href="/properties" class="btn btn-primary">
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-primary">
                             <i class="fas fa-search mr-2"></i>View Properties
                         </a>
                     </div>
@@ -119,7 +119,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <div class="card-body aps-cp-card-body">
                             <!-- Property Title -->
                             <h5 class="card-title property-title">
-                                <a href="/properties/<?= $property['id'] ?>" class="text-decoration-none">
+                                <a href="<?= BASE_URL ?>/properties/<?= $property['id'] ?>" class="text-decoration-none">
                                     <?= htmlspecialchars($property['title'] ?? '') ?>
                                 </a>
                             </h5>
@@ -186,7 +186,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
 
                             <!-- Action Buttons -->
                             <div class="property-actions">
-                                <a href="/properties/<?= $property['id'] ?>"
+                                <a href="<?= BASE_URL ?>/properties/<?= $property['id'] ?>"
                                     class="btn btn-primary btn-block">
                                     <i class="fas fa-eye mr-2"></i>View Details
                                 </a>
@@ -216,7 +216,7 @@ $page_description = 'Discover exceptional featured properties handpicked for you
                         <p class="card-text">
                             Find your favorite property from thousands of listings
                         </p>
-                        <a href="/properties" class="btn btn-light btn-lg">
+                        <a href="<?= BASE_URL ?>/properties" class="btn btn-light btn-lg">
                             <i class="fas fa-th-list mr-2"></i>View All Properties
                         </a>
                     </div>
