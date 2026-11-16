@@ -187,9 +187,11 @@ $stats = [
         })();
 
         // DataTables (if needed)
-        $(document).ready(function() {
-            $('#projectsTable').DataTable && $('#projectsTable').DataTable({
-                pageLength: 5
-            });
+        window.addEventListener('load', function() {
+            if (window.jQuery && window.$.fn && window.$.fn.DataTable && document.querySelector('#projectsTable')) {
+                window.$('#projectsTable').DataTable({
+                    pageLength: 5
+                });
+            }
         });
     </script>

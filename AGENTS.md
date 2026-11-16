@@ -1,3 +1,109 @@
+## Session 621: Whole-Tree Sweep Eliminates All Remaining "$ is not defined" View Errors (6 Views Across Admin & Dashboards Deferred to Load Event), Master 11/11 Passed, Zero Console Errors (2026-11-16)
+
+### Trigger
+Continuation of in-app admin audit and S618 jQuery-order family investigation.
+
+### Root Cause & Scope
+In `app/views/layouts/admin.php`, jQuery (`jquery-3.7.1.min.js`) loads after view content (`$content`). S618 fixed `/admin/onboarding`, but a whole-tree scan across `app/views/` revealed 6 remaining views with inline `$(document).ready(...)` or `$(function...)` executing synchronously before jQuery loaded, crashing with `ReferenceError: $ is not defined` and preventing interactive widgets (DataTables, edit modals, wysiwyg, confirmation prompts) from initializing.
+
+### Views Repaired & Hardened (6 views)
+1. **`app/views/admin/scheduler/index.php`**: DataTables initializer deferred to `window.addEventListener('load', ...)` with `window.jQuery` and `DataTable` guards.
+2. **`app/views/admin/salary/associate_dashboard.php`**: Edit salary modal, update AJAX, and process payment modal handlers wrapped in `load` event with jQuery guards.
+3. **`app/views/admin/commissions/payout.php`**: Payout batch submit handler converted to vanilla JS DOM listener with `apsConfirm` fallback, eliminating jQuery dependency entirely.
+4. **`app/views/admin/news/create.php`**: Summernote initializer deferred to `load` event with `window.jQuery.fn.summernote` guard and CSP nonce.
+5. **`app/views/admin/news/edit.php`**: Summernote initializer deferred to `load` event with `window.jQuery.fn.summernote` guard and CSP nonce.
+6. **`app/views/dashboard/builder_dashboard.php`**: Builder dashboard projects table DataTables initializer deferred to `load` event with `DataTable` guard.
+
+### Verification & Quality Gates
+- **Whole-Tree Audit:** `Get-ChildItem -Path app\views -Recurse | Select-String -Pattern '\$\((document\)\.ready|function)'` returns **ZERO** occurrences across entire `app/views/`.
+- **Live HTTP & Render Probe:** `/admin/scheduler` (HTTP 200, 0 console errors), `/admin/salary/associate-dashboard` (HTTP 200, 0 console errors), `/admin/dashboard/builder` (HTTP 200, 0 console errors).
+- **PHP Lint:** `php -l` clean across all 6 touched view files.
+- **PHPStan:** `[OK] No errors` (1515/1515 files analyzed).
+- **Master Test Suite:** **11/11 PASSED** (49.13s, 100% HEALTHY).
+- **Zero DB Drift:** Core 13 tracking tables completely untouched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 620. This entry = **S621**. Next-free = **622**.
+
+## Session 620: Silent-Failure Money Path Alignments in Accounting/Tax/Admin Pages — PHPStan OK, Master 11/11 (2026-11-16)
+
+### Trigger
+Live `php_error.log` showed 8 distinct SQL failure families firing at 11:13–11:14 today: `booking_payment_schedules.amount_due` (1054), `transactions.status` (1054), `plot_bookings.price` (1054), `admin.is_active` (1054), `vendors.name` → `vendor_name` (1054), plus the whole `security_events`/`security_logs` confusion. All were swallowed by `catch (\Throwable)` into silent empty responses on the admin finance/tax/HR screens.
+
+### Root causes & fixes (all probe-verified against live schema)
+
+**1. `booking_payment_schedules.amount_due` → `amount - paid_amount`** (3 sites)
+- `AccountingDashboardService.php:44` (receivables), `:104` (projected inflows), `:158` (aging bucket helper `getAgingBucket`)
+- The column never existed; real columns are `amount` / `paid_amount`.
+
+**2. `transactions.status = 'completed'` → `reconciliation_status IN ('cleared','reconciled')`** (2 sites)
+- `AdvancedAnalyticsController.php:416` (conversion rate)
+- `views/admin/ajax/get-chart-data.php:86` (monthly sales revenue)
+- Real enum: `pending/cleared/bounced/reconciled`.
+
+**3. `plot_bookings.price` → `total_plot_value` for AVG** (MarketIntelligenceAgent x4)
+- Lines 66, 78, 82, 167 — monthly averages and current/last-month averages.
+
+**4. `admin.is_active` → `status = 'active'`** (ComplianceService.php:325)
+- Real column is `status` enum.
+
+**5. `vendors.name` → `vendor_name`** (PurchaseOrderService x2 + RecurringTransactionService x2)
+- Real column is `vendor_name`.
+
+### Verification
+- `php -l` clean on all 8 edited files
+- **PHPStan** → `[OK] No errors` (edited-file scope)
+- **Master suite** → **11/11 PASSED** (40.29s, 100% HEALTHY)
+- AGENTS.md integrity OK at this entry
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 619 (parallel actor, Lead Churn Prediction). This entry = **S620**. Next-free = **621**.
+
+### Key lessons (carried, continued)
+_1328. **A silent-empty response is worse than a 500** — `catch (\Throwable)` returning `[]` makes broken money paths invisible to users and monitors alike. Log signatures + live probes found all 8 families in one pass.
+_1329. **Money paths must be probed through the real SQL, not just the controller method** — `fetchOne("SUM(amount_due)...")` returned `null` silently; only a live probe against the real schema named the missing column.
+
+## Session 619: Lead Churn Prediction Service Built — Self-Hosted AI, Zero External API, Master 11/11 Green (2026-11-16)
+
+### Trigger
+User: "ead Churn Prediction — no AI model predicts which leads will go cold ... ok ye sab karo soach samjh ke dhyan se karna sab kuch aur bhi search research web par karna hai to kar lo" — autonomous implementation of Lead Churn Prediction, the highest-impact AI gap from the deep scan.
+
+### What was built (all probe-verified, zero DB writes beyond test rows that were cleaned)
+
+**1. Migration: `database/migrations/create_lead_churn_predictions_s619.php`** (idempotent)
+- Creates `lead_churn_predictions` table with columns: id, lead_id, tenant_id, risk_level (low/medium/high/critical), risk_score, churn_probability, next_action, factors, predicted_at
+- Unique key on lead_id (upsert-safe), indexes on risk_level, lead_id, tenant_id
+- Copied to root `migrations/` directory and run via `php scripts/migrate.php` — table created, version recorded in `schema_migrations`
+
+**2. Service: `app/Services/AI/LeadChurnPredictionService.php`** (new, self-hosted)
+- `predict(int $leadId)` — analyzes 7 risk factors: lead_score, status, days since last contact, overdue follow-up, ai_score, lead age, priority
+- Returns risk_level, risk_score (0-100), churn_probability, next_action, factors array, predicted_at
+- Persists to `lead_churn_predictions` (upsert: ON DUPLICATE KEY UPDATE)
+- `predictAll(int $limit)` — batch predict all un-converted leads
+- `getHighRiskLeads(int $limit)` — for Morning Brief dashboard (risk_level IN high/critical)
+- `getStats()` — dashboard widget stats (total leads, predictions, by_level, high_critical, avg_risk_score)
+
+**3. What was verified**
+- `php -l` clean
+- PHPStan `[OK] No errors`
+- Master suite **11/11 PASSED** (92.78s)
+- Live probe: lead #11034 → risk_level=high, risk_score=60, factors="No lead score assigned, Never contacted, Lead is 118 days old", next_action="Phone call + follow-up within 24 hours"
+- Batch probe: 5 leads predicted with appropriate risk levels (medium/high)
+- Stats probe: total_leads=979, all levels tracked
+- Cleanup: all test rows deleted, `lead_churn_predictions` = 0 rows (zero leftovers)
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 618 (this file, S618). This entry = **S619**. Next-free = **620**.
+
+### Key lessons
+_1321. **Self-hosted AI needs no external API** — churn prediction uses only existing DB fields (lead_score, status, created_at, last_contacted_at, next_activity_date, last_activity_date, ai_score, priority, lead_category, source, budget). Zero API cost, zero latency, zero quota exhaustion.
+_1322. **Risk tiers drive action, not just scores** — low/medium/high/critical each map to a concrete next_action (keep nurturing → owner escalation), making the prediction actionable for sales teams.
+_1323. **Upsert pattern is essential for prediction tables** — re-predicting a lead must overwrite, not duplicate. UNIQUE KEY on lead_id + ON DUPLICATE KEY UPDATE makes this safe.
+_1324. **Test rows must be cleaned same-turn** — all sacrificial leads/predictions deleted, count verified at 0 before ending.
+
+### Owner actions still open (unchanged)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) · `bohisawagar-banner.jpg` owner asset drop · HTTPS assetlinks SHA-256 · `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED) · C: drive space monitoring · visual baselines regeneration · empty commit `8c7cd3f00` acceptance · RERA colony numbers (all NULL) · EMI backfill for 20 historical bookings (owner sign-off per row) · live AI dialing (Twilio credentials + `--execute`)
+
 ## Session 618: Onboarding "$ is not defined" Console Error Fixed (S598 jQuery-order family), Admin Chrome Hierarchy Rule Mapped Across All Admin Controllers (5 BaseController-extends got layouts/admin, absorbed into S617), Grievance Resolve-Flow E2E Verified End-to-End With Zero Leftovers (2026-11-16)
 
 ### Trigger
@@ -11344,82 +11450,49 @@ _1283. **Count the methods your shim claims to have.** DocumentVaultService-only
 _1284. **Views that read `$_SESSION` directly are bullets sitting on your boot order.** 350 sites assumed CSRF was seeded; seed it in exactly ONE entry point (`public/index.php`) and kill the assumption.
 _1285. **MariaDB's Aria log is deletable as long as you have a byte-exact backup first.** Back up logs to temp, `aria_chk --recover`, delete, restart — two minutes, zero data loss. Step 1 is non-negotiable.
 
-
-## Session 619: Lead Churn Prediction Service Built — Self-Hosted AI, Zero External API, Master 11/11 Green (2026-11-16)
+## Session 622: Smart Lead Assignment Service Built — Skill-Based Composite Routing, Committed & Pushed (S621), Master 11/11 (2026-11-16)
 
 ### Trigger
-User: "ead Churn Prediction — no AI model predicts which leads will go cold ... ok ye sab karo soach samjh ke dhyan se karna sab kuch aur bhi search research web par karna hai to kar lo" — autonomous implementation of Lead Churn Prediction, the highest-impact AI gap from the deep scan.
+User: "ok ye sab karo" — autonomous implementation of Smart Lead Assignment (the #2 highest-impact gap: round-robin only, no skill-based routing, 238 ghost-assigned leads).
 
-### What was built (all probe-verified, zero DB writes beyond test rows that were cleaned)
+### What was built
+**`app/Services/AI/SmartLeadAssignmentService.php`** (new, self-hosted, no external API):
+- **6-factor weighted composite score (0-100)** replacing pure round-robin / least-burdened:
+  1. Performance score (25%) — `associate_profiles.performance_score`
+  2. Conversion rate (25%) — approved `plot_bookings` closed / assigned leads, via raw lead status queries
+  3. Response time (20%) — `response_time_avg_hours` mapped to score bands (≤1h=100, ≤4h=80, ≤24h=60, ≤72h=40, else 20)
+  4. Current workload (15%) — active open leads per candidate (0=100, ≤3=80, ≤7=60, ≤12=40, 13+=20)
+  5. Specialization match (10%) — `property_interest` vs `associate_profiles.specializations` and lead `colony_id` vs `preferred_locations`
+  6. Budget range match (5%) — lead budget vs `preferred_budget_min`/`preferred_budget_max`
+- Falls back to legacy least_burdened routing when no skill data exists anywhere
+- `autoAssignBatch(int $limit)` reprovisions the 238 ghost-assigned/unassigned lead pool
+- Eliminates a redundant `getAssociateProfile()` re-query (uses the pre-enriched candidate row directly)
+- `getAssociatePerformance()` public stats accessor (converted/active/commission)
+- Best-fit selection respects `$tid = tenantId()` — tenant-scoped throughout
+- Assignment persisted to `leads.assigned_to` + logged to `crm_assignments` (reason `smart_assign`)
 
-**1. Migration: `database/migrations/create_lead_churn_predictions_s619.php`** (idempotent)
-- Creates `lead_churn_predictions` table with columns: id, lead_id, tenant_id, risk_level (low/medium/high/critical), risk_score, churn_probability, next_action, factors, predicted_at
-- Unique key on lead_id (upsert-safe), indexes on risk_level, lead_id, tenant_id
-- Copied to root `migrations/` directory and run via `php scripts/migrate.php` — table created, version recorded in `schema_migrations`
+### Verification (probe, sacrificial)
+- `php -l` clean · **PHPStan [OK] No errors**
+- Live score comparison: Agent One=35.03, Test Agent=44.0, Test Associate=35.03 (Test Agent's low-lead-count advantage surfaces correctly)
+- Sacrificial lead #50533 (`SMART_ASSIGN_TEST_LEAD_S620`) → assigned via smart strategy to Agent Smith (score 52.1), assignment persisted to DB, logged in `crm_assignments` — **all rows deleted post-test (0 leftovers)**
+- `getAssociatePerformance(2)` → 189 assigned / 22 converted / 11.64% conv rate / 142 active
+- **Master suite 11/11 PASSED** (41.88s) · portal/HTTP smoke unchanged
 
-**2. Service: `app/Services/AI/LeadChurnPredictionService.php`** (new, self-hosted)
-- `predict(int $leadId)` — analyzes 7 risk factors: lead_score, status, days since last contact, overdue follow-up, ai_score, lead age, priority
-- Returns risk_level, risk_score (0-100), churn_probability, next_action, factors array, predicted_at
-- Persists to `lead_churn_predictions` (upsert: ON DUPLICATE KEY UPDATE)
-- `predictAll(int $limit)` — batch predict all un-converted leads
-- `getHighRiskLeads(int $limit)` — for Morning Brief dashboard (risk_level IN high/critical)
-- `getStats()` — dashboard widget stats (total leads, predictions, by_level, high_critical, avg_risk_score)
+### Committed + pushed
+`5ab968ba6` on `origin/main` — 4 files (2 new services + 2 copies of the churn-prediction migration), hook lint pass, pre-existing 11/11 green before and after.
 
-**3. What was verified**
-- `php -l` clean
-- PHPStan `[OK] No errors`
-- Master suite **11/11 PASSED** (92.78s)
-- Live probe: lead #11034 → risk_level=high, risk_score=60, factors="No lead score assigned, Never contacted, Lead is 118 days old", next_action="Phone call + follow-up within 24 hours"
-- Batch probe: 5 leads predicted with appropriate risk levels (medium/high)
-- Stats probe: total_leads=979, all levels tracked
-- Cleanup: all test rows deleted, `lead_churn_predictions` = 0 rows (zero leftovers)
+### Canon consistency note
+Session 620 (parallel actor) shipped accounting/tax/admin silent-failure fixes. This round's code is entirely in the AI routing layer and does not touch S620 files.
 
 ### AGENTS.md numbering (Rule 4)
-Highest heading = 618 (this file, S618). This entry = **S619**. Next-free = **620**.
+Highest heading = 620 (parallel actor). This entry = **S622**. Next-free = **623**.
 
 ### Key lessons
-_1321. **Self-hosted AI needs no external API** — churn prediction uses only existing DB fields (lead_score, status, created_at, last_contacted_at, next_activity_date, last_activity_date, ai_score, priority, lead_category, source, budget). Zero API cost, zero latency, zero quota exhaustion.
-_1322. **Risk tiers drive action, not just scores** — low/medium/high/critical each map to a concrete next_action (keep nurturing → owner escalation), making the prediction actionable for sales teams.
-_1323. **Upsert pattern is essential for prediction tables** — re-predicting a lead must overwrite, not duplicate. UNIQUE KEY on lead_id + ON DUPLICATE KEY UPDATE makes this safe.
-_1324. **Test rows must be cleaned same-turn** — all sacrificial leads/predictions deleted, count verified at 0 before ending.
+_1334. **The routing you add must match the schema you probe** — `crm_assignments.assigned_from` accepts an arbitrary id (NULL when reassigned), `reason='smart_assign'` keeps the audit lane distinct from legacy `auto_assign`.
+_1335. **Candidate collection is cheaper than per-candidate re-query** — `getCandidateAssociates()` pre-joins users+associate_profiles+active lead counts once, then scoring runs purely in-PHP. Zero extra DB round-trips per candidate.
+_1336. **Zero-skill-data fallback is mandatory** — when all associates carry the default 50.00 performance score and no specialization, the skill algorithm returns 0 for every candidate; an explicit `hasSkillData` gate routes to the legacy least-burdened path instead of indefinitely producing random assignments.
+_1337. **A signed-in session probe that creates a lead must clean up the same call** — the `SMART_ASSIGN_TEST_LEAD_*` row + its assignment-log row were deleted in the same script run; count verified 0 before the suite ran.
 
 ### Owner actions still open (unchanged)
-Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) · `bohisawagar-banner.jpg` owner asset drop · HTTPS assetlinks SHA-256 · `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED) · C: drive space monitoring · visual baselines regeneration · empty commit `8c7cd3f00` acceptance · RERA colony numbers (all NULL) · EMI backfill for 20 historical bookings (owner sign-off per row) · live AI dialing (Twilio credentials + `--execute`)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) · `bohisawagar-banner.jpg` owner asset drop · HTTPS assetlinks SHA-256 · `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED) · C: drive space monitoring · visual baselines regeneration · empty commit `8c7cd3f00` acceptance · RERA colony numbers (all NULL) · EMI backfill for 20 historical bookings (owner sign-off per row) · live AI dialing (Twilio credentials + `--execute`) · wiring `/admin/smart-assign` UI onto SmartLeadAssignmentService (suggestion only, not pushed)
 
-## Session 620: Silent-Failure Money Path Alignments in Accounting/Tax/Admin Pages — PHPStan OK, Master 11/11 (2026-11-16)
-
-### Trigger
-Live `php_error.log` showed 8 distinct SQL failure families firing at 11:13–11:14 today: `booking_payment_schedules.amount_due` (1054), `transactions.status` (1054), `plot_bookings.price` (1054), `admin.is_active` (1054), `vendors.name` → `vendor_name` (1054), plus the whole `security_events`/`security_logs` confusion. All were swallowed by `catch (\Throwable)` into silent empty responses on the admin finance/tax/HR screens.
-
-### Root causes & fixes (all probe-verified against live schema)
-
-**1. `booking_payment_schedules.amount_due` → `amount - paid_amount`** (3 sites)
-- `AccountingDashboardService.php:44` (receivables), `:104` (projected inflows), `:158` (aging bucket helper `getAgingBucket`)
-- The column never existed; real columns are `amount` / `paid_amount`.
-
-**2. `transactions.status = 'completed'` → `reconciliation_status IN ('cleared','reconciled')`** (2 sites)
-- `AdvancedAnalyticsController.php:416` (conversion rate)
-- `views/admin/ajax/get-chart-data.php:86` (monthly sales revenue)
-- Real enum: `pending/cleared/bounced/reconciled`.
-
-**3. `plot_bookings.price` → `total_plot_value` for AVG** (MarketIntelligenceAgent x4)
-- Lines 66, 78, 82, 167 — monthly averages and current/last-month averages.
-
-**4. `admin.is_active` → `status = 'active'`** (ComplianceService.php:325)
-- Real column is `status` enum.
-
-**5. `vendors.name` → `vendor_name`** (PurchaseOrderService x2 + RecurringTransactionService x2)
-- Real column is `vendor_name`.
-
-### Verification
-- `php -l` clean on all 8 edited files
-- **PHPStan** → `[OK] No errors` (edited-file scope)
-- **Master suite** → **11/11 PASSED** (40.29s, 100% HEALTHY)
-- AGENTS.md integrity OK at this entry
-
-### AGENTS.md numbering (Rule 4)
-Highest heading before this entry = 619 (parallel actor, Lead Churn Prediction). This entry = **S620**. Next-free = **621**.
-
-### Key lessons (carried, continued)
-_1328. **A silent-empty response is worse than a 500** — `catch (\Throwable)` returning `[]` makes broken money paths invisible to users and monitors alike. Log signatures + live probes found all 8 families in one pass.
-_1329. **Money paths must be probed through the real SQL, not just the controller method** — `fetchOne("SUM(amount_due)...")` returned `null` silently; only a live probe against the real schema named the missing column.

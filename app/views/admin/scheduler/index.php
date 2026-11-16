@@ -180,12 +180,16 @@ $tasks = $tasks ?? [];
     </div>
 </div>
 
-<script>
-$(document).ready(function() {
-    $('#tasksTable').DataTable({
-        order: [[3, 'desc']],
-        pageLength: 25
-    });
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+// DataTables initialization. jQuery loads AFTER view content
+// (layouts/admin.php), so defer to the load event, not document.ready.
+window.addEventListener('load', function() {
+    if (window.jQuery && window.$.fn && window.$.fn.DataTable && document.querySelector('#tasksTable')) {
+        window.$('#tasksTable').DataTable({
+            order: [[3, 'desc']],
+            pageLength: 25
+        });
+    }
 });
 </script>
 

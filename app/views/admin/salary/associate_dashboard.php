@@ -233,8 +233,11 @@
     </div>
 </div>
 
-<script>
-$(document).ready(function() {
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+window.addEventListener('load', function() {
+    if (!window.jQuery) return;
+    var $ = window.jQuery;
+
     // Edit Salary Modal
     $('.edit-salary').click(function() {
         var id = $(this).data('id');

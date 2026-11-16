@@ -90,16 +90,22 @@
     </div>
 </div>
 
-<script>
-$(document).ready(function() {
-    $('#payout-form').submit(function(e) {
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+window.addEventListener('load', function() {
+    var payoutForm = document.getElementById('payout-form');
+    if (!payoutForm) return;
+    payoutForm.addEventListener('submit', function(e) {
         e.preventDefault();
         var form = this;
-        apsConfirm('Are you sure you want to generate a payout batch for all approved commissions?').then(function(ok) {
-            if (ok) {
-                form.off('submit').submit();
-            }
-        });
+        if (typeof apsConfirm === 'function') {
+            apsConfirm('Are you sure you want to generate a payout batch for all approved commissions?').then(function(ok) {
+                if (ok) {
+                    form.submit();
+                }
+            });
+        } else if (confirm('Are you sure you want to generate a payout batch for all approved commissions?')) {
+            form.submit();
+        }
     });
 });
 </script>

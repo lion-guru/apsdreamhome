@@ -74,18 +74,25 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.summernote').summernote({
-            height: 300,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'clear']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture']],
-                ['view', ['fullscreen', 'codeview']]
-            ]
-        });
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    // Capture the jQuery this script ran on (the view's 3.6.0, which summernote
+    // registers on). layouts/admin.php loads jQuery 3.7.1 AFTER view content,
+    // replacing window.jQuery - the 3.7.1 object has no summernote plugin.
+    var apsNewsJQ = window.jQuery;
+    window.addEventListener('load', function() {
+        var jq = apsNewsJQ;
+        if (jq && jq.fn && jq.fn.summernote) {
+            jq('.summernote').summernote({
+                height: 300,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+        }
     });
 
     document.getElementById('newsForm').addEventListener('submit', function(e) {
