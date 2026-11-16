@@ -2990,7 +2990,7 @@ class UserController extends BaseController
             // Payment receipts
             $st = $pdo->prepare("
                 SELECT bpr.*, b.booking_number, p.plot_number, c.name as colony_name,
-                       ips.installment_number, ips.due_date
+                       ips.installment_no AS installment_number, ips.due_date
                 FROM booking_payment_receipts bpr
                 JOIN plot_bookings b ON b.id = bpr.booking_id
                 LEFT JOIN plots p ON b.plot_id = p.id
