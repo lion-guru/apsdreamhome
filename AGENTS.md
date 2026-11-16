@@ -1,3 +1,37 @@
+## Session 611: Stock-Unsplash Colony-Hero Hotlinks Removed — Honest Placeholders Now Render (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — clear the remaining publicly-visible fabrication from the CEO audit (unsplash hotlinks presented as real-estate inventory).
+
+### What was broken (read-only DB inventory first, then targeted backup + null)
+
+**Two active colonies hot-linked generic Unsplash luxury-villa photography:**
+- `colonies.id=6 Raghunath Nagri` (`image_path`, `layout_image`, `gallery_images` — *four* distinct stock villa renders including swimming-pool mansion shots)
+- `colonies.id=7 APS Motiram Township` (`image_path` — stock villa at 8 AM) — already soft-hidden this session (`is_active=0`)
+
+Blog posts (ids 1-8) also carry hot-linked editorial photos — KEPT, because the imagery is illustrative lifestyle/editorial context, not a representation of a deliverable real-estate asset. Verified none of them are presented as company-owned sites.
+
+### Verified live after the fix
+- Before: `/colonies` served **5** references to unsplash luxury villas — the document included one specific hero shot for Raghunath Nagri on the public page.
+- Backup tables `colonies_s611_pre_img` (image_path column) and `colonies_s611_pre_gallery` (`layout_image`, `gallery_images`) retained — restorable in 2 seconds.
+- After: `php C:\Users\abhay\AppData\Local\Temp\opencode\probe_col611c.php` → `unsplash: 0` on the rendered `/colonies` HTML. Colonies render via existing `colony-placeholder` fallback (icon + name), no fabricated inventory images anywhere.
+- All colony-detail routes serve 200 (`/colony/suryoday-colony`, `/braj-radha-nagri`, `/budh-bihar-colony`, `/raghunath-nagri-motiram`, `/lakeview-residency`, `/colony/aps-motiram-township` correctly 404 — colony is soft-hidden).
+
+### Also shipped in this round
+- `/pricing` (S610): redirect `302` to `/colonies`; SaaS pricing page archived to `_archive/pages_pricing_saas.php` intact for owner restore — `git revert 51fd1cbcf` to undo.
+- `git status --porcelain`: now clean. The parallel actor's in-flight work (`app/helpers.php` adding `aps_indian_money()` helper, `app/views/pages/project_detail.php` in-flight lightbox edit) is untouched and uncommitted — their to commit.
+
+### Incidents
+- **Master suite 11/11 flapped to FAIL once this session** with `Withdrawal Lifecycle Money Probe`: `Insufficient wallet balance` for the synthetic probe user. Isolated run: **8/8 passed**, 0 leftovers. Full suite re-run immediately afterward: **11/11 PASSED** (28.6s). Transient during a parallel-actor build window — not a regression.
+
+### Gates (re-verified)
+- **PHPStan** → `[OK] No errors`; **Master** → **11/11 PASSED**; **PHP lint** clean on all touched files.
+- **DB**: no new tables created this session (backup tables are plain copies of NULLed rows); all 13 core tracking-table counts byte-identical to baseline.
+- **HEAD** → 200 on `/`, `/properties`, `/faqs`; **/colonies** → 200; `/colony/{slug}` → 404 (correct for hidden township) now answered as 404, not 500.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 610. This entry = **S611**. Next-free = **612**.
+
 ## Session 610: Orphan `/pricing` SaaS Page Removed From Public Surface — Route Now Redirects to `/colonies` (2026-11-16)
 
 ### Trigger
