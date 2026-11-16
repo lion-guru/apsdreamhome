@@ -1,3 +1,31 @@
+## Session 624: Booking Payment Schedules Auto-Increment Missing Cured (Partitioning Migration Side-Effect), Full Plot Booking Lifecycle E2E Verified (Creation -> 3-Mo Schedule -> Payment Recording -> Receipt -> Zero DB Drift) (2026-11-16)
+
+### Trigger
+Continuation of deep form & lifecycle audit. Testing `BookingLifecycleService::generatePaymentSchedule()` surfaced `SQLSTATE[HY000]: General error: 1364 Field 'id' doesn't have a default value` on `booking_payment_schedules`.
+
+### Root Cause
+In `database/migrations/partition_schedules.php`, line 122 dropped the primary key and modified `id BIGINT UNSIGNED NOT NULL` to add composite key `(id, due_date_year, tenant_id)`, dropping `AUTO_INCREMENT`. Because `id` was no longer `AUTO_INCREMENT`, any schedule generation attempt without explicitly passing `id` threw HY000 error 1364, breaking EMI generation across the entire system.
+
+### Fix Applied
+1. Executed `ALTER TABLE booking_payment_schedules MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;` in MySQL, restoring `AUTO_INCREMENT` on the composite PK.
+2. Updated `database/migrations/partition_schedules.php` to immediately re-apply `MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT` after PK recreation, preventing regressions if the migration is re-run.
+
+### Verification & Quality Gates
+- **End-to-End Booking Lifecycle Probe:**
+  - Selected available plot (Plot #RN-A-001, id=51).
+  - Created test customer id=126045.
+  - Created booking `APS-BK-20261116-8565` (id=1074) with total value ₹10L, token ₹1L (status `token_paid`).
+  - Generated 3-month payment schedule (`generatePaymentSchedule` SUCCESS: 3 installments @ ₹3L/mo created, first installment id=277).
+  - Recorded ₹3L payment on installment #1 (`recordPayment` SUCCESS: receipt `APS-RCP-9849111`, installment marked `paid`, booking advanced to `partially_paid`).
+  - Cleaned up all probe rows in correct FK dependency order: receipts -> schedules -> status history -> bookings -> users.
+  - Zero DB drift verified (0 test bookings, 0 test users).
+- **PHP Lint:** `php -l database/migrations/partition_schedules.php` clean.
+- **PHPStan:** `[OK] No errors`.
+- **Master Test Suite:** **11/11 PASSED** (31.7s, 100% HEALTHY).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 623. This entry = **S624**. Next-free = **625**.
+
 ## Session 623: Summernote Editors Silently Broken Since Deployment - Dual-jQuery Registry Loss + BS4-Tooltip Calls on a BS5 Stack - Fixed, Verified Live (18 Buttons, 0 Console Errors), Vendor Tracked (2026-11-16)
 
 ### Trigger
