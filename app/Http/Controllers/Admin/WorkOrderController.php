@@ -140,7 +140,7 @@ class WorkOrderController extends AdminController
             exit;
         }
 
-        require dirname(__DIR__, 2) . '/views/admin/construction/work_order_print.php';
+        require dirname(__DIR__, 3) . '/views/admin/construction/work_order_print.php';
         exit;
     }
 }

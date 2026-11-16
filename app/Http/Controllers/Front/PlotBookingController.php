@@ -340,7 +340,7 @@ class PlotBookingController extends PlotBaseController
             $emis = $this->getBookingEmis((int)$bookingId);
             $currentStatus = $booking['status'] ?? 'pending';
 
-            $viewFile = __DIR__ . '/../../views/pages/booking_receipt.php';
+            $viewFile = dirname(__DIR__, 3) . '/views/pages/booking_receipt.php';
             if (file_exists($viewFile)) {
                 require $viewFile;
             } else {

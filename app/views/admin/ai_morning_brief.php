@@ -13,7 +13,7 @@ $stats      = $stats ?? [];
     <!-- Header Strip -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h2 class="mb-1"><i class="fas fa-sun-rise me-2 text-warning"></i>AI Morning Brief</h2>
+            <h2 class="mb-1"><i class="fas fa-sun me-2 text-warning"></i>AI Morning Brief</h2>
             <div class="text-muted small"><?= date('l, d M Y') ?> · Daily 3-minute sales brief for the Sales Director</div>
         </div>
         <div>

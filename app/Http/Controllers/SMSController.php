@@ -94,7 +94,7 @@ class SMSController extends BaseController
         );
 
         $base = BASE_URL;
-        include __DIR__ . '/../views/admin/sms/dashboard.php';
+        include dirname(__DIR__, 2) . '/views/admin/sms/dashboard.php';
     }
 
     /**

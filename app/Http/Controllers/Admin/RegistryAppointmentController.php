@@ -108,7 +108,7 @@ class RegistryAppointmentController extends AdminController
             exit;
         }
 
-        require dirname(__DIR__, 2) . '/views/admin/legal/registry_appointment_slip.php';
+        require dirname(__DIR__, 3) . '/views/admin/legal/registry_appointment_slip.php';
         exit;
     }
 }

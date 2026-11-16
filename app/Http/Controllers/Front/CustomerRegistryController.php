@@ -131,7 +131,7 @@ class CustomerRegistryController extends PageController
             return $this->redirect('/customer/registry-appointments');
         }
 
-        require dirname(__DIR__, 2) . '/views/admin/legal/registry_appointment_slip.php';
+        require dirname(__DIR__, 3) . '/views/admin/legal/registry_appointment_slip.php';
         exit;
     }
 }

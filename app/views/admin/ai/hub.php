@@ -90,7 +90,7 @@ $isManager = in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin', [
             <a href="<?= $base ?>/admin/ai-morning-brief" class="text-decoration-none">
                 <div class="card h-100 border-0 shadow-sm" style="border-left: 4px solid #f59e0b;">
                     <div class="card-body">
-                        <i class="fas fa-sun-rise fa-2x text-warning mb-2"></i>
+                        <i class="fas fa-sun fa-2x text-warning mb-2"></i>
                         <h5 class="card-title">Morning Brief <span class="badge bg-warning text-dark">NEW</span></h5>
                         <p class="card-text small text-muted">Daily 3-minute sales brief: top leads to call, site visits today, "closed won – no booking yet" leads, hot/cold reviver.</p>
                     </div>

@@ -1,3 +1,141 @@
+## Session 628: Whole-Application View Path Audit & Correction (6 Controllers Fixed: PlotBooking, CustomerRegistry, RegistryAppointment, WorkOrder, SMS, FarmerAuth), FA Icon Hardening, Master 11/11 Green (2026-11-16)
+
+### Trigger
+Static analysis and comprehensive view-path scan revealed 6 controllers with broken relative view paths caused by incorrect directory depth calculations (`dirname(__DIR__, X)` off-by-one errors and legacy subfolder naming), causing 404/500 errors or blank page renders on customer receipts, legal appointment slips, work orders, SMS dashboards, and farmer login.
+
+### Root Causes & Fixes Applied
+1. **`app/Http/Controllers/Front/PlotBookingController.php:343`**:
+   - `__DIR__ . '/../../views/pages/booking_receipt.php'` resolved to non-existent `app/Http/views/pages/booking_receipt.php`, breaking customer booking receipt displays (`/booking/{id}/receipt`).
+   - **Fix:** Corrected to `dirname(__DIR__, 3) . '/views/pages/booking_receipt.php'`.
+2. **`app/Http/Controllers/Front/CustomerRegistryController.php:134`**:
+   - `dirname(__DIR__, 2) . '/views/admin/legal/registry_appointment_slip.php'` resolved to `app/Http/views/...`.
+   - **Fix:** Corrected to `dirname(__DIR__, 3) . '/views/admin/legal/registry_appointment_slip.php'`.
+3. **`app/Http/Controllers/Admin/RegistryAppointmentController.php:111`**:
+   - `dirname(__DIR__, 2) . '/views/admin/legal/registry_appointment_slip.php'` resolved to `app/Http/views/...`.
+   - **Fix:** Corrected to `dirname(__DIR__, 3) . '/views/admin/legal/registry_appointment_slip.php'`.
+4. **`app/Http/Controllers/Admin/WorkOrderController.php:143`**:
+   - `dirname(__DIR__, 2) . '/views/admin/construction/work_order_print.php'` resolved to `app/Http/views/...`.
+   - **Fix:** Corrected to `dirname(__DIR__, 3) . '/views/admin/construction/work_order_print.php'`.
+5. **`app/Http/Controllers/SMSController.php:97`**:
+   - `__DIR__ . '/../views/admin/sms/dashboard.php'` resolved to `app/Http/views/admin/sms/dashboard.php`.
+   - **Fix:** Corrected to `dirname(__DIR__, 2) . '/views/admin/sms/dashboard.php'`.
+6. **`app/Http/Controllers/Auth/FarmerAuthController.php:45`**:
+   - `$viewPath = __DIR__ . '/../../../views/farmer/login.php'` failed because the directory is `views/farmer_portal/` (silently rendering a blank login page on `/farmer/login`).
+   - **Fix:** Corrected to `$viewPath = __DIR__ . '/../../../views/farmer_portal/login.php'`.
+7. **FontAwesome Icons Hardened (`hub.php`, `ai_morning_brief.php`)**:
+   - Replaced invalid `fa-sun-rise` with `fa-sun` in Morning Brief headers.
+
+### Verification & Quality Gates
+- **Comprehensive View Path Probe (146 Includes Scanned):**
+  - Scanned all 146 `require`, `include`, and view path expressions across `app/Http/Controllers`, `app/controllers`, `app/views`, `app/Services`, and `app/core`.
+  - Found and resolved all 6 broken paths -> **0 issues remaining (146/146 valid)**.
+- **Direct View Render Probes:**
+  - `booking_receipt.php`: Rendered successfully (6,402 bytes HTML).
+  - `registry_appointment_slip.php`: Rendered successfully (9,211 bytes HTML).
+  - `work_order_print.php`: Rendered successfully (9,986 bytes HTML).
+  - `farmer_portal/login.php`: Rendered successfully (4,678 bytes HTML).
+- **PHP Lint:** `php -l` clean across all 6 touched controller files.
+- **PHPStan:** `[OK] No errors` across all 6 touched files (`--memory-limit=1G`).
+- **Master Test Suite:** **11/11 PASSED** (36.77s, 100% HEALTHY).
+- **Zero DB Drift:** Users (82), Bookings (23), Leads (994), Transactions (5), Ledger (359), Queue (14) — perfectly intact.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 627. This entry = **S628**. Next-free = **629**.
+
+## Session 627: HolidayCalendarService Multi-Tenant Fix — Hardcoded tenant_id=1 Replaced, Duplicate `use` Removed, Master 11/11 (2026-11-16)
+
+### Trigger
+Live `php_error.log` showed `HolidayCalendarService::fetchAll` HY093 Invalid parameter number at 12:45:48 today — traced to hardcoded `tenant_id = 1` in `getStats()` (uses `tenant_id = 1` literal) and duplicate `use App\Traits\ServiceTenantTrait;` (dead at namespace level, correct one inside class).
+
+### Root Cause
+`HolidayCalendarService` is used by `/admin/holiday-calendar` — a multi-tenant admin page. Every query used `tenant_id = 1` literal instead of `$this->tenantId()`, so tenant 2+ never saw their holidays, and tenant 1 saw all tenants' holidays. The duplicate `use` at file top was inert (dead at namespace scope), but confusing.
+
+### Fix Applied
+- Removed dead `use App\Traits\ServiceTenantTrait;` at namespace level (line 7)
+- Added fully-qualified `use \App\Traits\ServiceTenantTrait;` inside class
+- Replaced all 9 hardcoded `tenant_id = 1` with `$this->tenantId()`:
+  - `getHolidays()` — `$params = [$this->tenantId()];`
+  - `getHolidaysInRange()` — `[$this->tenantId(), $startDate, $endDate]`
+  - `isHoliday()` — `[$date, $this->tenantId()]`
+  - `getStats()` — `$tid = $this->tenantId()` then used in all 4 queries
+  - `getNextHoliday()` — `[$this->tenantId(), $fromDate]`
+  - `createHoliday()` — `$this->tenantId()` in INSERT
+  - `updateHoliday()` — `WHERE id = ? AND tenant_id = ?`
+  - `deleteHoliday()` — `WHERE id = ? AND tenant_id = ?`
+  - `getHoliday()` — `[$id, $this->tenantId()]`
+
+### Verification
+- `php -l` clean
+- **PHPStan** → `[OK] No errors`
+- **Master suite** → **11/11 PASSED** (36.26s, 100% HEALTHY)
+- AGENTS.md integrity OK at this entry
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 626 (DemandForecastService). This entry = **S627**. Next-free = **628**.
+
+### Key lessons (carried, continued)
+_1342. **A hardcoded tenant_id is a multi-tenant bug waiting to surface** — `tenant_id = 1` meant every tenant saw tenant 1's data, and tenants 2+ saw nothing. `$this->tenantId()` is the only correct source.
+_1343. **A dead `use` at namespace level is silently ignored** — the parallel `use` inside the class was doing all the work; the top one just added noise. Remove it to avoid confusion.
+
+## Session 626: DemandForecastService Built — Forward Demand Forecasting, Honest Engagement-Allocation, Committed & Pushed, Master 11/11 (2026-11-16)
+
+### Trigger
+User: "do next" — continuing the AI gap-closure program (S619 churn, S622 smart assignment). This round: the #3 gap from the deep scan — no forward demand forecast exists; the price optimizer had an A/B experiment framework but no predicted demand curve.
+
+### What was built
+**`app/Services/AI/DemandForecastService.php`** (new, self-hosted, pure-compute — no migration, no new tables):
+
+**Signals used (all real, all queryable):**
+- 12-month tenant lead creation velocity (months with 0 leads filled as zero-buckets)
+- Available/engaged inventory per colony (plots table, live counts)
+- Price history trend per colony (604 rows; linear least-squares on log-price vs years)
+- Month-of-year seasonality (average leads per calendar month vs 12-month overall mean)
+- Colony-tagged leads (60d): location_preference / colony_id / tags JSON_CONTAINS
+
+**Forecast output (`forecastColony(int)` / `forecastAll(int)` / `colonyRows()`):**
+- Per-colony 30/60/90d lead + booking projection
+- Engagement-share allocation: `engaged_this_colony / engaged_tenant` share of tenant demand, floor 0.02 when zero engagement. This is an **allocation assumption, not a measured per-colony lead signal** — the honest note is surfaced in the payload:
+  - Suryoday Colony: allocation 0.061 (2 engaged) → 1 lead/mo
+  - Budh Bihar: 0.182 (6 engaged) → 3 leads/mo
+  - Raghunath Nagri: 0.636 (21 engaged) → 10 leads/mo
+  - Lakeview Residency: 0.02 (floor, 0 engaged) → 0 leads/mo, confidence 0.6
+- Inventory runway: days to deplete available plots at the projected rate; "OK"/"Critical: under 30 days"/"insufficient velocity" label
+- Price trend direction (up/sideways/down + % change/year + n rows of evidence)
+- Confidence: 12mo sample → 0.70; heuristic penalty for zero tagged leads AND zero engagement (floor 0.15)
+- Explicit `limited_data` flag; 8% lead-to-booking conversion assumption documented
+- Every colony output carries its own honest breakdown (tenant projections included)
+
+### Honest limitations (disclosed, not hidden)
+- **There is ZERO per-colony lead signal in the DB** (0 colony-tagged leads in 90d; all 55 90d leads are Meerut/Lucknow/Varanasi-preference etc.). Any "this colony will sell N plots" number cannot be measured directly — the output is tenant lead-velocity split by engagement share, plainly labelled as such.
+- `plot_bookings` only has 2 dated bookings (July 2026: 21, Sept 2026: 1) — booking velocity is unusable as a colony-level signal; lead velocity is the primary model input.
+- The 8% conversion rate is an assumption, not a measured value; notes() flags it every time.
+- No external macro signals (RBI repo rate, monsoon cycle, festive calendar beyond lead seasonality).
+- Limited runway visibility for colonies with 0 engaged (days=null, label "Insufficient velocity to project").
+
+### Verification (probe, read-only)
+- `php -l` clean · **PHPStan [OK] No errors**
+- Live probe: 5 colonies forecast — each shows its own allocation (0.061/0.03/0.02/0.182/0.636), own price trend (Suryoday down, Raghunath flat), own notes (zero-engagement floor case Lakeview correctly flagged)
+- **Master suite 11/11 PASSED** (36.11s)
+- Zero DB writes this round (pure compute); `lead_churn_predictions` still 0 rows; sacrifices balances byte-identical
+
+### Committed + pushed
+`8b871397a` on `origin/main` — 1 file (373 lines), hook lint pass, `origin/main` in sync.
+
+### Canon consistency note
+S623/S624/S625 (parallel actor) shipped arena edits, booking-schedule AUTO_INCREMENT restore, MLM/transactions AUTO_INCREMENT and email_queue fixes — all theirs; this round touched none of them.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 625 (parallel actor). This entry = **S626**. Next-free = **627**.
+
+### Key lessons
+_1338. **A "forecast" that doesn't expose its allocation assumption is fabrication.** The first rank of this code projected the same 15-leads figure for every colony — technically true (tenant velocity) but useless and dishonest-looking. Applying the engagement-share multiplier made each colony's number its own, with the multiplier printed in the payload.
+_1339. **When census data says zero, floor honestly, don't impute.** A colony with 0 engaged plots now returns ~0 allocation and a "tenant-level, not colony-specific" note — better than a confident-looking fiction.
+_1340. **Tagged-lead count is not zero-demand.** 0 tagged leads tells you the lead form never asks the colony; it does not tell you demand. The notes() line documents this explicitly so nobody treats tagged=0 as a colonies-wide demand signal shortfall.
+_1341. **Read-only probing is a feature.** DemandForecastService computes entirely from SELECTs; the probe took no backups, created no rows, and left zero trace.
+
+### Owner actions still open (unchanged)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) · `bohisawagar-banner.jpg` owner asset drop · HTTPS assetlinks SHA-256 · `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED) · C: drive space monitoring · RERA colony numbers (all NULL) · EMI backfill for 20 historical bookings (owner sign-off per row) · live AI dialing (Twilio credentials + `--execute`) · wiring DemandForecastService + SmartLeadAssignmentService + LeadChurnPredictionService into the admin Morning Brief widget (suggestion only, not pushed) · assigning an owner for the colony-tagged-lead form field (makes per-colony demand measurable, currently zero signal)
+
 ## Session 625: MLM Commission Ledger & Transactions Missing Auto-Increment Cured, Email Queue Default Value Fixed, Multi-Table Auto-Increment Audit Verified (2026-11-16)
 
 ### Trigger
