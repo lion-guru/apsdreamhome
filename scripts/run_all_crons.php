@@ -22,6 +22,9 @@
  *    14. Fast-Start 30-Day Bonus Evaluation
  *    15. AI Health Check (writes ai_health.degraded so the public chatbot
  *        falls back to the offline corpus instead of erroring)
+ *    16. Churn Prediction Refresh (scores up to 300 open leads into the
+ *        recomputable lead_churn_predictions cache - keeps the admin
+ *        Morning Brief AI Insight Panel + the lead-desk AI Council fresh)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% →' qualified site managers)
@@ -114,6 +117,7 @@ if ($statusOnly || $dryRun) {
         echo "   13. API Token Prune (expired > 30d)" . PHP_EOL;
         echo "   14. Fast-Start 30-Day Bonus Evaluation" . PHP_EOL;
         echo "   15. AI Health Check" . PHP_EOL;
+        echo "   16. Churn Prediction Refresh (up to 300 open leads)" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -585,6 +589,25 @@ try {
         } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'ai_health: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 16. CHURN PREDICTION REFRESH (scores up to 300 open leads into the
+        //     recomputable lead_churn_predictions cache - keeps the admin
+        //     Morning Brief AI Insight Panel + the lead-desk AI Council
+        //     panels fresh daily. Bounded upserts, no business events.)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}  Churn Prediction Refresh" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $churnSvc = new \App\Services\AI\LeadChurnPredictionService();
+            $churnResult = $churnSvc->predictAll(300);
+            $log['churn_refresh'] = ['status' => 'completed', 'predicted' => (int)($churnResult['predicted'] ?? 0), 'skipped' => (int)($churnResult['skipped'] ?? 0)];
+            echo "  [OK] churn refreshed: {$churnResult['predicted']} predicted, {$churnResult['skipped']} skipped" . PHP_EOL;
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'churn_refresh: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }
