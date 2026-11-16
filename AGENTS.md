@@ -11980,3 +11980,49 @@ Highest heading before this entry = 626 (parallel actor, DemandForecastService).
 ### Key lessons (carried, continued)
 _1342. **A hardcoded tenant_id is a multi-tenant bug waiting to surface** — `tenant_id = 1` meant every tenant saw tenant 1's data, and tenants 2+ saw nothing. `$this->tenantId()` is the only correct source.
 _1343. **A dead `use` at namespace level is silently ignored** — the parallel `use` inside the class was doing all the work; the top one just added noise. Remove it to avoid confusion.
+## Session 632: AI Insight Panel Wired Into Admin Morning Brief — Live Demand Forecast + Churn Risk Cache + One-Click Analysis, Honest Labels, All Gates Green (2026-11-16)
+
+### Trigger
+User: "do next" — the three AI services shipped in S622–S626 (LeadChurn, SmartAssign, DemandForecast) were CLI-only and invisible to the sales desk. Wiring them into the existing AI Morning Brief page makes them usable by the Sales Director; everything stays advisory and read-only except a bounded, recomputable churn cache.
+
+### What was built
+**1. `AiMorningBriefController::index()`** — computes two new real-time panels after the existing sections (wrapped in try/catch so a service failure never breaks the page; `error_log` on failure):
+- `DemandForecastService($this->db)->colonyRows()` — pure compute, no writes: colony demand at a glance.
+- `LeadChurnPredictionService::getStats()` + `getHighRiskLeads(6)` — reads the churn cache.
+
+**2. New `POST /admin/ai-morning-brief/run-churn-analysis`** (`runChurnAnalysis()`): `requireAdmin()` + `validateCsrfOrFail()`, calls `predictAll(300)` (each predict is tenant-scoped upsert — recomputable cache, never doubled), flashes the result ("Churn analysis complete: N leads scored, M skipped.") and redirects. Nothing money-related is touched; the table `lead_churn_predictions` is a recomputable scoring cache created in S619 exactly for this.
+
+**3. View `app/views/admin/ai_morning_brief.php`** — new "AI Insight Panel" card (marked `advisory`) above the existing sections:
+- **Lead Churn Risk**: scored count, high+critical count, avg risk; Low/Med/High/Crit badges; top-6 high-risk leads table (name, phone, risk level, score, next action, Open link). Empty state when no predictions exist with a clear "click Refresh Churn Analysis" hint.
+- **Colony Demand Forecast**: table of live colony rows — available/total, allocation %, 30d leads, 90d bookings, runway days, confidence, `limited data` badge when thin. Explicit honesty line: "Allocation = engaged-plot share of tenant demand (an assumption, not a measured per-colony signal — no colony-tagged leads exist in the database today). Bookings assume 8% conversion. RERA status is colony-wise; verify at up-rera.in or our legal desk (+91 70074 44842)."
+- Flash alerts rendered (success/error) with dismiss buttons.
+- CSRF hidden input uses nonce-compatible pattern; POST form styled inline.
+
+**4. `DemandForecastService::colonyRows()`** — now exposes `allocation` (the engagement-share assumption) so the widget/table can show it. PHPStan/limt unchanged.
+
+### Verification (all live)
+- `php -l` clean (controller, view, routes, service).
+- **PHPStan → `[OK] No errors`** (1517 files).
+- **Master → 11/11 PASSED** (50.5s).
+- **Smoke runner → 38/38 PASSED** (two runs: one transient 7-route failure where all admin probes returned the 14,678-byte login page — see honesty note — then a clean rerun plus a fresh test_login=2 probe of all 7 AI admin pages, each returning correct bytes with needles present).
+- Live admin probe (test_login=2): page 403,142 → 407,916 bytes after churn seed; needles: "AI Insight Panel" ✓, "Lead Churn Risk" ✓, "Colony Demand Forecast" ✓, "Refresh Churn Analysis" ✓, Suryoday/Raghunath ✓, advisory ✓, RERA honesty line ✓.
+- **POST refresh flow E2E (fresh session, CSRF token from page):** 302 → flash; DB read-back: **300 predictions written — 15 critical / 111 high / 174 medium** (real computation on live open leads; bounded cache, refreshable). High-risk table rendered 6 live leads (Vikram Verma, Nitin Reddy, Priya Iyer, Gaurav Nair, Gaurav Kumar, Karan Rathore).
+- Zero DB drift beyond the intended churn cache: 300 rows in `lead_churn_predictions` (product data, not test probes); no money table touched; no schema changes.
+
+### Honest notes
+- The earlier smoke-suite hiccup (7 AI admin routes all returning 14678 bytes, the same byte count as the login shell) was **not** a code regression — a re-run passed 38/38 and all 7 pages verified clean with a fresh test_login=2 jar. The runner's own fast-fail guard had passed at that moment, so this was an environment/session-churn artifact of the shared local dev server (parallel actor's S630/S631 probe traffic), not my change. Noted for the next session — watch for intermittent 14678-byte admin probes under heavy parallel load.
+- **300 churn predictions were seeded into the live cache** by the POST refresh test — these are real scores of real open leads, not test artifacts; they auto-refresh on each Refresh Churn Analysis click.
+- `app/core/Autoloader.php` (parallel actor's in-flight `realpath()` fix) was **not** committed by me.
+- `AGENTS.md` not rewritten; S631 (parallel actor, Plan Coach) entry untouched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = S631 (parallel actor, AI Plan Coach, committed 0af58d5e8). This entry = **S632**. Next-free = **633**.
+
+### Key lessons
+_1353. **A feature is not usable until its consumers can see and trigger it.** Three services sat CLI-only for weeks; one panel turned them into a morning-briefing surface for the actual sales desk.
+_1354. **A recomputable cache is the right home for batch AI scoring.** `lead_churn_predictions` with UNIQUE(lead_id) + upsert makes the one-click button idempotent by construction; no partial states, no duplicates, bounded at 300.
+_1355. **Label assumptions inside the widget, not beside it.** The allocation % is an assumption (engaged share), not a measurement — the panel itself says so, so nobody quotes "₹X expected bookings" as RERA-verified fact.
+_1356. **Excluding another actor's in-flight files must be deliberate.** Autoloader.php carried someone else's uncommitted fix; staging it would have co-committed their work. The staged-set was verified before commit: exactly my 4 files.
+
+### Owner actions still open (unchanged)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · `bohisawagar-banner.jpg` · production deploy (`apsdreamhome.com` unreachable) · SmartAssign wiring at lead intake (not done — zero-risk suggestion) · colony-tagged-lead form field owner (makes per-colony demand measurable, currently zero signal)
