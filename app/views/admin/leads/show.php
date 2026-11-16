@@ -94,6 +94,25 @@ function timeAgo($dt) {
 @media print{.lead-detail-header{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none!important}}
 </style>
 
+<?php
+$flashSuccess = $this->getFlash('success');
+$flashError = $this->getFlash('error');
+$flashInfo = $this->getFlash('info');
+?>
+<?php if ($flashSuccess || $flashError || $flashInfo): ?>
+<div class="container-fluid px-4 pt-3">
+    <?php if ($flashSuccess): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-2" role="alert"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars((string) $flashSuccess) ?><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+    <?php endif; ?>
+    <?php if ($flashError): ?>
+    <div class="alert alert-danger alert-dismissible fade show mb-2" role="alert"><i class="fas fa-exclamation-triangle me-2"></i><?= htmlspecialchars((string) $flashError) ?><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+    <?php endif; ?>
+    <?php if ($flashInfo): ?>
+    <div class="alert alert-info alert-dismissible fade show mb-2" role="alert"><i class="fas fa-info-circle me-2"></i><?= htmlspecialchars((string) $flashInfo) ?><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+
 <!-- Lead Header -->
 <div class="lead-detail-header">
     <div class="container-fluid px-4">
