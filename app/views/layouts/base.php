@@ -457,6 +457,9 @@ $bodyClass = $isHomePage ? 'page-home' : '';
       });
     </script>
 
+    <!-- Voice Booking Widget - AI-powered plot booking assistance -->
+    <?php include __DIR__ . '/../components/voice_booking_widget.php'; ?>
+
     </body>
 
 </html>

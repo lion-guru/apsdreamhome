@@ -35,6 +35,14 @@ function c(string $t, string $color = ''): string {
 }
 
 $tmp = sys_get_temp_dir();
+$writableCheck = @is_writable($tmp);
+if (!$writableCheck) {
+    $fallback = dirname(__DIR__) . '/storage/app/tmp';
+    if (!is_dir($fallback)) {
+        @mkdir($fallback, 0777, true);
+    }
+    $tmp = is_dir($fallback) && @is_writable($fallback) ? $fallback : $tmp;
+}
 $jars = ['public' => "$tmp/smoke_public.txt", 'admin' => "$tmp/smoke_admin.txt", 'assoc' => "$tmp/smoke_assoc.txt", 'employee' => "$tmp/smoke_employee.txt", 'customer' => "$tmp/smoke_customer.txt"];
 foreach ($jars as $j) @unlink($j);
 
@@ -135,12 +143,22 @@ function probeOnce(string $url, string $jar, array $expect, int $wantJson, ?stri
     }
     return [$ok, $note, $info, $ms];
 }
+// Re-auth an admin session only when the sentinel page lost it. This kills the
+// 14,678-byte login-page tear artifact (S552/S570/S572) WITHOUT extra logins in the healthy case.
+function ensureAdminSession(string $jar): void {
+    [$info, $body] = hit($GLOBALS['BASE'] . '/admin/erp', $jar);
+    if (stripos($body, 'aps-admin-body') === false) {
+        hit($GLOBALS['BASE'] . '/admin/login?test_login=2', $jar);
+    }
+}
 foreach ($probes as $probe) {
     $label = $probe[0]; $path = $probe[1]; $jar = $probe[2]; $expect = $probe[3]; $wantJson = $probe[4]; $needle = $probe[5] ?? null;
+    if ($jar === 'admin') ensureAdminSession($jars[$jar]);
     [$ok, $note, $info, $ms] = probeOnce($BASE . $path, $jars[$jar], $expect, $wantJson, $needle);
     if (!$ok) {
         // One retry: an occasional empty-body render (S492-class race) is transient; retry distinguishes that from a real failure.
         usleep(400000);
+        if ($jar === 'admin') ensureAdminSession($jars[$jar]);
         [$ok2, $note2, $info2, $ms2] = probeOnce($BASE . $path, $jars[$jar], $expect, $wantJson, $needle);
         if ($ok2) { $ok = true; $note = 'FLAKY-RETRY'; $info = $info2; $ms = $ms2; } else { $note = $note2 !== '' ? $note2 : $note; }
     }

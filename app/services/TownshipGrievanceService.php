@@ -26,7 +26,11 @@ class TownshipGrievanceService
         $title = trim((string)($data['title'] ?? ''));
         $description = trim((string)($data['description'] ?? ''));
         $category = $data['category'] ?? 'water_supply';
-        $priority = $data['priority'] ?? 'medium';
+        $priority = trim((string)($data['priority'] ?? 'medium'));
+        $allowedPriorities = ['low', 'medium', 'high', 'emergency'];
+        if (!in_array($priority, $allowedPriorities, true)) {
+            $priority = 'medium'; // crafted POST out-of-enum would 1265 under strict mode and 500 the request
+        }
 
         if ($customerId <= 0 || $colonyId <= 0 || empty($title) || empty($description)) {
             return ['success' => false, 'message' => 'Customer, colony, title, and description are required.'];
