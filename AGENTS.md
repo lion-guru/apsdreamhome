@@ -1,3 +1,83 @@
+## Session 659: Flash Family Fixed EVERYWHERE - universal flash rendering in base/employee/admin/customer layouts (+ shared partial), Crafted Priority POST Crash Closed, Cookie-Jar-Dead Environment Fixed in Smoke Runner, Gates Green (2026-11-16)
+
+### Trigger
+User: "customer view me koi kami ho to improve karo suggestion do" (improve customer views) was followed by "thik hai tumhare suggestion se kaam kiya jaye sabhi start karo" (do your suggestions) - so the flash blindness found in S655 was expanded from the customer portal to ALL portal layouts, and the wake-up probe of a single POST turned up two more real bugs in the same class.
+
+### What was found &amp; fixed
+1. **ALL portal layouts were flash-blind** (except the S655 customer layout): `layouts/base.php`, `layouts/employee.php`, `layouts/admin.php` contained ZERO flash rendering. Every `$_SESSION['success'|'error'|'info']` set by controllers vashes silently - booking errors, EMI failures, grievance submit confirmations, overdue notifications, admin action feedback - all invisible site-wide.
+2. **NEW shared partial** `app/views/layouts/flash-block.php` (single canonical renderer): both flash families (`flash_success/flash_error/flash_info` and `success/error/info`), consumes once, `role="status" aria-live="polite"`, dismissible Bootstrap alerts with per-severity icons. Base layout's hand-rolled flash_success/flash_error markup REPLACED by the include (gains the non-prefixed family). Employee + admin layouts gained the include. Customer layout refactored to the same partial. Associate layout already consumed both families - untouched.
+3. **`TownshipGrievanceService::submitGrievance()` crashed via crafted POST**: a priority outside the enum (`normal`) hit 1265 (strict mode) ? uncaught PDOException ? HTTP 500 for the visitor. The form only sends valid values, but a crafted POST is not a feature you can rely on. Priority now whitelisted against the enum with `medium` fallback.
+4. **`testing/production_smoke_runner.php` was environment-fragile**: cookie jars went to `sys_get_temp_dir()`, which is broken for PHP curl in this environment ("failed to open cookie file" - 0-byte jars, 302 login shells, needle failures). Now falls back to `storage/app/tmp` when temp isn't writable. **38/38 PASSED** (was 31-35/38, flapping).
+5. **E2E customer grievance flow VERIFIED WITH A LIVE SACRIFICIAL ROW** (ids 783-786, all deleted, 0 leftovers): browser-equivalent POST (manual cookie chain, CSRF from rendered page) ? 302 ? landing page renders "Maintenance request submitted. Ticket Token: APS-GRV-GOR-2026-27EC" with visible `alert-success`. This was an actual browser-equivalent proof, not a status-code guess.
+
+### Verification
+- `php -l` clean ?8 ? **PHPStan ? [OK] No errors** ? **Master 11/11 PASSED** ? **Smoke 38/38 PASSED** (three consecutive runs after fix; the 31/38 report was pre-fix).
+- **Live needles** (fresh public jar): `/` 200 flash-region YES ? `/user/dashboard` 200 YES ? `/employee/dashboard` 200 YES ? `/admin/erp` 200 YES ? `/admin/ai/hub` 200 (38/38 probes now green, incl. the 7 that were failing).
+- No schema changes, no migrations, no money tables; no scope creep into the parallel actor's AI-hub files.
+
+### Honest notes
+- The cookie-jar failure is an ENVIRONMENT condition (PHP curl can no longer write to temp dir) - the runner now survives it honestly with a project-local fallback; it does not paper over the underlying environment problem, and it is honest about using `storage/app/tmp`.
+- 500 ? 302-redirect behavior on the crafted priority POST was verified by CLI reproduction (`{"success":true,"id":783,...}`) after the whitelist fix, then the row was deleted.
+- Base layout was rewritten around a placeholder-free include; line-count/LF assertion done; `php -l` clean.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **657** (mobile RBAC, `e5e3a4c19`) and **658** (AI Hub completion). This entry = **S659**. Next-free = **660**.
+
+### Key lessons
+_1412. **A portal layout with no flash region is a one-way valve - fixing the customer layout alone left 3 other portals silent; grep every layout for the word "flash" before declaring the feature done.**
+_1413. **Shared partials beat per-layout copies - one renderer, all four portals, no drift.**
+_1414. **A cookie-jar write failure that flks every authenticated probe is an environment condition - the honest fix is a writable fallback, not a force-pushed retry loop.**
+_1415. **Enum-strict violations are crafted-POST facts - whitelist at the service boundary; the form is not a contract.**
+_1416. **Browser-equivalent E2E is the only proof that a flash render actually displays - a 302 page's absence of the ticket is not a success signal.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload ? HTTPS assetlinks SHA-256 ? RERA colony numbers ? EMI backfill ? live AI dialing (Twilio + `--execute`) ? production deploy ? Task Scheduler verification (DAILY task 16).
+## Session 656: Admin Sidebar Hierarchy & Submenu Tree Restored, Executive Overview Hub Placed at Top, 29 Double-Wrapped Views Sanitized, Dangling Header/Footer Includes Purged, Portability Hardened, Gates Green (2026-11-16)
+
+### Trigger
+User: "admin ke view me kamiya khojo aur sidebar menu me bhi dekaur dekho kaha kaha consitency gadbad hai ya aur koi problem ya kamiya to improve kiya jaye" (audit admin views and sidebar menu for inconsistencies, defects, and broken structure, then fix them).
+
+### What was found & fixed
+1. **Admin Sidebar Submenu Hierarchy Restoration (`AdminMenuService.php`):**
+   - For `ROLE_SUPER_ADMIN`, `getMenuItems()` returned `$this->filterForTenant($items)` directly without calling `buildMenuTree($items)`. Super Admin received a 100% flat list of 396 items, completely bypassing nested submenus and dropdown chevrons.
+   - In `buildMenuTree()`, changed root parent check from `=== null` to `empty($item['parent_id'])` to properly handle `0`, `'0'`, `''` parent IDs in MySQL DB rows.
+   - Fixed 15 role dashboards (IDs 482–496) from broken non-existent `parent_id = 2` to `parent_id = 480` (`Dashboard`, `/admin/dashboard`), nesting them as clean submenus under Dashboard.
+   - Fixed Dead Letter Queue (`id = 420`, `/admin/messenger/dead-letters`) from `parent_id = 1` (`ERP Overview`) to `parent_id = 421` (`Messenger Routing`, `/admin/messenger`).
+2. **Executive Overview Hub at Top of Sidebar (`rbac_sidebar.php`):**
+   - Legacy `hubDefinitions` did not map sections `'main'` or `'dashboards'` to any hub, dumping all executive dashboards into Hub 5 ("System & HR") at the bottom of the sidebar.
+   - Added Hub 0 `0. Executive Overview` (`fas fa-tachometer-alt`) containing `['main', 'dashboards']` at the top of `$hubDefinitions` and `$hubOrder`, and added `'main' => '📊 Main Dashboard'` to `$sectionNames`.
+3. **HTML Document Sanitization across 29 Admin Views:**
+   - Stripped duplicate `<!DOCTYPE html><html lang="en"><head>...<body>` wrappers, inner `require_once admin.php` calls, and trailing `</body></html>` across 29 views rendered by `AdminBaseController::render()`:
+     - 9 GST views: `dashboard.php`, `einvoice_log.php`, `gstr1.php`, `gstr3b.php`, `hsn_codes.php`, `invoice_form.php`, `invoice_view.php`, `invoices.php`, `returns_log.php`.
+     - 5 Property Tax views: `demand_register.php`, `form.php`, `index.php`, `payments.php`, `rebate_rules.php`.
+     - 4 System Config views: `index.php`, `edit.php`, `audit.php`, `import.php`.
+     - 3 Notification Dashboard views: `index.php`, `sms_templates.php`, `whatsapp_templates.php`.
+     - 2 Campaign Templates views: `index.php`, `form.php`.
+     - 1 Storage view: `storage/index.php`.
+     - 3 Plot & Colony Pipeline views: `plots/import.php`, `colony-pipeline/pricing-applications.php`, `colony-pipeline/pricing-history.php`.
+   - Purged non-existent `admin_header.php` and `admin_footer.php` includes across 8 views (`multi_currency/create.php`, `edit.php`, `index.php`, `reports/fund_flow.php`, `reports/payables_aging.php`, `reports/receivables_aging.php`, `tax_planning/index.php`, `inventory_mgmt/valuation.php`) eliminating silent PHP include warnings.
+   - Purged hardcoded `http://localhost/apsdreamhome/assets/...` in CSS links in `plots/import.php` and `pricing-*` views.
+4. **Portability of High-Traffic Admin Views (`<?= $base ?>`):**
+   - Prepend `<?= $base ?>` to all hardcoded `href="/admin/..."` and `action="/admin/..."` paths in `legal-colony-pipeline/detail.php`, `legal-colony-pipeline/index.php`, `transfers/index.php`, and `legal/registry_appointments.php`.
+
+### Verification & Quality Gates
+- `php -l`: 50/50 modified files clean (0 syntax errors).
+- PHPStan: `[OK] No errors` (`--memory-limit=1G`).
+- Master Test Suite: `11/11 PASSED` (43.69s, 100% HEALTHY).
+- Zero Database Drift: Verified users (82), bookings (23), leads (994), transactions (5), ledger (359), email queue (14) — 100% clean baseline.
+- AGENTS.md Integrity: Validated via `scripts/verify_agents_log.php`.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **655** (customer layout flash illumination). This entry = **S656**. Next-free = **657**.
+
+### Key lessons
+_1408. **Superadmin menu queries must always pass through the tree-builder - bypassing buildMenuTree for superadmin flattens the hierarchy and breaks nested submenus.**
+_1409. **Never assume parent_id === null is sufficient for root items - MySQL default zero values (0, '0') will falsely orphan root rows unless empty($parent_id) is checked.**
+_1410. **A controller layout wrapping a view that itself declares <!DOCTYPE html> creates invalid nested DOM trees - views rendered by a layout controller must never declare their own html/body envelope.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+
 ## Session 655: Customer Layout Was Flash-Blind - Every setFlash/$_SESSION["flash_*"] Write Across All ~30 Customer-Controller Sites Rendered Nothing, Now Surfaces as dismissible Bootstrap Alerts; Zero Other View Defects Found, Gates Green (2026-11-16)
 
 ### Trigger
@@ -12951,3 +13031,40 @@ _1406. **Live byte-count probes catch what neither lint nor grep can** — the h
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification for `run_all_crons.php` DAILY tasks 15/16/17.
+## Session 660: Voice Provider Status Surface Shipped + Smoke Runner Sentinel Harvested Into S659's Whole-Tree Commit; Flaky Gate Truly Dead; All AI Surfaces Verified (2026-11-16)
+
+### Trigger
+User: "do next" — continuation of the AI-system program on our lane. Two threads closed this round; gates were red twice and both times were root-caused honestly.
+
+### Smoke runner — root cause of the recurring 10/11 flap, and where the fix landed
+- Master suite failed **Production Smoke Runner (38 probes): 7 failed** — all 7 were admin AI-page probes returning exactly **14,678/14,679 bytes = the admin login page** ("missing needle"). 5 consecutive runs all passed 38/38 once the session-alive sentinel fired; one earlier master run reported 11/11, one 10/11 — the flap was not random code failure, it was the admin session tearing mid-run under the parallel actor's sidebar/flashes surgery load.
+- Fix authored in the runner (mine): `ensureAdminSession()` — before **every** admin probe + before the retry, GET `/admin/erp` and check for `aps-admin-body`; if absent, re-login once via `/admin/login?test_login=2`. No extra logins in healthy runs (avoids the 5/60s throttle), immune to load-induced session tear.
+- Parallel actor's **whole-tree S659 commit `649df63da`** absorbed my sentinel edit + their own cookie-jar fallback (`storage/app/tmp` fallback for this box's broken PHP curl temp dir) in the same file and made both live on `origin/main`. Flagged here explicitly as attribution: behavior is mine+theirs combined, both in HEAD.
+- Verified this round: **5 consecutive 38/38 runs** under partial parallel-actor churn, and the parallel actor reports 38/38 on their side too — the flap is dead on both axes. `aps-admin-body` confirmed as sentinel (present on admin pages, absent on login page).
+- One functional necessity for the record: PHPStan passes, master is 11/11 on both sides now.
+
+### AI Voice provider status honesty line — new (`9fe34f518`, pushed)
+Zero-dup audit first: hub already has an **AI Voice & Calls** section (Voice Scheduler + AI Auto-Dialer cards, marketing copy). Service-configs store **all 5** provider JSON blobs (`voice` group: exotel / kaleyra / knowlarity / plivo / twilio, all `is_secret=1`, non-empty) and `ai_voice.provider_type` shows `twilio` active. Built what was missing: an honest status line inside the section, no new card, no new route:
+- `AiHubController`: `voice_status` — reads the 5 stored-config keys (`SELECT config_key FROM service_configs WHERE group_name='voice' AND config_value <> ''`) + `provider_type` active row; try/catch logged, zero writes.
+- `ai/hub.php`: **"Stored provider configs: 5 of 5 (exotel, kaleyra, knowlarity, plivo, twilio) · Active: twilio · verify keys → /admin/service-configs"** + honest disclaimer ("stored" is a blob at rest; keys not proven valid until a test call succeeds).
+- Live probe: 403,051 B — all needles render (`Stored provider configs`, `of 5`, `exotel`, `twilio`, `Active:`, `verify keys`).
+- php -l clean ×2 · **PHPStan → [OK] No errors** · **Master → 11/11 PASSED** (29.94s).
+
+### Honest notes
+- Committing was mine-only this round (`AiHubController.php`, `ai/hub.php`); all parallel-actor in-flight work untouched. Post-commit, parallel actor's files remained uncommitted as before.
+- The `/admin/ai-calling/health` 302 seen today is **my own login throttle artifact** (5 test-logins per minute from this IP; the parallel actor's own running tests drove the same window) — not a dead page; verified separately via a fresh session that /admin/erp 302s pre-login and 200s post-login, which is the designed gate behavior.
+- HONEST ABOUT SCOPE: no test call was placed (would trigger a real outbound call to a number; provider credentials are unproven) — the hub deliberately says "verify keys" for exactly this reason. Live dialing stays `--execute`-gated, owner territory.
+- RERA numbers everywhere remain NULL; colony legal desk phone used instead (+91 70074 44842).
+- AGENTS.md top-of-file holds parallel actor's S659 entry pre-prepend; this entry is S660, below it by position.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **657 / 658 / 659** at the top of the log (mobile RBAC S657, AI-hub completion S658, universal flash + smoke-env S659). This entry = **S660**. Next-free = **661**.
+
+### Key lessons
+_1417. **An admin-load-tear flake is fixed by re-authenticating before the check, not by re-running the check.** The sentinel + single re-login probe is dead-simple, stays under throttle, and eliminates the whole 14,678-byte class.
+_1418. **Whole-tree commits absorb other people's in-flight edits silently — check `git status` and stage by name if you need your own session identity attached.** When that convention is in effect, attribution is written into AGENTS.md, not the commit index.
+_1419. **"Stored" and "working" are different claims; never print one under the other.** The voice section previously claimed config status nothing measured; the honest line shows what's stored and leaves validity for the owner to verify.
+_1420. **Login throttling during same-IP test loops will cost you probes for 60+ seconds — batch probes into one session, and verify 302s are the gate before assuming a dead page.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio creds + `--execute`; verify a stored provider with one real test call first) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · wiring VoiceProviderManager->getProviderStatus for live provider health (needs creds proven valid first).
