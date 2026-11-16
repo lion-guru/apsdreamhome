@@ -53,7 +53,7 @@ class OffboardingService
             SELECT oc.*, t.name as template_name
             FROM offboarding_checklists oc
             LEFT JOIN offboarding_templates t ON oc.template_id = t.id
-            WHERE oc.employee_id = ?{$this->tenantSql()}
+            WHERE oc.employee_id = ?{$this->tenantWhere()}
             ORDER BY oc.assigned_at ASC
         ", array_merge([$employeeId], $this->tVal()));
     }
@@ -211,7 +211,7 @@ class OffboardingService
         if (!empty($pending)) return ['success' => false, 'message' => 'Complete all checklist items first'];
         $this->db->beginTransaction();
         try {
-            $this->execute("UPDATE employees SET status = 'terminated', offboarded_at = NOW() WHERE id = ?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+            $this->execute("UPDATE employees SET status = 'terminated', offboarded_at = NOW() WHERE id = ?{$this->tenantWhere()}", array_merge([$employeeId], $this->tVal()));
             if (!empty($data['settlement_amount'])) {
                 $settlementNo = 'FNF-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
                 $this->execute("INSERT INTO employee_fnf_settlements (tenant_id, settlement_no, employee_id, resignation_date, last_working_day, exit_type, earnings_total, deductions_total, net_payable, settlement_amount, settlement_date, processed_by, created_by, notes, status, created_at) VALUES (?, ?, ?, ?, CURDATE(), 'resignation', ?, 0.00, ?, ?, NOW(), ?, ?, ?, 'calculated', NOW())", [
