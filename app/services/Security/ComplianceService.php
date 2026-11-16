@@ -322,7 +322,7 @@ class ComplianceService
 
         $adminCount = 0;
         try {
-            $adminCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM admin WHERE is_active = 1");
+            $adminCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM admin WHERE status = 'active'");
         } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $score = 50;

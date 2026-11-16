@@ -63,9 +63,9 @@ class MarketIntelligenceAgent
             // Monthly average prices for last 12 months
             $monthly = $this->db->fetchAll(
                 "SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
-                        AVG(price) as avg_price,
-                        MIN(price) as min_price,
-                        MAX(price) as max_price,
+                        AVG(total_plot_value) as avg_price,
+                        MIN(total_plot_value) as min_price,
+                        MAX(total_plot_value) as max_price,
                         COUNT(*) as sales_count
                  FROM plot_bookings
                  WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH) AND status = 'confirmed'" . $tidSql . "
@@ -75,11 +75,11 @@ class MarketIntelligenceAgent
 
             // Current vs last month
             $current = $this->db->fetch(
-                "SELECT AVG(price) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND status = 'confirmed'" . $tidSql,
+                "SELECT AVG(total_plot_value) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND status = 'confirmed'" . $tidSql,
                 $tidParams
             );
             $lastMonth = $this->db->fetch(
-                "SELECT AVG(price) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND status = 'confirmed'" . $tidSql,
+                "SELECT AVG(total_plot_value) as avg FROM plot_bookings WHERE MONTH(created_at) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(created_at) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND status = 'confirmed'" . $tidSql,
                 $tidParams
             );
 
@@ -164,7 +164,7 @@ class MarketIntelligenceAgent
             $tidParams = $tid > 1 ? [$tid] : [];
 
             $monthly = $this->db->fetchAll(
-                "SELECT MONTH(created_at) as month, COUNT(*) as bookings, AVG(price) as avg_price
+                "SELECT MONTH(created_at) as month, COUNT(*) as bookings, AVG(total_plot_value) as avg_price
                  FROM plot_bookings WHERE status = 'confirmed'" . $tidSql . "
                  GROUP BY month ORDER BY month",
                 $tidParams

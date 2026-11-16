@@ -127,7 +127,7 @@ class TdsService
             $params[] = $filters['deductee_pan'];
         }
 
-        $where .= " ORDER BY payment_date DESC, id DESC";
+        $where .= " ORDER BY deposit_date DESC, id DESC";
         return $this->db->fetchAll("SELECT * FROM tds_register $where", $params) ?: [];
     }
 
@@ -138,7 +138,7 @@ class TdsService
         if ($tid > 1) $params[] = $tid;
         $where = "WHERE financial_year = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
 
-        $stmt = $this->db->fetchOne("SELECT COALESCE(SUM(amount_paid), 0) AS total_paid, COALESCE(SUM(tds_amount), 0) AS total_tds, COALESCE(SUM(CASE WHEN deposit_status = 'deposited' THEN tds_amount ELSE 0 END), 0) AS deposited, COALESCE(SUM(CASE WHEN deposit_status = 'pending' THEN tds_amount ELSE 0 END), 0) AS pending FROM tds_register $where", $params);
+        $stmt = $this->db->fetchOne("SELECT COALESCE(SUM(total_tds), 0) AS total_paid, COALESCE(SUM(total_tds), 0) AS total_tds, COALESCE(SUM(CASE WHEN status = 'deposited' THEN total_tds ELSE 0 END), 0) AS deposited, COALESCE(SUM(CASE WHEN status = 'pending' THEN total_tds ELSE 0 END), 0) AS pending FROM tds_register $where", $params);
         return $stmt ?: ['total_paid' => 0, 'total_tds' => 0, 'deposited' => 0, 'pending' => 0];
     }
 

@@ -41,7 +41,7 @@ class AccountingDashboardService
         }
 
         // Outstanding receivables
-        $receivables = $this->db->fetchOne("SELECT COALESCE(SUM(amount_due), 0) AS total FROM booking_payment_schedules WHERE status IN ('pending', 'partial')" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []);
+        $receivables = $this->db->fetchOne("SELECT COALESCE(SUM(amount - paid_amount), 0) AS total FROM booking_payment_schedules WHERE status IN ('pending', 'partial')" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$tid] : []);
         $outstandingReceivables = (float)($receivables['total'] ?? 0);
 
         // Outstanding payables
@@ -105,8 +105,8 @@ class AccountingDashboardService
             SELECT 'Expenses' as type, SUM(amount) as amount FROM expenses
             WHERE due_date BETWEEN CURDATE() AND ? AND status = 'pending'" . ($tid > 1 ? " AND tenant_id = ?" : "") .
             " UNION ALL
-            SELECT 'TDS/GST' as type, SUM(tds_amount) as amount FROM tds_register
-            WHERE deposit_status = 'pending' AND deposit_date BETWEEN CURDATE() AND ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            SELECT 'TDS/GST' as type, SUM(total_tds) as amount FROM tds_register
+            WHERE status = 'pending' AND deposit_date BETWEEN CURDATE() AND ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
             array_merge([$days, $days, $days], $tid > 1 ? [$tid, $tid, $tid] : [])
         );
 
@@ -155,7 +155,7 @@ class AccountingDashboardService
         $fromDate = date('Y-m-d', strtotime("-$to days"));
         $toDate = date('Y-m-d', strtotime("-$from days"));
 
-        $sql = "SELECT COALESCE(SUM(amount_due), 0) AS total FROM $table WHERE $dateField BETWEEN ? AND ? AND status IN ('pending', 'partial') $where";
+        $sql = "SELECT COALESCE(SUM(amount - paid_amount), 0) AS total FROM $table WHERE $dateField BETWEEN ? AND ? AND status IN ('pending', 'partial') $where";
         $params2 = array_merge([$fromDate, $toDate], $params);
         $result = $this->db->fetchOne($sql, $params2);
         return (float)($result['total'] ?? 0);

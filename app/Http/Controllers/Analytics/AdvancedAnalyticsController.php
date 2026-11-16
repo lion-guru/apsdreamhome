@@ -413,7 +413,7 @@ class AdvancedAnalyticsController extends AdminController
             $stmt = $this->db->query("SELECT COUNT(*) as total_inquiries FROM property_inquiries");
             $total_inquiries = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total_inquiries'];
 
-            $stmt = $this->db->query("SELECT COUNT(*) as total_sales FROM transactions WHERE status = 'completed'");
+            $stmt = $this->db->query("SELECT COUNT(*) as total_sales FROM transactions WHERE reconciliation_status IN ('cleared','reconciled')");
             $total_sales = (int)$stmt->fetch(\PDO::FETCH_ASSOC)['total_sales'];
 
             return $total_inquiries > 0 ? round(($total_sales / $total_inquiries) * 100, 2) : 0;

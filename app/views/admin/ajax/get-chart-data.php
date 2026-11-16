@@ -83,7 +83,7 @@ function getMonthlySalesData($db, &$response, $mlSupport) {
         }
 
         // Monthly Sales (Revenue)
-        $sql = "SELECT DATE_FORMAT(date, '%Y-%m') as m, SUM(amount) as amt FROM transactions WHERE status = 'completed' AND date >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY m";
+        $sql = "SELECT DATE_FORMAT(date, '%Y-%m') as m, SUM(amount) as amt FROM transactions WHERE reconciliation_status IN ('cleared','reconciled') AND date >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY m";
         $results = $db->fetchAll($sql);
         foreach ($results as $row) {
             if (isset($months[$row['m']])) $months[$row['m']]['sales'] = (float)$row['amt'];
