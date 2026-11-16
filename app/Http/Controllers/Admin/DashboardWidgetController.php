@@ -33,10 +33,33 @@ class DashboardWidgetController extends AdminController
 
         $widgets = $this->getAvailableWidgets();
 
+        // Saved layout for this user (if any) — drives the drag-drop order on reload
+        $savedLayout = null;
+        try {
+            $row = $this->db->fetchOne(
+                "SELECT widgets_order, layout_config FROM user_dashboard_layouts WHERE user_id = ? AND layout_name = 'Default' LIMIT 1",
+                [$this->currentUserId()]
+            );
+            if ($row) {
+                $order = json_decode((string) ($row['widgets_order'] ?? '[]'), true);
+                if (!is_array($order) || $order === []) {
+                    $cfg = json_decode((string) ($row['layout_config'] ?? '{}'), true);
+                    $order = is_array($cfg['widgets'] ?? null) ? $cfg['widgets'] : [];
+                }
+                // only known widgets, in stored order
+                $known = ['stats_overview','recent_leads','pending_tasks','revenue_chart','leads_chart','pending_followups','quick_actions','notifications','calendar','team_performance'];
+                $savedLayout = array_values(array_filter($order, fn($id) => in_array($id, $known, true)));
+            }
+        } catch (\Throwable $e) {
+            error_log('[DashboardWidgetController::index] savedLayout decode: ' . $e->getMessage());
+        }
+
         return $this->render('admin/dashboard/customize', [
             'page_title' => 'Customize Dashboard',
             'layouts' => $layouts,
             'widgets' => $widgets,
+            'kpis' => $this->getLiveKpis(),
+            'savedLayout' => $savedLayout,
         ]);
     }
 
@@ -58,6 +81,176 @@ class DashboardWidgetController extends AdminController
         return $this->jsonResponse(['success' => true, 'widgets' => $widgets]);
     }
 
+
+    /* ──────────────────────────────────────────
+     * Widget data feeds (admin-gated JSON, no CSRF — read-only)
+     * ────────────────────────────────────────── */
+
+    public function widgetDataChart()
+    {
+        $this->requireAdmin();
+        $tid = (int) $this->tenantId();
+        $dataSource = trim((string) ($_GET['data_source'] ?? ''));
+
+        $data = $this->chartDataset($dataSource, $tid);
+        $this->jsonResponse(['success' => true, 'data' => $data]);
+    }
+
+    public function widgetDataTable()
+    {
+        $this->requireAdmin();
+        $tid = (int) $this->tenantId();
+        $dataSource = trim((string) ($_GET['data_source'] ?? ''));
+        $limit = max(1, min(50, (int) ($_GET['limit'] ?? 10)));
+
+        $records = $this->tableDataset($dataSource, $limit, $tid);
+        $this->jsonResponse(['success' => true, 'data' => ['records' => $records]]);
+    }
+
+    private function chartDataset(string $dataSource, int $tid): array
+    {
+        try {
+            if ($dataSource === 'revenue_monthly_6m') {
+                $tSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+                $tParams = $tid > 1 ? [$tid] : [];
+                $rows = $this->db->fetchAll(
+                    "SELECT DATE_FORMAT(payment_date, '%Y-%m') AS ym, COALESCE(SUM(amount),0) AS total
+                     FROM payments
+                     WHERE payment_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)" . $tSql . "
+                     GROUP BY DATE_FORMAT(payment_date, '%Y-%m')
+                     ORDER BY ym ASC",
+                    $tParams
+                ) ?: [];
+                $byYm = array_column($rows, 'total', 'ym');
+                $labels = [];
+                $values = [];
+                for ($i = 5; $i >= 0; $i--) {
+                    $ym = date('Y-m', strtotime("-{$i} months"));
+                    $labels[] = date('M Y', strtotime($ym . '-01'));
+                    $values[] = (float) ($byYm[$ym] ?? 0);
+                }
+                return ['labels' => $labels, 'data' => $values];
+            }
+
+            if ($dataSource === 'leads_monthly_6m') {
+                $tSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+                $tParams = $tid > 1 ? [$tid] : [];
+                $rows = $this->db->fetchAll(
+                    "SELECT DATE_FORMAT(created_at, '%Y-%m') AS ym, COUNT(*) AS c
+                     FROM leads
+                     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)" . $tSql . "
+                     GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                     ORDER BY ym ASC",
+                    $tParams
+                ) ?: [];
+                $byYm = array_column($rows, 'c', 'ym');
+                $labels = [];
+                $values = [];
+                for ($i = 5; $i >= 0; $i--) {
+                    $ym = date('Y-m', strtotime("-{$i} months"));
+                    $labels[] = date('M Y', strtotime($ym . '-01'));
+                    $values[] = (int) ($byYm[$ym] ?? 0);
+                }
+                return ['labels' => $labels, 'data' => $values];
+            }
+
+            if ($dataSource === 'bookings_monthly_6m') {
+                $tSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+                $tParams = $tid > 1 ? [$tid] : [];
+                $rows = $this->db->fetchAll(
+                    "SELECT DATE_FORMAT(created_at, '%Y-%m') AS ym, COUNT(*) AS c
+                     FROM plot_bookings
+                     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)" . $tSql . "
+                     GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                     ORDER BY ym ASC",
+                    $tParams
+                ) ?: [];
+                $byYm = array_column($rows, 'c', 'ym');
+                $labels = [];
+                $values = [];
+                for ($i = 5; $i >= 0; $i--) {
+                    $ym = date('Y-m', strtotime("-{$i} months"));
+                    $labels[] = date('M Y', strtotime($ym . '-01'));
+                    $values[] = (int) ($byYm[$ym] ?? 0);
+                }
+                return ['labels' => $labels, 'data' => $values];
+            }
+        } catch (\Throwable $e) {
+            error_log('[DashboardWidgetController::chartDataset] ' . $e->getMessage());
+        }
+        return ['labels' => [], 'data' => []];
+    }
+
+    private function tableDataset(string $dataSource, int $limit, int $tid): array
+    {
+        try {
+            $tSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $tParams = $tid > 1 ? [$tid] : [];
+
+            if ($dataSource === 'recent_leads') {
+                return $this->db->fetchAll(
+                    "SELECT id, name, phone, status, created_at FROM leads WHERE 1=1" . $tSql . " ORDER BY created_at DESC LIMIT {$limit}",
+                    $tParams
+                ) ?: [];
+            }
+            if ($dataSource === 'recent_bookings') {
+                return $this->db->fetchAll(
+                    "SELECT id, customer_id, plot_id, total_plot_value, status, created_at FROM plot_bookings WHERE 1=1" . $tSql . " ORDER BY created_at DESC LIMIT {$limit}",
+                    $tParams
+                ) ?: [];
+            }
+            if ($dataSource === 'pending_followups') {
+                return $this->db->fetchAll(
+                    "SELECT id, name, phone, status, next_activity_date FROM leads WHERE next_activity_date IS NOT NULL AND next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 2 DAY) AND status NOT IN ('closed_won','closed_lost','converted','dead')" . $tSql . " ORDER BY next_activity_date ASC LIMIT {$limit}",
+                    $tParams
+                ) ?: [];
+            }
+        } catch (\Throwable $e) {
+            error_log('[DashboardWidgetController::tableDataset] ' . $e->getMessage());
+        }
+        return [];
+    }
+
+    /**
+     * Live KPI feed for server-rendered widgets (S673)
+     */
+    public function getLiveKpis(): array
+    {
+        $this->requireAdmin();
+        $tid = (int) $this->tenantId();
+        $tSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $tParams = $tid > 1 ? [$tid] : [];
+        $out = ['leads_month' => 0, 'available_plots' => 0, 'active_colonies' => 0, 'bookings_month' => 0, 'open_followups' => 0, 'unread_notifications' => 0, 'pending_followups' => 0];
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM notifications WHERE is_read = 0 OR read_at IS NULL");
+            $out['unread_notifications'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM leads WHERE next_activity_date IS NOT NULL AND next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 2 DAY) AND status NOT IN ('closed_won','closed_lost','converted','dead')" . $tSql, $tParams);
+            $out['pending_followups'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM leads WHERE MONTH(created_at) = MONTH(CURDATE())" . $tSql, $tParams);
+            $out['leads_month'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM plots WHERE status = 'available'");
+            $out['available_plots'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM colonies WHERE status IN ('active','completed')");
+            $out['active_colonies'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE())" . $tSql, $tParams);
+            $out['bookings_month'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS c FROM leads WHERE status NOT IN ('closed_won','closed_lost','converted','dead')" . $tSql, $tParams);
+            $out['open_followups'] = (int) ($row['c'] ?? 0);
+        } catch (\Throwable $e) { /* best effort */ }
+        return $out;
+    }
 
     /**
      * Save layout from JSON (drag-drop customize page)

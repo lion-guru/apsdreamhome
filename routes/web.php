@@ -1764,6 +1764,8 @@ $router->get('/api/dashboard/builder/materials', 'App\\Http\\Controllers\\RoleBa
 // Admin Dashboard Widgets
 $router->get('/admin/dashboard/customize', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@index');
 $router->get('/admin/dashboard/widgets', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@getWidgets');
+$router->get('/admin/dashboard/widget-data/chart_widget', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@widgetDataChart');
+$router->get('/admin/dashboard/widget-data/table_widget', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@widgetDataTable');
 $router->post('/admin/dashboard/customize/save', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@saveLayoutJson');
 $router->post('/admin/dashboard/customize/reset', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@resetLayout');
 $router->post('/admin/dashboard/layout', 'App\\Http\\Controllers\\Admin\\DashboardWidgetController@saveLayout');
