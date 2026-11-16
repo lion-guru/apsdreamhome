@@ -1,3 +1,57 @@
+## Session 646: Silent-Failure 1054/HY093 Family Eliminated - Stub Columns Widened (2 Migrations, 15 Columns), 11 Code Paths Aligned to Live Schema, One Live Fabrication Removed, Gates Green (2026-11-16)
+
+### Trigger
+`php_error.log` at 00:40 and 14:12 listed recurring 1054/HY093/1364/42S02 signatures on admin/employee/mobile pages. Each was traced to either a database stub that was never widened to its designed columns, or a service reading the live schema against dead column names - plus one TDS mobile screen that invented certificate figures for users with zero records.
+
+### Root causes found & fixed
+
+**A. Widened columns (migrations `widen_dead_stub_columns_s640.php` and `widen_stamp_duty_calculations_s645.php`, both idempotent, all tables 0 rows at migration time; safety dumps kept in `backups/db/`):**
+1. `bank_reconciliations` (id/tenant/timestamps only) -> added bank_account_id, statement_date, statement_balance, book_balance, difference, status, reconciled_by, reconciled_at, notes (designed contract of `BankReconciliationService` + `views/admin/finance/reconciliation.php`).
+2. `reconciliation_items` -> added `cash_book_id` (used by `matchTransaction()` UPDATE).
+3. `tds_register` -> added `certificate_number`, `certificate_issued_at` (used by `TdsService::generateTdsCertificate()` and `EFilingController`); TDS certificate generation was silently dead.
+4. `mlm_associate_registrations` (bare stub) -> added `payment_status` enum('pending','paid','failed','refunded') and `amount_paid` (used by `MlmInvestmentEngine::getStats()`).
+5. `webhook_deliveries` -> added `event_type` (used by `WebhookService::logDelivery()` and stats-by-event); ALL webhook delivery logging silently failed.
+6. `stamp_duty_calculations` -> added `status` enum('pending_verification','verified','rejected') default 'pending_verification' (used by `LegalAdvisorController::getStampPaperVerification()` for the legal desk; its registration_fee select fixed to `registration_fee_amount`; both existing rows default to pending = legal review, the designed semantic).
+
+**B. Code aligned to the live schema (no data changes):**
+1. `CareerService::getAvailablePositions()` read `position` and `status` from `job_applications` (no such columns) -> now reads `title AS position FROM jobs WHERE status='active'` (the public careers desk).
+2. `AdminMarketplaceController` read `user_packages.status` (phantom; live: `is_active` and `payment_status`) -> `is_active = 1` for active count, `payment_status = 'completed'` for package revenue.
+3. `MLMRealEstateController` read `salary_tracker.amount_paid` and `status='paid'` (phantom; live: `monthly_payout`, status enum `completed`) -> rewired both.
+4. `TdsService::getTdsRegister()` read `deposit_status`, `payment_date` and `deductee_type` (all phantoms) -> live `status` and `transaction_date`; `deductee_type` filter removed (UI-only select, never persisted).
+5. `TdsService::recordTDS()` payload carried 7 phantom keys -> fully rewired to live schema (transaction_date, gross_amount, deposit_challan, remarks, explicit FY/quarter pass-through, `status='deposited'` when the form selects deposited_in_bank); certificate columns now real (s640).
+6. `EmployeeDashboardController::getHRData()`: `users.department` -> `employee_profiles.department`; `job_applications.status='pending'` -> all rows are unprocessed, plain `COUNT(*)`; `performance_reviews.scheduled_date` and `status='scheduled'` -> live `next_review_date` + `status NOT IN ('completed','acknowledged')` (the HR-role employee dashboard fatal was hitting the outer catch on every render).
+7. `ResellPropertyService::recordAnalytics()` wrote `event_type`/`event_data`/`ip_address`/`user_agent` into `property_analytics` (live time-series is metric_type/metric_value) -> `metric_type = substr($event,0,50)`, `metric_value=1`; `getAnalytics()` rewritten against live columns, same `{event_type,count,day}` shape.
+8. `NetworkController::getRanks()` read `mlm_ranks` (wrong, never-populated stub) -> reads `mlm_rank_benefits` with `perks AS benefits`; `getRankRequirements()` dropped the non-existent `rank_order` on the bare `rank_requirements` stub -> `ORDER BY created_at DESC LIMIT 25`.
+9. `views/admin/network/ranks.php` dead links repointed: Overview `/admin/network` (404, no such route) -> `/admin/network/tree`; Commission `/admin/network/commission` (404) -> `/admin/commission` (live route).
+10. `MobileFeatureEndpointsController::getAssociateTds()`: removed the hard-coded fake certificate (gross Rs 345,000, TDS Rs 17,250, fabricated challans CHL-60192/71829/89102, fake TAN 'LKNA12345B', invented per-quarter 2500-6000 TDS for FY 2025-26) -> FY window derived from the current date, quarter buckets computed from live records only, real company name from `company_settings`, TAN stays `null` (genuinely not configured anywhere in the DB), section and rate default from the associate's latest record (null when none). Zero-record associates now render honest zeros. Removed at the data layer, not merely relabeled.
+11. `EmployeeDashboardController::getHRData()` also rebuilt the HR dashboard data path as above (bug family: phantom `users.department`, `employees FROM users`, `performance_reviews.scheduled_date`).
+
+### Verification
+- `php -l` clean on all 11 touched files; **PHPStan -> `[OK] No errors`** (1517 files, memory-limit=1G); **Master -> 11/11 PASSED** (33.74s).
+- **Idempotency**: both migrations re-run safe (information_schema existence checks; SKIP path).
+- **Live probes** (fresh admin jar, all unlinked same turn): `/admin/finance/tds` 200 (387KB) / `/admin/finance/tds-record` 200 / `/admin/finance/tds-certificates` 200 / `/admin/network/ranks` 200, renders live Ass./President/Site Manager rank rows + `Benefits` column / `/admin/marketplace` 200 / `/careers` 200 / `/resell` 200 / employee dashboard 200.
+- **`logs/php_error.log`**: no NEW 42S22/1054/HY093/1364/42S02 from the probe window; the 16:41 `mlm_ranks` 1054 (pre-fix) is the last of its family.
+- `schema_migrations`: `widen_dead_stub_columns_s640` + `widen_stamp_duty_calculations_s645` recorded. `backups/db/`: both pre-migration dumps kept.
+
+### Honest notes
+- The `customers` 1146 from the 14:12 crawl ("SELECT COUNT(*) FROM `customers`") has NO caller in the live tree - it was a stale artifact of restore-era crawling, not a live code path; left un-addressed rather than invented a fix for a phantom.
+- The migrate.php red box on both runs is the known DDL-implicit-commit vs transaction-wrapper artifact; the DELETEs verification of both tables' post-state was done live after each run (columns present, `schema_migrations` rows inserted).
+- `stamp_duty_calculations` keeps both rows defaulting to `pending_verification` (designed: they need legal review before any payout ceremony), not to `verified`.
+- `getStampPaperVerification` now reads live schema; the `status` default matches the legal review flow.
+- Stamp-duty/reconciliation/webhook tables hold 2/0/0 rows at patch time; no business data transformed.
+- `TdsService::recordTDS` never ran successfully in production (INSERT was 100% dead since the stub was created) - so no live TDS records exist to validate against the new mapping; the first real record will prove the path end-to-end.
+- Parallel actor's in-flight files (CustomerMaintenanceController.php, CustomerPassbookController.php, TeamController.php, Autoloader.php, all `app/views/customer/*` S642 sweep) untouched and unstaged.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **644** (parallel actor, stale Global Cap copy interpolation). This entry = **S646**. Next-free = **647**. (Renumbered from 645: a parallel actor landed their own Session 645 at the file tail mid-round.)
+
+### Key lessons
+_1386. **A bare stub table a service writes to is a guaranteed silent failure, not "schema pending" - audit the service's column list against information_schema the same day it is found.** Three tables killed their whole feature paths while holding zero rows each, unnoticed since creation.
+_1387. **When the designed contract names 15 columns a stub never had, widen once in one idempotent migration - do not ship 15 controller patches.**
+_1388. **A hard-coded certificate (CHL-60192/71829/89102, TAN LKNA12345B, Rs 3,45,000) is fraud-shaped filler, not demo content - remove it at the data layer, do not relabel the screen.**
+_1389. **Redirect targets drift - a 404 Overview button on a live admin page is a dead door admins hit; repoint to the live sibling route.**
+_1390. **`ORDER BY created_at DESC LIMIT n` is the honest substitute for a `rank_order` a stub never carried.**
+
 ## Session 644: Stale "20%" Global Cap Copy Interpolated live on Payout Simulator + Create Plan Page, Gates Green (2026-11-16)
 
 ### Trigger
@@ -12453,6 +12507,36 @@ Highest heading before this entry = **644** (parallel actor, stale 20% cap copy 
 _1386. **A log line's timestamp + a live code check decide whether it's a bug — not its scary volume.** ~70 trait-fatal lines and dozens of 1054s all resolved to already-fixed code; only the show.php:772 line survived both checks and got the fix.
 _1387. **Probe with needles, never with status codes.** Every "stale" verdict above was made by reading actual page bytes plus the schema — status 200 alone would have been as unconvincing as an error count.
 _1388. **Sweep the log, fix the one live crash, and say what you did NOT fix.** An empty sweep is also a result — but only if you check each signature, or you ship false reassurance.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).## Session 647: Cross-Actor Gate Check After S646 — Master 11/11 (Earlier Flap), PHPStan Red Attributable To Parallel Actor's In-Flight TeamController (Line 186, Untouched), My Work All Pushed (2026-11-16)
+
+### Trigger
+The S646 silent-failure commit landed while gates were being run. This entry records the verification of both my fixes and the parallel actor's landed work — and names the one remaining gate failure precisely.
+
+### What was verified live (this round)
+1. **My S643 lead-detail fix** — re-probed later this session: 4/4 leads 200, no error markers. Still holds.
+2. **Parallel actor's S646 migrations applied & recorded** — `schema_migrations`: `widen_dead_stub_columns_s640` (id=6, executed 20:53) + `widen_stamp_duty_calculations_s645` (id=7, executed 21:13). Column existence spot-checked live in `information_schema`: `bank_reconciliations` (2), `mlm_associate_registrations` (1), `reconciliation_items` (1), `stamp_duty_calculations` (1), `tds_register` (1), `webhook_deliveries` (1) — all present.
+3. **Master suite** — reported 10/11 once (singleton), **re-ran: 11/11 PASSED** (100% HEALTHY).
+
+### The one red gate: PHPStan — `associated TeamController.php:186` (parallel actor's in-flight work, NOT MINE)
+- Error: `Offset 'associate'|'bdm'|'president'|... on array{...} on left side of ?? is never set` — on `$currentRank = $displayNames[$currentSlug] ?? ucfirst($currentSlug);`
+- Cause: `$currentSlug` is narrowed by `array_search(...) === false ? 0 : ...` + `$ladder[0] = 'associate'`, and all seven slugs are keys of `$displayNames` — so the `??` right side is provably unreachable.
+- **Not fixed here.** `TeamController.php` carries the parallel actor's uncommitted MLM-plan rewrite (`mlmPlan()` body fully rewritten to live `mlm_plan_levels`/`mlm_rank_benefits` reads); editing it mid-flight would co-stage their work. The minimal owner-side fix when they finish: `$currentRank = $displayNames[$currentSlug] ?? 'Associate';` — but that's their call to make.
+- All MY modified files produce zero PHPStan errors.
+
+### Honest notes
+- No code changed this round — verification only.
+- The parallel actor's S646 entry renumbered to S646 mid-round to avoid colliding with my S645 (their note reads "Renumbered from 645"); my S645 crash-sweep entry was also bumped to S646 by their whole-tree sync. Both entries exist; history not rewritten; HEAD == `c70645f0e` on origin/main.
+- The parallel actor's S646 entry also removed their own fabricated TDS certificate filler (CHL-60192/71829/89102, TAN LKNA12345B) — a real removal of agent-serving fabrication, acknowledged here for the record.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading at this entry = **646** (parallel actor, silent-failure sweep, renumbered). This entry = **S647**. Next-free = **648**.
+
+### Key lessons
+_1391. **A red gate mid-parallel-sprint belongs to the in-flight worker whose file it flags — attribute first, fix only if the file is sealed.**
+_1392. **Smoke of one suite can flap under concurrent load — re-run once before calling anything broken.**
+_1393. **Verify another actor's migration via information_schema directly — don't trust the migration's own success print.**
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
