@@ -1,3 +1,54 @@
+## Session 642: Customer Portal UI Layout & Portability Hardening — Duplicate DOCTYPE Stripped Across 6 Views, 27 Hardcoded Relative Hrefs Prefixed with BASE_URL, Autoloader Realpath Windows Normalization, PHPStan & Master 11/11 Green (2026-11-16)
+
+### Trigger
+User request: "ui me kamiya find karo jaisa bhi ho improve karo aur improve karne par service ya controller ya database etc me bhi sayad imorove karna pade to soach samjh ke tum dekh lena" ("Audit the UI across the application for flaws/deficiencies, improve them, and if improving the UI requires corresponding adjustments in services, controllers, or database etc., handle everything end-to-end carefully").
+
+### Root Causes & UI Improvements Applied
+1. **Duplicate Nested HTML Document Structure Cured Across 6 Customer Views:**
+   - `CustomerPassbookController`, `CustomerNriController`, `CustomerMaintenanceController`, `ForeclosureController`, and `AllotmentAcceptanceController` render views inside `layouts/customer.php`.
+   - `layouts/customer.php` already outputs the complete HTML page wrapper (`<!DOCTYPE html><html lang="en"><head>...<body class="customer-portal"><div class="sidebar">...</div><main class="main-content"><div class="content-wrapper"><?= $content ?></div>`).
+   - However, 6 customer views were written as standalone pages with their own `<!DOCTYPE html><html lang="en"><head>...<body>...</body></html>`:
+     - `app/views/customer/documents.php`
+     - `app/views/customer/colony_progress.php`
+     - `app/views/customer/nri_desk.php`
+     - `app/views/customer/maintenance_dues.php`
+     - `app/views/customer/foreclosure_preview.php`
+     - `app/views/customer/allotment_accept.php`
+   - **Fix:** Stripped duplicate `<!DOCTYPE>`, `<html>`, `<head>`, `<link>` and `<body>` tags from all 6 views while preserving scoped component `<style nonce="...">` rules and container layouts.
+   - Initialized 13 document array variables in `app/views/customer/documents.php` (`$allotmentDocuments`, `$passbookDocuments`, `$paymentReceipts`, `$sitePlanDocuments`, `$nocDocuments`, `$mutationDocuments`, `$taxReceipts`, `$otherDocuments`, etc.) to prevent undefined variable notices.
+   - Explicitly configured `$this->layout = 'layouts/customer'` in `CustomerMaintenanceController::index()` so maintenance dues display within the customer portal sidebar shell.
+   - For printable fallback views (`allotment_letter.php`, `agreement.php`, and `nominee_sheet.php`), explicitly set `$this->layout = ''` in `CustomerPassbookController` so they render pure printable documents without the website layout wrapping them.
+
+2. **27 Hardcoded Action & Navigation Links Prefixed with `<?= BASE_URL ?>` Across Customer Portal Views:**
+   - In staging and subfolder installations (e.g. standard XAMPP `/apsdreamhome`), hardcoded root paths (`href="/customer/..."`, `href="/login..."`) bypass the app directory and submit directly to `http://localhost/`, causing 404 Not Found errors on mobile and web viewports.
+   - Systematically updated all 27 links across:
+     - `app/views/customer/construction/apply.php` (lines 13, 104)
+     - `app/views/customer/construction/index.php` (lines 15, 59, 102)
+     - `app/views/customer/grievances/create.php` (lines 13, 73)
+     - `app/views/customer/grievances/index.php` (lines 16, 45)
+     - `app/views/customer/journey.php` (lines 13, 15, 166, 222)
+     - `app/views/customer/registry/apply.php` (line 13)
+     - `app/views/customer/registry/index.php` (lines 20, 82, 116)
+     - `app/views/customer/solar/calculator.php` (lines 29, 178)
+     - `app/views/customer/solar/track.php` (lines 19, 31)
+     - `app/views/customer/transfers/apply.php` (lines 14, 100)
+     - `app/views/customer/transfers/index.php` (lines 19, 85, 145, 149)
+   - Zero hardcoded `/customer/` hrefs remain across customer views.
+
+3. **Windows Case-Collision Hardening in Custom Autoloader (`app/core/Autoloader.php`):**
+   - On Windows filesystems, case-insensitive paths caused duplicate class declaration fatal errors when Composer's PSR-4 autoloader and the project fallback autoloader loaded files with differing casing.
+   - Wrapped candidate paths with `realpath($path) ?: $path` across all `require_once` statements in `app/core/Autoloader.php` (lines 120, 150, 161, 174, 195), guaranteeing canonical file paths.
+
+### Verification & Quality Gates
+- **View Rendering Probes:** Tested all 6 modified customer views rendered with `layouts/customer`. Each view successfully rendered with **exactly 1 DOCTYPE** and proper content wrapper hierarchy (documents: 42,458 bytes; colony progress: 33,641 bytes; nri desk: 32,388 bytes; maintenance dues: 34,407 bytes; foreclosure preview: 40,026 bytes; allotment accept: 37,507 bytes).
+- **PHP Syntax (`php -l`):** 30 modified PHP files all passed syntax check (`SUCCESS: All 30 modified PHP files passed php -l lint check!`).
+- **PHPStan Static Analysis:** 1517/1517 files analyzed -> `[OK] No errors` (`--memory-limit=1G`).
+- **Master Test Suite Runner:** **11/11 Test Suites PASSED** (50.27s, 100% HEALTHY).
+- **Zero DB Drift:** Verified users (82), bookings (23), leads (994), transactions (5), ledger (359), email queue (14) — 100% clean baseline.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 641. This entry = **S642**. Next-free = **643**.
+
 ## Session 641: AI Morning Brief — Smart Routing Advisory Panel + Bounded Auto-Assign Button (Read-Only GET, Single Explicit POST), Honesty Proven Live (0 Unassigned = Pipeline Clean), Gates Green (2026-11-16)
 
 ### Trigger
@@ -12301,3 +12352,38 @@ _1369. **Prove the exact code path you shipped, standalone.** The cron never ran
 
 ### Owner actions still open (unchanged)
 Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · colony-tagged-lead form field owner · admin Task Scheduler verification (that the DAILY task 16 actually fires on schedule — code is ready, the scheduler is yours).
+## Session 643: Lead Detail Score Breakdown 500 Fixed — getScoreBreakdown Envelope vs Factor Rows (Pre-existing July 2026 Bug), Proven Live x4 Leads, Gates Green (2026-11-16)
+
+### Trigger
+Live `php_error.log` showed a real production 500: `Controller error: Unsupported operand types: string / int in app/views/admin/leads/show.php:772` — every open of `/admin/leads/{id}` crashed the Score Breakdown tab.
+
+### Root cause (not my code)
+`Admin\LeadController::show()` passes `$score_breakdown = $this->crm->getScoreBreakdown($id)` — an **envelope**: `['lead_id', 'total_score', 'breakdown' => [budget|source|engagement|recency|profile => ['score','max','label']], 'grade' => 'B']`. The view looped over the envelope: `$factor='grade'` produced `$val='B'` (a string) and `$max=100` → `'B' / 100` → PHP 8 `Unsupported operand types: string / int` at line 772. The `breakdown` nested array also summed to 0 (no top-level 'score' key).
+
+**Blame attests:** the crash block came from lion-guru in commit `59d6f4f35` (2026-07-05) — months before this session. My S635/S643-era edits never touched that block.
+
+### Fix applied (view-layer only)
+- Iterate only `sb['breakdown']` (falls back to flat envelope for legacy shapes)
+- Coerce `$val`/`$max` to `float` with `is_numeric()` guards — a stray string can never fatal again
+- Render factor rows as before; add the **Grade** chip (`htmlspecialchars`) into the Overall Score box (uses the envelope's `grade`, previously never shown)
+
+### Verification
+- `php -l` clean · **PHPStan [OK] No errors** (1517 files) · **Master → 11/11 PASSED** (58.72s) · smoke pass
+- Live probes (fresh `test_login=2` session, temp cookie jars, all removed same turn): **`/admin/leads/49985`, `/admin/leads/49960`, `/admin/leads/49937`, `/admin/leads/11034` — all HTTP 200, full render, zero error markers**, Score Breakdown tab renders with Budget/Source/Engagement/Recency factor bars, `<h1>` present, `Sanjay Bansal` present.
+- Diff is surgical: +14/−3 lines in one file, no other file staged.
+
+### Honest notes
+- The 500 had been live since 2026-07-05 — any associate opening a lead detail page since then crashed at the tab-score section.
+- `Score Factors` labels (`Recency`, `Engagement`, `Budget Fit`, `Lead Quality`) are static help copy in the view, not DB-backed — unchanged.
+- Grade now surfaces once; earlier the envelope carried it silently.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **642** (parallel actor, Customer portal UI hardening). This entry = **S643**. Next-free = **644**.
+
+### Key lessons
+_1383. **A 500 in php_error.log is a file a user cannot open — production bug, never "pre-existing = out of scope".** Even a July-2026 lion-guru line is mine once I find it; blame identifies ownership, not blame-avoidance.
+_1384. **An envelope vs its nested payload is the #1 foreach bug in hand-rolled views.** When a service returns `['total','breakdown','grade',...]`, the view must iterate the leaf level only — and coerce scalars defensively before any arithmetic.
+_1385. **Every error log line names its exact line number — read it, don't grep around.** The trace had file:line, controller, route id — the fix was 30 minutes top to bottom, not a hunt.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16) · lead `score-churn` re-score flash double-render if noticed (cosmetic).
