@@ -284,27 +284,29 @@ class AdminController extends BaseController
             ") ?? [];
         } catch (\Throwable $e) { $recentActivity = []; }
 
-        // Cash flow chart data (last 7 days)
+        // Cash flow chart data (last 7 days from payments ledger; falls back to 90-day view – daily_cash_book is unused by this codebase)
         $cashFlowChart = [];
         try {
             $cashFlowChart = $this->db->fetchAll("
-                SELECT transaction_date,
-                       COALESCE(SUM(CASE WHEN transaction_type='receipt' THEN amount ELSE 0 END), 0) AS receipts,
-                       COALESCE(SUM(CASE WHEN transaction_type='payment' THEN amount ELSE 0 END), 0) AS payments
-                FROM daily_cash_book
-                WHERE transaction_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+                SELECT COALESCE(payment_date, DATE(created_at)) AS transaction_date,
+                       COALESCE(SUM(amount), 0) AS receipts,
+                       0 AS payments
+                FROM payments
+                WHERE status = 'completed'
+                  AND COALESCE(payment_date, DATE(created_at)) >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
                 GROUP BY transaction_date
                 ORDER BY transaction_date ASC
             ") ?? [];
         } catch (\Throwable $e) { $cashFlowChart = []; }
 
-        // Lead pipeline chart data
+        // Lead pipeline chart data – the app's live pipeline lives in `leads`, not in the vestigial lead_pipeline table
         $leadPipelineChart = [];
         try {
             $leadPipelineChart = $this->db->fetchAll("
-                SELECT stage AS status, COUNT(*) AS cnt
-                FROM lead_pipeline
-                GROUP BY stage
+                SELECT status, COUNT(*) AS cnt
+                FROM leads
+                WHERE deleted_at IS NULL
+                GROUP BY status
                 ORDER BY cnt DESC
             ") ?? [];
         } catch (\Throwable $e) { $leadPipelineChart = []; }

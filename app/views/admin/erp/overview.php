@@ -338,5 +338,9 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         document.getElementById('leadPipelineChart').parentElement.innerHTML = '<div ><i class="fas fa-chart-pie me-2"></i>No pipeline data available</div>';
     }
+    var cashDataLen = <?= count($cashFlow) ?>;
+    if (cashDataLen === 0) {
+        document.getElementById('cashFlowChart').parentElement.innerHTML = '<div ><i class="fas fa-chart-line me-2"></i>No recent cash activity</div>';
+    }
 });
 </script>

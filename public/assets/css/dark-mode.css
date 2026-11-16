@@ -182,7 +182,7 @@ html.dark-mode .erp-module-card {
 html.dark-mode .erp-module-card .mc-val { color: var(--dm-text) !important; }
 html.dark-mode .erp-module-card .mc-lbl { color: var(--dm-text-muted) !important; }
 html.dark-mode .erp-module-card .mc-label { color: var(--dm-text-muted) !important; }
-html.dark-mode .erp-module-card .mc-icon { color: inherit; }
+/* .mc-icon intentionally not overridden: each .icon-* class declares a solid colour in the view's CSS; a blanket inherit washed glyphs out on the pastel chips */
 html.dark-mode .erp-alert-card { background-color: var(--dm-card-bg) !important; }
 html.dark-mode .erp-quick-action {
     background-color: var(--dm-card-bg) !important;
