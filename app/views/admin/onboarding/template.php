@@ -28,7 +28,7 @@ $categories = ['document', 'access', 'training', 'equipment', 'compliance', 'oth
         </a>
     </div>
 
-    <form method="POST" id="templateForm" class="needs-validation" novalidate>
+    <form method="POST" action="<?= BASE_URL ?>/admin/onboarding/<?= $mode === 'edit' ? ('template/' . (int)($template['id'] ?? 0) . '/update') : 'create-template/save' ?>" id="templateForm" class="needs-validation" novalidate>
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
         <input type="hidden" name="mode" value="<?= $mode ?>">
         <?php if ($mode === 'edit'): ?>

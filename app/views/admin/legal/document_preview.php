@@ -1,6 +1,22 @@
 <?php
 $doc = $doc ?? null;
 if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-danger">Document not found</div></div>'; return; }
+
+
+// Minimal whitelist sanitizer: allow basic formatting markup, strip active content.
+if (!function_exists('apsSanitizeLegalHtml')) {
+    function apsSanitizeLegalHtml(string $html): string {
+        // Remove dangerous elements with content
+        $html = preg_replace('#<\s*(script|style|iframe|object|embed|form|link|meta|base)\b[^>]*>.*?<\s*/\s*\1\s*>#is', '', $html);
+        // Remove self-closing / stray dangerous tags
+        $html = preg_replace('#<\s*(script|style|iframe|object|embed|form|link|meta|base)\b[^>]*>#is', '', $html);
+        // Strip inline event handlers (onclick, onload, ...)
+        $html = preg_replace('/\s+on[a-z0-9_]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]*)/i', '', $html);
+        // Neutralize javascript: / vbscript: URLs in attributes
+        $html = preg_replace('/(href|src|action|formaction)\s*=\s*("|\')\s*(javascript|vbscript|data)\s*:/i', '$1=$2#', $html);
+        return $html;
+    }
+}
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,9 +42,9 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
         <?php if (!empty($doc['kyc_verified'])): ?><span class="badge bg-info fs-6 ms-1">✅ KYC Verified</span><?php endif; ?>
     </div>
     <div class="print-container">
-        <?= $doc['content'] ?? '<p class="text-muted text-center py-5">No content</p>' ?>
+        <?= apsSanitizeLegalHtml($doc['content'] ?? '') ?: '<p class="text-muted text-center py-5">No content</p>' ?>
         <?php if (!empty($doc['notes'])): ?>
-            <div >
+            <div>
                 <strong>Internal Notes:</strong> <?= nl2br(htmlspecialchars($doc['notes'] ?? '')) ?>
             </div>
         <?php endif; ?>

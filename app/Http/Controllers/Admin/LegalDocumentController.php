@@ -499,33 +499,68 @@ class LegalDocumentController extends AdminController
         $tid = $this->tenantId();
         $id = (int)$id;
 
-        try {
-            $doc = $db->prepare("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.id = ? AND d.tenant_id = ?");
-            $doc->execute([$id, $tid]);
-            $doc = $doc->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {
-            $doc = null;
-        }
-
-        try {
-            $uploads = $db->prepare("SELECT * FROM legal_document_uploads WHERE document_id = ? ORDER BY created_at DESC");
-            $uploads->execute([$id]);
-            $uploads = $uploads->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {
-            $uploads = [];
-        }
-
+        $doc = $this->loadDocument($id, $tid, $db);
         if (!$doc) {
             $this->setFlash('error', 'Document not found');
             $this->redirect('/admin/legal/documents');
             return;
         }
 
+        $uploads = $this->loadDocumentUploads($id, $db);
+
         return $this->render('admin/legal/document_detail', [
             'page_title' => $doc['title'] ?? 'Document Detail',
             'doc'        => $doc,
             'uploads'    => $uploads,
         ]);
+    }
+
+    /**
+     * Standalone printable preview of a legal document (A4, print-optimized)
+     */
+    public function documentPrintPreview($id)
+    {
+        $this->requireAdmin();
+        $db = $this->getDb();
+        $tid = $this->tenantId();
+        $id = (int)$id;
+
+        $doc = $this->loadDocument($id, $tid, $db);
+        if (!$doc) {
+            $this->setFlash('error', 'Document not found');
+            $this->redirect('/admin/legal/documents');
+            return;
+        }
+
+        return $this->render('admin/legal/document_preview', [
+            'page_title' => 'Preview: ' . ($doc['title'] ?? 'Legal Document'),
+            'doc'        => $doc,
+            'uploads'    => $this->loadDocumentUploads($id, $db),
+        ], '');
+    }
+
+    private function loadDocument(int $id, int $tid, $db)
+    {
+        try {
+            $doc = $db->prepare("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.id = ? AND d.tenant_id = ?");
+            $doc->execute([$id, $tid]);
+            return $doc->fetch(\PDO::FETCH_ASSOC) ?: null;
+        } catch (\Throwable $e) {
+            error_log('[LegalDocumentController::loadDocument] ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function loadDocumentUploads(int $id, $db): array
+    {
+        try {
+            $uploads = $db->prepare("SELECT * FROM legal_document_uploads WHERE document_id = ? ORDER BY created_at DESC");
+            $uploads->execute([$id]);
+            return $uploads->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[LegalDocumentController::loadDocumentUploads] ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function store()

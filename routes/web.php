@@ -80,6 +80,8 @@ $router->get('/become_associate', function () {
 });
 $router->get('/offers', 'Front\\PageController@offers');
 $router->get('/festival-offers', 'Front\\PageController@offers');
+$router->get('/smart-township', 'Front\\SmartTownshipController@installationGuide');
+$router->get('/smart-township/packages', 'Front\\SmartTownshipController@packages');
 
 // Support
 $router->get('/support', 'Front\\SupportController@index');
@@ -2619,6 +2621,7 @@ $router->get('/admin/media/stats', 'App\\Http\\Controllers\\Admin\\MediaControll
 
 // Admin Careers
 $router->get('/admin/careers', 'App\\Http\\Controllers\\Admin\\CareerController@index');
+$router->get('/admin/careers/dashboard', 'App\\Http\\Controllers\\Admin\\CareerController@dashboard');
 $router->get('/admin/careers/create', 'App\\Http\\Controllers\\Admin\\CareerController@create');
 $router->post('/admin/careers/store', 'App\\Http\\Controllers\\Admin\\CareerController@store');
 $router->get('/admin/careers/{id}', 'App\\Http\\Controllers\\Admin\\CareerController@show');
@@ -6291,6 +6294,7 @@ $router->post('/admin/legal/documents/{id}/mark-online',            'App\\Http\\
 $router->post('/admin/legal/documents/{id}/mark-physical',          'App\\Http\\Controllers\\Admin\\LegalDocumentController@archive');
 $router->post('/admin/legal/documents/{id}/kyc-verify',             'App\\Http\\Controllers\\Admin\\LegalDocumentController@kycVerify');
 $router->get('/admin/legal/documents/{id}/preview',                 'App\\Http\\Controllers\\Admin\\LegalDocumentController@documentDetail');
+$router->get('/admin/legal/documents/{id}/print-preview',           'App\\Http\\Controllers\\Admin\\LegalDocumentController@documentPrintPreview');
 $router->get('/admin/legal/title-certificate/{plot_id}', 'App\\Http\\Controllers\\Admin\\LegalDocumentController@titleCertificate');
 // Uploads
 $router->post('/admin/legal/uploads/{id}/verify',                   'App\\Http\\Controllers\\Admin\\LegalDocumentController@uploadVerify');
@@ -6420,6 +6424,16 @@ $router->get('/admin/onboarding',                       'App\\Http\\Controllers\
 $router->post('/admin/onboarding/save-step',            'App\\Http\\Controllers\\Admin\\OnboardingController@saveStep');
 $router->post('/admin/onboarding/complete',             'App\\Http\\Controllers\\Admin\\OnboardingController@complete');
 $router->get('/admin/onboarding/readiness',             'App\\Http\\Controllers\\Admin\\OnboardingController@readiness');
+// Employee onboarding templates (admin manages templates, assigns to employees)
+$router->get('/admin/onboarding/create-template',       'App\\Http\\Controllers\\Admin\\OnboardingController@create');
+$router->post('/admin/onboarding/create-template/save', 'App\\Http\\Controllers\\Admin\\OnboardingController@store');
+$router->get('/admin/onboarding/template/{id}',         'App\\Http\\Controllers\\Admin\\OnboardingController@edit');
+$router->post('/admin/onboarding/template/{id}/save',   'App\\Http\\Controllers\\Admin\\OnboardingController@update');
+$router->post('/admin/onboarding/template/{id}/delete', 'App\\Http\\Controllers\\Admin\\OnboardingController@destroy');
+$router->get('/admin/onboarding/assign',                'App\\Http\\Controllers\\Admin\\OnboardingController@assignmentDetail');
+$router->get('/admin/onboarding/assign/{id}',           'App\\Http\\Controllers\\Admin\\OnboardingController@assignmentDetail');
+$router->post('/admin/onboarding/assign-template',      'App\\Http\\Controllers\\Admin\\OnboardingController@assignTemplate');
+$router->post('/admin/onboarding/update-item',          'App\\Http\\Controllers\\Admin\\OnboardingController@updateItem');
 
 // ============================================================
 // SAAS BILLING & SUBSCRIPTIONS (Super Admin)

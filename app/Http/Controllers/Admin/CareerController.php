@@ -108,6 +108,65 @@ class CareerController extends AdminController
     }
 
     /**
+     * Careers dashboard — overview metrics and recent applications
+     */
+    public function dashboard()
+    {
+        $this->requireAdmin();
+        try {
+            $db = \App\Core\Database::getInstance();
+
+            $stats = [
+                'total_jobs' => 0,
+                'active_jobs' => 0,
+                'total_applicants' => 0,
+                'new_applications' => 0,
+            ];
+
+            $r = $db->fetchOne("SELECT COUNT(*) AS c FROM careers");
+            $stats['total_jobs'] = (int)($r['c'] ?? 0);
+
+            $r = $db->fetchOne("SELECT COUNT(*) AS c FROM careers WHERE status = 'open'");
+            $stats['active_jobs'] = (int)($r['c'] ?? 0);
+
+            $r = $db->fetchOne("SELECT COUNT(*) AS c FROM career_applications");
+            $stats['total_applicants'] = (int)($r['c'] ?? 0);
+
+            $r = $db->fetchOne("SELECT COUNT(*) AS c FROM career_applications WHERE status = 'pending'");
+            $stats['new_applications'] = (int)($r['c'] ?? 0);
+
+            $recentApplicants = [];
+            $rows = $db->fetchAll(
+                "SELECT ca.full_name AS name, c.title AS position, ca.created_at, ca.status
+                 FROM career_applications ca
+                 LEFT JOIN careers c ON c.id = ca.career_id
+                 ORDER BY ca.created_at DESC
+                 LIMIT 10"
+            ) ?: [];
+            foreach ($rows as $row) {
+                $status = (string)($row['status'] ?? 'pending');
+                $recentApplicants[] = [
+                    'name' => $row['name'] ?? '',
+                    'position' => $row['position'] ?? '—',
+                    'created_at' => $row['created_at'] ?? '',
+                    'status' => $status === 'reviewing' ? 'reviewed' : $status,
+                ];
+            }
+
+            return $this->render('admin/careers/dashboard', [
+                'page_title' => 'Careers Dashboard - APS Dream Home',
+                'active_page' => 'careers',
+                'stats' => $stats,
+                'recentApplicants' => $recentApplicants,
+            ]);
+        } catch (\Throwable $e) {
+            $this->loggingService->error("Career dashboard error: " . $e->getMessage());
+            $this->setFlash('error', 'Failed to load careers dashboard');
+            return $this->redirect('admin/careers');
+        }
+    }
+
+    /**
      * Show the form for creating a new career
      */
     public function create()

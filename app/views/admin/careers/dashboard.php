@@ -4,7 +4,7 @@
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item active">Careers</li></ol></nav>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-briefcase me-2"></i>Careers Dashboard</h4>
-        <div><a href="<?= BASE_URL ?>/admin/careers/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Job</a><a href="<?= BASE_URL ?>/admin/careers/applications" class="btn btn-outline-primary btn-sm ms-2"><i class="fas fa-users me-1"></i>Applications</a></div>
+        <div><a href="<?= BASE_URL ?>/admin/careers/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Job</a><a href="<?= BASE_URL ?>/admin/careers/manage" class="btn btn-outline-primary btn-sm ms-2"><i class="fas fa-users me-1"></i>Applications</a></div>
     </div>
     <div class="row g-3 mb-4">
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body"><div class="d-flex justify-content-between"><div><small class="text-muted text-uppercase fw-bold">Total Jobs</small><h3 class="mb-0 mt-1"><?= number_format($stats['total_jobs'] ?? 0) ?></h3></div><div class="bg-primary-subtle p-3 rounded"><i class="fas fa-briefcase fa-2x text-primary"></i></div></div></div></div></div>

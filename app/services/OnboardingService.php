@@ -46,6 +46,11 @@ class OnboardingService
      * internally, but the method NEVER existed -> every caller died with
      * "Call to undefined method <Service>::fetchAll()".
      */
+    private function execute(string $sql, array $params = [])
+    {
+        return $this->db->execute($sql, $params);
+    }
+
     private function fetchAll(string $sql, array $params = []): array
     {
         try {
@@ -98,9 +103,9 @@ class OnboardingService
     {
         // Get template items
         $templateItems = $this->fetchAll("
-            SELECT * FROM onboarding_template_items 
-            WHERE template_id = ? AND is_active = 1
-            ORDER BY sort_order", [$templateId]);
+            SELECT * FROM onboarding_template_items
+            WHERE template_id = ?
+            ORDER BY CAST(sort_order AS UNSIGNED) ASC, id ASC", [$templateId]);
 
         if (empty($templateItems)) {
             return ['success' => false, 'message' => 'Template has no items'];
@@ -118,7 +123,7 @@ class OnboardingService
                     $this->tenantId(), $employeeId, $templateId,
                     $item['item_name'], $item['description'] ?? null,
                     $item['category'] ?? 'other', $item['is_mandatory'] ?? 1,
-                    $item['assigned_to_role'] ?? null,
+                    is_numeric($item['assigned_to_role'] ?? null) ? (int)$item['assigned_to_role'] : null,
                     $item['due_days'] ? date('Y-m-d', strtotime("+{$item['due_days']} days")) : null
                 ]);
             }
@@ -136,6 +141,10 @@ class OnboardingService
      */
     public function updateItemStatus(int $itemId, int $employeeId, string $status, array $data = []): array
     {
+        $allowed = ['pending', 'in_progress', 'completed', 'skipped', 'waived'];
+        if (!in_array($status, $allowed, true)) {
+            return ['success' => false, 'message' => 'Invalid status'];
+        }
         $item = $this->fetchOne("SELECT * FROM onboarding_checklists WHERE id = ? AND employee_id = ?", [$itemId, $employeeId]);
         if (!$item) return ['success' => false, 'message' => 'Item not found'];
 
@@ -156,7 +165,6 @@ class OnboardingService
             $params[] = $data['completed_at_ts'];
         }
 
-        $params[] = $itemId;
         $this->execute(
             "UPDATE onboarding_checklists SET " . implode(', ', $updates) . " WHERE id = ?",
             array_merge($params, [$itemId])
@@ -190,7 +198,7 @@ class OnboardingService
                 VALUES (?, ?, ?, 1, NOW())
             ", [$this->tenantId(), $data['name'], $data['description'] ?? '']);
 
-            $templateId = $this->db->lastInsertId();
+            $templateId = (int) $this->db->lastInsertId();
 
             if (!empty($data['items'])) {
                 $stmt = $this->db->prepare("
@@ -201,7 +209,7 @@ class OnboardingService
                 ");
                 foreach ($data['items'] as $i => $item) {
                     $stmt->execute([
-                        $this->tenantId(), $this->db->lastInsertId(),
+                        $this->tenantId(), $templateId,
                         $item['item_name'], $item['description'] ?? null,
                         $item['category'] ?? 'other', $item['is_mandatory'] ?? 1,
                         $item['assigned_to_role'] ?? null, $item['due_days'] ?? null, $i

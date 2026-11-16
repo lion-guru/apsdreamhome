@@ -7,7 +7,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0"><i class="fas fa-file-contract me-2 text-primary"></i><?= htmlspecialchars($doc['document_number'] ?? 'Draft') ?> <small class="text-muted"><?= htmlspecialchars($doc['title'] ?? '') ?></small></h4>
         <div>
-            <a href="<?= BASE_URL ?>/admin/legal/documents/<?= $doc['id'] ?>/preview" class="btn btn-outline-info btn-sm" target="_blank"><i class="fas fa-print me-1"></i>Preview</a>
+            <a href="<?= BASE_URL ?>/admin/legal/documents/<?= $doc['id'] ?>/print-preview" class="btn btn-outline-info btn-sm" target="_blank"><i class="fas fa-print me-1"></i>Preview</a>
             <a href="<?= BASE_URL ?>/admin/legal/documents" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Back</a>
         </div>
     </div>

@@ -96,7 +96,7 @@ class ApiKeyController extends AdminController
             'page_title' => 'Edit API Key',
             'key' => $key,
         ]);
-        return $this->render('admin/features/api_keys', $this->data);
+        return $this->render('admin/features/api_keys_edit', $this->data);
     }
 
     public function update($id)
@@ -195,7 +195,7 @@ class ApiKeyController extends AdminController
                     'valid' => (bool)$key['is_active']
                 ]
             ]);
-            return $this->render('admin/features/api_keys', $this->data);
+            return $this->render('admin/features/api_keys_test', $this->data);
         } catch (\Throwable $e) {
             $_SESSION['flash_error'] = 'Failed to test API key';
             header('Location: ' . BASE_URL . '/admin/api-keys');
