@@ -678,14 +678,8 @@ public function becomeAssociate()
 
     public function pricing()
     {
-        $viewPath = APP_PATH . '/views/pages/pricing.php';
-        if (file_exists($viewPath)) {
-            $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
-            extract(['base' => $base], EXTR_SKIP);
-            include $viewPath;
-        } else {
-            $this->redirect(BASE_URL);
-        }
+        // Route retired: no longer a SaaS plans page (would confuse plot buyers).
+        $this->redirect(BASE_URL . '/colonies');
     }
 
     public function offers()
