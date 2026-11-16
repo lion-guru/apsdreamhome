@@ -10,6 +10,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\AdminController;
+use App\Services\AI\DemandForecastService;
+use App\Services\AI\LeadChurnPredictionService;
 
 class AiMorningBriefController extends AdminController
 {
@@ -116,8 +118,22 @@ class AiMorningBriefController extends AdminController
             );
         } catch (\Throwable $e) { error_log('AiMorningBrief bookingBreakdown: ' . $e->getMessage()); }
 
+        // ── 7. AI insight panels (advisory, read-only compute; churn table is a cache) ──
+        $demandForecast = [];
+        try {
+            $demandForecast = (new DemandForecastService($this->db))->colonyRows();
+        } catch (\Throwable $e) { error_log('AiMorningBrief demandForecast: ' . $e->getMessage()); }
+
+        $churnStats = null;
+        $highRiskLeads = [];
+        try {
+            $churnSvc = new LeadChurnPredictionService();
+            $churnStats = $churnSvc->getStats();
+            $highRiskLeads = $churnSvc->getHighRiskLeads(6);
+        } catch (\Throwable $e) { error_log('AiMorningBrief churn: ' . $e->getMessage()); }
+
         $data = [
-            'page_title' => 'AI Morning Brief — Sales Director',
+            'page_title' => 'AI Morning Brief - Sales Director',
             'page_description' => 'Today\'s 3-minute brief: who to call, what to chase, what\'s at risk.',
             'top_leads' => $topLeads,
             'visits_today' => $todayVisits,
@@ -126,8 +142,36 @@ class AiMorningBriefController extends AdminController
             'in_negotiation' => $inNegotiation,
             'booking_breakdown' => $bookingBreakdown,
             'stats' => $stats,
+            'demand_forecast' => $demandForecast,
+            'churn_stats' => $churnStats,
+            'high_risk_leads' => $highRiskLeads,
         ];
 
         $this->render('admin/ai_morning_brief', $data);
+    }
+
+    /**
+     * POST /admin/ai-morning-brief/run-churn-analysis
+     * One-click refresh of the churn-risk cache (lead_churn_predictions).
+     * Bounded (300 leads per run, upsert-safe), admin-only, CSRF-gated.
+     * Nothing money-related is touched; the table is a recomputable cache.
+     */
+    public function runChurnAnalysis()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        try {
+            $churnSvc = new LeadChurnPredictionService();
+            $results = $churnSvc->predictAll(300);
+            $predicted = (int)($results['predicted'] ?? 0);
+            $skipped = (int)($results['skipped'] ?? 0);
+            $this->setFlash('success', "Churn analysis complete: {$predicted} leads scored, {$skipped} skipped.");
+        } catch (\Throwable $e) {
+            error_log('AiMorningBrief runChurnAnalysis: ' . $e->getMessage());
+            $this->setFlash('error', 'Churn analysis failed - see error log. No partial data was saved.');
+        }
+
+        $this->redirect('/admin/ai-morning-brief');
     }
 }

@@ -222,6 +222,7 @@ class DemandForecastService
                 'colony_name' => $c['colony_name'],
                 'available' => $c['inventory']['available'],
                 'total' => $c['inventory']['total_plots'],
+                'allocation' => $c['demand']['allocation'] ?? null,
                 'next_30d_leads' => $c['forecast']['next_30d_leads'],
                 'next_90d_bookings' => $c['forecast']['next_90d_bookings'],
                 'runway_days' => $c['runway']['runway_days'],
