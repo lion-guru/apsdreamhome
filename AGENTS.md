@@ -1,3 +1,38 @@
+## Session 641: AI Morning Brief — Smart Routing Advisory Panel + Bounded Auto-Assign Button (Read-Only GET, Single Explicit POST), Honesty Proven Live (0 Unassigned = Pipeline Clean), Gates Green (2026-11-16)
+
+### Trigger
+Continuation of the AI rollout program. The Morning Brief already carried churn risk, demand forecast (S632), and the lead-desk AI Council (S635/S631) — but had zero visibility into how many leads sat unassigned, nor which associate would fit best for a new lead. The open owner action "wire SmartLeadAssignmentService into admin Morning Brief widget" was the last unwired AI surface.
+
+### What was built
+1. **`Admin\AiMorningBriefController::index()`** — after the churn panel, two new advisory blocks (both pure compute / read-only, zero writes on GET):
+   - `unassigned_count` — aggregate COUNT of open `assigned_to IS NULL` leads (excludes closed_won/closed_lost/converted/dead/cancelled; tenant-agnostic diagnostic).
+   - `unassigned_oldest` — MIN(created_at) so admin sees how stale the backlog is.
+   - `unassigned_preview` — top-5 unassigned leads × `SmartLeadAssignmentService::recommendForLead($id, 1)` — pure compute, no persistence.
+2. **`Admin\AiMorningBriefController::runSmartAssignment()`** (POST `/admin/ai-morning-brief/run-smart-assignment`) — admin-triggered ONLY behind confirm + CSRF: calls `SmartLeadAssignmentService::autoAssignBatch(50)`. Bounded to 50 assignments per click, logs `smart_assign` reason to `crm_assignments`, tenant-scoped. Never runs on page load.
+3. **`app/views/admin/ai_morning_brief.php`** — new "Unassigned Leads — Smart Routing Preview" advisory card between the AI Insight Panel and the Top-5 table:
+   - 0 unassigned → "Pipeline clean — every open lead is assigned." (honest empty state)
+   - else Top-5 table: Lead / Source / Score / Best-fit (name + role + composite score) / Open button; plus a 6-factor recipe footer and an "Auto-Assign Up to 50" button with confirm dialog.
+4. **`routes/ai.php`** — registered POST `run-smart-assignment` next to the existing `run-churn-analysis` route.
+
+### Verification
+- `php -l` clean ×3 · **PHPStan [OK] No errors** on controller · **Master → 11/11 PASSED** (42.11s).
+- **Live HTTP probes** (fresh `test_login=2` session, temp cookie jar, all cleaned same turn):
+  - GET `/admin/ai-morning-brief` → HTTP 200, 416,316 bytes; needles: `Unassigned Leads` YES · `Smart Routing Preview` YES · `Auto-Assign Up to 50` YES · `Pipeline clean` YES · `run-smart-assignment` YES · `advisory` YES.
+  - POST `/admin/ai-morning-brief/run-smart-assignment` (CSRF extracted from rendered page) → HTTP 200, 416,614 bytes; flash rendered `Smart re-route complete` YES; **zero `smart_assign` rows in the last minute** (correct — DB has 0 unassigned, confirmed by direct SQL: 802 open assigns all `active` users, 0 ghost, 0 unassigned).
+- Live DB probe: 979 total leads · 802 open — **0 unassigned, 0 assigned-to-inactive, 0 assigned-to-nonexistent** — the panel renders its honest "clean" path rather than inventing work.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **640** (parallel actor, MLM dashboard stale Global Cap / breakaway lines). This entry = **S641**. Next-free = **642**. Commit hash `667be37d5` actually predates this entry — the commit was landed as "S640" before the parallel actor claimed that number; therefore this entry renames my session to S641 rather than overwriting the parallel actor's S640. All other props/routes/existing entry mentions referencing "S640" in commit message are noted here as already-pushed artifacts.
+
+### Key lessons (carried, continued)
+_1379. **A query-mask can hide the truth — always recount the DB directly.** The "unassigned backlog" turned out to be exactly zero on live tenant; without the SQL probe the panel would have been presented as normal.
+_1380. **Advisory AI on GET must be zero-write, always.** `recommendForLead()` is read-only; only the explicit POST button can flip `assigned_to`. GET = taste test, POST = decision — same contract as churn re-score (S635).
+_1381. **A confirm-dialog on a destructive-ish button is not decoration — it is the UI-contract that makes the admin's click informed.** Button carries `onsubmit="return confirm(...)"` with explicit scope (`max 50`).
+_1382. **Number collisions must be renamed, never overwritten.** S640 was taken between push and log-write; renaming the session entry to S641 preserves both lanes' records.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · colony-tagged-lead form field owner · admin Task Scheduler verification (DAILY task 16).
+
 ## Session 640: MLM Dashboard Stale "Global Cap 20%" + "Same-Rank Breakaway" Lines Wired to Live Active Plan, Gates Green (2026-11-16)
 
 ### Trigger
