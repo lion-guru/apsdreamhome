@@ -1,3 +1,49 @@
+## Session 664: RERA Fabrication Sweep Finished — 7 Public Claims Removed, /plots-availability Was Dead-For-Forever (View Name Hyphen Mismatch) Found & Fixed, Offline Chatbot Corpus Probed Honest End-to-End, All Absorbed Into Parallel Actor's S663 Staged Whole-Tree Commit, Gates Green (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the trust/honesty lane. This round: eliminate every surviving universal RERA registration/approval claim on public surfaces, prove the offline AI answers honest questions correctly, and verify the public plots-availability page actually serves content.
+
+### Part 1 — Fabrication sweep (7 fixes, all public/customer-facing)
+1. **`lang/en.php` + `lang/hi.php` `plots_avail_rera`**: "RERA Verified"/"RERA सत्यापित" → "RERA Verification On Request"/"आरईआरए सत्यापन अनुरोध पर" (live lang values, not fallbacks).
+2. **`lang/en.php` + `lang/hi.php` `plots_avail_hero_desc`**: "All plots RERA-registered, bank-approved, with clear titles" / Devanagari equivalent → "Colony-wise RERA status available on request; clear titles with every sale" (full bilingual rewrite).
+3. **`app/views/pages/plots-availability.php`** — chip fallback "RERA Registered Projects" → "RERA Verification On Request"; page now renders with honest copy.
+4. **`app/views/pages/booking_receipt.php`** — receipt-footer fallback "RERA Registered Project." → "RERA verification available on request."
+5. **`app/views/pages/user/agreement_detail.php`** — user-agreement term fallback "RERA registered project" → "RERA status available on request"; key absent from both stacks so the fallback was LIVE on the customer agreement page.
+6. **`app/views/auth/core_login.php`** — "100% Legal Verification Available" / "RERA compliant with complete documentation" → "Colony-wise Legal Verification" / "Colony-wise RERA status available on request; ask for the colony certificate at our legal desk".
+7. **`app/views/pdf_templates/receipt.php`** — footer line "RERA Registered | ISO 9001:2015 Certified" (universal + unverified ISO claim on every payment receipt) → "RERA verification available on request at our legal desk | Support: +91 70074 44842".
+8. **`app/views/languages/en.php`** (legacy stack) — `why_choose_rera` "RERA Verified Projects"/"All properties legally approved" → honest equivalents (dead stack kept consistent).
+**Kept (honest):** `properties/detail.php` (conditional on a stored `property.rera_number`), `legal-colony-pipeline/milestones.php` (admin "RERA Not Registered Yet" empty state), `rera_lookup.php`/`rera_form.php`/`rera_requests.php` (verification TOOLS, not claims), `lang/en.php` a3/faq_a3/faqs_a3 ("fully licensed... documents available upon request" — honest, no RERA claim).
+**No fabrications found in: services/controllers** — zero hits for registration numbers or "RERA approved" as a statement of fact.
+
+### Part 2 — `/plots-availability` was dead for its entire life
+`Front/PropertyPageController::plotsAvailability()` calls `render('pages/plots_availability', …)` (UNDERSCORE) but `app/views/pages/plots-availability.php` is the only shipped file (HYPHEN, 9,231 B) → `file_exists` failed → **"View not found" rendered inside the public layout for every visitor since the view was written** — a 200-class dead page with a public chrome wrap, invisible without byte-probing. Direct check found `availability-hero` ABSENT from served bytes. Fixed: render call aligned to the hyphenated filename. Verified live: HTTP 200, 207,406 B, `availability-hero` YES, chip renders **"RERA Verification On Request"**, hero text = honest copy.
+
+### Part 3 — Offline/degraded chatbot honesty probed end-to-end
+- **Guest online path**: POST `/api/smart-ai/chat` (guest session) with "Colony ka RERA number kya hai?" → model `free_ai:groq` → answer **refuses to fabricate**, routes to **up-rera.in** + legal desk **+91 70074 44842**; live inventory shown with honest colony data; zero invented registration numbers.
+- **Degraded flag**: `ai_health.degraded = 1` → `/api/ai/health` correctly answered `{"available":false,"degraded":true}`; restored to 0 → `{"available":true,"degraded":false}` (DB left at 0).
+- **Offline corpus** (ssdatabase-extracted from served homepage, executed with node): all tested questions answer honestly: RERA→"Colony-wise RERA certificate available on request... up-rera.in... legal desk +91 70074 44842"; EMI → down-payment/installment description + 20%/12–60mo; booking → token ₹11,000 + login flow; registry → UP stamp duty + legal desk; token-refund → non-refundable with admin path; fallback → office contact. **Zero invented RERA numbers or ISO claims, zero fake guarantees.**
+
+### Verification
+- php -l clean ×8 (all edited files) · **PHPStan → [OK] No errors** · **Master → 11/11 PASSED** (32.93s) · **AGENTS.md integrity OK**.
+- Live needles: homepage 328,186 B needles all YES after cleanup · login page: `Colony-wise Legal Verification` + `RERA status available on request` YES, `100% Legal` gone · `/plots-availability`: hero YES, RERA chip honest, no "View not found" · agreement detail (auth-gated) not probed — would render same fixed fallback.
+- No schema changes, no migrations, no DB writes except the degraded flag roundtrip (restored).
+
+### Attribution — my 9 files ride inside the parallel actor's staged S663 whole-tree commit
+At commit time, the parallel actor's S663 whole-tree staging is **101 files staged-uncommitted** (HEAD = `fc1c1959d` S662), and it includes my 9 edits from this round (PropertyPageController render-path, 4 public views, 2 lang stacks, pdf_templates, languages/en.php). They swept my probe files `storage/app/tmp/.gitkeep` in too. The S663 log entry written before my work landed therefore credits the RERA-copy and hyphen-fix to that session — the fixes are real, the commit is theirs; the work was performed this round. Not re-cutting the staging (shadow-editing their whole-tree convention would break the working tree); noted here for the record.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **662** (agent flash fix) and **663** (whole-admin view sanitization — staged). This entry = **S664**. Next-free = **665**.
+
+### Key lessons
+_1431. **A claim-sweep is one grep wide but pays forever** — every surface missing "verification available on request" is either an honesty bug or a dead file; both are 30 seconds to fix.
+_1432. **A 404/500 wrapped in a public layout is indistinguishable from a working page unless you read served bytes** — "View not found" inside the chrome is the signature class of silent dead public pages; needle-probe every public page after any render-path edit.
+_1433. **The offline path is the least-tested trust surface in the product** — verify `cwOfflineAnswer()` by extraction + node, not by reading comments; it is the one thing standing between a buyer and a hallucination when the LLM is down.
+_1434. **Whole-tree commit conventions absorb other actors' in-flight work mid-session** — land work, verify needles live, accept whole-tree attribution, log honestly; never re-cut staged trees to steal credit back.
+_1435. **Two parallel language stacks can both hold fabricated claims** — `lang/*.php` and `views/languages/*.php` must be swept together, or the legacy one re-serves the lie.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · decision on "View not found" class (full public-page needle sweep, expected another 2–3 dead public pages in the same family).
+
 ## Session 663: Whole-Admin View Sanitization (29 Views De-Duplicated), Executive Overview Hub & Submenu Tree Restored, Plots-Availability 500 Cured, RERA & Arrears Sanitized, Gates Green (2026-11-17)
 
 ### Trigger
