@@ -13,7 +13,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <p class="text-muted small mb-0">Track civil repairs, water supply, drainage &amp; street lighting maintenance</p>
         </div>
         <div>
-            <a href="/customer/township-grievances/create" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/customer/township-grievances/create" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i>Raise Maintenance Request
             </a>
         </div>
@@ -42,7 +42,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                     <i class="fas fa-clipboard-check fs-1 d-block mb-2 text-secondary opacity-50"></i>
                                     You have not submitted any maintenance requests yet.
                                     <div class="mt-3">
-                                        <a href="/customer/township-grievances/create" class="btn btn-sm btn-primary">
+                                        <a href="<?= BASE_URL ?>/customer/township-grievances/create" class="btn btn-sm btn-primary">
                                             Raise New Maintenance Request
                                         </a>
                                     </div>

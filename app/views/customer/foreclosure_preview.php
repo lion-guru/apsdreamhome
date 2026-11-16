@@ -7,25 +7,15 @@ $foreclosure = $foreclosure ?? [];
 $upi = $upi ?? [];
 $base = BASE_URL ?? '';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foreclosure Preview - APS Dream Home</title>
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        .foreclosure-hero { background: linear-gradient(135deg, #0d6efd, #0b5ed7); color: #fff; border-radius: 16px; }
-        .rebate-badge { background: linear-gradient(135deg, #198754, #157347); color: #fff; }
-        .upi-qr-box img { width: 200px; height: 200px; border: 1px solid #dee2e6; border-radius: 8px; background: #fff; padding: 10px; }
-        .installment-row { border-left: 4px solid #0d6efd; }
-        .installment-row.overdue { border-left-color: #dc3545; }
-        .installment-row.paid { border-left-color: #198754; }
-        @media print { .no-print { display: none !important; } .foreclosure-hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
-    </style>
-</head>
-<body>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .foreclosure-hero { background: linear-gradient(135deg, #0d6efd, #0b5ed7); color: #fff; border-radius: 16px; }
+    .rebate-badge { background: linear-gradient(135deg, #198754, #157347); color: #fff; }
+    .upi-qr-box img { width: 200px; height: 200px; border: 1px solid #dee2e6; border-radius: 8px; background: #fff; padding: 10px; }
+    .installment-row { border-left: 4px solid #0d6efd; }
+    .installment-row.overdue { border-left-color: #dc3545; }
+    .installment-row.paid { border-left-color: #198754; }
+    @media print { .no-print { display: none !important; } .foreclosure-hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
@@ -186,5 +176,3 @@ $base = BASE_URL ?? '';
             link.click();
         }
     </script>
-</body>
-</html>

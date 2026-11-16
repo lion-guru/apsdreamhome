@@ -10,7 +10,7 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
 <div class="container py-4" style="max-width: 800px;">
     <!-- Back Button -->
     <div class="mb-3">
-        <a href="/customer/registry-appointments" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/customer/registry-appointments" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back to Registry Desk
         </a>
     </div>

@@ -59,6 +59,7 @@ class CustomerMaintenanceController extends BaseController
         }
         unset($d);
 
+        $this->layout = 'layouts/customer';
         $this->render('customer/maintenance_dues', [
             'page_title' => 'My Society Maintenance Dues',
             'dues' => $dues,

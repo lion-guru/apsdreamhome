@@ -16,7 +16,7 @@ $requests = $requests ?? [];
             <p class="text-muted small mb-0">Track your PM Surya Ghar installation progress, UP-NEDA subsidy clearance & PVVNL net-metering status.</p>
         </div>
         <div>
-            <a href="/customer/solar-calculator" class="btn btn-warning text-dark fw-bold btn-sm">
+            <a href="<?= BASE_URL ?>/customer/solar-calculator" class="btn btn-warning text-dark fw-bold btn-sm">
                 <i class="fas fa-calculator me-1"></i>New Solar Calculation
             </a>
         </div>
@@ -28,7 +28,7 @@ $requests = $requests ?? [];
             <h5 class="fw-bold text-dark">No Solar Applications Yet</h5>
             <p class="text-muted mb-4">Calculate feasibility and submit your PM Surya Ghar rooftop solar application for your plot.</p>
             <div>
-                <a href="/customer/solar-calculator" class="btn btn-primary px-4">
+                <a href="<?= BASE_URL ?>/customer/solar-calculator" class="btn btn-primary px-4">
                     Open Solar Calculator & Apply
                 </a>
             </div>

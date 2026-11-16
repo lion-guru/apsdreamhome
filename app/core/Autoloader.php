@@ -117,7 +117,7 @@ class Autoloader
                 // error_log("Autoloader: Checking file: " . $file);
                 if (file_exists($file)) {
                     // error_log("Autoloader: Found file: " . $file);
-                    require_once $file;
+                    require_once realpath($file) ?: $file;
                     return;
                 }
                 // Case-sensitivity fallback for a case-sensitive filesystem
@@ -147,7 +147,7 @@ class Autoloader
                     if (is_dir($dir)) {
                         $candidate = $dir . '/' . $name;
                         if (file_exists($candidate)) {
-                            require_once $candidate;
+                            require_once realpath($candidate) ?: $candidate;
                             return;
                         }
                     }
@@ -158,7 +158,7 @@ class Autoloader
                     if (is_dir($dir)) {
                         foreach (scandir($dir) as $entry) {
                             if (strcasecmp($entry, $name) === 0) {
-                                require_once $dir . '/' . $entry;
+                                require_once realpath($dir . '/' . $entry) ?: ($dir . '/' . $entry);
                                 return;
                             }
                         }
@@ -171,7 +171,7 @@ class Autoloader
         $filePath = \APP_ROOT . '/app/' . strtolower(str_replace('\\', '/', $className)) . '.php';
         // error_log("Autoloader: Checking fallback: " . $filePath);
         if (file_exists($filePath)) {
-            require_once $filePath;
+            require_once realpath($filePath) ?: $filePath;
         }
     }
 
@@ -192,7 +192,7 @@ class Autoloader
 
         foreach ($possiblePaths as $path) {
             if (file_exists($path)) {
-                require_once $path;
+                require_once realpath($path) ?: $path;
                 return;
             }
         }

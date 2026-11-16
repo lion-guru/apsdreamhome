@@ -11,23 +11,13 @@ $catIcons = [
 ];
 $statusColors = ['completed' => 'success', 'in_progress' => 'primary', 'on_hold' => 'warning', 'not_started' => 'secondary', 'cancelled' => 'dark'];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'Colony Development Feed') ?> - APS Dream Home</title>
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        .feed-hero { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border-radius: 16px; }
-        .milestone-card { border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
-        .progress { height: 10px; border-radius: 6px; }
-        .site-photo { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; cursor: zoom-in; }
-        .cat-badge { font-size: 0.7rem; }
-    </style>
-</head>
-<body>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .feed-hero { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; border-radius: 16px; }
+    .milestone-card { border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
+    .progress { height: 10px; border-radius: 6px; }
+    .site-photo { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; cursor: zoom-in; }
+    .cat-badge { font-size: 0.7rem; }
+</style>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -107,5 +97,3 @@ $statusColors = ['completed' => 'success', 'in_progress' => 'primary', 'on_hold'
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
-</body>
-</html>

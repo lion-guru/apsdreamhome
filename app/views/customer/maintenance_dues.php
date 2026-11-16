@@ -8,17 +8,7 @@ $total_paid = $total_paid ?? 0.00;
 $base = defined('BASE_URL') ? BASE_URL : '';
 $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $e($page_title ?? 'My Society Maintenance Dues') ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container py-4">
+<div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
                 <h2 class="fw-bold mb-1"><i class="fas fa-tools text-primary me-2"></i>My Society Maintenance Dues</h2>
@@ -116,5 +106,3 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
             <i class="fas fa-shield-alt me-1 text-primary"></i> Society Maintenance payments ensure smooth operations of 24x7 security, water supply, and colony greenery.
         </div>
     </div>
-</body>
-</html>

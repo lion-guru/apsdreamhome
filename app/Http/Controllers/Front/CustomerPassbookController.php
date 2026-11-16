@@ -1091,6 +1091,7 @@ class CustomerPassbookController extends BaseController
         }
 
         // Fallback HTML
+        $this->layout = '';
         $this->render('customer/allotment_letter', ['doc' => $doc]);
     }
 
@@ -1193,6 +1194,7 @@ class CustomerPassbookController extends BaseController
         }
 
         // Fallback HTML
+        $this->layout = '';
         $this->render('customer/agreement', ['doc' => $doc]);
     }
 
@@ -1587,6 +1589,7 @@ class CustomerPassbookController extends BaseController
             return;
         }
         $me = $this->db->fetchOne("SELECT name, phone FROM users WHERE id = ? LIMIT 1", [$userId]);
+        $this->layout = '';
         $this->render('customer/nominee_sheet', [
             'page_title' => 'Family Asset Succession Sheet',
             'booking' => $booking,

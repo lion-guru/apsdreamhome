@@ -60,10 +60,17 @@ class RecruitmentController extends AdminController
     public function show($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->setFlash('error', 'Job not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         $job = $this->service->getJobPosting($id);
         if (!$job) {
             $this->setFlash('error', 'Job not found');
             $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
         }
         $applications = $this->service->getApplications(['job_id' => $id]);
         return $this->render('admin/recruitment/show', [
@@ -76,10 +83,17 @@ class RecruitmentController extends AdminController
     public function edit($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->setFlash('error', 'Job not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         $job = $this->service->getJobPosting($id);
         if (!$job) {
             $this->setFlash('error', 'Job not found');
             $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
         }
         $managers = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','manager','director','hr_manager') ORDER BY name");
         return $this->render('admin/recruitment/create', [
@@ -94,6 +108,12 @@ class RecruitmentController extends AdminController
     {
         $this->requireAdmin();
         $this->validateCsrfOrFail();
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->setFlash('error', 'Job not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         $result = $this->service->updateJobPosting($id, $_POST);
         $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
         $this->redirect(BASE_URL . '/admin/recruitment/' . $id);
@@ -102,6 +122,12 @@ class RecruitmentController extends AdminController
     public function publish($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->setFlash('error', 'Job not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         $result = $this->service->publishJob($id);
         $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
         $this->redirect(BASE_URL . '/admin/recruitment/' . $id);
@@ -110,9 +136,20 @@ class RecruitmentController extends AdminController
     public function applications($jobId)
     {
         $this->requireAdmin();
+        $jobId = (int)$jobId;
+        if ($jobId <= 0) {
+            $this->setFlash('error', 'Job not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         $filters = ['job_id' => $jobId, 'status' => $_GET['status'] ?? null];
         $applications = $this->service->getApplications($filters);
         $job = $this->service->getJobPosting($jobId);
+        if (!$job) {
+            $this->setFlash('error', 'Job not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         return $this->render('admin/recruitment/applications', [
             'page_title' => 'Applications: ' . $job['title'],
             'job' => $job,
@@ -174,18 +211,25 @@ class RecruitmentController extends AdminController
     public function applicationShow($id)
     {
         $this->requireAdmin();
+        $id = (int)$id;
+        if ($id <= 0) {
+            $this->setFlash('error', 'Application not found');
+            $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
+        }
         $application = $this->service->getApplication($id);
         if (!$application) {
             $this->setFlash('error', 'Application not found');
             $this->redirect(BASE_URL . '/admin/recruitment');
+            return;
         }
 
-        $job = $this->service->getJobPosting($application['job_id']);
+        $job = !empty($application['job_id']) ? $this->service->getJobPosting((int)$application['job_id']) : null;
         $interviews = $this->service->getInterviewsForApplication($id);
         $offer = $this->service->getOfferForApplication($id);
 
         return $this->render('admin/recruitment/application_show', [
-            'page_title' => 'Application: ' . $application['application_number'],
+            'page_title' => 'Application: ' . ($application['application_number'] ?? '#' . $id),
             'application' => $application,
             'job' => $job,
             'interviews' => $interviews,

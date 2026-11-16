@@ -2896,6 +2896,7 @@ $router->post('/admin/statutory-returns/{id}/file', 'App\\Http\\Controllers\\Adm
 
 // Recruitment / ATS
 $router->get('/admin/recruitment', 'App\\Http\\Controllers\\Admin\\RecruitmentController@index');
+$router->get('/admin/recruitment/jobs', 'App\\Http\\Controllers\\Admin\\RecruitmentController@index');
 $router->get('/admin/recruitment/create', 'App\\Http\\Controllers\\Admin\\RecruitmentController@create');
 $router->post('/admin/recruitment/store', 'App\\Http\\Controllers\\Admin\\RecruitmentController@store');
 $router->get('/admin/recruitment/{id}', 'App\\Http\\Controllers\\Admin\\RecruitmentController@show');

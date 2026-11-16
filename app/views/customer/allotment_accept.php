@@ -5,21 +5,11 @@ $allotment = $allotment ?? [];
 $acceptance = $acceptance ?? null;
 $base = BASE_URL ?? '';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'Accept Allotment Letter') ?> - APS Dream Home</title>
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        .allotment-card { border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
-        .otp-input { letter-spacing: 0.5em; font-size: 1.5rem; text-align: center; }
-        .document-preview { max-height: 60vh; overflow-y: auto; }
-    </style>
-</head>
-<body>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .allotment-card { border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; }
+    .otp-input { letter-spacing: 0.5em; font-size: 1.5rem; text-align: center; }
+    .document-preview { max-height: 60vh; overflow-y: auto; }
+</style>
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -175,5 +165,3 @@ $base = BASE_URL ?? '';
         }
     });
 </script>
-</body>
-</html>

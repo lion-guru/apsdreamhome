@@ -10,7 +10,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <div class="row justify-content-center">
         <div class="col-lg-9">
             <div class="d-flex align-items-center mb-3">
-                <a href="/customer/construction-approvals" class="btn btn-outline-secondary btn-sm me-3">
+                <a href="<?= BASE_URL ?>/customer/construction-approvals" class="btn btn-outline-secondary btn-sm me-3">
                     <i class="fas fa-arrow-left me-1"></i>Back
                 </a>
                 <h4 class="fw-bold mb-0">Apply for Township Construction Excavation Permit</h4>
@@ -101,7 +101,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="/customer/construction-approvals" class="btn btn-outline-secondary">Cancel</a>
+                            <a href="<?= BASE_URL ?>/customer/construction-approvals" class="btn btn-outline-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary px-4">
                                 <i class="fas fa-paper-plane me-1"></i>Submit Application for Approval
                             </button>

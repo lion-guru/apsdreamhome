@@ -1,3 +1,68 @@
+## Session 654: TDS Pipeline Proven End-to-End After S646 Fixes - recordTDS, generateTdsCertificate &amp; FY Label Shape Verified With Sacrificial Live Records (Zero Leftovers), One FY Mismatch Cured, 11/11 (2026-11-16)
+
+### Trigger
+S646 ended with an honest caveat: "`TdsService::recordTDS` never ran successfully in production - the first real record will prove the path end-to-end." This round is that proof.
+
+### What was verified live (sacrificial rows, all cleaned)
+1. **`recordTDS()`** (the INSERT the 14:12 crawl proved dead): inserted id=18 -> `tds_section=194IA, transaction_date=2026-11-16, financial_year=2026-27, quarter=Q3, status=pending, total_tds=1000.00` (generated column math exact), `getTdsCertificatesIssued("2026-27")` empty pre-issue as expected, row deleted.
+2. **Full lifecycle**: insert id=19 -> FY bucket `2026-27` correct, `generateTdsCertificate(2, "2026-27", "Q3")` -> `certificate_number=TDS-D2C9817754` + `certificate_issued_at` stamped -> `getTdsCertificatesIssued("2026-27")` returns exactly that row -> summary for FY reads correctly -> row deleted, **zero leftovers**.
+3. **GET /admin/finance/tds**, **/admin/finance/tds-record**, **/admin/finance/tds-certificates** - all HTTP 200 probed fresh post-S646; no new 42S22-family hits in `logs/php_error.log` (last entry still 16-Nov 08:17, pre-S646).
+
+### Bug found &amp; fixed during the proof
+`TdsService::getCurrentFinancialYear()` returned `2026-2027` while every admin page, filter and FY select uses `2026-27` (created by `MoneyWorkflowController::currentFy()`). Any TDS record created without an explicit FY would filter to zero on the certificate list and summary. Rewritten to the identical formula (`m<4 ? (y-1).'-'.substr(y,-2) : y.'-'.substr(y+1,-2)`); sacrificial record now lands in FY `2026-27` and lists correctly.
+
+### Verification
+- `php -l` clean ? **PHPStan -> [OK] No errors** (1517 files) ? **Master -> 11/11 PASSED** (46.2s) ? **AGENTS.md integrity OK** (404 headings at this entry).
+- No money tables touched; no schema changes this round (FY label only); sacrificial rows deleted same turn.
+- Parallel actor's in-flight `app/views/admin/leads/show.php` (flash rendering, S653), `RecruitmentController.php`, `routes/web.php`, customer-portal views and `app/core/Autoloader.php` NOT touched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **653** (parallel actor, lead flash rendering). This entry = **S654**. Next-free = **655**.
+
+### Key lessons
+_1391. **A "should be fine" caveat you write yourself is a task, not a note - schedule the proof the moment you flag it.** S646's honesty line was followed by exactly this entry.
+_1392. **FY labels must be produced by ONE formula everywhere - two spellings ("2026-27" vs "2026-2027") silently zero every year-filtered query.** Compare strings before they compare years.
+_1393. **Prove the full lifecycle with a sacrificial row, not the insert alone** - the certificate roundtrip surfaced the FY mismatch that an insert-only probe would have missed entirely.
+
+### Honest notes
+- The 2 real `tds_register` rows (this DB carries 2 latent rows from legacy test) plus this proof confirm the whole TDS path alive.
+- `certificate_issued_at` UPDATE reads `deductee_user_id`; no user got certified by this probe (sacrificial row deleted).
+- Parallel actor committed their own AGENTS.md within minutes of my read; my entry is prepended above their S653 landed at the file tail.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload ? HTTPS assetlinks SHA-256 ? RERA colony numbers ? EMI backfill ? live AI dialing ? production deploy ? Task Scheduler verification (DAILY task 16) ? day-1 TDS record (the first REAL production transaction will now execute the proven path end-to-end; no code work pending).
+## Session 653: Whole-Tree Consolidation & Customer Portal UI Portability Finalization — 22 Modified Code Files Validated Clean, All Quality Gates Green (Master 11/11, PHPStan [OK], php -l 0/21 Fail), Zero DB Drift (2026-11-16)
+
+### Trigger
+Consolidation and commit readiness turn following Sessions 642, 650, 651, and 652. User command "do next". All 22 modified code files in the worktree were validated through full end-to-end quality gates.
+
+### What is Landed & Committed
+1. **Customer Portal UI Structure & Navigation Portability (18 Views & Controllers):**
+   - Stripped duplicate `<!DOCTYPE html><html ...><head>...<body>` wrappers across 6 customer views (`documents.php`, `colony_progress.php`, `nri_desk.php`, `maintenance_dues.php`, `foreclosure_preview.php`, `allotment_accept.php`). Scoped `<style nonce="...">` component styles and layout containers preserved.
+   - Initialized 13 document array variables in `documents.php` to prevent PHP notices when rendered with empty datasets.
+   - Fixed 27 hardcoded relative navigation and action paths (`href="/customer/..."`, `href="/login..."`) by prepending `<?= BASE_URL ?>`, ensuring full functionality in subfolder environments (e.g. `/apsdreamhome`).
+   - Configured `$this->layout = 'layouts/customer'` in `CustomerMaintenanceController::index()` and `$this->layout = ''` for printable fallback views in `CustomerPassbookController`.
+2. **Recruitment Route Wildcard 500 Fix (`routes/web.php` & `RecruitmentController.php`):**
+   - Added explicit route `$router->get('/admin/recruitment/jobs', 'RecruitmentController@index')` to prevent parameterized `{id}` route from capturing `'jobs'` as an ID.
+   - Added strict integer casting `(int)$id > 0` validation and early-return guards across `show`, `edit`, `update`, `publish`, `applications`, and `applicationShow`.
+3. **Autoloader Realpath Windows Normalization (`app/core/Autoloader.php`):**
+   - Applied `realpath($file) ?: $file` normalization to all `require_once` statements to eliminate Windows case-collision duplicate class inclusion fatal errors.
+4. **Lead Detail Flash Alert Render (`app/views/admin/leads/show.php`):**
+   - Added dismissible Bootstrap alert banner for `success`, `error`, and `info` flash messages.
+
+### Verification & Quality Gates
+- **PHP Syntax Check (`php -l`):** 21/21 modified PHP files clean (0 errors).
+- **PHPStan Static Analysis:** 1517/1517 files analyzed -> `[OK] No errors` (`--memory-limit=1G`).
+- **Master Test Suite Runner:** **11/11 Test Suites PASSED** (36.05s, 100% HEALTHY).
+- **Zero Database Drift:** Verified core table counts (`users: 82`, `plot_bookings: 23`, `leads: 994`, `transactions: 5`, `mlm_commission_ledger: 359`, `email_queue: 14`) — 100% clean baseline.
+- **AGENTS.md Integrity:** Validated via `scripts/verify_agents_log.php`.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **652** (AGENTS.md Integrity Surgery). This entry = **S653**. Next-free = **654**.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+
 ## Session 652: AGENTS.md Integrity Surgery — S648 Byte-Identical Duplicates Deduplicated To One, Glued-At-EOF S647 Entry Restored To Correct Position (Descending Order), Zero Data Lost, 402 Headings, Backup Kept (2026-11-16)
 
 ### Trigger

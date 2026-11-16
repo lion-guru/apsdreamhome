@@ -10,9 +10,9 @@
       </small>
     </div>
     <div class="btn-group">
-      <a href="/customer/passbook" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Back to Passbook</a>
+      <a href="<?= BASE_URL ?>/customer/passbook" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Back to Passbook</a>
       <?php if ($can_download): ?>
-        <a href="/customer/possession-certificate/<?= (int)$booking['id'] ?>" class="btn btn-outline-success"><i class="fas fa-download me-1"></i> Certificate</a>
+        <a href="<?= BASE_URL ?>/customer/possession-certificate/<?= (int)$booking['id'] ?>" class="btn btn-outline-success"><i class="fas fa-download me-1"></i> Certificate</a>
       <?php endif; ?>
     </div>
   </div>
@@ -163,7 +163,7 @@
                 <strong>Due Date:</strong> <?= date('d M Y', strtotime($stats['next_emi_date'])) ?>
               </div>
               <div class="col-md-6 text-md-end">
-                <a href="/customer/passbook?booking_id=<?= (int)$booking['id'] ?>" class="btn btn-tenant-primary">
+                <a href="<?= BASE_URL ?>/customer/passbook?booking_id=<?= (int)$booking['id'] ?>" class="btn btn-tenant-primary">
                   <i class="fas fa-credit-card me-1"></i> Pay Now
                 </a>
               </div>
@@ -219,7 +219,7 @@
         </div>
         <div class="card-footer bg-light">
           <?php if ($can_download): ?>
-            <a href="/customer/possession-certificate/<?= (int)$booking['id'] ?>" class="btn btn-success w-100">
+            <a href="<?= BASE_URL ?>/customer/possession-certificate/<?= (int)$booking['id'] ?>" class="btn btn-success w-100">
               <i class="fas fa-certificate me-1"></i> Download Possession Certificate
             </a>
           <?php else: ?>

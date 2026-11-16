@@ -8,17 +8,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger'];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My NRI Desk - APS Dream Home</title>
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container-fluid py-4">
+<div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold mb-1"><i class="fas fa-globe me-2"></i>My NRI Desk</h2>
@@ -82,5 +72,3 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
             </div>
         </div>
     </div>
-</body>
-</html>

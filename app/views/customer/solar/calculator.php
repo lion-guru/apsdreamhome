@@ -26,7 +26,7 @@ $is_logged_in = $is_logged_in ?? false;
                             <i class="fas fa-calculator me-1"></i> Calculate My Subsidy
                         </a>
                         <?php if ($is_logged_in): ?>
-                            <a href="/customer/solar-desk" class="btn btn-outline-light px-4 py-2">
+                            <a href="<?= BASE_URL ?>/customer/solar-desk" class="btn btn-outline-light px-4 py-2">
                                 <i class="fas fa-list-check me-1"></i> Track My Solar Requests
                             </a>
                         <?php endif; ?>
@@ -175,7 +175,7 @@ $is_logged_in = $is_logged_in ?? false;
                     <i class="fas fa-user-lock me-2"></i>
                     Please log in to link this solar request directly with your APS Dream Home plot booking.
                 </div>
-                <a href="/login?redirect=/customer/solar-calculator" class="btn btn-primary btn-sm">Log In Now</a>
+                <a href="<?= BASE_URL ?>/login?redirect=<?= urlencode(BASE_URL . '/customer/solar-calculator') ?>" class="btn btn-primary btn-sm">Log In Now</a>
             </div>
         <?php endif; ?>
 

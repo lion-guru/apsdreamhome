@@ -9,30 +9,31 @@ $user = $user ?? [];
 $userDocuments = $userDocuments ?? [];
 $bookingDocuments = $bookingDocuments ?? [];
 $agreementDocuments = $agreementDocuments ?? [];
-$base = BASE_URL ?? '';
+$allotmentDocuments = $allotmentDocuments ?? [];
+$passbookDocuments = $passbookDocuments ?? [];
+$titleCertificates = $titleCertificates ?? [];
+$jointOwnerships = $jointOwnerships ?? [];
+$possessionCerts = $possessionCerts ?? [];
+$maintenanceDues = $maintenanceDues ?? [];
+$paymentReceipts = $paymentReceipts ?? [];
+$sitePlanDocuments = $sitePlanDocuments ?? [];
+$nocDocuments = $nocDocuments ?? [];
+$mutationDocuments = $mutationDocuments ?? [];
+$taxReceipts = $taxReceipts ?? [];
+$otherDocuments = $otherDocuments ?? [];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title ?? 'My Documents') ?> - APS Dream Home</title>
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        .document-card { transition: all 0.3s ease; }
-        .document-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .document-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .doc-type-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-        .badge-allotment { background: #dbeafe; color: #1e40af; }
-        .badge-passbook { background: #dcfce7; color: #166534; }
-        .badge-agreement { background: #fef3c7; color: #92400e; }
-        .document-actions .btn { transition: all 0.2s ease; }
-        .document-actions .btn:hover { transform: translateY(-1px); }
-        @media print { .no-print { display: none !important; } }
-    </style>
-</head>
-<body>
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .document-card { transition: all 0.3s ease; }
+    .document-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+    .document-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .doc-type-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .badge-allotment { background: #dbeafe; color: #1e40af; }
+    .badge-passbook { background: #dcfce7; color: #166534; }
+    .badge-agreement { background: #fef3c7; color: #92400e; }
+    .document-actions .btn { transition: all 0.2s ease; }
+    .document-actions .btn:hover { transform: translateY(-1px); }
+    @media print { .no-print { display: none !important; } }
+</style>
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -475,5 +476,3 @@ document.querySelectorAll('.document-card a[target="_blank"]').forEach(link => {
     });
 });
 </script>
-</body>
-</html>

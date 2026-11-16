@@ -12,7 +12,7 @@ $applications = $applications ?? [];
             <p class="text-muted small mb-0">Track architectural map clearance & excavation permit status for your plots</p>
         </div>
         <div>
-            <a href="/customer/construction/apply" class="btn btn-primary">
+            <a href="<?= BASE_URL ?>/customer/construction/apply" class="btn btn-primary">
                 <i class="fas fa-plus me-1"></i>Apply for Construction Permit
             </a>
         </div>
@@ -56,7 +56,7 @@ $applications = $applications ?? [];
                                     <i class="fas fa-drafting-compass fs-1 d-block mb-2 text-secondary opacity-50"></i>
                                     You haven't submitted any construction approval applications yet.
                                     <div class="mt-3">
-                                        <a href="/customer/construction/apply" class="btn btn-sm btn-primary">
+                                        <a href="<?= BASE_URL ?>/customer/construction/apply" class="btn btn-sm btn-primary">
                                             Apply for Construction Permit
                                         </a>
                                     </div>
@@ -99,7 +99,7 @@ $applications = $applications ?? [];
                                     </td>
                                     <td class="text-end pe-3">
                                         <?php if ($app['status'] === 'approved'): ?>
-                                            <a href="/customer/construction/permit/<?= $app['id'] ?>" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <a href="<?= BASE_URL ?>/customer/construction/permit/<?= $app['id'] ?>" target="_blank" class="btn btn-sm btn-outline-success">
                                                 <i class="fas fa-print me-1"></i>Print Permit NOC
                                             </a>
                                         <?php else: ?>

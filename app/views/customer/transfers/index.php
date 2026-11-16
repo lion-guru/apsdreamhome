@@ -16,7 +16,7 @@ $transfers = $transfers ?? [];
             </h3>
             <p class="text-muted mb-0">Apply for ownership transfer, gift to family, or resell your plot with an official APS NOC.</p>
         </div>
-        <a href="/customer/documents" class="btn btn-outline-secondary btn-sm">
+        <a href="<?= BASE_URL ?>/customer/documents" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-folder me-1"></i>My Documents
         </a>
     </div>
@@ -82,7 +82,7 @@ $transfers = $transfers ?? [];
                                     </td>
                                     <td class="text-end">
                                         <?php if (!empty($t['noc_number'])): ?>
-                                            <a href="/customer/plot-transfers/noc/<?= (int)$t['id'] ?>" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <a href="<?= BASE_URL ?>/customer/plot-transfers/noc/<?= (int)$t['id'] ?>" target="_blank" class="btn btn-sm btn-outline-success">
                                                 <i class="fas fa-print me-1"></i>View NOC
                                             </a>
                                         <?php else: ?>
@@ -142,11 +142,11 @@ $transfers = $transfers ?? [];
 
                                 <div class="mt-2">
                                     <?php if ($b['transfer_eligible']): ?>
-                                        <a href="/customer/plot-transfers/apply/<?= (int)$b['id'] ?>" class="btn btn-primary btn-sm w-100">
+                                        <a href="<?= BASE_URL ?>/customer/plot-transfers/apply/<?= (int)$b['id'] ?>" class="btn btn-primary btn-sm w-100">
                                             <i class="fas fa-paper-plane me-1"></i>Apply for Transfer / Resale NOC
                                         </a>
                                     <?php else: ?>
-                                        <a href="/customer/maintenance-dues" class="btn btn-outline-warning btn-sm w-100">
+                                        <a href="<?= BASE_URL ?>/customer/maintenance-dues" class="btn btn-outline-warning btn-sm w-100">
                                             <i class="fas fa-wallet me-1"></i>Clear Dues to Unlock Transfer
                                         </a>
                                     <?php endif; ?>

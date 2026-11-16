@@ -17,7 +17,7 @@ $bookings = $bookings ?? [];
             <p class="text-muted small mb-0">Book your Sub-Registrar Office registry date slot, check stamp duty & download appointment gatepasses.</p>
         </div>
         <div>
-            <a href="/customer/documents" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= BASE_URL ?>/customer/documents" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-folder me-1"></i>My Document Locker
             </a>
         </div>
@@ -79,7 +79,7 @@ $bookings = $bookings ?? [];
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end">
-                                        <a href="/customer/registry-appointments/slip/<?= $a['id'] ?>" target="_blank" class="btn btn-outline-danger btn-sm">
+                                        <a href="<?= BASE_URL ?>/customer/registry-appointments/slip/<?= $a['id'] ?>" target="_blank" class="btn btn-outline-danger btn-sm">
                                             <i class="fas fa-print me-1"></i>Print Slip
                                         </a>
                                     </td>
@@ -113,7 +113,7 @@ $bookings = $bookings ?? [];
                                     <span class="badge bg-success small text-uppercase"><?= str_replace('_', ' ', $b['status']) ?></span>
                                 </div>
                                 <div>
-                                    <a href="/customer/registry-appointments/book/<?= $b['id'] ?>" class="btn btn-danger btn-sm">
+                                    <a href="<?= BASE_URL ?>/customer/registry-appointments/book/<?= $b['id'] ?>" class="btn btn-danger btn-sm">
                                         <i class="fas fa-calendar-plus me-1"></i>Book SRO Slot
                                     </a>
                                 </div>

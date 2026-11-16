@@ -11,7 +11,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <div class="container py-4">
     <div class="max-w-700 mx-auto" style="max-width: 750px;">
         <div class="mb-3">
-            <a href="/customer/plot-transfers" class="text-decoration-none text-muted small">
+            <a href="<?= BASE_URL ?>/customer/plot-transfers" class="text-decoration-none text-muted small">
                 <i class="fas fa-arrow-left me-1"></i>Back to Transfer Desk
             </a>
             <h3 class="fw-bold mt-1 mb-0">Ownership Transfer & Resale NOC Application</h3>
@@ -97,7 +97,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="/customer/plot-transfers" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="<?= BASE_URL ?>/customer/plot-transfers" class="btn btn-outline-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary px-4 fw-bold">
                             <i class="fas fa-paper-plane me-1"></i>Submit Transfer Application
                         </button>
