@@ -1054,7 +1054,7 @@ class CustomerPassbookController extends BaseController
 
         $doc = $this->db->fetchOne("
             SELECT * FROM allotment_documents
-            WHERE id = ? AND user_id = ? AND tenant_id = ?
+            WHERE id = ? AND customer_id = ? AND tenant_id = ?
         ", [$id, $userId, (int)$this->tenantId()]);
 
         if (!$doc) {
