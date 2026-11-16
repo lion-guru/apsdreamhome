@@ -224,7 +224,7 @@ return [
     'process_closing' => 'Closing',
     'process_closing_desc' => 'Handle all paperwork, negotiations, and legal processes to complete your transaction.',
     'why_choose_us' => 'Why Choose APS Dream Home?',
-    'why_choose_us_subtitle' => 'Trusted by thousands of clients for exceptional service',
+    'why_choose_us_subtitle' => 'Trusted across Uttar Pradesh for exceptional service',
     'trusted_reliable' => 'Trusted & Reliable',
     'trusted_reliable_desc' => 'Licensed and regulated real estate professionals with years of experience in the market.',
     'extensive_network' => 'Extensive Network',

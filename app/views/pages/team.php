@@ -513,7 +513,7 @@ foreach ($team_members ?? [] as $tm) {
                     <div class="col-sm-6">
                         <div class="d-flex align-items-start gap-3 p-3 bg-white rounded-3 shadow-sm">
                             <i class="fas fa-users text-warning"></i>
-                            <div><strong>Community Support</strong><br><small class="text-muted">Join a network of empowered women across India</small></div>
+                            <div><strong>Community Support</strong><br><small class="text-muted">Join a network of empowered women across Uttar Pradesh</small></div>
                         </div>
                     </div>
                     <div class="col-sm-6">

@@ -58,7 +58,7 @@ if (!empty($properties) && is_array($properties)) {
 $seo = is_array($seo ?? null) ? $seo : [];
 $seo['json_ld'] = $jsonLd;
 
-$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across India.';
+$meta_description = 'Browse ' . number_format($total ?? 0) . ' premium properties — plots, flats, villas, farmhouses — from APS Dream Home across Uttar Pradesh.';
 $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' . implode(', ', array_filter([
     $currentFilters['location'] ?? null,
     $currentFilters['type'] ?? null
@@ -128,7 +128,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 <div class="hero-premium pt-5 pb-5 mb-0" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
     <div class="container hero-content premium-reveal fade-up position-relative z-2">
         <h1 class="display-4 fw-bold text-white mb-2"><i class="fas fa-building me-3"></i><?= __('properties') ?></h1>
-        <p class="lead text-white-50 mb-4">Discover premium properties across India — plots, flats, villas, farmhouses & more</p>
+        <p class="lead text-white-50 mb-4">Discover premium properties across Uttar Pradesh — plots, flats, villas, farmhouses & more</p>
         <div class="d-flex flex-wrap gap-2">
             <div class="capsule-badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 shadow-sm px-3 py-2">
                 <i class="fas fa-check-circle text-success me-1"></i>

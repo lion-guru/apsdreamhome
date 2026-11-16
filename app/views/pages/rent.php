@@ -70,7 +70,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
 <section class="rent-hero py-5 text-white position-relative">
     <div class="container text-center py-4 position-relative">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-key me-3"></i>Properties for Rent</h1>
-        <p class="lead mb-4">Find your perfect rental home, flat, or commercial space across India</p>
+        <p class="lead mb-4">Find your perfect rental home, flat, or commercial space across Uttar Pradesh</p>
         <div class="row g-3 justify-content-center">
             <div class="col-6 col-md-3">
                 <div class="rent-stat-card">

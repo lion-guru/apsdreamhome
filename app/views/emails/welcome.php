@@ -39,7 +39,7 @@ a:hover{text-decoration:underline}
           <td class="px-mobile">
             <h2 >Hi {{name}},</h2>
             <p >
-              Thank you for joining <strong>APS Dream Home</strong> — your trusted partner in finding the perfect property across India.
+              Thank you for joining <strong>APS Dream Home</strong> — your trusted partner in finding the perfect property across Uttar Pradesh.
             </p>
             <p >
               You can now:
