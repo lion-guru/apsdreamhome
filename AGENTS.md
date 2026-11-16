@@ -1,3 +1,41 @@
+## Session 605: Read-Only Security & Hygiene Sweep — VAPID Private Key Tracked in Git Flagged for Owner Decision, Eval/Exec Sinks Audited, .env Untracked Confirmed (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — continue autonomous sweep after S604 while the owner sleeps.
+
+### Findings (all read-only; ZERO code/schema/data changes this round)
+
+**1. [ACTION REQUIRED — owner decision] `config/vapid_private.key` is tracked in git, with history, pushed to GitHub.**
+- File: `config/vapid_private.key` — EC P-256 private key for Web Push (VAPID). Tracked since commit `77373ef78` (Phase 14: Email templates + notifications wiring + VAPID keys + mobile responsive CSS) — it is on origin `https://github.com/lion-guru/apsdreamhome.git` and in every clone since then.
+- Companion tracked files: `config/vapid.env` (PUBLIC key + subject email — fine to track), `config/vapid_public.key` (public — fine).
+- `.gitignore` covers `.env*`, `storage/keys/`, keystores — but NOT `config/vapid_private.key`. The key is a live credential today (the code path `config/vapid_private.key` is the documented production setup when `.env` sets `VAPID_PRIVATE_KEY=PEM:config/vapid_private.key`, per `_archive/scripts/generate_vapid_keys.php`).
+- **Impact:** anyone with a clone of the repo can sign Web Push payloads impersonating this app to all subscribed browsers of this origin. It does NOT grant DB/credential access. However, the exposure is already on the remote — it is unrecoverable by deletion alone.
+- **Deliberately NOT done by this actor, and must not be done without owner direction:** rotation (invalidates all current push subscriptions — customers stop receiving notifications until they re-subscribe); untracking/gitignore-only (push would break on next deploy, silently); history purge (BFG / `git filter-repo` — force-push, everybody's clones invalidate). All three are owner calls because they each break something live.
+- **Recommended sequence for the owner:** (1) generate a new VAPID pair (`openssl ec -genkey -name prime256v1 -out new_vapid_private.pem` + derivable public key or the generator in `_archive/scripts/generate_vapid_keys.php`), (2) update production `.env` with the new pair (never commit the new key), (3) deploy, (4) after confirm, run BFG + force-push to purge `config/vapid_private.key` from history, (5) add `config/vapid_private.key` and `vapid.env` (if it ever contains private-key material in future) to `.gitignore`, (6) if the repo is public, assess whether notification-subscription tokens also need reset (they do not re-bind on key rotation — separate issue).
+
+**2. `.env` itself is NOT tracked** — confirmed vs `git ls-files` (no `.env`, `.env.local`, `.env.production`, `production.env` matches tracked). `.gitignore` correctly bans them.
+
+**3. Eval audit — clean.** Three `eval(` occurrences repo-wide, all string literals (blocklist in `Api\CommunicationController`, whitelist doc comments in `WorkflowEngine.php`) — no live `eval()` anywhere in app, config, routes or scripts.
+
+**4. Exec-sink audit — 67 files flagged, 56 of them one file of string literals.** `app/services/Archives/Reports/AdvancedOptimizationReportService.php` matches `eval( / exec( / system( ` 56 times, every one a changelog string (e.g. `"Removed dangerous exec() usage"`). No real execution calls in it. Remaining flags are legitimate patterns: backup managers (BackupManager), system monitors (SystemMonitor/SystemIntegration), cron/CLI wrappers (Database, EMIAutomationService, LocalizationService, PayoutBatchService, phpstan sandbox helpers in `_archive/`), no user-controlled input reaching them (all args are literals or validated whitelist values). No action taken.
+
+**5. No tracked filename references htdocs/xampp absolute paths** — `git ls-files "app/**" "config/**" "routes/**" "public/**" "scripts/**" "database/**" "mobile/**"` cross-checked against `xampp|htdocs` — zero matches. No developer-machine path leaks in shipped code.
+
+**6. Env templates tracked — all placeholder values** (`.env.example`, `.env.railway`, `.env.testing`, `production.env.example`, `config/vapid.env` public-only) — no real secrets among them.
+
+### Incidents this round (disclosed)
+- **Missed route-file timeout from previous round** — reran the same caller census with a scoped tool instead of the 90s recursive PowerShell scan; confirmed zero callers for all five dormant route families (`/api/farmers/*`, `/api/events/*`, `/api/container/*`, `/api/performance-cache/*`, `/api/request-middleware/*`) — all of app/views, public/**/*.js, mobile/**/*.dart, testing/ return NO matches. Decision stands: dormant, wiring would create PII/$-bearing endpoints with no consumer.
+- **Secrets exposure** — new finding not fixed in-code (see #1). Logged, not silently swept.
+
+### Verified end-to-end
+- **PHPStan** → `[OK] No errors` (unchanged since S604; this round made zero code changes).
+- **Master** → **11/11 PASSED** (S604, 27.42s; this round no suite re-run needed — no changes).
+- `git status --porcelain`: only the parallel actor's two in-flight files are `M` (AgentDashboardController.php, RoleBasedDashboardController.php) — neither touched; not committed.
+- Live check: `GET /` 200 · `GET /api/health` 200 `{"status":"healthy"}`.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 604. This entry = **S605**. Next-free = **606**.
+
 ## Session 604: Dead Code Purge — 2 Unreferenced Controllers Removed (employee_tax_compliance + DocumentGenerator), Unreferenced-Controllers Audit Tool Added, Dormant Route Files Proven Zero-Caller, Owner-Facing .env Templates Verified Clean (2026-11-16)
 
 ### Trigger
