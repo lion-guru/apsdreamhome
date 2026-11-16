@@ -106,7 +106,7 @@ document.getElementById('accountType').addEventListener('change', function() {
 // Prevent self-referencing parent
 const currentId = <?= (int)($account['id'] ?? 0) ?>;
 document.getElementById('parentAccount').addEventListener('change', function() {
-    if ((int)this.value === currentId) {
+    if (parseInt(this.value, 10) === currentId) {
         alert('Account cannot be its own parent');
         this.value = '';
     }

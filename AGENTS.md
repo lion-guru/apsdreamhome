@@ -1,3 +1,44 @@
+## Session 602: Whole-Surface Inline-Script Parse Census Fix — 0/2212 Views Unparseable, 12 admin pages rescued (PHP-in-JS rewritten properly, duplicate JS block removed, mojibake byte removed, unterminated template literal fixed, 7 sed-migration orphan `.catch` removed, PHP cast in JS removed, 2 bulk-import `)` closures repaired, PHPStan OK, Master 11/11 (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" - the S600/S601 customer/agent/employee crawls exposed an inline-script family class (SyntaxError-dead JS in reachable pages), so this round ran a repo-wide acorn parse of EVERY inline `<script>`块 in all 2,212 view files to find them all, not just the ones a crawl happened to visit.
+
+### The census method
+`scan_views.js`: for each of the 2,212 PHP view files, strip PHP tags (`<?php ... ?>` → PHPP, `<?= ... ?>` → PHPP, `<? ... ?>` → PHPP), skip `application/ld+json`, and `acorn.parse()` every remaining inline `<script>`块 with `ecmaVersion=2020`. 536 sed-migration/mojibake/other artifacts then found. Repair by hand, re-scan to 0.
+
+### What was actually broken (all probe-verified, all fixed)
+**Class A — sed-migration orphan `.catch(err => console.error('Request failed:', err));` standing alone at statement position** (inside a `.then(data => {` where it silently killed the whole callback). Fixed by removing the orphan line: `api_key_management.php` (×2 — 410, 440), `dashboards/cfo.php` (46), `godmode/dashboard.php` (×4 — incl. 60), `sms/dashboard.php` (100), `users/pending.php` (×2), `live_chat/view.php` (68), `efiling/tin-portal.php` (46). Verified: all 8 pages re-crawled live, 0 console errors.
+
+**Class B — phantom `});` at statement end in nested `if`/form handlers** (a third closing `)` where the `if (...)` block should end with `}`). Fixed: `bookings/create.php` (toggleCustomerFields end), `withdrawal/index.php` (×3 — the duplicate `let currentLoadingBtn = null` block was also redundantly declared ×2 and acorn could not even reach the second), `withdrawal/view.php` (×3). Verified: `/admin/withdrawals` 0 console errors, JS parses.
+
+**Class C — mojibake byte** (`âˆ'` — mis-encoded – inside a single-quoted JS string in `colony-costing/create.php` line 46). Replaced the 6 offending bytes with ASCII `-`: string terminated early, `'` opened a new string with no operator between → SyntaxError at 46:82. Verified: parses clean.
+
+**Class D — PHP code served as JavaScript** (`cron-health/index.php`: raw PHP `foreach (data.results as $key => $val) {` and `is_array()`, `htmlspecialchars()` inside `<script>`. Entire inline block was 100% dead — auto-refresh timer never ran, "Details" modal never populated). Rewrote the block in vanilla JS with proper `escapeHtml()` helper preserving the intended output contract (Task Results table, Errors list, Modal show). Verified: `/admin/cron-health` renders, JS parses.
+
+**Class E — unterminated string constants** (raw newline inside single-quoted JS strings — page generator text in `two_factor_backup_codes.php`). Rewrote the multi-line print-template as a backtick template literal containing the raw HTML; verified: JS parses.
+
+**Class F — missing closing delimiters** (collection of late-statement closers that never arrived). Fixed: `banking/reconciliation.php` (had `}` at EOF after `</script>` — moved inside the script tag, where the parser expects it), `ai/calling.php` (`await fetch(...)` hung inside `.then(async function(ok) {` with no await wrapper and the catch orphaned outside the `.then` — restructured to single async callback with try/catch and proper closing paren), `agreements/create.php` (`)` closing the fetch options object where `}` was expected — `}).finally(...)` was missing its `)`... actually `}`→`)` correction), `holiday_calendar/bulk_import.php` (×2 — `forEach(err => {` never closed before `} else {`).
+
+**Class G — PHP cast in JS** (`chart_of_accounts/edit.php` and the duplicated copy under `chart_of_accounts/chart_of_accounts/edit.php`: `(int)this.value === currentId` — `int` is not a JS operator; comparison always false and the self-reference guard never fired. Fixed: `parseInt(this.value, 10) === currentId`).
+
+**Verification matrix** — 746 inline scripts parsed clean across all 2,212 views (was 668 before fixes; 78 JS blocks rescued from parse-fatal). Direct probes: `/admin/cron-health`, `/admin/users/pending`, `/admin/withdrawals`, `/admin/withdrawals/view/1`, `/admin/chart-of-accounts`, `/admin/chart-of-accounts/edit/1`, `/admin/bookings/create`, `/admin/agreements/create`, `/admin/colonies/create`, `/admin/banking/reconciliation`, `/admin/users/show/3`, `/admin/users/edit/3`, `/admin/users/show/8`, `/admin/users/edit/8`, `/admin/users/1` — **all 0 console errors**.
+
+**PHPStan** — [OK] No errors. **Master** — **11/11 PASSED**. **AGENTS.md integrity** — OK (verified after prepend).
+
+### Key lessons (carried, continued)
+_1317. **An edit-marker that sits inside a block is invisible until you run the parse check** — the orphan `.catch` lines were all syntactically valid statements inside a live `.then` callback that simply never closed; only `acorn.parse` over the *stripped* source revealed them. A browser console crawl alone cannot find these either: the SyntaxError aborts the whole `<script>` block so the page renders "fine" but every JS feature it was supposed to provide silently does nothing.
+_1318. **PHP in `<script>` is a 100% file, not a glitch** — cron-health shipped a whole `<script>` whose content was unclassifiable as JS; only substring-grep for `foreach (` `from the inline-script corpus found it. Any `<?php` tag inside `<script>` that isn't producing a JSON-safe value and isn't `json_encode()`-wrapped is dead-on-arrival.
+_1319. **A parse-clean count that goes UP refutes the "already green" assumption** — 746 clean now vs 668 before; 78 scripts were silently dead, which means every one of those pages had a JS-dead feature surface.
+_1320. **Duplicate declaration masks the next syntax error** — withdrawal/index.php's `let currentLoadingBtn` was duplicated (global + inside feature script); acorn stops at the first error, so fixing it surfaced a second SyntaxError 20 lines down that had been hiding behind it the whole time.
+_1321. **Mojibake bytes are syntax errors in JS strings** — `'` is not an operator and `'...'-'' + x` throws "Unexpected token"; only a byte-level replacement finds them.
+_1322. **The `int()` cast is PHP-only syntax** — `(int)this.value` is never valid JavaScript; any such line inside `<script>` blocks is PHP pasted into JS, not a typo.
+_1323. **Orphaned `.catch(...)` standing alone at statement position is always a dead block** — the continuation of a broken promise chain that lost its opening `.then`. Deleting it (or relocating it to the real chain tail) is correct; a standalone `.catch` can never run.
+_1324. **Re-running the parse census after every fix is the only honest gate** — each repair uncovers the next failure in the same file; one pass is never enough.
+_1325. **Browser-crawl consoles catch pages that look alive** — all 15 probed pages rendered with real content and 0 console errors *after* fixes; two pages showed identical SyntaxError at the same line in both the source parse and the live console (`users/pending`), proving source-based scan and browser are two witnesses, not one.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 601. This entry = S602. Next-free = **603**.
+
 ## Session 601: Agent & Employee Portal Crawls Confirmed Clean; Employee Self-Service Tax Calculator SyntaxError Root-Caused & Fixed (missing arrow-body }), PHPStan OK, Master 11/11 (2026-11-16)
 
 ### Trigger

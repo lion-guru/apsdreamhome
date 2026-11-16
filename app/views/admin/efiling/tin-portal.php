@@ -242,7 +242,6 @@ document.getElementById('form16aDownload').addEventListener('submit', function(e
     if (!token) { resultDiv.style.display = 'block'; resultDiv.innerHTML = '<div class="alert alert-warning py-2 mb-0">Enter a token number</div>'; return; }
 
     fetch('<?= BASE_URL ?>/admin/efiling/tin/status/' + encodeURIComponent(token))
-        .catch(err => console.error('Request failed:', err));
         .then(function(r) { return r.json(); }).then(function(data) {
             resultDiv.style.display = 'block';
             if (data.success) {

@@ -145,4 +145,5 @@ function bulkReconcile() {
         if (!ok) return;
         document.getElementById('bulkReconcileForm').submit();
     });
+}
 </script>

@@ -174,7 +174,7 @@ document.getElementById('agreementForm')?.addEventListener('submit', async funct
             method: 'POST',
             body: fd,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        ).finally(() => hideLoader());
+        }).finally(() => hideLoader());
         const ct = r.headers.get('content-type') || '';
         if (ct.includes('json')) {
             const data = await r.json();

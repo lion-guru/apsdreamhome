@@ -122,14 +122,15 @@ ob_start();
   if (printBtn) {
     printBtn.addEventListener('click', () => {
       const w = window.open('', '_blank');
-      const html = '<!DOCTYPE html><html><head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>2FA Backup Codes</title>' +
-        '<style>body{font-family:system-ui;padding:30px;max-width:600px;margin:0 auto}' +
-        'h1{color:#b45309}code{display:inline-block;padding:8px 12px;background:#f3f4f6;border-radius:6px;margin:4px;font-weight:bold}' +
-        '.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}' +
-        '.footer{margin-top:30px;padding-top:15px;border-top:1px solid #ccc;font-size:12px;color:#666}' +
-        '</style>    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
-</head><body>' +
+      const html = `<!DOCTYPE html><html><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>2FA Backup Codes</title>
+        <style>body{font-family:system-ui;padding:30px;max-width:600px;margin:0 auto}
+        h1{color:#b45309}code{display:inline-block;padding:8px 12px;background:#f3f4f6;border-radius:6px;margin:4px;font-weight:bold}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+        .footer{margin-top:30px;padding-top:15px;border-top:1px solid #ccc;font-size:12px;color:#666}
+        </style>
+        <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
+</head><body>` +
         '<h1>APS Dream Home — 2FA Backup Codes</h1>' +
         '<p>Account: <strong><?= htmlspecialchars($user_email ?? '') ?></strong></p>' +
         '<p>Generated: ' + new Date().toLocaleString() + '</p>' +

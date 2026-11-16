@@ -272,7 +272,6 @@ $page_title = "SMS Dashboard";
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    .catch(err => console.error('Request failed:', err));
                     showToast('SMS sent successfully!', 'success');
                     bootstrap.Modal.getInstance(document.getElementById('sendSMSModal')).hide();
                     form.reset();

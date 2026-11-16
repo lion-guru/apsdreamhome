@@ -408,33 +408,6 @@ function openCompleteModal(id) {
     }, 150);
 }
 
-// Global state for loading states
-let currentLoadingBtn = null;
-
-function showLoading(btnId, spinnerId, textId, loadingText) {
-    const btn = document.getElementById(btnId);
-    const spinner = document.getElementById(spinnerId);
-    const text = document.getElementById(textId);
-    if (btn && spinner && text) {
-        btn.disabled = true;
-        spinner.classList.remove('d-none');
-        text.textContent = loadingText;
-        currentLoadingBtn = { btnId, spinnerId, textId };
-    }
-}
-
-function hideLoading(btnId, spinnerId, textId, originalText) {
-    const btn = document.getElementById(btnId);
-    const spinner = document.getElementById(spinnerId);
-    const text = document.getElementById(textId);
-    if (btn && spinner && text) {
-        btn.disabled = false;
-        spinner.classList.add('d-none');
-        text.textContent = originalText;
-        currentLoadingBtn = null;
-    }
-}
-
 // Form submission handlers with loading states
 document.addEventListener('DOMContentLoaded', function() {
     // Approve form
@@ -446,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading('approveSubmitBtn', 'approveSpinner', 'approveBtnText', 'Approving...');
             }
         });
-    });
+    }
 
     // Reject form
     const rejectForm = document.getElementById('rejectForm');
@@ -463,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading('rejectSubmitBtn', 'rejectSpinner', 'rejectBtnText', 'Rejecting...');
             }
         });
-    });
+    }
 
     // Complete form
     const completeForm = document.getElementById('completeForm');
@@ -474,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading('completeSubmitBtn', 'completeSpinner', 'completeBtnText', 'Completing...');
             }
         });
-    });
+    }
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {

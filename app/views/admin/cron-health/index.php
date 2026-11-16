@@ -157,6 +157,12 @@ function refreshStatus() {
         .catch(console.error);
 }
 
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+}
+
 function showDetails(data) {
     const container = document.getElementById('detailsContent');
     if (!data) {
@@ -167,22 +173,24 @@ function showDetails(data) {
             html += '<h6 class="mb-3">Task Results</h6>';
             html += '<div class="table-responsive"><table class="table table-sm table-bordered">';
             html += '<thead><tr><th scope="col">Task</th><th scope="col">Status</th><th scope="col">Details</th></tr></thead><tbody>';
-            foreach (data.results as $key => $val) {
-                if (is_array($val)) {
-                    $status = isset($val['success']) && $val['success'] ? '<span class="badge bg-success">OK</span>' : '<span class="badge bg-danger">FAIL</span>';
-                    $details = json_encode($val);
+            for (const key of Object.keys(data.results)) {
+                const val = data.results[key];
+                let status, details;
+                if (val && typeof val === 'object') {
+                    status = val.success ? '<span class="badge bg-success">OK</span>' : '<span class="badge bg-danger">FAIL</span>';
+                    details = escapeHtml(typeof val === 'object' ? JSON.stringify(val) : String(val));
                 } else {
-                    $status = '<span class="badge bg-secondary">INFO</span>';
-                    $details = htmlspecialchars((string)$val);
+                    status = '<span class="badge bg-secondary">INFO</span>';
+                    details = escapeHtml(String(val));
                 }
-                html += "<tr><td>{$key}</td><td>{$status}</td><td>{$details}</td></tr>";
+                html += '<tr><td>' + escapeHtml(String(key)) + '</td><td>' + status + '</td><td>' + details + '</td></tr>';
             }
             html += '</tbody></table></div>';
         }
         if (data.errors) {
             html += '<h6 class="mt-3 mb-2 text-danger">Errors</h6><ul class="text-danger">';
-            foreach (data.errors as $err) {
-                html += "<li>" . htmlspecialchars($err) . "</li>";
+            for (const err of data.errors) {
+                html += '<li>' + escapeHtml(String(err)) + '</li>';
             }
             html += '</ul>';
         }

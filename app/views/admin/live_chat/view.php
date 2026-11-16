@@ -186,7 +186,6 @@ function pollMessages() {
         .then(data => {
             if (data.messages && data.messages.length) {
                 data.messages.forEach(m => {
-                    .catch(err => console.error('Request failed:', err));
                     appendMessage(m.sender_type, m.sender_name, m.message, false);
                     lastMessageId = Math.max(lastMessageId, m.id);
                 });

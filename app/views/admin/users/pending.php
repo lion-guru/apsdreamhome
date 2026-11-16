@@ -183,7 +183,6 @@ function confirmReject() {
     })
     .then(r => r.json())
     .then(data => {
-        .catch(err => console.error('Request failed:', err));
         bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
         if (data.success) {
             const row = document.getElementById('row-' + userId);
@@ -238,7 +237,6 @@ function bulkApprove() {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-                .catch(err => console.error('Request failed:', err));
             ids.forEach(id => {
                 const row = document.getElementById('row-' + id);
                 if (row) row.remove();

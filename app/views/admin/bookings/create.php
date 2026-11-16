@@ -405,7 +405,7 @@ $active_page = 'bookings';
                 resolveAssociateName();
             });
         }
-    });
+    }
 </script>
 <!-- jQuery and Select2 JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

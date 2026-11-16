@@ -568,7 +568,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading('approveSubmitBtn', 'approveSpinner', 'approveBtnText', 'Approving...');
             }
         });
-    });
+    }
 
     // Reject form
     const rejectForm = document.getElementById('rejectForm');
@@ -585,7 +585,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading('rejectSubmitBtn', 'rejectSpinner', 'rejectBtnText', 'Rejecting...');
             }
         });
-    });
+    }
 
     // Complete form
     const completeForm = document.getElementById('completeForm');
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showLoading('completeSubmitBtn', 'completeSpinner', 'completeBtnText', 'Completing...');
             }
         });
-    });
+    }
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {

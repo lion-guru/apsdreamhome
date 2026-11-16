@@ -356,17 +356,17 @@ async function quickCall() {
 }
 
 async function hangupCall(channel) {
-    apsConfirm('Hangup this call?').then(function(ok) {
+    apsConfirm('Hangup this call?').then(async function(ok) {
         if (!ok) return;
-    try {
-        await fetch('<?= BASE_URL ?>/admin/sim-calling/api/hangup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ channel })
-        });
-        location.reload();
+        try {
+            await fetch('<?= BASE_URL ?>/admin/sim-calling/api/hangup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ channel })
+            });
+            location.reload();
+        } catch (e) { showToast('Hangup failed', 'danger'); }
     });
-    } catch (e) { showToast('Hangup failed', 'danger'); }
 }
 
 function refreshChannels() { location.reload(); }

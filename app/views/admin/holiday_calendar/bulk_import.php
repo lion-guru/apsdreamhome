@@ -204,7 +204,7 @@ document.getElementById('importForm').addEventListener('submit', async function(
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${err.row}</td><td>${err.field || '-'}</td><td class="text-danger">${err.error}</td>`;
                 document.getElementById('errorsTableBody').appendChild(tr);
-            }
+            });
         } else {
             document.getElementById('errorsContainer').classList.add('d-none');
         }
@@ -217,7 +217,7 @@ document.getElementById('importForm').addEventListener('submit', async function(
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${item.name}</td><td>${item.date}</td><td>${item.type}</td><td>${item.region || '-'}</td>`;
                 document.getElementById('createdTableBody').appendChild(tr);
-            }
+            });
         } else {
             document.getElementById('createdList').classList.add('d-none');
         }
