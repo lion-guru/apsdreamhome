@@ -71,12 +71,14 @@ class PlotTransferService
 
         // 3. Check for active legal litigation stay orders
         try {
-            $litigation = $this->db->fetchRow(
-                "SELECT COUNT(*) AS c FROM land_litigations
-                 WHERE colony_id = ? AND status = 'active' AND stay_order_granted = 1",
+            $litigation = $this->db->fetchOne(
+                "SELECT COUNT(*) FROM land_litigations ll
+                  JOIN land_parcels lp ON lp.khasra_no = ll.khasra_no AND lp.colony_id = ?
+                  WHERE ll.stay_order_active = 1 AND ll.status = 'pending'",
                 [(int)$booking['colony_id']]
             );
-            if (($litigation['c'] ?? 0) > 0) {
+            $c = (int)($litigation['c'] ?? $litigation[0] ?? 0);
+            if ($c > 0) {
                 $reasons[] = "Colony has active stay order/injunction in legal litigation records.";
             }
         } catch (\Throwable $e) {
