@@ -7,18 +7,9 @@ $daily_stats = $daily_stats ?? [];
 $template_stats = $template_stats ?? [];
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $page_title ?? 'Notification Dashboard' ?> - APS Dream Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         
         .page-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 2rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .page-header h1 { font-size: 1.75rem; font-weight: 700; color: #f8fafc; }
@@ -79,11 +70,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .stat-card .value { font-size: 1.5rem; }
             .page-header { padding: 1.5rem; }
         }
-    </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
-</head>
-<body>
-    <div class="page-header">
+</style>
+
+<div class="container-fluid py-4">
+<div class="page-header">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1><i class="fas fa-bell me-2"></i>Notification Dashboard</h1>
@@ -256,5 +246,4 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     </div>
     
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>

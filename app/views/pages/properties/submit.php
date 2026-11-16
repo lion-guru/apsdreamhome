@@ -23,7 +23,7 @@
                     <h3 class="mb-4 border-bottom pb-2"><?php echo __('property_details', 'Property Details'); ?></h3>
 
                     <?php if (isset($_SESSION['error'])): ?>
-                        <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                        <div class="alert alert-danger"><?= htmlspecialchars((string)($_SESSION['error'] ?? ''), ENT_QUOTES, 'UTF-8'); unset($_SESSION['error']); ?></div>
                     <?php endif; ?>
 
                     <?php if (isset($_SESSION['msg'])): ?>

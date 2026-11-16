@@ -3,25 +3,13 @@ $base = rtrim(BASE_URL, '/');
 $csrf = $this->getCsrfToken();
 $mode = $mode ?? 'create';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
-    <style>
-        .item-row { border: 1px solid #dee2e6; border-radius: .375rem; padding: 1rem; margin-bottom: 1rem; background: #f8f9fa; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .item-row { border: 1px solid #dee2e6; border-radius: .375rem; padding: 1rem; margin-bottom: 1rem; background: #f8f9fa; }
         .item-row .row > div { padding: 0 .5rem; }
         .calc-summary { background: #e7f3ff; border: 1px solid #b6d4fe; border-radius: .375rem; padding: 1rem; margin-top: 1rem; }
         .calc-row { display: flex; justify-content: space-between; padding: .25rem 0; }
         .calc-row.total { font-weight: 700; font-size: 1.1rem; color: #6B4EE6; border-top: 1px solid #b6d4fe; padding-top: .75rem; }
-    </style>
-</head>
-<body>
-<?php require_once __DIR__ . '/../../layouts/admin.php'; ?>
+</style>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -364,5 +352,3 @@ document.getElementById('supplyType').addEventListener('change', updateSummary);
 // Add first item on load
 addItem();
 </script>
-</body>
-</html>

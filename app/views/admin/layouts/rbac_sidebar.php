@@ -93,6 +93,11 @@ foreach ($menuItems as $item) {
 
 // Hub definitions — map legacy sections to 5 hubs
 $hubDefinitions = [
+    'overview' => [
+        'label' => '0. Executive Overview',
+        'icon' => 'fas fa-tachometer-alt',
+        'sections' => ['main', 'dashboards'],
+    ],
     'inventory' => [
         'label' => '1. Inventory & Projects',
         'icon' => 'fas fa-building',
@@ -138,7 +143,8 @@ $defaultHub = 'control';
 
 // Section display names with icons (for individual section headers within hubs)
 $sectionNames = [
-    'dashboards'  => '📊 Dashboards',
+    'main'        => '📊 Main Dashboard',
+    'dashboards'  => '📈 Role Dashboards',
     'crm'         => '👥 CRM & Leads',
     'projects'    => '🏗️ Projects & Townships',
     'colonies'    => '🏘️ Colonies & Planning',
@@ -204,7 +210,7 @@ $sectionNames = [
 ];
 
 // Hub sort order
-$hubOrder = ['inventory', 'sales', 'mlm', 'finance', 'control', 'operations'];
+$hubOrder = ['overview', 'inventory', 'sales', 'mlm', 'finance', 'control', 'operations'];
 
 // Flatten the menu tree: getMenuItems() nests children inside parents for
 // RBAC roles (admin/manager), but the sidebar groups by section — without

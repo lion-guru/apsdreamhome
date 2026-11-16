@@ -58,7 +58,7 @@ foreach ($plots as $plot) {
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <span class="info-chip mb-3 bg-white"><i class="fas fa-certificate text-warning"></i> <?= __('plots_avail_rera', [], 'RERA Registered Projects') ?></span>
+                <span class="info-chip mb-3 bg-white"><i class="fas fa-certificate text-warning"></i> <?= __('plots_avail_rera', [], 'RERA Verification On Request') ?></span>
                 <h1 class="display-5 fw-bold mb-3"><?= __('plots_avail_hero_heading', [], 'Live Plot Availability') ?></h1>
                 <p class="lead opacity-90"><?= __('plots_avail_hero_desc', [], 'Stay updated with the latest inventory across APS Dream Homes colonies. Check real-time status and schedule site visits.') ?></p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">

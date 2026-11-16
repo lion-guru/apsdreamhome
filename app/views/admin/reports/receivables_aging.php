@@ -109,4 +109,4 @@ $buckets = $data['buckets'] ?? [];
     </section>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

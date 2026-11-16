@@ -1,3 +1,87 @@
+## Session 663: Whole-Admin View Sanitization (29 Views De-Duplicated), Executive Overview Hub & Submenu Tree Restored, Plots-Availability 500 Cured, RERA & Arrears Sanitized, Gates Green (2026-11-17)
+
+### Trigger
+User: "do next" - following comprehensive admin views & sidebar audit ("admin ke view me kamiya khojo aur sidebar menu me bhi dekaur dekho kaha kaha consitency gadbad hai ya aur koi problem ya kamiya to improve kiya jaye").
+
+### What was found & fixed
+1. **Admin Sidebar Submenu Hierarchy Restoration (`AdminMenuService.php`):**
+   - For `ROLE_SUPER_ADMIN`, `getMenuItems()` returned `$this->filterForTenant($items)` directly without calling `buildMenuTree($items)`, producing a 100% flat list of 396 items and bypassing all submenus. Super Admin now routes through `buildMenuTree($filtered)`.
+   - In `buildMenuTree()`, changed root parent check from `=== null` to `empty($item['parent_id'])` to properly handle `0`, `'0'`, `''` parent IDs in MySQL DB rows.
+   - Fixed 15 role dashboards (IDs 482–496) from broken non-existent `parent_id = 2` to `parent_id = 480` (`Dashboard`, `/admin/dashboard`), nesting them as clean submenus under Dashboard.
+   - Fixed Dead Letter Queue (`id = 420`, `/admin/messenger/dead-letters`) from `parent_id = 1` (`ERP Overview`) to `parent_id = 421` (`Messenger Routing`, `/admin/messenger`).
+2. **Executive Overview Hub at Top of Sidebar (`rbac_sidebar.php`):**
+   - Legacy `hubDefinitions` did not map sections `'main'` or `'dashboards'` to any hub, dumping all executive dashboards into Hub 5 ("System & HR") at the bottom of the sidebar.
+   - Added Hub 0 `0. Executive Overview` (`fas fa-tachometer-alt`) containing `['main', 'dashboards']` at the top of `$hubDefinitions` and `$hubOrder`, and added `'main' => '📊 Main Dashboard'` to `$sectionNames`.
+3. **HTML Document Sanitization across 29 Admin Views:**
+   - Stripped duplicate `<!DOCTYPE html><html lang="en"><head>...<body>` wrappers, inner `require_once admin.php` calls, and trailing `</body></html>` across 29 views rendered by `AdminBaseController::render()`:
+     - 9 GST views: `dashboard.php`, `einvoice_log.php`, `gstr1.php`, `gstr3b.php`, `hsn_codes.php`, `invoice_form.php`, `invoice_view.php`, `invoices.php`, `returns_log.php`.
+     - 5 Property Tax views: `demand_register.php`, `form.php`, `index.php`, `payments.php`, `rebate_rules.php`.
+     - 4 System Config views: `index.php`, `edit.php`, `audit.php`, `import.php`.
+     - 3 Notification Dashboard views: `index.php`, `sms_templates.php`, `whatsapp_templates.php`.
+     - 2 Campaign Templates views: `index.php`, `form.php`.
+     - 1 Storage view: `storage/index.php`.
+     - 3 Plot & Colony Pipeline views: `plots/import.php`, `colony-pipeline/pricing-applications.php`, `colony-pipeline/pricing-history.php`.
+   - Purged non-existent `admin_header.php` and `admin_footer.php` includes across 8 views (`multi_currency/create.php`, `edit.php`, `index.php`, `reports/fund_flow.php`, `reports/payables_aging.php`, `reports/receivables_aging.php`, `tax_planning/index.php`, `inventory_mgmt/valuation.php`) eliminating silent PHP include warnings.
+   - Purged hardcoded `http://localhost/apsdreamhome/assets/...` in CSS links in `plots/import.php` and `pricing-*` views.
+4. **Fatal 500 View Resolution in `PropertyPageController.php`:**
+   - Fixed fatal `View not found: pages/plots_availability` on `/plots-availability` by aligning view name to actual hyphenated file `pages/plots-availability`.
+5. **Portability of High-Traffic Admin Views (`<?= $base ?>`):**
+   - Prepend `<?= $base ?>` to all hardcoded `href="/admin/..."` and `action="/admin/..."` paths in `legal-colony-pipeline/detail.php`, `legal-colony-pipeline/index.php`, `transfers/index.php`, and `legal/registry_appointments.php`.
+6. **XSS & RERA Copy Compliance:**
+   - Sanitized `$success` / `$error` variables in `about-cms/index.php`, `$_GET['status']` in `recurring_journal_entries/show.php`, and re-posted fields in `salary/arrears_preview.php`.
+   - Updated legal RERA disclaimers in `lang/en.php`, `lang/hi.php`, `plots-availability.php`, and `pdf_templates/receipt.php` to "RERA verification on request".
+
+### Verification
+- `php -l`: 98/98 files clean (0 syntax errors).
+- PHPStan: `[OK] No errors` (`--memory-limit=1G`).
+- Master Test Suite: `11/11 PASSED` (35.25s, 100% HEALTHY).
+- Smoke Runner: `38/38 PASSED` (0 failed, 100% green).
+- Zero Database Drift: Verified users (82), bookings (23), leads (994), transactions (5), ledger (359), email queue (14) — 100% clean baseline.
+- AGENTS.md Integrity: Validated via `scripts/verify_agents_log.php`.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **662** (parallel actor, Agent Layout Flash-Blind Fixed). This entry = **S663**. Next-free = **664**.
+
+### Key lessons
+_1426. **Controller render views must never declare their own DOCTYPE/HTML wrapper - layouts already provide the document boundary; nested doctypes corrupt the DOM and duplicate headers.**
+_1427. **File naming mismatches between underscore and hyphen (e.g. plots_availability vs plots-availability) cause fatal 500s that static analysis misses if view paths are strings.**
+_1428. **Always verify parent_id references in navigation tables - orphaned items silently float to the top level, cluttering the UI.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY task 16).
+
+## Session 662: Agent Layout Flash-Blind Fixed - Every Agent-Portal Action Now Renders Alert Feedback; 404s /employee-Self-Service Verified Alive, Gates Green (2026-11-17)
+
+### Trigger
+User: "do next all" - closing the portal-flash enumeration the previous sessions started (S654 customer, S655 base/customer, S659 employee/admin/public, S662 agent). Agent layout was the last portal whose `$_SESSION['success'/'error']` and `flash_*` keys were silently swallowed at render time.
+
+### What was found &amp; fixed
+- `app/views/layouts/agent.php`: NO flash rendering anywhere - agent actions (lead assignment, site-visit scheduling, commission-share links, wallet-activation claims) all wrote to `$_SESSION` with zero UI output, exactly the S653 lead-detail/S655 customer-portal defect class.
+- Added the S662 shared partial: `<?php include __DIR__ . '/flash-block.php'; ?>` directly before the `<div class="content-wrapper" id="aps-main-content">` block - consumes both the legacy `flash_success`/`flash_error` keys AND the current `success`/`error`/`info` family from `HasFlashMessages::setFlash()`.
+- Agent self-contained views (like `wallet_activation_packages.php`) remain self-rendered with own flash blocks - untouched.
+
+### Live verification
+- `/agent/dashboard` -> HTTP 200 (59,601 B), needle `aps-flash-region` YES.
+- `/agent/leads` -> HTTP 200 (49,887 B), needle YES.
+- Employee self-service regression: `/employee/self-service/grievances` + `/employee/self-service/grievances/create` -> HTTP 200, flash-region YES, `Submit Grievance` needle YES - the S662/S655 partial surfaces on the employee layout too.
+- `/admin/holiday-calendar` -> 200 (393,854 B, Holiday needles YES - confirms holiday feature usable post-S628 fix).
+- **PHPStan -> [OK] No errors** (1517 files via edit tool path lint) - **Master -> 11/11 PASSED**.
+- `php -l` clean on the single touched file.
+
+### Honest notes
+- `app/views/agent/layouts/agent.php` is a distinct UNUSED copy of the agent layout (the live one is `layouts/agent.php` via the `AgentDashboardController` constructor); my first edit landed on the dead copy, was caught by the agent page probe returning `flash-region:NO`, and the dead-copy revert + live-file patch was redone in the same round. The dead copy is unchanged now (reverted to HEAD); the live file is the one patched.
+- No money tables, no routes, no schema touched - one view file only.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **661** (parallel actor, Employee Onboarding end-to-end + customize-dashboard widgets). This entry = **S662**. Next-free = **663**.
+
+### Key lessons
+_1426. **Portal layouts are enumerable - list them all and render-check each before declaring "flash is fixed"; a dead copy with the same path shape exists in the repo and will eat your edit silently if you don\x27t probe after editing.**
+_1427. **Always pick the layout the controller resolves, not the one with the most similar name; a flat-layout fallback chain in HasViewRendering makes wrong-file edits invisible in lint and PHPStan.**
+_1428. **A 59 KB page with a flash-region present still cannot prove a flash rendered - but it is the necessary precondition; pair it with a POST-then-GET probe whenever a flashian action is exercised E2E.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload ? HTTPS assetlinks SHA-256 ? RERA colony numbers ? EMI backfill ? live AI dialing (Twilio + `--execute`) ? production deploy ? Task Scheduler verification (DAILY tasks 15/16/17) ? Employee-self-service POST flows (advances, overtime, leaves) flash verified live for display only - some still need a real E2E roundtrip check + browser probe.
 ## Session 659: Flash Family Fixed EVERYWHERE - universal flash rendering in base/employee/admin/customer layouts (+ shared partial), Crafted Priority POST Crash Closed, Cookie-Jar-Dead Environment Fixed in Smoke Runner, Gates Green (2026-11-16)
 
 ### Trigger

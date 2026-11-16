@@ -10,15 +10,8 @@ $localPath = $info['local_path'] ?? '';
 $localSize = (int) ($info['local_size_bytes'] ?? 0);
 $localCount = (int) ($info['local_count'] ?? 0);
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storage Gateways - APS Dream Home</title>
-    <link rel="stylesheet" href="<?= $base ?>/assets/admin/css/admin.css">
-    <style>
-        .storage-card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:20px; margin-bottom:16px; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .storage-card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:20px; margin-bottom:16px; }
         .storage-card h3 { margin:0 0 12px 0; font-size:1.15rem; display:flex; align-items:center; gap:8px; }
         .badge { display:inline-block; padding:3px 8px; border-radius:4px; font-size:.75rem; font-weight:600; }
         .badge-green { background:#10b981; color:#fff; }
@@ -38,10 +31,9 @@ $localCount = (int) ($info['local_count'] ?? 0);
         .alert-error { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
         .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
         .alert-info { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
-    </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
-</head>
-<body>
+</style>
+
+<div class="container-fluid py-4">
 <div class="admin-wrap">
     <?php include __DIR__ . '/../layouts/sidebar.php'; ?>
     <main >
@@ -133,5 +125,4 @@ AWS_BUCKET=apsdreamhome-uploads</pre>
         </div>
     </main>
 </div>
-</body>
-</html>
+</div>

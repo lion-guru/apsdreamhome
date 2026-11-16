@@ -94,7 +94,7 @@ $purpose = $data['purpose'] ?? 'Payment';
         
         <div class="footer">
             <p><strong><?= htmlspecialchars($companyName) ?></strong> - Premium Plots & Townships in Gorakhpur</p>
-            <p>RERA Registered | ISO 9001:2015 Certified</p>
+            <p>RERA verification available on request at our legal desk | Support: +91 7007444842</p>
             <p>Website: www.apsdreamhomes.co.in | Support: +91 7007444842</p>
             <div class="seal">
                 <svg width="80" height="80" viewBox="0 0 80 80" style="border: 2px solid #D4AF37; border-radius: 50%; padding: 5px;">

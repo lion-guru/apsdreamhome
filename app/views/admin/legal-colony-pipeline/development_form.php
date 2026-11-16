@@ -7,11 +7,11 @@ $costs  = $costs ?? [];
   <h2 class="mb-4"><i class="fas fa-hard-hat me-2 text-secondary"></i>Phase 5: Development Costs</h2>
 
   <?php if (!empty($_SESSION['flash_success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-1"></i> <?= $_SESSION['flash_success'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars((string)($_SESSION['flash_success'] ?? ''), ENT_QUOTES, 'UTF-8') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_success']); ?>
   <?php endif; ?>
   <?php if (!empty($_SESSION['flash_error'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-triangle me-1"></i> <?= $_SESSION['flash_error'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars((string)($_SESSION['flash_error'] ?? ''), ENT_QUOTES, 'UTF-8') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_error']); ?>
   <?php endif; ?>
 

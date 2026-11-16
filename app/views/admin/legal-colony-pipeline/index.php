@@ -1,4 +1,6 @@
 <?php
+$base = defined('BASE_URL') ? BASE_URL : '';
+
 $colonies     = $colonies ?? [];
 $stats        = $stats ?? [];
 $colonyHealth = $colony_health ?? [];
@@ -12,14 +14,14 @@ $stages       = $stages ?? [];
       <h1 class="h3 mb-1"><i class="fas fa-gavel me-2 text-warning"></i>Legal Colony Development Pipeline</h1>
       <small class="text-muted">7-Phase Legal Colony Development: Land →' Planning →' Plots →' RERA →' Dev →' Pricing →' Sales</small>
     </div>
-    <a href="/admin/legal-colony-pipeline/start-acquisition" class="btn btn-warning">
+    <a href="<?= $base ?>/admin/legal-colony-pipeline/start-acquisition" class="btn btn-warning">
       <i class="fas fa-plus me-1"></i> Start New Acquisition
     </a>
     <div class="btn-group btn-group-sm ms-2">
-      <a href="/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-success" title="Compare All Colonies">
+      <a href="<?= $base ?>/admin/legal-colony-pipeline/analytics-all" class="btn btn-outline-success" title="Compare All Colonies">
         <i class="fas fa-chart-bar me-1"></i> Compare
       </a>
-      <a href="/admin/legal-colony-pipeline/health" class="btn btn-outline-danger" title="Health Dashboard">
+      <a href="<?= $base ?>/admin/legal-colony-pipeline/health" class="btn btn-outline-danger" title="Health Dashboard">
         <i class="fas fa-heartbeat me-1"></i> Health
       </a>
       <button class="btn btn-outline-warning" onclick="autoAdvance()" title="Auto-advance all eligible colonies">
@@ -40,7 +42,7 @@ $stages       = $stages ?? [];
     </div>
     <div class="col-md-2">
       <div class="card border-0 shadow-sm <?= ($filterStage === 'land_acquisition') ? 'bg-warning' : 'bg-dark' ?> text-white">
-        <a href="/admin/legal-colony-pipeline?stage=land_acquisition" class="text-white text-decoration-none">
+        <a href="<?= $base ?>/admin/legal-colony-pipeline?stage=land_acquisition" class="text-white text-decoration-none">
           <div class="card-body text-center py-3">
             <div class="fs-3 fw-bold"><?= (int)($stats['land_acq'] ?? 0) ?></div>
             <small><i class="fas fa-file-contract me-1"></i> Land Acquisition</small>
@@ -50,7 +52,7 @@ $stages       = $stages ?? [];
     </div>
     <div class="col-md-2">
       <div class="card border-0 shadow-sm <?= ($filterStage === 'master_planning') ? 'bg-info' : 'bg-dark' ?> text-white">
-        <a href="/admin/legal-colony-pipeline?stage=master_planning" class="text-white text-decoration-none">
+        <a href="<?= $base ?>/admin/legal-colony-pipeline?stage=master_planning" class="text-white text-decoration-none">
           <div class="card-body text-center py-3">
             <div class="fs-3 fw-bold"><?= (int)($stats['planning'] ?? 0) ?></div>
             <small><i class="fas fa-drafting-compass me-1"></i> Planning</small>
@@ -60,7 +62,7 @@ $stages       = $stages ?? [];
     </div>
     <div class="col-md-2">
       <div class="card border-0 shadow-sm <?= ($filterStage === 'plot_cutting') ? 'bg-primary' : 'bg-dark' ?> text-white">
-        <a href="/admin/legal-colony-pipeline?stage=plot_cutting" class="text-white text-decoration-none">
+        <a href="<?= $base ?>/admin/legal-colony-pipeline?stage=plot_cutting" class="text-white text-decoration-none">
           <div class="card-body text-center py-3">
             <div class="fs-3 fw-bold"><?= (int)($stats['plot_cut'] ?? 0) ?></div>
             <small><i class="fas fa-vector-square me-1"></i> Plot Cutting</small>
@@ -70,7 +72,7 @@ $stages       = $stages ?? [];
     </div>
     <div class="col-md-2">
       <div class="card border-0 shadow-sm <?= ($filterStage === 'rera_registration') ? 'bg-danger' : 'bg-dark' ?> text-white">
-        <a href="/admin/legal-colony-pipeline?stage=rera_registration" class="text-white text-decoration-none">
+        <a href="<?= $base ?>/admin/legal-colony-pipeline?stage=rera_registration" class="text-white text-decoration-none">
           <div class="card-body text-center py-3">
             <div class="fs-3 fw-bold"><?= (int)($stats['rera'] ?? 0) ?></div>
             <small><i class="fas fa-stamp me-1"></i> RERA</small>
@@ -80,7 +82,7 @@ $stages       = $stages ?? [];
     </div>
     <div class="col-md-2">
       <div class="card border-0 shadow-sm <?= ($filterStage === 'pricing') ? 'bg-success' : 'bg-dark' ?> text-white">
-        <a href="/admin/legal-colony-pipeline?stage=pricing" class="text-white text-decoration-none">
+        <a href="<?= $base ?>/admin/legal-colony-pipeline?stage=pricing" class="text-white text-decoration-none">
           <div class="card-body text-center py-3">
             <div class="fs-3 fw-bold"><?= (int)($stats['pricing'] ?? 0) ?></div>
             <small><i class="fas fa-tag me-1"></i> Pricing</small>
@@ -156,7 +158,7 @@ function autoAdvance() {
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <strong><i class="fas fa-list me-1"></i> Colonies <?= $filterStage ? '— ' . ucfirst(str_replace('_', ' ', $filterStage)) : 'All Stages' ?></strong>
       <?php if ($filterStage): ?>
-        <a href="/admin/legal-colony-pipeline" class="btn btn-sm btn-outline-light"><i class="fas fa-times me-1"></i> Clear Filter</a>
+        <a href="<?= $base ?>/admin/legal-colony-pipeline" class="btn btn-sm btn-outline-light"><i class="fas fa-times me-1"></i> Clear Filter</a>
       <?php endif; ?>
     </div>
     <div class="table-responsive">
@@ -242,31 +244,31 @@ function autoAdvance() {
                 <td>₹<?= number_format(floatval($c['dev_cost_total'] ?? 0)) ?></td>
                 <td>
                   <div class="btn-group btn-group-sm">
-                    <a href="/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-outline-info" title="Pipeline Detail">
+                    <a href="<?= $base ?>/admin/legal-colony-pipeline/detail/<?= $c['id'] ?>" class="btn btn-outline-info" title="Pipeline Detail">
                       <i class="fas fa-project-diagram"></i>
                     </a>
                     <?php if ($stage === 'land_acquisition'): ?>
-                      <a href="/admin/legal-colony-pipeline/master-plan/<?= $c['id'] ?>" class="btn btn-outline-warning" title="Create Master Plan">
+                      <a href="<?= $base ?>/admin/legal-colony-pipeline/master-plan/<?= $c['id'] ?>" class="btn btn-outline-warning" title="Create Master Plan">
                         <i class="fas fa-drafting-compass"></i>
                       </a>
                     <?php elseif ($stage === 'master_planning'): ?>
-                      <a href="/admin/legal-colony-pipeline/plot-cutting/<?= $c['id'] ?>" class="btn btn-outline-primary" title="Plot Cutting">
+                      <a href="<?= $base ?>/admin/legal-colony-pipeline/plot-cutting/<?= $c['id'] ?>" class="btn btn-outline-primary" title="Plot Cutting">
                         <i class="fas fa-vector-square"></i>
                       </a>
                     <?php elseif ($stage === 'plot_cutting'): ?>
-                      <a href="/admin/legal-colony-pipeline/rera/<?= $c['id'] ?>" class="btn btn-outline-danger" title="RERA Registration">
+                      <a href="<?= $base ?>/admin/legal-colony-pipeline/rera/<?= $c['id'] ?>" class="btn btn-outline-danger" title="RERA Registration">
                         <i class="fas fa-stamp"></i>
                       </a>
                     <?php elseif ($stage === 'rera_registration' || $stage === 'development'): ?>
-                      <a href="/admin/legal-colony-pipeline/development/<?= $c['id'] ?>" class="btn btn-outline-secondary" title="Record Costs">
+                      <a href="<?= $base ?>/admin/legal-colony-pipeline/development/<?= $c['id'] ?>" class="btn btn-outline-secondary" title="Record Costs">
                         <i class="fas fa-hard-hat"></i>
                       </a>
                     <?php elseif ($stage === 'pricing' || $stage === 'development'): ?>
-                      <a href="/admin/legal-colony-pipeline/pricing/<?= $c['id'] ?>" class="btn btn-outline-success" title="Apply Pricing">
+                      <a href="<?= $base ?>/admin/legal-colony-pipeline/pricing/<?= $c['id'] ?>" class="btn btn-outline-success" title="Apply Pricing">
                         <i class="fas fa-tag"></i>
                       </a>
                     <?php endif; ?>
-                    <a href="/admin/legal-colony-pipeline/readiness/<?= $c['id'] ?>" class="btn btn-outline-light" title="Sales Readiness">
+                    <a href="<?= $base ?>/admin/legal-colony-pipeline/readiness/<?= $c['id'] ?>" class="btn btn-outline-light" title="Sales Readiness">
                       <i class="fas fa-clipboard-check"></i>
                     </a>
                   </div>

@@ -18,10 +18,10 @@ $policy = $policy ?? [];
                     <p class="text-muted">Request overtime payment for extra hours worked. Rate: <?= $policy['weekday_rate'] ?? '1.5x' ?> (weekdays), <?= $policy['weekend_rate'] ?? '2x' ?> (weekends/holidays).</p>
 
                     <?php if (isset($_SESSION['error'])): ?>
-                        <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                        <div class="alert alert-danger"><?= htmlspecialchars((string)($_SESSION['error'] ?? ''), ENT_QUOTES, 'UTF-8'); unset($_SESSION['error']); ?></div>
                     <?php endif; ?>
                     <?php if (isset($_SESSION['success'])): ?>
-                        <div class="alert alert-success"><?= $_SESSION['success']; unset($_SESSION['success']); ?></div>
+                        <div class="alert alert-success"><?= htmlspecialchars((string)($_SESSION['success'] ?? ''), ENT_QUOTES, 'UTF-8'); unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
                     <form method="POST" action="<?= BASE_URL ?>/employee/self-service/overtime/apply" id="overtimeApplyForm">

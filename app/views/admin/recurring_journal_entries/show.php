@@ -53,7 +53,7 @@ $lines = $lines ?? [];
             <?php if ($rje['is_active']): ?>
             <button type="button" class="btn btn-success" onclick="executeJe(<?= $rje['id'] ?>)"><i class="fas fa-play me-2"></i>Execute Now (Post JE)</button>
             <?php endif; ?>
-            <a href="?status=<?= $_GET['status'] ?? 'active' ?>" class="btn btn-outline-secondary">Back to List</a>
+            <a href="?status=<?= htmlspecialchars((string)($_GET['status'] ?? 'active'), ENT_QUOTES, 'UTF-8') ?>" class="btn btn-outline-secondary">Back to List</a>
         </div>
         <div class="col-md-6 d-flex gap-2">
             <?php if ($rje['is_active']): ?>

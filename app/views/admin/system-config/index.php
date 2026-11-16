@@ -4,27 +4,14 @@
  */
 $base = BASE_URL;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/css/style.css?v=7" rel="stylesheet">
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        .config-card { transition: all 0.2s ease; }
-        .config-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        .config-value { font-family: 'Monospace', monospace; font-size: 0.85rem; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .group-header { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; }
-        .search-highlight { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
-    </style>
-</head>
-<body>
-    <?php include __DIR__ . '/../layouts/admin.php'; ?>
-    
-    <main class="main-content">
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .config-card { transition: all 0.2s ease; }
+    .config-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
+    .config-value { font-family: 'Monospace', monospace; font-size: 0.85rem; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .group-header { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: white; }
+    .search-highlight { background: #fff3cd; padding: 2px 4px; border-radius: 3px; }
+</style>
+<div class="container-fluid py-4">
         <header class="top-header">
             <div>
                 <h1 class="page-title"><?= htmlspecialchars($page_title) ?></h1>
@@ -339,5 +326,4 @@ $base = BASE_URL;
             });
         }
     </script>
-</body>
-</html>
+</div>

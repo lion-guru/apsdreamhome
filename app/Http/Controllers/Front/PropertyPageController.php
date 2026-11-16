@@ -863,7 +863,7 @@ class PropertyPageController extends BaseController
             ORDER BY c.name
         ", $params);
 
-        $this->render('pages/plots_availability', [
+        $this->render('pages/plots-availability', [
             'page_title' => 'Plots Availability - APS Dream Home',
             'page_description' => 'Check real-time plot availability.',
             'colonies' => $colonies,

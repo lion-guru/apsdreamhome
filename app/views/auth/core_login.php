@@ -165,8 +165,8 @@ $supportedRoles = [
             <div class="benefit-item">
                 <div class="benefit-icon"><i class="fas fa-shield-halved"></i></div>
                 <div class="benefit-text">
-                    <h4>100% Legal Verification Available</h4>
-                    <p>RERA compliant with complete documentation</p>
+                    <h4>Colony-wise Legal Verification</h4>
+                    <p>Colony-wise RERA status available on request; ask for the colony certificate at our legal desk</p>
                 </div>
             </div>
             <div class="benefit-item">

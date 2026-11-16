@@ -208,7 +208,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_possession', null, 'Possession within 24 months from agreement date') ?></li>
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_stamp', null, 'Stamp duty and registration charges borne by buyer') ?></li>
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_dispute', null, 'Dispute resolution: Gorakhpur jurisdiction') ?></li>
-                    <li class="mb-0"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_rera', null, 'RERA registered project') ?></li>
+                    <li class="mb-0"><i class="fas fa-check text-success me-2"></i><?= __('user_agreement_detail_term_rera', null, 'RERA status available on request') ?></li>
                 </ul>
             </div>
         </div>

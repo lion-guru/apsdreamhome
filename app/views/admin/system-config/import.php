@@ -4,20 +4,7 @@
  */
 $base = BASE_URL;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/css/style.css?v=7" rel="stylesheet">
-</head>
-<body>
-    <?php include __DIR__ . '/../layouts/admin.php'; ?>
-    
-    <main class="main-content">
+<div class="container-fluid py-4">
         <header class="top-header">
             <div>
                 <h1 class="page-title"><?= htmlspecialchars($page_title) ?></h1>
@@ -123,8 +110,5 @@ $base = BASE_URL;
                 </div>
             </div>
         </div>
-    </main>
-
-    <?php include __DIR__ . '/../layouts/admin.php'; ?>
-</body>
-</html>
+    </div>
+</div>

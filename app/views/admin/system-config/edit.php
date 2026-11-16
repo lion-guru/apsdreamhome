@@ -4,24 +4,11 @@
  */
 $base = BASE_URL;
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link href="<?= $base ?>/assets/css/style.css?v=7" rel="stylesheet">
-    <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        .json-editor { font-family: 'Monospace', monospace; }
-        .type-badge { font-size: 0.75rem; }
-    </style>
-</head>
-<body>
-    <?php include __DIR__ . '/../layouts/admin.php'; ?>
-    
-    <main class="main-content">
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .json-editor { font-family: 'Monospace', monospace; }
+    .type-badge { font-size: 0.75rem; }
+</style>
+<div class="container-fluid py-4">
         <header class="top-header">
             <div>
                 <h1 class="page-title"><?= htmlspecialchars($page_title) ?></h1>
@@ -239,5 +226,4 @@ $base = BASE_URL;
             });
         });
     </script>
-</body>
-</html>
+</div>

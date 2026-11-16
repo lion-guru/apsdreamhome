@@ -1,4 +1,6 @@
 <?php
+$base = defined('BASE_URL') ? BASE_URL : '';
+
 /**
  * Admin Plot Transfer & Resale NOC Desk — List View
  */
@@ -16,10 +18,10 @@ $current_status = $current_status ?? 'all';
             <small class="text-muted">Oversee plot resale, family gifts, and ownership handover with audit-ready NOCs.</small>
         </div>
         <div class="d-flex gap-2">
-            <a href="/admin/plots" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= $base ?>/admin/plots" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-th-large me-1"></i>All Plots
             </a>
-            <a href="/admin/sales/registry-packet" class="btn btn-outline-primary btn-sm">
+            <a href="<?= $base ?>/admin/sales/registry-packet" class="btn btn-outline-primary btn-sm">
                 <i class="fas fa-folder me-1"></i>Registry Packets
             </a>
         </div>
@@ -28,31 +30,31 @@ $current_status = $current_status ?? 'all';
     <!-- Status Tabs / Counters -->
     <div class="row g-2 mb-3">
         <div class="col-6 col-md-2">
-            <a href="/admin/plot-transfers?status=all" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'all' ? 'bg-primary text-white' : 'bg-white text-dark' ?>">
+            <a href="<?= $base ?>/admin/plot-transfers?status=all" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'all' ? 'bg-primary text-white' : 'bg-white text-dark' ?>">
                 <div class="small fw-semibold">Total Requests</div>
                 <div class="fs-5 fw-bold"><?= (int)($counts['all'] ?? 0) ?></div>
             </a>
         </div>
         <div class="col-6 col-md-2">
-            <a href="/admin/plot-transfers?status=requested" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'requested' ? 'bg-warning text-dark' : 'bg-white text-dark' ?>">
+            <a href="<?= $base ?>/admin/plot-transfers?status=requested" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'requested' ? 'bg-warning text-dark' : 'bg-white text-dark' ?>">
                 <div class="small fw-semibold">Pending Review</div>
                 <div class="fs-5 fw-bold text-warning"><?= (int)($counts['requested'] ?? 0) ?></div>
             </a>
         </div>
         <div class="col-6 col-md-2">
-            <a href="/admin/plot-transfers?status=approved" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'approved' ? 'bg-info text-white' : 'bg-white text-dark' ?>">
+            <a href="<?= $base ?>/admin/plot-transfers?status=approved" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'approved' ? 'bg-info text-white' : 'bg-white text-dark' ?>">
                 <div class="small fw-semibold">NOC Issued</div>
                 <div class="fs-5 fw-bold text-info"><?= (int)($counts['approved'] ?? 0) ?></div>
             </a>
         </div>
         <div class="col-6 col-md-2">
-            <a href="/admin/plot-transfers?status=completed" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'completed' ? 'bg-success text-white' : 'bg-white text-dark' ?>">
+            <a href="<?= $base ?>/admin/plot-transfers?status=completed" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'completed' ? 'bg-success text-white' : 'bg-white text-dark' ?>">
                 <div class="small fw-semibold">Ownership Transferred</div>
                 <div class="fs-5 fw-bold text-success"><?= (int)($counts['completed'] ?? 0) ?></div>
             </a>
         </div>
         <div class="col-6 col-md-2">
-            <a href="/admin/plot-transfers?status=rejected" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'rejected' ? 'bg-danger text-white' : 'bg-white text-dark' ?>">
+            <a href="<?= $base ?>/admin/plot-transfers?status=rejected" class="card text-decoration-none border-0 shadow-sm text-center p-2 <?= $current_status === 'rejected' ? 'bg-danger text-white' : 'bg-white text-dark' ?>">
                 <div class="small fw-semibold">Rejected</div>
                 <div class="fs-5 fw-bold text-danger"><?= (int)($counts['rejected'] ?? 0) ?></div>
             </a>
@@ -69,7 +71,7 @@ $current_status = $current_status ?? 'all';
                     <i class="fas fa-search me-1"></i>Search
                 </button>
                 <?php if (!empty($search)): ?>
-                    <a href="/admin/plot-transfers?status=<?= htmlspecialchars($current_status) ?>" class="btn btn-sm btn-outline-secondary">Clear</a>
+                    <a href="<?= $base ?>/admin/plot-transfers?status=<?= htmlspecialchars($current_status) ?>" class="btn btn-sm btn-outline-secondary">Clear</a>
                 <?php endif; ?>
             </form>
         </div>
@@ -148,11 +150,11 @@ $current_status = $current_status ?? 'all';
                                     <span class="badge bg-<?= $badge ?>"><?= strtoupper(str_replace('_', ' ', $st)) ?></span>
                                 </td>
                                 <td class="text-end">
-                                    <a href="/admin/plot-transfers/<?= (int)$t['id'] ?>" class="btn btn-sm btn-outline-primary" title="Review Request">
+                                    <a href="<?= $base ?>/admin/plot-transfers/<?= (int)$t['id'] ?>" class="btn btn-sm btn-outline-primary" title="Review Request">
                                         <i class="fas fa-eye me-1"></i>Review
                                     </a>
                                     <?php if (!empty($t['noc_number'])): ?>
-                                        <a href="/admin/plot-transfers/noc/<?= (int)$t['id'] ?>" target="_blank" class="btn btn-sm btn-outline-success ms-1" title="Print NOC">
+                                        <a href="<?= $base ?>/admin/plot-transfers/noc/<?= (int)$t['id'] ?>" target="_blank" class="btn btn-sm btn-outline-success ms-1" title="Print NOC">
                                             <i class="fas fa-print me-1"></i>NOC
                                         </a>
                                     <?php endif; ?>

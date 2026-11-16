@@ -5,23 +5,11 @@ $mode = $mode ?? 'create';
 $master = $master ?? null;
 $data = $data ?? [];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
-    <style>
-        .calc-result { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: .375rem; padding: 1rem; margin-top: 1rem; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .calc-result { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: .375rem; padding: 1rem; margin-top: 1rem; }
         .calc-row { display: flex; justify-content: space-between; padding: .25rem 0; }
         .calc-row.total { border-top: 1px solid #dee2e6; margin-top: .5rem; padding-top: .75rem; font-weight: 600; font-size: 1.1rem; color: #6B4EE6; }
-    </style>
-</head>
-<body>
-<?php require_once __DIR__ . '/../../layouts/admin.php'; ?>
+</style>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -270,5 +258,3 @@ calculateTax();
     });
 })();
 </script>
-</body>
-</html>

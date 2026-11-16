@@ -2,25 +2,13 @@
 $base = rtrim(BASE_URL, '/');
 $csrf = $this->getCsrfToken();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
-    <style>
-        .gstr3b-table { font-size: .9rem; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .gstr3b-table { font-size: .9rem; }
         .gstr3b-table th, .gstr3b-table td { padding: .5rem; }
         .section-header { background: #f0f4f8; font-weight: 600; }
         .input-cell input { border: 1px solid #ced4da; border-radius: .25rem; padding: .25rem .5rem; width: 100%; text-align: right; }
         .total-row { font-weight: 700; background: #e7f3ff; }
-    </style>
-</head>
-<body>
-<?php require_once __DIR__ . '/../../layouts/admin.php'; ?>
+</style>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -167,5 +155,3 @@ document.querySelectorAll('input[name^="data["]').forEach(input => {
 });
 updateTotals();
 </script>
-</body>
-</html>

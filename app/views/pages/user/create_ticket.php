@@ -18,7 +18,7 @@ $page_title = $page_title ?? __('user_create_ticket_page_title', 'Create Support
 
 <?php if (isset($_SESSION['flash_error'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?>
+        <?= htmlspecialchars((string)($_SESSION['flash_error'] ?? ''), ENT_QUOTES, 'UTF-8'); unset($_SESSION['flash_error']); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>

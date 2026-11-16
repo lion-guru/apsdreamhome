@@ -1,4 +1,6 @@
 <?php
+$base = defined('BASE_URL') ? BASE_URL : '';
+
 $colony      = $colony ?? null;
 $pipeline    = $pipeline ?? ['stages' => [], 'current_stage' => '', 'plot_stats' => [], 'readiness' => []];
 $acquisition = $acquisition ?? null;
@@ -35,14 +37,14 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <a href="/admin/legal-colony-pipeline" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
+      <a href="<?= $base ?>/admin/legal-colony-pipeline" class="text-decoration-none text-muted small"><i class="fas fa-arrow-left me-1"></i> Back to Pipeline</a>
       <h2 class="mb-1"><i class="fas fa-gavel me-2 text-warning"></i><?= htmlspecialchars($colony['name'] ?? 'Colony') ?></h2>
       <small class="text-muted">Pipeline Stage: <strong class="text-white"><?= ucfirst(str_replace('_', ' ', $currentStage)) ?></strong></small>
     </div>
     <div class="text-end">
       <?php if (!empty($health['success'])): ?>
         <div class="mb-2">
-          <a href="/admin/legal-colony-pipeline/health" class="text-decoration-none">
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/health" class="text-decoration-none">
             <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-<?= $health['grade']['color'] ?> text-white fw-bold" title="Health: <?= $health['grade']['label'] ?> (<?= $health['overall_score'] ?>%)">
               <?= $health['grade']['letter'] ?>
             </span>
@@ -144,7 +146,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4 <?= $currentStage === 'land_acquisition' ? 'border-warning' : '' ?>">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-file-contract me-1 text-warning"></i> Phase 1: Land Acquisition</strong>
-          <a href="/admin/legal-colony-pipeline/start-acquisition" class="btn btn-sm btn-warning"><i class="fas fa-plus me-1"></i> New</a>
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/start-acquisition" class="btn btn-sm btn-warning"><i class="fas fa-plus me-1"></i> New</a>
         </div>
         <div class="card-body">
           <?php if ($acquisition): ?>
@@ -185,7 +187,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             <hr class="border-secondary">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h2  class="fs-6 fw-semibold text-warning mb-0"><i class="fas fa-search me-1"></i> Land Leads (<?= $landLeads['count'] ?>)</h2>
-              <a href="/admin/land-inventory/leads" class="btn btn-sm btn-outline-warning">View All</a>
+              <a href="<?= $base ?>/admin/land-inventory/leads" class="btn btn-sm btn-outline-warning">View All</a>
             </div>
             <div class="table-responsive">
               <table class="table table-dark table-sm mb-0">
@@ -211,7 +213,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4 <?= $currentStage === 'master_planning' ? 'border-info' : '' ?>">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-drafting-compass me-1 text-info"></i> Phase 2: Master Planning</strong>
-          <a href="/admin/legal-colony-pipeline/master-plan/<?= $colony['id'] ?>" class="btn btn-sm btn-info"><i class="fas fa-edit me-1"></i> Create/Update</a>
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/master-plan/<?= $colony['id'] ?>" class="btn btn-sm btn-info"><i class="fas fa-edit me-1"></i> Create/Update</a>
         </div>
         <div class="card-body">
           <?php if ($layout): ?>
@@ -233,7 +235,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4 <?= $currentStage === 'plot_cutting' ? 'border-primary' : '' ?>">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-vector-square me-1 text-primary"></i> Phase 3: Plot Cutting</strong>
-          <a href="/admin/legal-colony-pipeline/plot-cutting/<?= $colony['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-cut me-1"></i> Generate</a>
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/plot-cutting/<?= $colony['id'] ?>" class="btn btn-sm btn-primary"><i class="fas fa-cut me-1"></i> Generate</a>
         </div>
         <div class="card-body">
           <div class="row g-3">
@@ -249,7 +251,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4 <?= $currentStage === 'rera_registration' ? 'border-danger' : '' ?>">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-stamp me-1 text-danger"></i> Phase 4: RERA Registration</strong>
-          <a href="/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?>" class="btn btn-sm btn-danger"><i class="fas fa-plus me-1"></i> Register</a>
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?>" class="btn btn-sm btn-danger"><i class="fas fa-plus me-1"></i> Register</a>
         </div>
         <div class="card-body">
           <?php if ($rera): ?>
@@ -290,7 +292,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4 <?= $currentStage === 'development' ? 'border-secondary' : '' ?>">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-hard-hat me-1 text-secondary"></i> Phase 5: Development Costs</strong>
-          <a href="/admin/legal-colony-pipeline/development/<?= $colony['id'] ?>" class="btn btn-sm btn-secondary"><i class="fas fa-plus me-1"></i> Record Cost</a>
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/development/<?= $colony['id'] ?>" class="btn btn-sm btn-secondary"><i class="fas fa-plus me-1"></i> Record Cost</a>
         </div>
         <div class="card-body">
           <div class="row g-3">
@@ -307,8 +309,8 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-tag me-1 text-success"></i> Phase 6: Pricing</strong>
           <div>
-            <a href="/admin/colony-feasibility/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-success me-1"><i class="fas fa-calculator me-1"></i> Feasibility</a>
-            <a href="/admin/legal-colony-pipeline/pricing/<?= $colony['id'] ?>" class="btn btn-sm btn-success"><i class="fas fa-dollar-sign me-1"></i> Apply Pricing</a>
+            <a href="<?= $base ?>/admin/colony-feasibility/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-success me-1"><i class="fas fa-calculator me-1"></i> Feasibility</a>
+            <a href="<?= $base ?>/admin/legal-colony-pipeline/pricing/<?= $colony['id'] ?>" class="btn btn-sm btn-success"><i class="fas fa-dollar-sign me-1"></i> Apply Pricing</a>
           </div>
         </div>
         <div class="card-body">
@@ -368,7 +370,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
           <?php else: ?>
             <hr class="border-secondary">
             <p class="text-muted mb-2 small"><i class="fas fa-info-circle me-1"></i> Feasibility analysis not yet calculated.</p>
-            <a href="/admin/colony-feasibility/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-calculator me-1"></i> Run Feasibility Analysis</a>
+            <a href="<?= $base ?>/admin/colony-feasibility/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-calculator me-1"></i> Run Feasibility Analysis</a>
           <?php endif; ?>
         </div>
       </div>
@@ -377,7 +379,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-dark text-white d-flex justify-content-between">
           <strong><i class="fas fa-clipboard-check me-1 text-dark"></i> Phase 7: Sales Readiness</strong>
-          <a href="/admin/legal-colony-pipeline/readiness/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-light"><i class="fas fa-eye me-1"></i> Full Checklist</a>
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/readiness/<?= $colony['id'] ?>" class="btn btn-sm btn-outline-light"><i class="fas fa-eye me-1"></i> Full Checklist</a>
         </div>
         <div class="card-body">
           <div class="mb-3">
@@ -424,40 +426,40 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
         <div class="card-header bg-dark text-white"><strong><i class="fas fa-bolt me-1"></i> Quick Actions</strong></div>
         <div class="list-group list-group-flush">
           <?php if ($currentStage === 'land_acquisition'): ?>
-            <a href="/admin/legal-colony-pipeline/master-plan/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <a href="<?= $base ?>/admin/legal-colony-pipeline/master-plan/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
               <i class="fas fa-drafting-compass me-2 text-info"></i> Create Master Plan
             </a>
           <?php endif; ?>
           <?php if ($currentStage === 'master_planning'): ?>
-            <a href="/admin/legal-colony-pipeline/plot-cutting/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <a href="<?= $base ?>/admin/legal-colony-pipeline/plot-cutting/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
               <i class="fas fa-vector-square me-2 text-primary"></i> Generate Plots
             </a>
           <?php endif; ?>
           <?php if ($currentStage === 'plot_cutting'): ?>
-            <a href="/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <a href="<?= $base ?>/admin/legal-colony-pipeline/rera/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
               <i class="fas fa-stamp me-2 text-danger"></i> Register RERA
             </a>
           <?php endif; ?>
           <?php if (in_array($currentStage, ['rera_registration', 'development'])): ?>
-            <a href="/admin/legal-colony-pipeline/development/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <a href="<?= $base ?>/admin/legal-colony-pipeline/development/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
               <i class="fas fa-hard-hat me-2 text-secondary"></i> Record Development Cost
             </a>
           <?php endif; ?>
           <?php if (in_array($currentStage, ['development', 'pricing'])): ?>
-            <a href="/admin/legal-colony-pipeline/pricing/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+            <a href="<?= $base ?>/admin/legal-colony-pipeline/pricing/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
               <i class="fas fa-tag me-2 text-success"></i> Apply Pricing
             </a>
           <?php endif; ?>
-          <a href="/admin/legal-colony-pipeline/readiness/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/readiness/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
             <i class="fas fa-clipboard-check me-2 text-warning"></i> Sales Readiness
           </a>
-          <a href="/admin/colony-feasibility/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+          <a href="<?= $base ?>/admin/colony-feasibility/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
             <i class="fas fa-chart-line me-2 text-success"></i> Feasibility Calculator
           </a>
-          <a href="/admin/legal-colony-pipeline/analytics/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/analytics/<?= $colony['id'] ?>" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
             <i class="fas fa-chart-bar me-2 text-info"></i> Colony Analytics
           </a>
-          <a href="/admin/legal-colony-pipeline/health" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+          <a href="<?= $base ?>/admin/legal-colony-pipeline/health" class="list-group-item list-group-item-action bg-dark text-white border-secondary">
             <i class="fas fa-heartbeat me-2 text-danger"></i> Health Dashboard
           </a>
         </div>

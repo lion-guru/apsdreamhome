@@ -130,7 +130,7 @@
                 <div class="col-6 text-end">
                     <small><?= __('receipt_footer_computer', [], 'This is a computer-generated receipt.') ?><br>
                     <?= __('receipt_footer_terms', [], 'Booking Subject to Terms & Conditions.') ?><br>
-                    <?= __('receipt_footer_rera', [], 'RERA Registered Project.') ?></small>
+                    <?= __('receipt_footer_rera', [], 'RERA verification available on request.') ?></small>
                 </div>
             </div>
         </div>

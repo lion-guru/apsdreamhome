@@ -267,4 +267,4 @@ document.getElementById('generateForm').addEventListener('submit', function(e){
 });
 </script>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

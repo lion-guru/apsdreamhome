@@ -2,18 +2,6 @@
 $base = rtrim(BASE_URL, '/');
 $csrf = $this->getCsrfToken();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
-</head>
-<body>
-<?php require_once __DIR__ . '/../../layouts/admin.php'; ?>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -205,5 +193,3 @@ document.getElementById('paymentForm').addEventListener('submit', function(e) {
     this.action = <?= json_encode($base . '/admin/property-tax/record-payment/' . (int)($master['id'] ?? 0)) ?>;
 });
 </script>
-</body>
-</html>

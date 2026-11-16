@@ -47,7 +47,7 @@ $statusBadgeClass = [
 
     <?php if (!empty($_SESSION['flash_success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <?= $_SESSION['flash_success'] ?>
+            <?= htmlspecialchars((string)($_SESSION['flash_success'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" ></button>
         </div>
         <?php unset($_SESSION['flash_success']); ?>

@@ -2,18 +2,9 @@
 $templates = $templates ?? [];
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $page_title ?? 'SMS Templates' ?> - APS Dream Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         .page-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 2rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .page-header h1 { font-size: 1.75rem; font-weight: 700; color: #f8fafc; }
         .page-header p { color: #94a3b8; font-size: 0.9rem; margin-top: 0.25rem; }
@@ -29,11 +20,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         .btn-back:hover { background: rgba(59,130,246,0.25); color: #93bbfc; }
         .empty-state { text-align: center; padding: 3rem; color: #64748b; }
         .empty-state i { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
-    </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
-</head>
-<body>
-    <div class="page-header">
+</style>
+
+<div class="container-fluid py-4">
+<div class="page-header">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h1><i class="fas fa-sms me-2"></i>SMS Templates</h1>
@@ -73,5 +63,4 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <?php endif; ?>
         </div>
     </div>
-</body>
-</html>
+</div>

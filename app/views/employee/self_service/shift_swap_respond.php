@@ -16,10 +16,10 @@ $swap = $swap ?? [];
                 </div>
                 <div class="card-body">
                     <?php if (isset($_SESSION['error'])): ?>
-                        <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                        <div class="alert alert-danger"><?= htmlspecialchars((string)($_SESSION['error'] ?? ''), ENT_QUOTES, 'UTF-8'); unset($_SESSION['error']); ?></div>
                     <?php endif; ?>
                     <?php if (isset($_SESSION['success'])): ?>
-                        <div class="alert alert-success"><?= $_SESSION['success']; unset($_SESSION['success']); ?></div>
+                        <div class="alert alert-success"><?= htmlspecialchars((string)($_SESSION['success'] ?? ''), ENT_QUOTES, 'UTF-8'); unset($_SESSION['success']); ?></div>
                     <?php endif; ?>
 
                     <!-- Swap Details -->

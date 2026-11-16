@@ -1,4 +1,6 @@
 <?php
+$base = defined('BASE_URL') ? BASE_URL : '';
+
 /**
  * Admin SRO Registry Appointments Desk
  */
@@ -17,7 +19,7 @@ $current_status = $current_status ?? 'all';
             <p class="text-muted small mb-0">Sub-Registrar Office appointments, UP Stamp Duty verification, witness clearance & sale deed completion.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="/admin/plot-transfers" class="btn btn-outline-secondary btn-sm">
+            <a href="<?= $base ?>/admin/plot-transfers" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-exchange-alt me-1"></i>Resale NOC Desk
             </a>
             <button onclick="location.reload()" class="btn btn-primary btn-sm">
@@ -30,16 +32,16 @@ $current_status = $current_status ?? 'all';
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-2">
             <div class="d-flex flex-wrap gap-2">
-                <a href="/admin/registry-appointments?status=all" class="btn btn-sm <?= $current_status === 'all' ? 'btn-dark' : 'btn-outline-secondary' ?>">
+                <a href="<?= $base ?>/admin/registry-appointments?status=all" class="btn btn-sm <?= $current_status === 'all' ? 'btn-dark' : 'btn-outline-secondary' ?>">
                     All Appointments (<?= count($appointments) ?>)
                 </a>
-                <a href="/admin/registry-appointments?status=requested" class="btn btn-sm <?= $current_status === 'requested' ? 'btn-warning text-dark' : 'btn-outline-warning text-dark' ?>">
+                <a href="<?= $base ?>/admin/registry-appointments?status=requested" class="btn btn-sm <?= $current_status === 'requested' ? 'btn-warning text-dark' : 'btn-outline-warning text-dark' ?>">
                     Requested / Pending Slots
                 </a>
-                <a href="/admin/registry-appointments?status=slot_confirmed" class="btn btn-sm <?= $current_status === 'slot_confirmed' ? 'btn-primary' : 'btn-outline-primary' ?>">
+                <a href="<?= $base ?>/admin/registry-appointments?status=slot_confirmed" class="btn btn-sm <?= $current_status === 'slot_confirmed' ? 'btn-primary' : 'btn-outline-primary' ?>">
                     Slots Confirmed
                 </a>
-                <a href="/admin/registry-appointments?status=completed" class="btn btn-sm <?= $current_status === 'completed' ? 'btn-success' : 'btn-outline-success' ?>">
+                <a href="<?= $base ?>/admin/registry-appointments?status=completed" class="btn btn-sm <?= $current_status === 'completed' ? 'btn-success' : 'btn-outline-success' ?>">
                     Registry Executed / Deeds Issued
                 </a>
             </div>
@@ -123,10 +125,10 @@ $current_status = $current_status ?? 'all';
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="/admin/registry-appointments/<?= $a['id'] ?>" class="btn btn-outline-primary" title="View & Manage SRO Execution">
+                                        <a href="<?= $base ?>/admin/registry-appointments/<?= $a['id'] ?>" class="btn btn-outline-primary" title="View & Manage SRO Execution">
                                             <i class="fas fa-gavel me-1"></i>Manage
                                         </a>
-                                        <a href="/admin/registry-appointments/<?= $a['id'] ?>/slip" target="_blank" class="btn btn-outline-secondary" title="Print Appointment Slip">
+                                        <a href="<?= $base ?>/admin/registry-appointments/<?= $a['id'] ?>/slip" target="_blank" class="btn btn-outline-secondary" title="Print Appointment Slip">
                                             <i class="fas fa-print"></i>
                                         </a>
                                     </div>

@@ -80,4 +80,4 @@ $method = $method ?? 'weighted_average';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>
+

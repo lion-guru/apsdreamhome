@@ -5,23 +5,10 @@
 $page_title = $page_title ?? 'Pricing Applications';
 $colony = $colony ?? [];
 $applications = $applications ?? [];
+$base = defined('BASE_URL') ? BASE_URL : '';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?></title>
-    <link href="http://localhost/apsdreamhome/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://localhost/apsdreamhome/assets/css/premium-theme.css?v=12" rel="stylesheet">
-    <link href="http://localhost/apsdreamhome/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-</head>
-<body class="admin-body">
-    <?php include __DIR__ . '/../layouts/admin_header.php'; ?>
-    
-    <main class="admin-main">
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0"><?= htmlspecialchars($page_title) ?></h1>
                 <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= (int)$colony['id'] ?>/pricing" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i>Back to Pricing
@@ -76,11 +63,6 @@ $applications = $applications ?? [];
                         </div>
                     <?php endif; ?>
                 </div>
-            </div>
         </div>
-    </main>
-    
-    <?php include __DIR__ . '/../layouts/admin_footer.php'; ?>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-</body>
-</html>
+    </div>
+</div>

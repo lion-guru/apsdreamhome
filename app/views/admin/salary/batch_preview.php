@@ -20,11 +20,11 @@
     <section class="content">
         <div class="container-fluid">
             <?php if (!empty($_SESSION['success'])): ?>
-                <div class="alert alert-success alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button><?= $_SESSION['success'] ?></div>
+                <div class="alert alert-success alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button><?= htmlspecialchars((string)($_SESSION['success'] ?? ''), ENT_QUOTES, 'UTF-8') ?></div>
                 <?php unset($_SESSION['success']); ?>
             <?php endif; ?>
             <?php if (!empty($_SESSION['error'])): ?>
-                <div class="alert alert-danger alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button><?= $_SESSION['error'] ?></div>
+                <div class="alert alert-danger alert-dismissible"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button><?= htmlspecialchars((string)($_SESSION['error'] ?? ''), ENT_QUOTES, 'UTF-8') ?></div>
                 <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 

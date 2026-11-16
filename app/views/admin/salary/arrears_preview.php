@@ -233,7 +233,7 @@ $preview_year = $preview_year ?? date('Y');
                     <input type="hidden" name="year" value="<?= $preview_year ?>">
                     <!-- Re-post the structure values -->
                     <?php foreach (['basic_salary','hra','conveyance','medical_allowance','special_allowance','other_allowances','pf_employee','tds'] as $field): ?>
-                    <input type="hidden" name="<?= $field ?>" value="<?= $_POST[$field] ?? $current_structure[$field] ?? 0 ?>">
+                    <input type="hidden" name="<?= $field ?>" value="<?= htmlspecialchars((string)($_POST[$field] ?? $current_structure[$field] ?? 0), ENT_QUOTES, 'UTF-8') ?>">
                     <?php endforeach; ?>
                     <input type="hidden" name="month" value="<?= $preview_month ?>">
                     <input type="hidden" name="year" value="<?= $preview_year ?>">

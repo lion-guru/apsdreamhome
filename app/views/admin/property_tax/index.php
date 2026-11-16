@@ -2,17 +2,8 @@
 $base = rtrim(BASE_URL, '/');
 $csrf = $this->getCsrfToken();
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
-    <style>
-        .stat-card { border-left: 4px solid; transition: transform .2s; }
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    .stat-card { border-left: 4px solid; transition: transform .2s; }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
         .stat-card.primary { border-color: #6B4EE6; }
         .stat-card.success { border-color: #28a745; }
@@ -21,10 +12,7 @@ $csrf = $this->getCsrfToken();
         .stat-card.info { border-color: #17a2b8; }
         .table th { white-space: nowrap; }
         .badge-status { font-size: .75rem; padding: .35em .65em; }
-    </style>
-</head>
-<body>
-<?php require_once __DIR__ . '/../../layouts/admin.php'; ?>
+</style>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -237,7 +225,3 @@ $csrf = $this->getCsrfToken();
         </div>
     </div>
 </div>
-
-<script src="<?= $base ?>/assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

@@ -2,24 +2,12 @@
 $base = rtrim(BASE_URL, '/');
 $invoice = $invoice ?? [];
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($invoice['invoice_number'] ?? 'Invoice') ?> - APS Dream Home</title>
-    <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
-    <style>
-        @media print {
+<style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+    @media print {
             .no-print { display: none !important; }
             .card { border: 1px solid #ddd !important; box-shadow: none !important; }
         }
-    </style>
-</head>
-<body>
-<?php require_once __DIR__ . '/../../layouts/admin.php'; ?>
+</style>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 no-print">
@@ -153,7 +141,3 @@ $invoice = $invoice ?? [];
         </div>
     <?php endif; ?>
 </div>
-
-<script src="<?= $base ?>/assets/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

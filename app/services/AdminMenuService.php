@@ -64,7 +64,8 @@ class AdminMenuService
         // Super admin sees everything (filtered by tenant if not platform owner)
         if ($role === RBACManager::ROLE_SUPER_ADMIN) {
             $items = $this->getAllMenuItems();
-            return $this->filterForTenant($items);
+            $filtered = $this->filterForTenant($items);
+            return $this->buildMenuTree($filtered);
         }
 
         // Admin and other roles: get menu items based on role permissions
@@ -374,7 +375,7 @@ class AdminMenuService
 
         // First pass: separate parents and children
         foreach ($menuItems as $item) {
-            if ($item['parent_id'] === null) {
+            if (empty($item['parent_id'])) {
                 $tree[$item['id']] = $item;
                 $tree[$item['id']]['children'] = [];
             } else {

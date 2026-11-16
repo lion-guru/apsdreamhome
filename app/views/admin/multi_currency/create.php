@@ -1,4 +1,7 @@
-<?php include __DIR__ . '/../../layouts/admin_header.php'; ?>
+<?php
+$page_title = $page_title ?? 'Add Exchange Rate';
+$base = defined('BASE_URL') ? BASE_URL : '';
+?>
 
 <div class="content-wrapper">
     <div class="content-header">
@@ -86,4 +89,3 @@ document.getElementById('addRateForm').addEventListener('submit', function(e) {
 });
 </script>
 
-<?php include __DIR__ . '/../../layouts/admin_footer.php'; ?>

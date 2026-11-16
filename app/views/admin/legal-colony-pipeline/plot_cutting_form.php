@@ -6,7 +6,7 @@ $colony = $colony ?? null;
   <h2 class="mb-4"><i class="fas fa-vector-square me-2 text-primary"></i>Phase 3: Legal Plot Cutting</h2>
 
   <?php if (!empty($_SESSION['flash_error'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-triangle me-1"></i> <?= $_SESSION['flash_error'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars((string)($_SESSION['flash_error'] ?? ''), ENT_QUOTES, 'UTF-8') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_error']); ?>
   <?php endif; ?>
 

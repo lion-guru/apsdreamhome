@@ -6070,9 +6070,9 @@ return array(
   // Plots Availability - plots-availability.php
   'plots_avail_title' => 'Plots Availability',
   'plots_avail_meta_desc' => 'Check real-time plot availability, status, and pricing across APS Dream Home colonies.',
-  'plots_avail_rera' => 'RERA Verified',
+  'plots_avail_rera' => 'RERA Verification On Request',
   'plots_avail_hero_heading' => 'Plots Availability',
-  'plots_avail_hero_desc' => 'Check real-time availability across APS colonies. All plots RERA-registered, bank-approved, with clear titles.',
+  'plots_avail_hero_desc' => 'Check real-time availability across APS colonies. Colony-wise RERA status available on request; clear titles with every sale.',
   'plots_avail_colony' => 'Colony:',
   'plots_avail_phase' => 'Phase:',
   'plots_avail_summary' => 'Summary',

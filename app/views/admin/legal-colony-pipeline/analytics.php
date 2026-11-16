@@ -22,7 +22,7 @@ function inr($n) { return '₹' . number_format($n); }
   <!-- Flash Messages -->
   <?php if (!empty($_SESSION['flash_success'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-      <i class="fas fa-check-circle me-1"></i> <?= $_SESSION['flash_success'] ?>
+      <i class="fas fa-check-circle me-1"></i> <?= htmlspecialchars((string)($_SESSION['flash_success'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php unset($_SESSION['flash_success']); ?>

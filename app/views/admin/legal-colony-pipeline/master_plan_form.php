@@ -6,7 +6,7 @@ $colony = $colony ?? null;
   <h2 class="mb-4"><i class="fas fa-drafting-compass me-2 text-info"></i>Phase 2: Create Master Plan</h2>
 
   <?php if (!empty($_SESSION['flash_error'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-triangle me-1"></i> <?= $_SESSION['flash_error'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-triangle me-1"></i> <?= htmlspecialchars((string)($_SESSION['flash_error'] ?? ''), ENT_QUOTES, 'UTF-8') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php unset($_SESSION['flash_error']); ?>
   <?php endif; ?>
 

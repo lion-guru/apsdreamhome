@@ -6053,9 +6053,9 @@ return array(
     // प्लॉट उपलब्धता - plots-availability.php
     'plots_avail_title' => 'प्लॉट उपलब्धता',
     'plots_avail_meta_desc' => 'APS Dream Home कॉलोनियों में वास्तविक समय की प्लॉट उपलब्धता, स्थिति और मूल्य निर्धारण देखें।',
-    'plots_avail_rera' => 'RERA सत्यापित',
+    'plots_avail_rera' => 'RERA सत्यापन अनुरोध पर',
     'plots_avail_hero_heading' => 'प्लॉट उपलब्धता',
-    'plots_avail_hero_desc' => 'APS कॉलोनियों में वास्तविक समय की उपलब्धता देखें। सभी प्लॉट्स आरईआरए-पंजीकृत, बैंक-अनुमोदित, स्पष्ट शीर्षक के साथ।',
+    'plots_avail_hero_desc' => 'APS कॉलोनियों में वास्तविक समय की उपलब्धता देखें। कोलोनी-वार आरईआरए स्थिति अनुरोध पर उपलब्ध; हर बिक्री के साथ स्पष्ट शीर्षक।',
     'plots_avail_colony' => 'कॉलोनी:',
     'plots_avail_phase' => 'चरण:',
     'plots_avail_summary' => 'सारांश',
