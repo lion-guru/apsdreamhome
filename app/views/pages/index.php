@@ -28,7 +28,7 @@
                         <!-- Trust Indicators -->
                         <?php 
                         $heroStats = $hero_stats ?? [
-                            'properties_sold' => '500+',
+                            'properties_sold' => '33',
                             'happy_clients' => '1000+',
                             'years_experience' => '15+',
                             'projects_completed' => '50+'
@@ -319,7 +319,7 @@
                             </div>
                             <div class="feature-item mb-3">
                                 <i class="fas fa-check-circle text-success me-3"></i>
-                                <span><strong>500+ Properties Sold</strong> with satisfied clients</span>
+                                <span><strong>33+ Plots</strong> booked and registered with satisfied clients</span>
                             </div>
                             <div class="feature-item mb-3">
                                 <i class="fas fa-check-circle text-success me-3"></i>
@@ -392,7 +392,7 @@
             <div class="row text-center">
                 <?php 
                 $stats = $hero_stats ?? [
-                    'properties_sold' => '500+',
+                    'properties_sold' => '33',
                     'happy_clients' => '1000+',
                     'years_experience' => '15+',
                     'projects_completed' => '50+'

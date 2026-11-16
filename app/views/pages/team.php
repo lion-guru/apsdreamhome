@@ -393,7 +393,7 @@ foreach ($team_members ?? [] as $tm) {
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
-                    <div class="stat-number">2500+</div>
+                    <div class="stat-number">33+</div>
                     <div class="stat-label">Properties Sold</div>
                 </div>
             </div>

@@ -58,7 +58,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                     </div>
                     <div class="card-body p-3 p-md-4">
                         <p class="text-center text-muted small mb-3">
-                            <i class="fas fa-users text-primary me-1"></i>1000+ Happy Clients
+                            <i class="fas fa-users text-primary me-1"></i>80+ Happy Clients
                             <span class="mx-2">|</span>
                             <i class="fas fa-clock text-warning me-1"></i>We respond within 24 hours
                         </p>

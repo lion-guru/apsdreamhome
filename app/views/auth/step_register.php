@@ -886,7 +886,7 @@ $base = BASE_URL;
                 { icon: 'fas fa-shield-halved', text: 'RERA On Request', highlight: true },
                 { icon: 'fas fa-percent', text: 'EMI from ₹8,333/mo' },
                 { icon: 'fas fa-gift', text: 'Refer & Earn Points' },
-                { icon: 'fas fa-map-marker-alt', text: '204+ Plots Available' }
+                { icon: 'fas fa-map-marker-alt', text: '80+ Happy Families' }
             ],
             agent: [
                 { icon: 'fas fa-coins', text: 'Up to 5% Commission', highlight: true },

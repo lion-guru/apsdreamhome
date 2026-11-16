@@ -183,28 +183,7 @@
         <?php endif; ?>
     <?php endif; ?>
 
-    <!-- Price History -->
-    <?php if (!empty($priceHistory)): ?>
-    <div class="detail-card mt-3">
-        <h4 class="fw-bold mb-3"><i class="fas fa-history"></i> <?= __('plot_detail_price_history') ?></h4>
-        <div class="table-responsive">
-            <table class="table table-sm">
-                <thead><tr><th scope="col"><?= __('plot_detail_date') ?></th><th scope="col"><?= __('plot_detail_old_price') ?></th><th scope="col"><?= __('plot_detail_new_price') ?></th><th scope="col"><?= __('plot_detail_change_type') ?></th><th scope="col"><?= __('plot_detail_reason') ?></th></tr></thead>
-                <tbody>
-                    <?php foreach ($priceHistory as $ph): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($ph['created_at'] ?? '') ?></td>
-                        <td>₹<?= number_format(intval($ph['old_price'] ?? 0)) ?></td>
-                        <td>₹<?= number_format(intval($ph['new_price'] ?? 0)) ?></td>
-                        <td><span class="badge bg-info"><?= htmlspecialchars($ph['change_type'] ?? '') ?></span></td>
-                        <td><?= htmlspecialchars($ph['reason'] ?? '') ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <?php endif; ?>
+    <!-- Price History — DISABLED: internal admin re-pricing log leaked to anonymous visitors -->
 
     <!-- Nearby Plots -->
     <?php if (!empty($nearbyPlots)): ?>

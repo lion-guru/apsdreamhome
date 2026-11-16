@@ -1225,7 +1225,7 @@ function renderTrendChart(trendData) {
         const key = date.toISOString().split('T')[0];
         labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
         const found = trendData.find(t => t.date === key);
-        values.push(found ? parseInt(t.count) : 0);
+        values.push(found ? parseInt(found.count) : 0);
     }
     
     charts.trend = new Chart(ctx, {

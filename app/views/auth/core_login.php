@@ -22,7 +22,7 @@ $supportedRoles = [
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sign in to APS Dream Home to browse verified plots and properties, book plots, track your applications, and manage your account. Trusted by 5000+ families across Uttar Pradesh.">
+    <meta name="description" content="Sign in to APS Dream Home to browse verified plots and properties, book plots, track your applications, and manage your account. Trusted by 80+ families across Uttar Pradesh.">
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token ?? '') ?>">
     <title>Login - APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -146,7 +146,7 @@ $supportedRoles = [
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
             <div class="benefits-title"><i class="fas fa-shield-halved"></i> Why APS Dream Home?</div>
-            <div class="benefits-subtitle">Trusted by 5000+ families across Uttar Pradesh for premium real estate investments.</div>
+            <div class="benefits-subtitle">Trusted by 80+ families across Uttar Pradesh for premium real estate investments.</div>
 
             <div class="benefit-item">
                 <div class="benefit-icon"><i class="fas fa-vector-square"></i></div>
@@ -179,7 +179,7 @@ $supportedRoles = [
 
             <div class="stats-bar">
                 <div class="stat-item">
-                    <span class="stat-value">5000+</span>
+                    <span class="stat-value">80+</span>
                     <span class="stat-label">Plots Sold</span>
                 </div>
                 <div class="stat-item">

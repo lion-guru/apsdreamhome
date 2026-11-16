@@ -16,9 +16,11 @@ $pay = 0;
 $month_pay = 0;
 
 if ($amount > 0 && $mon > 0 && $int > 0) {
-    $interest = $amount * ($int / 100);
-    $pay = $amount + $interest;
-    $month_pay = $pay / $mon;
+    // Proper monthly amortization (simple EMI formula)
+    $rate = ($int / 12) / 100;
+    $month_pay = ($amount * $rate * pow(1 + $rate, $mon)) / (pow(1 + $rate, $mon) - 1);
+    $pay = $month_pay * $mon;
+    $interest = $pay - $amount;
 }
 
 ?>

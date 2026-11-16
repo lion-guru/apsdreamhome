@@ -17,7 +17,7 @@ $current_page = 'saas_home';
 
 <!-- Stats -->
 <div class="stats-bar">
-    <div class="stat-card"><div class="number">500+</div><div class="label">Properties Listed</div></div>
+    <div class="stat-card"><div class="number">33+</div><div class="label">Properties Sold</div></div>
     <div class="stat-card"><div class="number">50+</div><div class="label">Teams Onboarded</div></div>
     <div class="stat-card"><div class="number">₹10Cr+</div><div class="label">Revenue Managed</div></div>
     <div class="stat-card"><div class="number">99.9%</div><div class="label">Uptime SLA</div></div>

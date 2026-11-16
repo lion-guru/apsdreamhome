@@ -77,7 +77,20 @@ class Router
 
     public function dispatch($uri = null)
     {
-        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        // RFC 9110 §9.3.2: HEAD responses MUST NOT carry a body. Map HEAD to GET
+        // for route resolution and discard any output the handler produces.
+        $rawMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $isHead = $rawMethod === 'HEAD';
+        if ($isHead) {
+            $headBufferLevel = ob_get_level();
+            ob_start();
+            register_shutdown_function(static function () use ($headBufferLevel) {
+                while (ob_get_level() > $headBufferLevel) { ob_end_clean(); }
+            });
+            $method = 'GET';
+        } else {
+            $method = $rawMethod;
+        }
 
         // Step 1: Get URI
         if ($uri === null) {

@@ -90,7 +90,7 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
                         <i class="fas fa-th fa-3x text-warning"></i>
                     </div>
                     <h5><?= __('surya_detail_plots', [], 'Total Plots') ?></h5>
-                    <p class="text-muted"><?= __('surya_detail_plots_val', [], '200+ Plots') ?></p>
+                    <p class="text-muted"><?= __('surya_detail_plots_val', [], '33+ Plots Booked') ?></p>
                 </div>
             </div>
             

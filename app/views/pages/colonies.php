@@ -125,9 +125,10 @@ function getAmenityIcon($amenity) {
                                 $imagePath = get_asset_url((string)$imagePath);
                             }
                             ?>
-                            <img src="<?php echo htmlspecialchars($imagePath ?? '');?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid<?php if (empty($imagePath)) echo ' d-none'; ?>" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <?php if (empty($imagePath)): ?><style>.colony-placeholder{display:flex!important}</style><?php endif; ?>
-                            <div class="colony-placeholder">
+                            <?php if ($imagePath): ?>
+                            <img src="<?php echo htmlspecialchars($imagePath);?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <?php endif; ?>
+                            <div class="colony-placeholder"<?php if ($imagePath) echo ' style="display:none"'; ?>>
                                 <i class="fas fa-city fa-3x mb-2"></i>
                                 <p class="mb-0 text-center px-2"><?php echo e($colony['name']); ?></p>
                             </div>
@@ -165,7 +166,7 @@ function getAmenityIcon($amenity) {
                                 <span class="spec-label"><?= __('colonies_spec_available') ?></span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-value"><?php echo e($colony['starting_price']); ?></span>
+                                <span class="spec-value"><?php echo '₹' . number_format((float)($colony['starting_price'] ?? 0), 0); ?></span>
                                 <span class="spec-label"><?= __('colonies_spec_price') ?></span>
                             </div>
                         </div>

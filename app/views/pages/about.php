@@ -405,7 +405,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     and every customer treated as family.
                 </p>
                 <p class="story-text">
-                    Today, with over <strong>200+ plots delivered</strong> and <strong>500+ happy families</strong>, 
+                    Today, with over <strong>33 plots booked</strong> and <strong>80+ happy families</strong>, 
                     we continue to uphold the values of trust, quality, and community development that formed the 
                     foundation of our company.
                 </p>
@@ -429,7 +429,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 </div>
                 <div class="story-detail">
                     <h3 class="fs-6"><i class="fas fa-star me-2"></i> Rating</h3>
-                    <p>5.0/5 Stars on India Online &bull; Trusted by 500+ Families</p>
+                    <p>Trusted by 80+ Families across Gorakhpur &bull; 4+ Years in Business Since 2022</p>
                 </div>
             </div>
         </div>
@@ -450,7 +450,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     Experience the <span style="background: linear-gradient(135deg, #2dd4bf, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">APS Difference</span>
                 </h2>
                 <p class="text-light opacity-75 mb-4" style="line-height: 1.8;">
-                    Watch our official brand story and discover how APS Dream Homes Private Limited has delivered over 200+ plots with colony-wise RERA verification available across Gorakhpur, Lucknow, and Kushinagar.
+                    Watch our official brand story and discover how APS Dream Homes Private Limited has booked over 33 plots across Gorakhpur, Lucknow, and Kushinagar — with colony-wise RERA verification available on request.
                 </p>
                 <div class="d-flex flex-column gap-3 mb-4">
                     <div class="d-flex align-items-center gap-3">
@@ -467,7 +467,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <i class="fas fa-users text-info"></i>
                         </div>
                         <div>
-                            <h3 class="mb-0 fw-bold text-white fs-6">500+ Happy Families</h3>
+                            <h3 class="mb-0 fw-bold text-white fs-6">80+ Happy Families</h3>
                             <small class="text-light opacity-75">Customer trust, timely possession, and modern gated colonies</small>
                         </div>
                     </div>
@@ -813,13 +813,13 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         <div class="row g-4">
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num">5000+</div>
-                    <div class="stat-label">Plots Sold</div>
+                    <div class="stat-num">33</div>
+                    <div class="stat-label">Plots Booked</div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
                 <div class="stat-box scroll-reveal">
-                    <div class="stat-num">500+</div>
+                    <div class="stat-num">80</div>
                     <div class="stat-label">Happy Families</div>
                 </div>
             </div>
@@ -978,7 +978,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                         <i class="fas fa-city"></i>
                                     </div>
                                     <h4 class="fs-6">Lucknow</h4>
-                                    <p >APS Valley (800+)</p>
+                                    <p >Ram Nagri</p>
                                     <p >Awadhpuri</p>
                                 </div>
                             </div>
@@ -988,7 +988,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                         <i class="fas fa-city"></i>
                                     </div>
                                     <h4 class="fs-6">Kushinagar</h4>
-                                    <p >Budh Bihar Colony (1280+)</p>
+                                    <p >Budh Bihar Colony</p>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
@@ -1045,8 +1045,8 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="cert-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <h3 class="fs-6">UP RERA</h3>
-                    <p>Fully compliant with UP Real Estate Regulatory Authority</p>
+                    <h3 class="fs-6">Colony-wise RERA</h3>
+                    <p>Verification available on request — check up-rera.in or call our legal desk (+91 70074 44842)</p>
                 </div>
             </div>
             <div class="col-md-3 col-6">
@@ -1054,8 +1054,8 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="cert-icon">
                         <i class="fas fa-star"></i>
                     </div>
-                    <h3 class="fs-6">5.0 Rating</h3>
-                    <p>Top rated on India Online platform</p>
+                    <h3 class="fs-6">Est. 2022</h3>
+                    <p>Incorporated April 26, 2022 &mdash; CIN U70109UP2022PTC163047</p>
                 </div>
             </div>
         </div>
@@ -1074,7 +1074,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     Ready to Find Your Dream Plot?
                 </h2>
                 <p >
-                    Join 500+ families who trust APS Dream Homes for their property needs. 
+                    Join 80+ families who trust APS Dream Homes for their property needs. 
                     Browse our available plots or schedule a site visit today.
                 </p>
             </div>
