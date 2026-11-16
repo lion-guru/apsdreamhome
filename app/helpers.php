@@ -296,6 +296,27 @@ if (!function_exists('get_flash')) {
     }
 }
 
+if (!function_exists('aps_indian_money')) {
+    /**
+     * Format an integer with Indian digit grouping (e.g. 12345678 → "1,23,45,678").
+     * Rightmost 3 digits grouped as western thousand; every preceding 2 digits grouped.
+     * Negative numbers handled. Intended for INR display where views already prefix ₹.
+     */
+    function aps_indian_money($n): string {
+        $neg = (int)$n < 0;
+        $abs = abs((int)$n);
+        if ($abs < 1000) {
+            return ($neg ? '-' : '') . $abs;
+        }
+        $s = (string)$abs;
+        $last3 = substr($s, -3);
+        $rest = strrev(substr($s, 0, -3));
+        $parts = array_map('strrev', str_split($rest, 2));
+        $restStr = implode(',', array_reverse($parts));
+        return ($neg ? '-' : '') . $restStr . ',' . $last3;
+    }
+}
+
 if (!function_exists('get_page_title')) {
     /**
      * Get the current page title.

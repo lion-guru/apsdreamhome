@@ -133,13 +133,13 @@ $related_projects = $normRelated;
                 <div class="mt-3">
                     <span class="text-white-50 small text-uppercase fw-semibold d-block">Price Range:</span>
                     <span class="h4 text-warning fw-bold font-monospace">
-                        ₹<?= number_format((float)$project->price_range_min) ?>
+                        ₹<?= aps_indian_money((int)$project->price_range_min) ?>
                         <?php if (!empty($project->price_range_max) && $project->price_range_max > $project->price_range_min): ?>
-                            - ₹<?= number_format((float)$project->price_range_max) ?>
+                            - ₹<?= aps_indian_money((int)$project->price_range_max) ?>
                         <?php endif; ?>
                     </span>
                     <?php if (!empty($project->avg_price_per_sqft)): ?>
-                        <span class="badge bg-light text-dark ms-2 font-monospace">₹<?= number_format((float)$project->avg_price_per_sqft) ?>/sqft</span>
+                        <span class="badge bg-light text-dark ms-2 font-monospace">₹<?= aps_indian_money((int)$project->avg_price_per_sqft) ?>/sqft</span>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
@@ -392,7 +392,7 @@ $related_projects = $normRelated;
                             <div class="mb-4">
                                 <div class="d-flex justify-content-between mb-1">
                                     <label class="form-label small fw-bold text-dark mb-0" for="emiRangePrice">प्रॉपर्टी / प्लॉट मूल्य (Total Price)</label>
-                                    <span class="fw-bold text-primary font-monospace" id="emiDisplayPrice">₹<?= number_format($defaultEmiPrice) ?></span>
+                                    <span class="fw-bold text-primary font-monospace" id="emiDisplayPrice">₹<?= aps_indian_money((int)$defaultEmiPrice) ?></span>
                                 </div>
                                 <input aria-label="Emi range price" type="range" class="form-range" id="emiRangePrice" min="500000" max="10000000" step="50000" value="<?= $defaultEmiPrice ?>">
                                 <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
@@ -547,7 +547,7 @@ $related_projects = $normRelated;
                                 <td><strong>Price Range:</strong></td>
                                 <td>
                                     <span class="text-primary fw-bold font-monospace">
-                                        ₹<?= number_format((float)$project->price_range_min) ?><?= (!empty($project->price_range_max) && $project->price_range_max > $project->price_range_min) ? ' - ₹' . number_format((float)$project->price_range_max) : '' ?>
+                                        ₹<?= aps_indian_money((int)$project->price_range_min) ?><?= (!empty($project->price_range_max) && $project->price_range_max > $project->price_range_min) ? ' - ₹' . aps_indian_money((int)$project->price_range_max) : '' ?>
                                     </span>
                                 </td>
                             </tr>
@@ -555,7 +555,7 @@ $related_projects = $normRelated;
                             <?php if (!empty($project->avg_price_per_sqft)): ?>
                             <tr>
                                 <td><strong>Avg. Rate:</strong></td>
-                                <td>₹<?= number_format((float)$project->avg_price_per_sqft) ?> / sqft</td>
+                                <td>₹<?= aps_indian_money((int)$project->avg_price_per_sqft) ?> / sqft</td>
                             </tr>
                             <?php endif; ?>
                             <?php if (!empty($project->colony_available_plots) || !empty($project->available_plots)): ?>
