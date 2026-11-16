@@ -27,7 +27,8 @@ class CommissionPlanController extends AdminController
         $plans = $this->planService->getAllPlans();
         $activePlan = $this->planService->getActivePlan();
         $stats = $this->planService->getStats();
-        $this->render('admin/commission/plans/index', compact('plans', 'activePlan', 'stats'));
+        $coherence = $this->planService->getRankRateCoherence();
+        $this->render('admin/commission/plans/index', compact('plans', 'activePlan', 'stats', 'coherence'));
     }
 
     /* ── CREATE ── */

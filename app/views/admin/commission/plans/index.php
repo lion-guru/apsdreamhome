@@ -71,6 +71,27 @@ $statusBadge = fn($s) => match($s) {
             </div>
         <?php endif; ?>
 
+        <?php if (!empty($coherence) && !empty($coherence['active_plan'])): ?>
+        <div class="<?= $coherence['all_match'] ? 'alert alert-success' : 'alert alert-warning' ?> d-flex align-items-start gap-2 mb-3" role="alert" style="background:<?= $coherence['all_match'] ? '#0f2922' : '#2b1e0a' ?>;border:1px solid <?= $coherence['all_match'] ? '#14532d' : '#7c4a03' ?>;color:<?= $coherence['all_match'] ? '#86efac' : '#fcd34d' ?>">
+            <i class="fas <?= $coherence['all_match'] ? 'fa-check-circle' : 'fa-triangle-exclamation' ?> fa-lg mt-1" aria-hidden="true"></i>
+            <div class="small">
+                <strong><?= $coherence['all_match'] ? 'Direct-sale slabs: engine in sync' : 'Direct-sale slabs: DRIFT vs live engine' ?></strong> — active plan <code><?= htmlspecialchars($coherence['active_plan']['code']) ?></code> (v<?= $coherence['active_plan']['version'] ?>) vs <code>mlm_rank_benefits</code> (the live payout source).
+                <?php if (!$coherence['all_match']): ?>
+                    <div class="mt-1">Creating a plan does not rewrite the live slab. Track A/B/C, cap, royalty &amp; GBV run from this plan (engine snapshot); the Direct % slab still reads <code>mlm_rank_benefits</code> until slab-sync is wired (owner call).
+                        <ul class="mb-0 mt-1" style="line-height:1.5">
+                            <?php foreach ($coherence['rows'] as $r): if (!$r['match']): ?>
+                                <li><b><?= htmlspecialchars($r['rank']) ?></b> — plan: <?= htmlspecialchars((string)$r['plan_direct_pct']) ?>% · live engine: <?= $r['live_direct_pct'] === null ? 'not configured' : htmlspecialchars((string)$r['live_direct_pct']) . '%' ?></li>
+                            <?php endif; endforeach; ?>
+                        </ul>
+                        <div class="mt-1" style="color:#d97706">Fix needs CEO sign-off: activate-foundation must port plan slabs into <code>mlm_rank_benefits</code> atomically.</div>
+                    </div>
+                <?php else: ?>
+                    <div class="mt-1">Active plan slabs and the live engine payout rate match exactly: <?= implode(' / ', array_map(fn($r) => $r['plan_direct_pct'], $coherence['rows'])) ?>%</div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="row mb-4">
             <div class="col-md-2"><div class="cp-stat"><div class="num"><?= $stats['total'] ?? 0 ?></div><div class="lbl">Total Plans</div></div></div>
             <div class="col-md-2"><div class="cp-stat"><div class="num"><?= $stats['active'] ?? 0 ?></div><div class="lbl">Active</div></div></div>

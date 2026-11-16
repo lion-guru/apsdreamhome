@@ -667,6 +667,62 @@ UPDATE mlm_plan_levels SET
         return compact('total', 'active', 'draft', 'inactive', 'maxVersion', 'totalLevels', 'totalAudits');
     }
 
+    /**
+     * Read-only coherence check: the live MLM engine reads rank rates from
+     * mlm_rank_benefits, NOT from mlm_plan_levels — so the slab the admin
+     * edits on this form can drift from the rate the engine actually pays.
+     * Returns per-rank direct-pct match/mismatch for the ACTIVE plan.
+     */
+    public function getRankRateCoherence(): array
+    {
+        $active = $this->getActivePlan();
+        $levels = $active ? $this->getLevelsForPlan((int)$active['id']) : [];
+        $map = [
+            'Associate'      => 'Ass.',
+            'Sr. Associate'  => 'Sr. Ass.',
+            'BDM'            => 'BDM',
+            'Sr. BDM'        => 'Sr. BDM',
+            'Vice President' => 'V.P.',
+            'President'      => 'President',
+            'Site Manager'   => 'Site Manager',
+        ];
+        $live = [];
+        try {
+            $rows = $this->pdo->query("SELECT rank_name, direct_sale_pct FROM mlm_rank_benefits WHERE is_active = 1")->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($rows as $r) {
+                $live[$r['rank_name']] = (float)$r['direct_sale_pct'];
+            }
+        } catch (\Throwable $e) {
+            error_log('getRankRateCoherence live rates error: ' . $e->getMessage());
+        }
+        $rowsOut = [];
+        foreach ($levels as $lv) {
+            $rb = $map[$lv['level_name']] ?? null;
+            $liveVal = $rb !== null ? ($live[$rb] ?? null) : null;
+            $rowsOut[] = [
+                'rank'            => $lv['level_name'],
+                'plan_direct_pct' => (float)$lv['direct_commission'],
+                'live_direct_pct' => $liveVal,
+                'match'           => $liveVal !== null && abs($liveVal - (float)$lv['direct_commission']) < 0.0001,
+            ];
+        }
+        $allMatch = count($rowsOut) > 0
+            && count(array_filter($rowsOut, fn($r) => !$r['match'])) === 0;
+
+        return [
+            'active_plan' => $active
+                ? [
+                    'id'      => (int)$active['id'],
+                    'name'    => $active['plan_name'] ?? '',
+                    'code'    => $active['plan_code'] ?? '',
+                    'version' => (int)$active['version'],
+                ]
+                : null,
+            'rows'        => $rowsOut,
+            'all_match'   => $allMatch,
+        ];
+    }
+
     /* ================================================================
        PRIVATE HELPERS
        ================================================================ */

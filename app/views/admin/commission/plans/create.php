@@ -67,10 +67,11 @@ $activePlanName = $activePlanName ?? null;
         <!-- How it works strip -->
         <div class="cp-note">
             <strong>Yeh page kya karta hai?</strong> Yahan aap ek <strong>compensation plan</strong> define karte hain — yani "Company plot sale pe associate ko kitna commission, kis rank par kitna override, kab bonus dena hai" ka rule-sheet.
+            <div class="mt-1"><strong>Sachchai:</strong> is page se banaya plan <code>mlm_plan_levels</code> me save hota hai — engine ka Direct % slab hamesha <code>mlm_rank_benefits</code> se aata hai, isliye yahan slab edit se <em>live payout nahi badlega</em>. Track A/B/C, royalty, G1/G2 overrides aur Global Cap plan snapshot se aate hain (engine update); slab drift Plans list page par live coherence card me dikhayi dega.</div>
             <div class="d-flex flex-wrap gap-3 mt-2" style="font-size:.74rem">
                 <div><b>1.</b> Create — plan pehle <b>draft</b> banta hai, kuch payouts nahi padte</div>
                 <div><b>2.</b> Review — niche ka table edit karke numbers set karo</div>
-                <div><b>3.</b> Activate — Plans List page se <i class="fas fa-power-off"></i> dabao, tab se saare payouts isi plan se calculate honge</div>
+                <div><b>3.</b> Activate — Plans List page se <i class="fas fa-power-off"></i> dabao, plan live ho jata hai (Track/Cap/BV rules isi se aate hain; slab live-payout alag foundation se)</div>
             </div>
         </div>
 

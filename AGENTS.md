@@ -1,3 +1,34 @@
+## Session 637: Commission Plans List — Rank Rate Coherence Card Live (Engine Reads mlm_rank_benefits, Not mlm_plan_levels), Honest Create-Page Notes, Gates Green (2026-11-16)
+
+### Trigger
+Follow-up to S634's cap fix: create→plan writes `mlm_plan_levels`, but the live MLM differential engine reads rates from `mlm_rank_benefits` — the form's slab editor was a decorative layer. Admin need: see (and know) when those two tables disagree, without changing live payout on your own say-so.
+
+### What was built
+1. **`CommissionPlanService::getRankRateCoherence(): array`** (read-only) — active plan's levels vs `mlm_rank_benefits.is_active=1` mapped via `Associate→Ass.`, `Sr.Associate→Sr.Ass.`, `BDM→BDM`, `Sr.BDM→Sr.BDM`, `Vice President→V.P.`; tolerance `abs(diff) < 0.0001`. Returns `active_plan` (id/name/code/version), per-row `{rank, plan_direct_pct, live_direct_pct, match}`, `all_match` bool. Tenant-agnostic by design (rank_benefits is global config). No writes, no side effects.
+2. **`Admin\CommissionPlanController::index()`** — calls it, passes `coherence` to the view (existing `compact(...)` pattern preserved).
+3. **`app/views/admin/commission/plans/index.php`** — advisory card directly under the active-plan banner:
+   - in-sync (green, `#86efac` on `#0f2922`): "Direct-sale slabs: engine in sync… match exactly: 5 / 7 / 10 / 12 / 15 / 18 / 20%" — lists the live numbers.
+   - drift (amber): "Direct-sale slabs: DRIFT vs live engine" — lists per-rank `plan: X% · live: Y%` rows + note that creating a plan doesn't rewrite slabs via `mlm_rank_benefits`; slab-sync needs owner sign-off before activate-foundation atomically ports plan slabs there.
+4. **`app/views/admin/commission/plans/create.php`** — "Yeh page kya karta hai?" copy corrected: plan saves to `mlm_plan_levels`; engine slab reads `mlm_rank_benefits`; so slab edits don't flip live payout; Track A/B/C + royalty + GBV + Global Cap come from the snapshot (per S634); drift shows live on the plans list card. Step 3 reworded to say activation makes the plan live (Track/Cap/BV rules) without promising the untrue "saare payouts isi plan se".
+
+### Honest notes
+- Slab-sync on activation is RIDICULOUSLY tempting but NOYOVER — flipping payout economics on every plan activation is an owner decision; this work surfaces "drift" clearly instead of silently bridging it.
+- `mlm_rank_benefits` carries `'Ass.'`/`'V.P.'`/`'Sr. Ass.'` spellings — the map is exactly those strings (live DB probe proved 5/7/10/12/15/18/20 all match today).
+- `mlm_plan_levels` remains what the S633 live preview reads — page math is consistent with the form, not with payout; the coherence card is now the truth-teller for that delta.
+- No DB writes anywhere (read-only counters + view).
+
+### Verification
+- `php -l` clean ×3 · **PHPStan → `[OK] No errors`** · **Master → 11/11 PASSED** (54.02s).
+- **Live browser probe** (fresh admin session, `/admin/commission-plans`): card renders with "Direct-sale slabs: engine in sync — active plan DIRECT (v1)… 5 / 7 / 10 / 12 / 15 / 18 / 20%" — exactly the verified live values.
+- `git status --porcelain`: only mine staged (CommissionPlanService.php, Admin\CommissionPlanController.php, plans/index.php, plans/create.php); parallel actor's files untouched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **636** (parallel actor, nightly churn refresh in cron runner). This entry = **S637**. Next-free = **638**.
+
+### Key lessons
+_1370. **A preview is not a payout source — say it out loud on the page.** S633 shows form math; this card now says what the engine actually pays, with numbers. Two independent claims, one page, zero ambiguity.
+_1371. **Check the inner-cash source before you build the bridge.** Engine reads `mlm_rank_benefits` (`direct_sale_pct`); plan editor writes `mlm_plan_levels`; assuming "editor is the source" was a 2-week-old assumption that would have broken payout silently on activation.
+_1372. **Divergence detection beats half-fixes on money paths.** Auto-porting slabs on activate touches live economics; a read-only coherence card surfaces the condition (exactly like today: all 7 match) without changing anything.
 ## Session 634: Commission Engine Cap Hardcode Fixed — Global Cap Now Reads Active Plan Live, 20% Fallback Only, Both Money Paths Patched, Gates Green (2026-11-16)
 
 ### Trigger
