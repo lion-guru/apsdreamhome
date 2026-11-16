@@ -1,3 +1,35 @@
+## Session 625: MLM Commission Ledger & Transactions Missing Auto-Increment Cured, Email Queue Default Value Fixed, Multi-Table Auto-Increment Audit Verified (2026-11-16)
+
+### Trigger
+Continuation of deep form and error log audit. Tail of `php_error.log` revealed recurring SQLSTATE[HY000] 1364 failures:
+1. `DB Query failed: Field 'queue_id' doesn't have a default value` on `email_queue`.
+2. `[__CLASS__] __METHOD__() exception: Field 'id' doesn't have a default value` from `MLMCommissionEngine`.
+
+### Root Causes & Fixes Applied
+1. **`mlm_commission_ledger` Table (`partition_ledger.php` side-effect):**
+   - In `database/migrations/partition_ledger.php`, line 124 altered `id BIGINT UNSIGNED NOT NULL` to add composite key `(id, created_at_year, tenant_id)`, which stripped `AUTO_INCREMENT`.
+   - Every commission calculation attempt threw error 1364 on `id`.
+   - **Fix:** Ran `ALTER TABLE mlm_commission_ledger MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;` in MySQL, and updated `database/migrations/partition_ledger.php` to immediately re-apply `AUTO_INCREMENT`.
+2. **`transactions` Table Missing `AUTO_INCREMENT`:**
+   - Full-schema scan across `information_schema.COLUMNS` revealed `transactions.id` was also missing `AUTO_INCREMENT`.
+   - **Fix:** Ran `ALTER TABLE transactions MODIFY id INT(11) NOT NULL AUTO_INCREMENT;`.
+3. **`email_queue` Table Default Values & Sender Service:**
+   - `email_queue.queue_id` and `from_email` were `NOT NULL` without default values. When `EmailSenderService::logToQueue()` logged emails, inserts crashed with error 1364.
+   - **Fix:** Made `queue_id` and `from_email` nullable (`NULL DEFAULT NULL`), and updated `EmailSenderService::logToQueue()` to automatically populate `queue_id` (`EQ-timestamp-rand`), `from_email`, and `from_name`.
+
+### Verification & Quality Gates
+- **Live Probe Script:**
+  - Inserted test record into `email_queue` with generated `queue_id` and `from_email` -> verified and cleaned.
+  - Inserted test record into `mlm_commission_ledger` without providing `id` -> auto-increment generated ID 2139 -> verified and cleaned.
+  - Inserted test record into `transactions` without providing `id` -> auto-increment generated ID 6 -> verified and cleaned.
+  - Zero DB drift verified.
+- **PHP Lint:** `php -l app/Services/Communication/EmailSenderService.php database/migrations/partition_ledger.php` clean.
+- **PHPStan:** `[OK] No errors`.
+- **Master Test Suite:** **11/11 PASSED** (36.94s, 100% HEALTHY).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 624. This entry = **S625**. Next-free = **626**.
+
 ## Session 624: Booking Payment Schedules Auto-Increment Missing Cured (Partitioning Migration Side-Effect), Full Plot Booking Lifecycle E2E Verified (Creation -> 3-Mo Schedule -> Payment Recording -> Receipt -> Zero DB Drift) (2026-11-16)
 
 ### Trigger

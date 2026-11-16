@@ -157,8 +157,12 @@ public function processQueue($limit = 10)
     private function logToQueue($to, $subject, $bodyHtml, $bodyText, $status, $error = null)
     {
         try {
+            $queueId = 'EQ-' . date('YmdHis') . '-' . mt_rand(1000, 9999);
             $this->db->insert('email_queue', [
                 'tenant_id' => TenantContext::getId(),
+                'queue_id' => $queueId,
+                'from_email' => $this->config['from_email'] ?? 'notifications@apsdreamhome.com',
+                'from_name' => $this->config['from_name'] ?? 'APS Dream Home',
                 'to_email' => $to,
                 'subject' => $subject,
                 'body_html' => $bodyHtml,

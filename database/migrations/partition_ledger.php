@@ -124,7 +124,12 @@ try {
         MODIFY id BIGINT UNSIGNED NOT NULL, 
         ADD PRIMARY KEY (id, created_at_year, tenant_id)
     ");
-    echo "  Updated PRIMARY KEY to (id, created_at_year, tenant_id) ✓\n";
+    // Restore AUTO_INCREMENT on id
+    $pdo->exec("
+        ALTER TABLE mlm_commission_ledger 
+        MODIFY id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT
+    ");
+    echo "  Updated PRIMARY KEY to (id, created_at_year, tenant_id) with AUTO_INCREMENT ✓\n";
     
     // Recreate unique constraint with partitioning columns
     $pdo->exec("
