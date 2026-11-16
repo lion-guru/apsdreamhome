@@ -1,3 +1,43 @@
+## Session 608: Multi-Agent Senior-SWE Static Scan Wired + Duplicate-Route Audit Tool — 138 identical dups, 24 different-handler dups mapped (employee.php wins over web.php) (2026-11-16)
+
+### Trigger
+User (Hinglish): "jitne pichle msg kiye hai kal se wo padho samjh aayega... multi agent as ceo seniiur software devlooer thinker etc... yaad aaya" — re-read the history, run a multi-agent human-like audit of the whole site, personas CEO / Senior-SW-Dev / Thinker in the loop.
+
+### What was done (this round)
+
+**1. Senior-SW-Dev persona — CodeReviewAgent run against three hot trees (`app/services/AI`, `app/Http/Controllers/Front`, `app/views/pages`).**
+- Initial result: `missing-use-exception` at CodeReviewAgent.php:138 + `extract-in-render` ×2 (138 / mobile `views/pages/email_system.php:228`).
+- 2 of 3 were the scanner matching its own detector strings (`preg_match(` / `$this->hit(` construction lines recur verbatim in the source). Fixed in-place: the analyzer now skips `preg_match(` and `$this->hit(` lines as evidence. Re-scan: **0 false positives remain**.
+- The one genuine finding is `app/views/pages/email_system.php:228 extract($variables);` — real, but intentional (email template hydration; call-site keys are all `user_name`/`user_type`/`login_url`/`inquiry_name`/etc — none can clobber `$view`/`$layout`/`$template`). Left as-is; recorded.
+- Commit `ce10558e7` (`fix(ai-review): evidence-line skipping for regex/self-referencing detections`), pushed.
+- PHPStan `[OK] No errors`; Master **11/11 PASSED** after the fix.
+
+**2. New tool: `scripts/audit_duplicate_routes.php`** — maps every `($router->METHOD, path)` in `routes/*.php`, groups them, distinguishes identical-handler dups from different-handler dups. Reports line numbers. Results (informational; zero code changes applied):
+
+| Class | Count | Meaning |
+|---|---|---|
+| Duplicate registrations, IDENTICAL handler | 138 | harmless last-wins re-registry |
+| Duplicate registrations, DIFFERENT handler | 24 | earlier registration is DEAD code |
+| Closures (unparseable handlers) | 0 | none |
+
+**Different-handler duplicates by cause:**
+- **employee.php:9-109 vs web.php:1469-1567 (~15 routes)**: load order in `public/index.php` is `web.php` (bottom-includes `api.php`) → `land.php` → `gap_builds.php` → `ai.php` → **`employee.php` LAST**. Last-wins ⇒ **employee.php's handlers always win, web.php's EmployeeDashboardController / EmployeeSelfServiceController@* handlers are dead code.** Routes are `/employee/dashboard-overview`, `/employee/marketing-dashboard`, `/employee/ops-dashboard`, `/employee/sales-dashboard`, `/employee/self-service` (3 registrations: index ×2 vs dashboard), `helpdesk/create`, `helpdesk/{id}`, `advances/apply` POST, `assets/report-issue` POST, `encashment/apply` POST, `grievances/create` POST, `helpdesk/create` POST, `overtime/apply` POST, `shift-swaps/request` POST, `shift-swaps/{id}/respond` POST, `tax-regime` POST.
+- **Spelling-only duplicates (7-8)**: `Auth\Foo` vs `Auth\\Foo` (double-backslash) between api.php and web.php — behaviourally identical; dead.
+- **`GET /api/ai/chat/history`**: two handlers (`history()` at line 98, `getHistory()` at line 107) in the same api.php; line 107 wins. Both methods exist (579, 186). Harmless.
+- **Direct conclusion: the web.php employee self-service handler block is the dead side** — safe to retire if the parallel actor ever wants a reduction; this file is mixed-authorship so no deletion was applied without owner order.
+
+**3. Live multi-agent browser crawl (S607) shipped already** — all 7 dev-login roles crawled via agent-browser (`qa-rolltest`), every role 0 page-errors, console flagged lines 0, `/admin/departments` verified live (11 depts / 75 designations / 8 employees), screenshot captured, session closed cleanly.
+
+**4. Multi-agent human-like audit (CEO / Senior SWE / Thinker personas)** — 3 parallel read-only subagent audits running in background as of this entry (CEO: revenue-impact pass; SWE: console/JS/asset defect pass; Thinker: positioning/trust/RERA-honesty pass). Reports land in this conversation when they finish; this log will be amended if they surface bugs verified in this session.
+
+### Notes
+- No DB writes this round. No route registrations edited. No views edited.
+- Parallel actor's in-flight files: none touched; git status clean this round.
+- This agent run also proved the CodeReviewAgent → scanner → `scan(store=false)` path works end-to-end on the live tree (findings written to stdout; `ai_code_findings` NOT populated since store=false).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 607. This entry = **S608**. Next-free = **609**.
+
 ## Session 607: Multi-Role Browser Crawl — All 7 Test Roles × ~40 Pages Render 0 Page-Errors; Departments Desk Verified Live (11 Departments, 75 Designations, 8 Employees); Employee/Department System Inventory (2026-11-16)
 
 ### Trigger
