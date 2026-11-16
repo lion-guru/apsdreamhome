@@ -50,6 +50,10 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
         <a href="<?= $base ?>/admin/commission-plans" class="cp-btn cp-btn-outline"><i class="fas fa-arrow-left me-1"></i>Back</a>
     </div>
     <div class="cp-card-body">
+        <div class="cp-note" style="border-left:3px solid #f59e0b;background:#1f1607;padding:.65rem .9rem;border-radius:8px;font-size:.75rem;color:#fcd34d;margin-bottom:1.25rem">
+            <i class="fas fa-triangle-exclamation me-1"></i>
+            <strong>Edit ≠ payout switch.</strong> Editing saves the plan row + <code>mlm_plan_levels</code>; the live engine slab still reads <code>mlm_rank_benefits</code>, so Direct % changes here do <em>not</em> reach payouts until slab-sync is signed off. Track A/B/C · royalty · GBV · Global Cap hit the engine as soon as the plan is <code>active</code>. Plans list page shows live coherence.
+        </div>
         <?php if ($isActive): ?>
             <div >
                 <i class="fas fa-info-circle"></i>

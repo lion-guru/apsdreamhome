@@ -1,3 +1,27 @@
+## Session 639: Commission Plans Calculator Cap Hardcode Fixed (JS now reads active plan via GLOBAL_CAP), Edit Page Honesty Advisory Added, Gates Green (2026-11-16)
+
+### Trigger
+Interview-driven session on the commission editor family: the calculator page still hardcoded the 20% Global Cap line (two spots) while the engine had already been rewired (S634) to read the plan's live cap — and the edit page gave no hint that editing a plan ≠ switching payouts.
+
+### What was built
+1. **`app/views/admin/commission/plans/calculator.php`** — the "Global Cap" alert no longer claims "must not exceed 20%". Now prints the active plan's name and its actual `global_cap_pct` (via `$activePlan` — already passed by the controller), states the engine clamps payout to cap, and links to "plan manager" (not a hardcoded edit URL). New JS const `GLOBAL_CAP = json_encode((float)($activePlan['global_cap_pct'] ?? 20.0))` feeds both `rowTotal > 20` highlight and `totalPct > 20` danger class checks. Zero controller changes; `$activePlan` reused as-is.
+2. **`app/views/admin/commission/plans/edit.php`** — amber advisory under `cp-card-body`: "Edit ≠ payout switch" — clarifies saves go to plan row + `mlm_plan_levels`; live engine slab reads `mlm_rank_benefits`; slab changes don't hit payouts until slab-sync is wired; Track A/B/C, royalty, GBV, Global Cap hit engine when plan is `active`; plans list shows live coherence card.
+3. No DB writers; pure view-layer edits.
+
+### Verification
+- **Live browser probes** (fresh test login):
+  - `/admin/commission-plans/calculator?fresh=<ts>` — alert renders: "Active plan DIRECT (v1) allows up to 20% of the sale amount as total payout" (the `?fresh=` cache-bust was needed because an earlier probe read a stale, pre-edit snapshot; `globalThis` generation was stuck) — console 0; 7 rows render.
+  - `/admin/commission-plans/edit/9` — honesty advisory renders ("Edit ≠ payout switch" + levers list).
+- `php -l` clean ×2 · **PHPStan → `[OK] No errors`** · **Master → 11/11 PASSED** (33.02s; earlier Select-Object run reported exit 1 due to a pipe artifact, direct re-run is green) · AGENTS.md integrity OK at this entry.
+- Parallel actor's in-flight files (CustomerMaintenanceController.php, Autoloader.php, customer/*, registry/*, solar/*, transfers/*) untouched.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **638** (parallel actor, Smart Lead Assignment wired into `LeadController::store()`). This entry = **S639**. Next-free = **640**.
+
+### Key lessons
+_1373. **"must not exceed X%" hardcoded in a page next to a number the admin can change is always stale.** Always interpolate the live value — it's already on the server, one variable away.
+_1374. **A browser probe that reads the same DOM sequence twice can lock onto a stale snapshot** — adding `?fresh=<ts>` bypasses it; a console error and a cached tab look identical otherwise.
+_1375. **Client-side formulas must come from PHP truths** — `json_encode((float)$activePlan['...'])` gives the JS a guaranteed-numeric const with zero parsing risk.
 ## Session 638: Smart Lead Assignment Wired Into Lead Creation Flow — Skill-Based Routing Auto-Assigns New Leads, Legacy Fallback Intact, 11/11 (2026-11-16)
 
 ### Trigger

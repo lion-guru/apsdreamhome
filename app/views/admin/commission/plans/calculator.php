@@ -114,8 +114,8 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
         <div class="alert alert-secondary small">
             <i class="fas fa-info-circle me-1"></i>
-            <strong>Global Cap:</strong> Total commission per payment must not exceed 20% of sale amount.
-            The calculator highlights rows exceeding 20% in red. Adjust percentages in the <a href="<?= htmlspecialchars($base ?? '') ?>/admin/commission-plans/edit/1">plan editor</a>.
+            <strong>Global Cap:</strong> Active plan <strong><?= htmlspecialchars($activePlan['plan_name'] ?? '—') ?></strong> allows up to <span id="noteCap"><?= (float)($activePlan['global_cap_pct'] ?? 20) ?>%</span> of the sale amount as total payout.
+            Rows above cap show in red — the engine clamps the payout to the cap. Adjust percentages in the <a href="<?= htmlspecialchars($base ?? '') ?>/admin/commission-plans">plan manager</a>.
         </div>
     </div>
 </div>
@@ -123,6 +123,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 <script>
 let calcLevels = [];
 const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
+const GLOBAL_CAP = <?= json_encode((float)($activePlan['global_cap_pct'] ?? 20.0)) ?>;
 
 function loadLevels() {
     const planId = document.getElementById('calcPlan').value;
@@ -167,7 +168,7 @@ function calculateCommissions() {
         html += '<td>' + match.toFixed(1) + '%</td>';
         html += '<td>' + leader.toFixed(1) + '%</td>';
         html += '<td>' + perf.toFixed(1) + '%</td>';
-        html += '<td class="' + (rowTotal > 20 ? 'text-danger fw-bold' : '') + '">' + rowTotal.toFixed(1) + '%</td>';
+        html += '<td class="' + (rowTotal > GLOBAL_CAP ? 'text-danger fw-bold' : '') + '">' + rowTotal.toFixed(1) + '%</td>';
         html += '<td>' + fmt.format(Math.round(rowAmt)) + '</td>';
         html += '</tr>';
     });
@@ -182,7 +183,7 @@ function calculateCommissions() {
     document.getElementById('dispNet').textContent = fmt.format(Math.round(amount - totalAmt));
 
     const pctEl = document.getElementById('dispPct');
-    pctEl.className = totalPct > 20 ? 'text-danger' : 'text-warning';
+    pctEl.className = totalPct > GLOBAL_CAP ? 'text-danger' : 'text-warning';
     const netEl = document.getElementById('dispNet');
     netEl.className = (amount - totalAmt) < 0 ? 'text-danger' : 'text-danger';
 }
