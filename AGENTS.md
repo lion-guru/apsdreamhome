@@ -1,3 +1,36 @@
+## Session 600: Customer Portal 64-URL Crawl - Double-Layout-Include Root-Caused in 3 Views (Syntax-Fatal Duplicate Globals), Razorpay CSP Unlock on Pay Pages, Associate Portal Confirmed Clean, PHPStan OK, Master 11/11 (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" - after S599 (public site), the last un-machine-verified surface was the customer portal. Logged in as customer1 (`/admin/login?test_login=7`), harvested every GET `/user/*` route, crawled all 64 reachable ones in a live browser session with auto console capture.
+
+### What was actually broken (all probe-verified, all fixed)
+
+**1. Three views double-included the customer layout, fataling every shared script** - `pages/investment_plans.php` (route `/user/investment-plans`), `pages/referral_leaderboard.php` (`/user/referrals/leaderboard`), `pages/user_investments.php` (`/user/investments`). All three raw-`include` the view from their controllers (not `$this->render()`), and the view itself included `layouts/customer.php` TWICE: once at the top (full shell, content-empty, scripts load), once at the bottom after `ob_start`/`ob_get_clean` (full shell again, with `$content` echoed this time). Result: every shared asset (bootstrap.bundle, notification-system.js, customer-pages.js, aps-a11y.js, frontend-enhancements.js, smart_chatbot.php) loaded twice; the second evaluation of `const CHAT_API_URL` and `NotificationSystem` threw `SyntaxError: Identifier '...' has already been declared`, killing both inline scripts and leaving the pages broken. `len` of parsed DOM ~99 KB with duplicate script set; now ~52-65 KB single document.
+- **Fix:** remove exactly the top `<?php include __DIR__ . '/../layouts/customer.php'; ?>` line in each of the 3 views (nothing else); the trailing `ob_get_clean()` + layout include already wraps content correctly (layout echoes `$content` at line 203).
+- **Verified in-browser:** all 3 pages now show exactly ONE `<html>` element, `dupScripts={}` (zero duplicates), 0 console errors.
+
+**2. Razorpay checkout.js blocked by CSP on both payment pages** - `/user/bookings/12/pay-token` and `/user/installments/25/pay` both included `https://checkout.razorpay.com/v1/checkout.js`, but BOTH CSP emitters (`SecurityHelper::buildCsp` and `HasSecurityHeaders::getContentSecurityPolicy`) omitted `checkout.razorpay.com` from `script-src` - the browser console logged the violation and Razorpay never loaded, i.e. **payments could not open**. Added `https://checkout.razorpay.com` to `script-src` in both files. Verified: both pages now render with **0 console errors**.
+
+**3. Associate portal re-crawl (11 URLs)** - all real pages render 0 console errors; only `/associate/my-deals` 404'd, which is an invented URL (no route, no view reference), not a broken feature.
+
+**Not a bug:** `/user/kyc/status` returns `application/json` (by design); `/user/demand-letters` and `/user/inquiry-history` were invented URLs (real routes: `/user/installments/{id}/demand-letter`, `/user/inquiries`); `/user/journey/12/receipt` invented (real route: `/user/receipt/{id}` or `/user/documents/download/passbook/{id}`).
+
+### Verified end-to-end
+- **PHPStan** - [OK] No errors. **Master** - **11/11 PASSED** (27.64s).
+- Customer crawl needles: `/user/investments` title "My Investments", `/user/investment-plans` "Investment Plans", `/user/referrals/leaderboard` "Referral Leaderboard" — all HTTP 200, single document, zero duplicate scripts, 0 console errors.
+- No DB writes this round; no migrations; all fixes are view/CSP-only.
+- **Payment flow**: the two Razorpay pages load the checkout script now (CSP allows it); actual charge flow requires real Razorpay keys (owner action, unchanged).
+
+### Key lessons (carried, continued)
+_1309. **A layout that always emits HTML is a footgun for raw-include views** - included twice it produces two full documents, duplicate scripts and a parse salad the browser repairs unpredictably; every raw-include view must include the layout exactly ONCE (at the bottom, after `ob_get_clean()`).
+_1310. **Class of bug: "double view include" is findable by counting occurrences of the layout path per file** - a one-line PowerShell census (count occurrences >= 2) surfaced exactly the 3 offenders among ~700 views in seconds. Grep for the string, count per file, fix the tail.
+_1311. **A blocked payment checkout is a silent revenue bug** - CSP blocked `checkout.razorpay.com` and the only signal was a console warning nobody was watching; payment pages need console verification, not just HTTP 200.
+_1312. **Invented-URL 404s are probe artifacts, not regressions** - when a crawl URL 404s and nothing references it (routes + views), drop it from the list; the customer portal's real surface is fully green.
+_1313. **Adding a host to ONE CSP copy fixes nothing** - this codebase emits CSP twice (`SecurityHelper`, `HasSecurityHeaders`); every host/directive change must update both or the blocked resource keeps breaking.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 599. This entry = S600. Next-free = **601**.
+
 ## Session 599: Public Site Deep Audit & Console-Fatal Purge - Dead Colony Cards Filtered, Featured Properties Now Render Honestly, list-property SyntaxError Root-Caused & Fixed, Missing Brace, CSP Google Maps, YouTube Embeds, 52/52 Public URLs 0 Console Errors, PHPStan OK, Master 11/11 (2026-11-16)
 
 ### Trigger

@@ -10,7 +10,6 @@
 $base = BASE_URL;
 $page_title = $page_title ?? 'Investment Plans';
 ?>
-<?php include __DIR__ . '/../layouts/customer.php'; ?>
 <?php ob_start(); ?>
 
 <div class="container-fluid py-4">
