@@ -9,10 +9,10 @@ $callDigits = preg_replace('/[^0-9]/', '', $cPhone);
 $userRole = isset($_SESSION['admin_id']) ? 'admin' : (isset($_SESSION['role']) ? $_SESSION['role'] : (isset($_SESSION['user_id']) ? 'customer' : 'guest'));
 $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 ?>
-<!-- •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+<!-- •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
      APS AI Chatbot + WhatsApp + Call + Voice — Unified Widget v3
       Unified widget: AI chatbot + voice + WhatsApp + call — all in one place.
-     •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•� -->
+     ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• -->
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 .cw-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 @media(min-width:768px){.cw-wrap{bottom:24px;right:24px}}
@@ -246,9 +246,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         } catch (e) { cwAIHealth = 'degraded'; }
     })();
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // RBAC-AWARE GREETING
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     var cwGreetings = {
         admin: cwUserName ? ('Hello ' + cwUserName + '! Admin dashboard ready.\n\n—¢ View analytics\n—¢ Manage leads\n—¢ Commission reports\n—¢ Team performance\n\nWhat would you like to do?') : 'Hello Admin! Welcome back.\n\n—¢ View analytics\n—¢ Manage leads\n—¢ Commission reports\n—¢ Team performance\n\nChoose an option or type your question!',
         associate: cwUserName ? ('Hello ' + cwUserName + '! Ready to grow your network.\n\n—¢ Add new leads\n—¢ Post properties\n—¢ Check commissions\n—¢ View your team\n\nWhat would you like to do?') : 'Hello! Welcome to APS Dream Homes!\n\n—¢ Add new leads\n—¢ Post properties\n—¢ Check commissions\n—¢ View your team\n\nChoose an option or type your question!',
@@ -305,9 +305,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         ]
     };
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // INIT GREETING
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     function cwInitGreeting() {
         // Try to load conversation history first
         cwLoadHistory();
@@ -364,9 +364,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     }
     cwInitGreeting();
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // TOGGLE CHAT
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwToggle = function(){
         cwOpen = !cwOpen;
         var box = document.getElementById('cwBox');
@@ -383,9 +383,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         }
     };
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // VOICE MODE (STT + TTS)
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwToggleVoice = function() {
         cwVoiceMode = !cwVoiceMode;
         var btn = document.getElementById('cwVoiceBtn');
@@ -438,9 +438,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         window.speechSynthesis.speak(u);
     }
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // SEND MESSAGE
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwSend = function(){
         var input = document.getElementById('cwInput');
         var msg = input.value.trim();
@@ -504,16 +504,16 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         input.focus();
     };
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // KEYBOARD SUPPORT
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     document.getElementById('cwInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') cwSend();
     });
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // HUMAN REQUEST + LEAD FORM
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwRequestHuman = function(){
         cwAddMsg('I want to talk to a human agent', 'user');
         cwShowTyping();
@@ -548,9 +548,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         .catch(function(){cwHideTyping();cwAddMsg('Details saved! We will contact you soon.','bot');});
     };
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // WHATSAPP TRACKING
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwTrackWhatsApp = function(source) {
         try {
             fetch('<?= BASE_URL ?>/api/track/whatsapp-click', {
@@ -561,9 +561,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         } catch (e) { console.error("Error:", e); }
     };
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // WHATSAPP TEMPLATES PANEL
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwShowWATemplates = function() {
         var msgs = document.getElementById('cwMessages');
         var qr = document.getElementById('cwQuickReplies');
@@ -595,9 +595,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         msgs.scrollTop = msgs.scrollHeight;
     };
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // FALLBACK RESPONSES (when API fails)
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     function cwFallback(userMsg){
         setTimeout(function(){
             cwHideTyping();
@@ -649,9 +649,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         return 'Aapka interest note ho gaya hai. Humari team jald aapse contact karti hai. Ya direct call karein: ' + phone + '. WhatsApp ya email: info@apsdreamhome.com';
     }
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // CONVERSATION CHIPS + PROGRESS (Action Flows)
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     function cwRenderChips(suggestions, step, action) {
         var c = document.getElementById('cwMessages');
         // Remove old chips
@@ -698,9 +698,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         c.scrollTop = c.scrollHeight;
     }
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // HELPER FUNCTIONS
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     function cwLinkify(t){
         return t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" >$1</a>');
     }
@@ -757,9 +757,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         if(t) t.remove();
     }
 
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     // FEEDBACK (Thumbs Up/Down)
-    // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
+    // •••••••••••••••••••••••••••••••••••••••••••••••
     window.cwFeedback = function(btn, positive) {
         var container = btn.closest('.cw-feedback');
         if (!container) return;

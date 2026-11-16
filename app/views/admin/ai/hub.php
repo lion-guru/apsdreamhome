@@ -123,6 +123,47 @@ $isManager = in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? 'admin', [
         </div>
     </div>
 
+    <!-- AI Operations (Agents + AI Employees) -->
+    <div class="row g-3 mb-4">
+        <div class="col-12"><h5 class="text-muted mb-2"><i class="fas fa-robot me-1"></i> AI Operations</h5></div>
+
+        <div class="col-md-4">
+            <a href="<?= $base ?>/admin/agentic-ai" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-gears fa-2x text-warning mb-2"></i>
+                        <h5 class="card-title">Agentic AI</h5>
+                        <p class="card-text small text-muted"><?= (int)($agent_counts['total'] ?? 0) ?> agents (<?= (int)($agent_counts['idle'] ?? 0) ?> idle, <?= (int)($agent_counts['active'] ?? 0) ?> active, <?= (int)($agent_counts['busy'] ?? 0) ?> busy) — reserved for explicit triggers only.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="<?= $base ?>/admin/ai-employee" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-user-tie fa-2x text-success mb-2"></i>
+                        <h5 class="card-title">AI Employee Desk</h5>
+                        <p class="card-text small text-muted"><?= (int)($ai_employee_counts['active'] ?? 0) ?> active · <?= (int)($ai_employee_counts['paused'] ?? 0) ?> paused — <?= (int)($ai_employee_counts['pending_tasks'] ?? 0) ?> task(s) pending. The staff that actually triages leads (Aira→Vivaan→Sahil).</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="<?= $base ?>/admin/crm/agentic" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <i class="fas fa-paper-plane fa-2x text-info mb-2"></i>
+                        <h5 class="card-title">Agentic CRM</h5>
+                        <p class="card-text small text-muted">Auto follow-ups, score recalculation, auto-assignment, insights — assisted, not autonomous.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
         <div class="col-12"><h5 class="text-muted mb-2"><i class="fas fa-brain me-1"></i> Core AI</h5></div>
 
         <div class="col-md-4">

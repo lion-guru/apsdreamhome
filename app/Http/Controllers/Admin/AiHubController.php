@@ -19,6 +19,23 @@ class AiHubController extends AdminController
     {
         $this->requireAdmin();
 
+        // AI operations counters (agent roster + AI employee desk) — used by the AI Ops row
+        $agentCounts = ['total' => 0, 'active' => 0, 'idle' => 0, 'busy' => 0];
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS total, SUM(status='active') AS a, SUM(status='idle') AS i, SUM(status='busy') AS b FROM ai_agents");
+            $agentCounts = ['total' => (int)($row['total'] ?? 0), 'active' => (int)($row['a'] ?? 0), 'idle' => (int)($row['i'] ?? 0), 'busy' => (int)($row['b'] ?? 0)];
+        } catch (\Throwable $e) {
+            error_log('AiHub: agent counts failed: ' . $e->getMessage());
+        }
+        $empCounts = ['active' => 0, 'paused' => 0, 'pending_tasks' => 0];
+        try {
+            $empRow = $this->db->fetchOne("SELECT SUM(status='active') AS a, SUM(status='paused') AS p FROM ai_employees");
+            $taskRow = $this->db->fetchOne("SELECT COUNT(*) AS n FROM ai_employee_tasks WHERE status IN ('pending','claimed')");
+            $empCounts = ['active' => (int)($empRow['a'] ?? 0), 'paused' => (int)($empRow['p'] ?? 0), 'pending_tasks' => (int)($taskRow['n'] ?? 0)];
+        } catch (\Throwable $e) {
+            error_log('AiHub: employee counts failed: ' . $e->getMessage());
+        }
+
         // RAG health snapshot
         $health = [];
         try {
@@ -101,6 +118,8 @@ class AiHubController extends AdminController
             'churn_stats' => $churn,
             'unassigned_leads' => $unassigned,
             'low_stock_colonies' => $lowStockColonies,
+            'agent_counts' => $agentCounts,
+            'ai_employee_counts' => $empCounts,
         ];
 
         $this->render('admin/ai/hub', $data);
