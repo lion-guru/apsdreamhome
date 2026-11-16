@@ -16,11 +16,6 @@ if (file_exists(__DIR__ . '/../app/Http/Controllers/MLMTreeController.php')) {
     require_once __DIR__ . '/../app/Http/Controllers/MLMTreeController.php';
 }
 
-// SMS Controller
-if (file_exists(__DIR__ . '/../app/Http/Controllers/SMSController.php')) {
-    require_once __DIR__ . '/../app/Http/Controllers/SMSController.php';
-}
-
 // God Mode Controller
 if (file_exists(__DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php')) {
     require_once __DIR__ . '/../app/Http/Controllers/Admin/GodModeController.php';
@@ -5492,12 +5487,6 @@ $router->post('/api/reviews', 'App\\Http\\Controllers\\Api\\ReviewController@sto
 // API FOLLOWUPS (Api\FollowupController)
 // ============================================================
 $router->post('/api/followups/run', 'App\\Http\\Controllers\\Api\\FollowupController@run');
-
-// ============================================================
-// API SMS (SMSController)
-// ============================================================
-$router->post('/api/sms/send-otp', 'App\\Http\\Controllers\\SMSController@sendOTP');
-$router->post('/api/sms/verify-otp', 'App\\Http\\Controllers\\SMSController@verifyOTP');
 
 // ============================================================
 // MISSING SIDEBAR ROUTES
