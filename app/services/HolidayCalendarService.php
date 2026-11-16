@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use App\Core\Database\Database;
@@ -9,9 +8,6 @@ class HolidayCalendarService
 {
     /**
      * Query runner: fetch a single row.
-     *
-     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
-     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
      */
     private function fetchOne(string $sql, array $params = []): ?array
     {
@@ -37,10 +33,6 @@ class HolidayCalendarService
 
     /**
      * Query runner used by this service.
-     *
-     * NOTE (S451): this service calls $this->fetchAll($sql, $params)
-     * internally, but the method NEVER existed -> every caller died with
-     * "Call to undefined method <Service>::fetchAll()".
      */
     private function fetchAll(string $sql, array $params = []): array
     {
@@ -54,9 +46,25 @@ class HolidayCalendarService
         }
     }
 
+    /**
+     * Query runner for write operations (INSERT/UPDATE/DELETE).
+     * Returns true on success, false on failure (logged).
+     */
+    private function execute(string $sql, array $params = []): bool
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return true;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::execute] ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public function getHolidays(array $filters = []): array
     {
-        $query = "SELECT * FROM holiday_calendar WHERE tenant_id = 1";
+        $query = "SELECT * FROM holiday_calendar WHERE tenant_id = ?";
         $params = [1];
 
         if (!empty($filters['type'])) {
@@ -88,7 +96,7 @@ class HolidayCalendarService
     {
         return $this->fetchAll("
             SELECT * FROM holiday_calendar
-            WHERE tenant_id = 1 AND date BETWEEN ? AND ?
+            WHERE tenant_id = ? AND date BETWEEN ? AND ?
             ORDER BY date ASC", [1, $startDate, $endDate]);
     }
 
@@ -153,8 +161,8 @@ class HolidayCalendarService
 
         $params[] = $id;
         $this->execute(
-            "UPDATE holiday_calendar SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = ? AND tenant_id = 1",
-            array_merge($params, [$id])
+            "UPDATE holiday_calendar SET " . implode(', ', $updates) . ", updated_at = NOW() WHERE id = ?",
+            $params
         );
 
         return ['success' => true];
