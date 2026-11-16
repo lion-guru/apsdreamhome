@@ -1,3 +1,47 @@
+## Session 666: Employee Self-Service Salary Advance Would 100% Fail — `execute()` Never Existed, Duplicate `tenant_id` INSERT, Hardcoded Tenant `1`; All Closed, E2E Verified (2026-11-17)
+
+### Trigger
+User: "do next all" — continuation of the S662/S664/S665 flash-family lane. While probing employee self-service POST flows, the advance-apply flow turned out to be **100% dead for its entire lifetime** (every request died before the INSERT; every approve/reject/disburse/repay died too).
+
+### What was broken (found by live E2E probe, not static guess)
+1. **`$this->execute()` called 6 times but the method never existed on `SalaryAdvanceService`.**
+   - `requestAdvance()` — salary_advance insert (the employee "Request Salary Advance / Loan" form)
+   - `generateRepaymentSchedule()` — EMI repayment rows for loans
+   - `approveAdvance()`, `rejectAdvance()`, `processRepayment()` — payroll/admin lifecycle writes
+   - Live failure output: `Call to undefined method App\Services\SalaryAdvanceService::execute()` — surfaced by my flash-probe: the 302 → list page showed `alert-danger: Call to undefined method ...` instead of the submission flash (the S662-class "silent broken form" bug, made visible only because the flash family now renders).
+2. **Duplicate `tenant_id` in the salary_advances column list** (`(tenant_id, employee_id, type, amount, installments, emi_amount, interest_rate, status, requested_at, tenant_id)`) → MySQL duplicate-column rejection even after the missing method existed. Column list deduped to the 9 real columns, 7 value placeholders.
+3. **`generateRepaymentSchedule()` hardcoded `tenant_id = 1`** in the repayments INSERT — for any non-default tenant every EMI row would silently land in tenant 1. Now uses `$this->tenantId()`.
+4. `approve/reject/processRepayment` had no exception handling — a failed statement would have produced HTTP 500 for the admin instead of an honest error message. Now return `['success' => false, 'message' => ...]` like `requestAdvance()` already does on failure (its own `rollBack()` preserved).
+
+### Fix (this session, one file)
+- NEW private `execute()` delegating to `Database::query()` (throws on failure — the same semantics `Database::query` has always had — so transaction callers roll back correctly instead of committing a partial state). Mirrors the S451 `fetchOne()` pattern; every call site stays unchanged.
+- INSERT rewritten: `(tenant_id, employee_id, type, amount, installments, emi_amount, interest_rate, status, requested_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())`, 7 bound values.
+- `generateRepaymentSchedule()` — tenant_id bound from `$this->tenantId()`.
+- `approveAdvance()` / `rejectAdvance()` / `processRepayment()` — wrapped in try/catch, return honest error arrays, log the real exception server-side.
+
+### Verification (live E2E roundtrip + sacrificial row)
+- Baseline: `SELECT COUNT(*) FROM salary_advances WHERE employee_id = 7` = **0**.
+- Fresh employee session (dev bypass `?test_login=4`) → GET `/employee/self-service/advances/apply` (46,753 B) with CSRF → POST `type=advance, amount=5000, installments=5` → **HTTP 302** → landing `/employee/self-service/advances` renders the flash-region with **`alert-success: Advance request submitted successfully`**.
+- DB read-back: one sacrificial row **id=1** (advance, 5000.00, 5 installments, status=pending) → **deleted**, count back to **0**, zero leftovers.
+- **php -l clean** (PHPStorm/portable parse) · **PHPStan on this file → [OK] No errors** · **Master → 11/11 PASSED** (32.5 s, whole tree) · PHPStan whole-tree re-run not required for one additive helper + isolated edits.
+- No migrations, no routes, no schema or money rules changed; the wallet-credit path (S466) untouched.
+
+### Honest notes
+- The dev `?test_login=4` bypass binds `employee_id = 7` hardcoded (John Doe, Management dept) — real employee self-service uses the production `establishSession()` path; the fix applies identically there.
+- `getEmployeeIdFromAdvance()` remains a private helper for the repayment schedule link (read-only query against `salary_advances`).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading at this entry = **665** (parallel actor). This entry = **S666**. Next-free = **667**.
+
+### Key lessons
+_1440. **The flash family is the best bug detector ever shipped in this codebase** — a 100%-dead self-service form hid behind a swallowing try/catch and was only named the moment `alert-danger` actually rendered (S662). When an action "succeeds" but nothing appears, grep the server-side catch for swallowed exceptions before touching the UI.
+_1441. **A stub helper never implemented is the same failure mode as a missing table** — audit, don't trust, the helper surface (`fetchOne`, `execute`, `tenantSql`, `tVal`) in every legacy service before wiring it to a new caller.
+_1442. **Wrong column lists in INSERTs fail loudly twice** — missing method first, duplicate-column second; both hiding the same money-path. Rewrite the statement once, not two patches.
+_1443. **Tenant_id must come from the tenant context, never a literal** — the repayment schedule insert `VALUES (1, ...)` was a multi-tenant breach waiting to be found on the first real tenant 2 install.
+_1444. **Prove money/self-service fixes with a sacrificial roundtrip, then DELETE the row** — baseline count → POST → row read-back → delete → count back to baseline is the whole proof chain; rendering without the row is not evidence of the INSERT.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · decision on "View not found" class (full public-page needle sweep, expected another 2–3 dead public pages in the same family).
 ## Session 665: Raw Flash Echo Family Eliminated Across 46 Clean Views (77 Escapes) + 2 Attribute XSS Closed - All Swept Into Parallel Actor's Whole-Tree S663 Commit, Master 11/11 (2026-11-17)
 
 ### Trigger
