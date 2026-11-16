@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 
@@ -60,46 +57,41 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
 
   Future<void> _loadColonies() async {
     try {
-      AppConstants.initBaseUrl();
-      final url = '${AppConstants.baseUrl}/api/v2/mobile/colonies?limit=20';
-      final resp = await http
-          .get(Uri.parse(url))
-          .timeout(const Duration(seconds: 10));
-      if (resp.statusCode == 200) {
-        final data = jsonDecode(resp.body);
-        if (data['success'] == true && data['data'] is List) {
-          final colonies = (data['data'] as List).cast<Map<String, dynamic>>();
-          if (colonies.isNotEmpty) {
-            setState(() {
-              _properties = colonies.asMap().entries.map((e) {
-                final i = e.key;
-                final c = e.value;
-                final priceRaw = c['starting_price'];
-                final price = priceRaw is num
-                    ? priceRaw.toDouble()
-                    : (double.tryParse('$priceRaw') ?? 0);
-                final total = c['total_plots'] ?? 0;
-                final available = c['available_plots'] ?? 0;
-                final district = c['district_name'] ?? 'UP';
-                final featured =
-                    c['is_featured'] == true || c['is_featured'] == 1;
-                return {
-                  'id': c['id'] ?? i,
-                  'title': c['name'] ?? 'Colony',
-                  'location': '$district, Uttar Pradesh',
-                  'price': _formatPrice(price),
-                  'size': '$total plots ($available available)',
-                  'type': 'Residential',
-                  'badge': featured ? 'FEATURED' : 'NEW COLONY',
-                  'color': _gradients[i % _gradients.length],
-                  'icon': _icons[i % _icons.length],
-                };
-              }).toList();
-              _isLoading = false;
-            });
-            return;
-          }
-        }
+      final resp = await ApiService().request(
+        method: 'GET',
+        endpoint: '/colonies?limit=20',
+      );
+      final raw = resp['data'];
+      if (raw is List && raw.isNotEmpty) {
+        final colonies = raw.cast<Map<String, dynamic>>();
+        setState(() {
+          _properties = colonies.asMap().entries.map((e) {
+            final i = e.key;
+            final c = e.value;
+            final priceRaw = c['starting_price'];
+            final price = priceRaw is num
+                ? priceRaw.toDouble()
+                : (double.tryParse('$priceRaw') ?? 0);
+            final total = c['total_plots'] ?? 0;
+            final available = c['available_plots'] ?? 0;
+            final district = c['district_name'] ?? 'UP';
+            final featured =
+                c['is_featured'] == true || c['is_featured'] == 1;
+            return {
+              'id': c['id'] ?? i,
+              'title': c['name'] ?? 'Colony',
+              'location': '$district, Uttar Pradesh',
+              'price': _formatPrice(price),
+              'size': '$total plots ($available available)',
+              'type': 'Residential',
+              'badge': featured ? 'FEATURED' : 'NEW COLONY',
+              'color': _gradients[i % _gradients.length],
+              'icon': _icons[i % _icons.length],
+            };
+          }).toList();
+          _isLoading = false;
+        });
+        return;
       }
     } catch (_) {}
     // Fallback: honest empty state (no fake property cards)
@@ -113,7 +105,7 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
     if (price >= 10000000) {
       return '₹${(price / 10000000).toStringAsFixed(2)} Cr';
     } else if (price >= 100000) {
-      return '₹${(price / 100000).toStringAsFixed(1)} Lakh';
+      return '₹${(price / 100000).toStringAsFixed(1)} L';
     } else if (price >= 1000) {
       return '₹${(price / 1000).toStringAsFixed(0)}K';
     }
@@ -231,7 +223,7 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
                     border: Border.all(color: Colors.green),
                   ),
                   child: Text(
-                    '❤️ ${_savedProperties.length} Saved',
+                    '✓ ${_savedProperties.length} Saved',
                     style: const TextStyle(
                       color: Colors.green,
                       fontSize: 13,
@@ -511,7 +503,7 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
           ),
           const SizedBox(height: 8),
           Text(
-            '${_savedProperties.length} properties saved ❤️',
+            '${_savedProperties.length} properties saved ✓',
             style: const TextStyle(color: Colors.white54, fontSize: 16),
           ),
           const SizedBox(height: 24),

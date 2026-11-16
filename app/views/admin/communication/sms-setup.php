@@ -177,6 +177,7 @@ document.getElementById('smsTestForm').addEventListener('submit', function(e) {
     .finally(function() {
         btn.innerHTML = originalText;
         btn.disabled = false;
-    });
-).finally(() => hideLoader());
+    })
+    .finally(() => hideLoader());
+});
 </script>

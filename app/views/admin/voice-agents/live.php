@@ -231,7 +231,6 @@ function submitTransfer() {
             result.className = 'alert alert-success';
             result.textContent = 'Call transferred successfully.';
             setTimeout(() => location.reload(), 1500);
-            .catch(err => console.error('Request failed:', err));
         } else {
             result.className = 'alert alert-danger';
             result.textContent = 'Transfer failed: ' + (data.error || 'unknown error');
@@ -240,7 +239,7 @@ function submitTransfer() {
     .catch(e => {
         result.className = 'alert alert-danger';
         result.textContent = 'Error: ' + e.message;
-    ).finally(() => hideLoader());
+    }).finally(() => hideLoader());
 }
 
 function hangupCall(callSid) {

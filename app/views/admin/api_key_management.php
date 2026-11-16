@@ -272,7 +272,6 @@
                 .then(data => {
                     if (data.success) {
                         updateStats(data.stats);
-                        .catch(err => console.error('Request failed:', err));
                         loadMcpKeys();
                         loadUserKeys();
                         loadIntegrationStatus();

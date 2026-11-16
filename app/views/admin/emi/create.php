@@ -158,7 +158,6 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .then(data => {
                 if (data.success) {
                     showToast('EMI plan created successfully!', 'success');
-                    .catch(err => console.error('Request failed:', err));
                     window.location.href = '<?php echo e($base); ?>/admin/emi';
                 } else {
                     showToast(data.message || 'Failed to create EMI plan', 'danger');
@@ -167,7 +166,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             .catch(error => {
                 console.error('Error:', error);
                 showToast('An error occurred while creating EMI plan', 'danger');
-            ).finally(() => hideLoader());
+            }).finally(() => hideLoader());
         });
     </script>
 

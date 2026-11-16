@@ -288,7 +288,8 @@ async function makeCall() {
                 agent_script: document.getElementById('agentScript').value,
                 caller_id: document.getElementById('callerId').value
             })
-        ).finally(() => hideLoader());
+        })
+        .finally(() => hideLoader());
         const data = await res.json();
         if (data.success) {
             statusDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check"></i> ' + data.message + ' (ID: ' + data.call_id + ')</div>';
@@ -324,7 +325,7 @@ async function refreshStatus() {
 }
 
 async function hangup(channel) {
-    apsConfirm('Hangup this call?').then(function(ok) {
+    apsConfirm('Hangup this call?').then(async function(ok) {
         if (!ok) return;
     try {
         showLoader();
@@ -332,12 +333,13 @@ async function hangup(channel) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ channel })
-        ).finally(() => hideLoader());
+        })
+        .finally(() => hideLoader());
         location.reload();
-    });
     } catch (e) {
         showToast('Hangup failed', 'danger');
     }
+    });
 }
 
 // Auto-refresh only when Asterisk is connected (manual refresh button available)

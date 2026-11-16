@@ -78,13 +78,12 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(function (d) {
                 if (d.success) {
                     ta.value = (d.english || '') + "\n\n---\n\n" + (d.hindi || '');
-                    .catch(err => console.error('Request failed:', err));
                     if (meta && d.excerpt) meta.value = d.excerpt;
                 } else {
                     showToast('AI generation failed. Please try again.', 'danger');
                 }
             })
-            .catch(function () { showToast('AI generation failed. Please try again.', 'danger'); }).finally(() => hideLoader());
+            .catch(function () { showToast('AI generation failed. Please try again.', 'danger'); }).finally(() => hideLoader())
             .finally(function () {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-magic"></i> Generate with AI (Hindi + English)';

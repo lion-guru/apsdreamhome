@@ -523,6 +523,7 @@ $perPage = $per_page ?? 20;
 </ul></nav>
 <?php endif; ?>
 
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 const BASE_URL = <?= json_encode(BASE_URL) ?>;
 const CSRF = <?= json_encode((string)($csrf ?? '')) ?>;
@@ -597,7 +598,7 @@ function bulkAction(action) {
         }).then(r => r.json()).then(d => {
             if (d.success) { location.reload(); } else { showToast(d.message || 'Failed', 'danger'); }
 }).catch(() => showToast('Network error', 'danger')).finally(() => hideLoader());
-    }
+    });
 }
 
 function exportSelected(format) {
@@ -631,6 +632,8 @@ function exportSelected(format) {
         }).catch(() => showToast('Export failed', 'danger')).finally(() => hideLoader());
     });
 }
+
+function forcePasswordReset(userId) {
     if (!confirm('Force password reset for this user? They will be required to change password on next login.')) return;
     showLoader();
     fetch(BASE_URL + '/admin/users/' + userId + '/force-password-reset', {
@@ -990,8 +993,6 @@ document.addEventListener('keydown', function(e) {
         });
     }
 });
-});
-}
 
 // Activity Feed Widget
 let activityFeedCollapsed = false;
@@ -1105,9 +1106,6 @@ function timeAgo(dateString) {
     const days = Math.floor(hours / 24);
     return days + 'd ago';
 }
-
-});
-});
 
 // Analytics Dashboard
 let analyticsCollapsed = false;

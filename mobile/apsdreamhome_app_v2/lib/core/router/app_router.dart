@@ -123,6 +123,8 @@ import '../../presentation/pages/common/colony_health_page.dart';
 
 // Customer Shell
 import '../../presentation/pages/customer/customer_shell.dart';
+import '../../presentation/pages/associate/associate_shell.dart';
+import '../../presentation/pages/agent/agent_shell.dart';
 
 // Tools
 import '../../presentation/pages/tools/emi_calculator_page.dart';
@@ -1465,17 +1467,41 @@ isDisclaimer ||
       ),
 
       // ─── Associate / MLM Routes ───
-      GoRoute(
-        path: '/associate/dashboard',
-        builder: (context, state) => const AssociateDashboardPage(),
-      ),
-      GoRoute(
-        path: '/associate/leads',
-        builder: (context, state) => const LeadsPage(),
-      ),
-      GoRoute(
-        path: '/associate/offline-booking',
-        builder: (context, state) => const OfflineBookingPage(),
+      // Associate Shell (bottom nav): Home / Leads / Team / Bookings / Profile
+      ShellRoute(
+        builder: (context, state, child) => AssociateShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/associate/dashboard',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AssociateDashboardPage()),
+          ),
+          GoRoute(
+            path: '/associate/leads',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: LeadsPage()),
+          ),
+          GoRoute(
+            path: '/associate/team',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: MyTeamPage()),
+          ),
+          GoRoute(
+            path: '/associate/my-team',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: MyTeamPage()),
+          ),
+          GoRoute(
+            path: '/associate/offline-booking',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: OfflineBookingPage()),
+          ),
+          GoRoute(
+            path: '/associate/profile',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ProfilePage()),
+          ),
+        ],
       ),
       GoRoute(
         path: '/associate/commission',
@@ -1484,12 +1510,7 @@ isDisclaimer ||
       GoRoute(
         path: '/associate/payout',
         builder: (context, state) => const PayoutPage(),
-      ),
-      GoRoute(
-        path: '/associate/team',
-        builder: (context, state) => const MyTeamPage(),
-      ),
-      // Alias — dashboards may deep-link here; unresolved location panics otherwise.
+      ),      // Alias — dashboards may deep-link here; unresolved location panics otherwise.
       GoRoute(
         path: '/associate/my-team',
         builder: (context, state) => const MyTeamPage(),
@@ -1527,17 +1548,41 @@ isDisclaimer ||
       ),
 
       // ─── Agent Routes ───
-      GoRoute(
-        path: '/agent/dashboard',
-        builder: (context, state) => const AgentDashboardPage(),
-      ),
-      GoRoute(
-        path: '/agent/leads',
-        builder: (context, state) => const LeadKanbanPage(),
-      ),
-      GoRoute(
-        path: '/agent/deals',
-        builder: (context, state) => const DealPipelinePage(),
+      // Agent Shell (bottom nav): Home / Leads / Deals / Bookings / Profile
+      ShellRoute(
+        builder: (context, state, child) => AgentShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/agent/dashboard',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AgentDashboardPage()),
+          ),
+          GoRoute(
+            path: '/agent/leads',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: LeadKanbanPage()),
+          ),
+          GoRoute(
+            path: '/agent/deals',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: DealPipelinePage()),
+          ),
+          GoRoute(
+            path: '/agent/bookings',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AgentBookingsPage()),
+          ),
+          GoRoute(
+            path: '/agent/bookings/:bookingId',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AgentBookingsPage()),
+          ),
+          GoRoute(
+            path: '/agent/profile',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ProfilePage()),
+          ),
+        ],
       ),
       GoRoute(
         path: '/agent/commissions',
@@ -1547,19 +1592,10 @@ isDisclaimer ||
         path: '/agent/crm',
         builder: (context, state) => const AgentCRMPage(),
       ),
-
       // ─── Agent Portal Extended Routes (Session 78) ───
       GoRoute(
         path: '/agent/analytics',
         builder: (context, state) => const AgentAnalyticsPage(),
-      ),
-      GoRoute(
-        path: '/agent/bookings',
-        builder: (context, state) => const AgentBookingsPage(),
-      ),
-      GoRoute(
-        path: '/agent/bookings/:bookingId',
-        builder: (context, state) => const AgentBookingsPage(),
       ),
       GoRoute(
         path: '/agent/documents',

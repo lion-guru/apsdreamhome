@@ -83,6 +83,6 @@ document.getElementById('attendanceForm').addEventListener('submit', function(e)
     showLoader();
     fetch('<?= BASE_URL ?>/admin/backoffice/attendance/record', {method:'POST',body:fd})
     .then(function(r){return r.json()})
-    .then(function(d){if(d.success){location.reload()}else{showToast(d.error||'Error', 'danger')}).finally(() => hideLoader());
+    .then(function(d){if(d.success){location.reload()}else{showToast(d.error||'Error', 'danger')}}).finally(() => hideLoader());
 });
 </script>

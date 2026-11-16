@@ -408,12 +408,11 @@ $active_page = 'bookings';
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
                 body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=status&value=' + encodeURIComponent(status) + '&notes=' + encodeURIComponent(notes) + '&booking_ids[]=' + ids.join('&booking_ids[]=')
-            });
+            })
             }).then(r => r.json()).then(d => {
                 if (d.success) location.reload();
-                .catch(err => console.error('Request failed:', err));
                 else showToast(d.error || 'Failed', 'danger');
-            ).finally(() => hideLoader());
+            }).finally(() => hideLoader());
         });
 
         bulkCancel.addEventListener('click', function() {
@@ -427,12 +426,11 @@ $active_page = 'bookings';
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': '<?= $_SESSION['csrf_token'] ?? '' ?>'},
                 body: 'csrf_token=<?= $_SESSION['csrf_token'] ?? '' ?>&action=cancel&booking_ids[]=' + ids.join('&booking_ids[]=')
-            });
+            })
             }).then(r => r.json()).then(d => {
-                .catch(err => console.error('Request failed:', err));
                 if (d.success) location.reload();
                 else showToast(d.error || 'Failed', 'danger');
-            ).finally(() => hideLoader());
+            }).finally(() => hideLoader());
         });
     });
 </script>

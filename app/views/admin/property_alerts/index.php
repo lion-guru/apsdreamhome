@@ -268,7 +268,7 @@ function toggleSub(id, active) {
     showLoader();
     fetch('<?= BASE_URL ?>/admin/property-alerts/toggle', { method: 'POST', body: fd })
         .then(r => r.json())
-        .then(d => { if (!d.success) showToast('Update failed', 'danger'); ).finally(() => hideLoader());
+        .then(d => { if (!d.success) showToast('Update failed', 'danger'); }).finally(() => hideLoader());
 }
 function testMatch(id) {
     showLoader();
@@ -280,7 +280,7 @@ function testMatch(id) {
             } else {
                 showToast('Error: ' + (d.error || 'Unknown'), 'danger');
             }
-        ).finally(() => hideLoader());
+        }).finally(() => hideLoader());
 }
 </script>
 

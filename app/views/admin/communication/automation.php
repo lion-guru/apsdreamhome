@@ -324,7 +324,6 @@ document.getElementById('testSendForm').addEventListener('submit', function(e) {
     .then(function(data) {
         if (data.success) {
             showToast('Success: ' + data.message, 'success');
-            .catch(err => console.error('Request failed:', err));
             bootstrap.Modal.getInstance(document.getElementById('testSendModal')).hide();
         } else {
             showToast('Error: ' + data.message, 'danger');
@@ -336,6 +335,7 @@ document.getElementById('testSendForm').addEventListener('submit', function(e) {
     .finally(function() {
         btn.innerHTML = originalText;
         btn.disabled = false;
-    });
-).finally(() => hideLoader());
+    })
+    .finally(() => hideLoader());
+});
 </script>

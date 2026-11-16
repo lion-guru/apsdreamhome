@@ -158,7 +158,6 @@ function sendMessage(message, isInternal) {
         .then(data => {
             if (data.success) {
                 appendMessage('agent', 'You', message, isInternal);
-                .catch(err => console.error('Request failed:', err));
                 if (isInternal) location.reload();
             }
         });

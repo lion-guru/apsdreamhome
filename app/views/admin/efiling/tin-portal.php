@@ -213,7 +213,6 @@ document.querySelectorAll('#tin26qForm, #tin27qForm').forEach(function(form) {
             method: 'POST',
             body: new FormData(form)
         }).then(function(r) { return r.json(); }).then(function(data) {
-        .catch(err => console.error('Request failed:', err));
             btn.disabled = false;
             var formType = form.querySelector('input[name="form_type"]').value;
             btn.innerHTML = '<i class="fas fa-cloud-upload-alt me-1"></i>Submit ' + formType;

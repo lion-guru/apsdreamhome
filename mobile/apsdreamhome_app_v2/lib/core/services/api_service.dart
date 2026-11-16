@@ -28,6 +28,9 @@ class ApiService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          // ngrok's free tier serves an HTML warning interstitial to requests
+          // without this header (HTTP 200!), which silently breaks JSON decoding.
+          'ngrok-skip-browser-warning': 'true',
         },
       ),
     );
@@ -42,6 +45,7 @@ class ApiService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
       ),
     );

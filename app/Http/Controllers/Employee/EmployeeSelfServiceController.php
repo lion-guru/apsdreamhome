@@ -1322,9 +1322,6 @@ class EmployeeSelfServiceController extends BaseController
         try {
             $svc = new \App\Services\DocumentService();
             $categories = $svc->getCategories();
-            if (!is_array($categories)) {
-                $categories = [];
-            }
         } catch (\Throwable $e) {
             error_log('documentUploadForm: ' . $e->getMessage());
             $categories = [];

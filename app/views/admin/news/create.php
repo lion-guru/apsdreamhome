@@ -115,7 +115,7 @@
                 showToast('An error occurred', 'danger');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Article';
-            ).finally(() => hideLoader());
+            }).finally(() => hideLoader());
     });
 
     document.getElementById('image').addEventListener('change', function(e) {

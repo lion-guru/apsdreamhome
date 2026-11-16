@@ -651,7 +651,6 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
             .then(data => {
                 if (data.success) {
                     showToast(data.message, 'success');
-                    .catch(err => console.error('Request failed:', err));
                     setTimeout(() => window.location.href = data.redirect, 1000);
                 } else {
                     showToast(data.error || 'Failed to impersonate', 'error');

@@ -128,7 +128,7 @@ document.querySelectorAll('.lead-status').forEach(sel => {
             body: `csrf_token=<?= $csrf ?>&lead_id=${leadId}&status=${status}`
         }).then(r => r.json()).then(d => {
             if (!d.success) showToast('Update failed', 'danger');
-        ).finally(() => hideLoader());
+        }).finally(() => hideLoader());
     });
 });
 </script>

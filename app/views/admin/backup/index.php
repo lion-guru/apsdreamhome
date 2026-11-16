@@ -279,10 +279,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 var msg = 'Status: ' + (j.status || '?') +
                           ' | Age: ' + (j.age_hours !== null ? j.age_hours + 'h' : '?') +
                           ' | Last: ' + (j.last_backup_at || 'never');
-                          .catch(err => console.error('Request failed:', err));
                 showToast(msg, 'info');
             })
-            .catch(function (e) { showToast('Health check failed: ' + e.message, 'danger'); }).finally(() => hideLoader());
+            .catch(function (e) { showToast('Health check failed: ' + e.message, 'danger'); }).finally(() => hideLoader())
             .finally(function () {
                 btn.disabled = false;
                 btn.querySelector('i').classList.remove('fa-spin');

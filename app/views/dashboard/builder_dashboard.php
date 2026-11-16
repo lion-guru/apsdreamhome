@@ -180,46 +180,12 @@ $stats = [
                 document.getElementById('aiChatResponse').innerHTML = '<b>AI:</b> This is a sample AI-powered answer to: <code>' + input + '</code>';
             }, 1200);
         }
-        // AI Suggestions Panel (AJAX)
-        function logAIInteraction(action, suggestion, feedback, notes) {
-            $.post('admin/log_ai_interaction.php', {
-                action: action,
-                suggestion: suggestion,
-                feedback: feedback || '',
-                notes: notes || ''
-            });
-        }
-        $(function() {
-            $.get('user_ai_suggestions.php', function(resp) {
-                if (resp.success) {
-                    let html = '';
-                    if (resp.status && resp.status.length) {
-                        html += '<div class="mb-2"><b>Reminders:</b><ul>';
-                        resp.status.forEach(function(rem) {
-                            html += '<li>' + rem + ' <span class="badge bg-light text-dark pointer ms-1" onclick="logAIInteraction(\'feedback\', `' + rem.replace(/'/g, "&#39;") + '`,\'like\')">👍</span> <span class="badge bg-light text-dark pointer" onclick="logAIInteraction(\'feedback\', `' + rem.replace(/'/g, "&#39;") + '`,\'dislike\')">👎</span></li>';
-                        });
-                        html += '</ul></div>';
-                    }
-                    if (resp.suggestions && resp.suggestions.length) {
-                        html += '<div><b>AI Suggestions:</b><ul>';
-                        resp.suggestions.forEach(function(sugg) {
-                            html += '<li>' + sugg + ' <span class="badge bg-light text-dark pointer ms-1" onclick="logAIInteraction(\'feedback\', `' + sugg.replace(/'/g, "&#39;") + '`,\'like\')">👍</span> <span class="badge bg-light text-dark pointer" onclick="logAIInteraction(\'feedback\', `' + sugg.replace(/'/g, "&#39;") + '`,\'dislike\')">👎</span></li>';
-                        });
-                        html += '</ul></div>';
-                    }
-                    if (!html) html = '<div class="text-success">You are all caught up!</div>';
-                    $('#aiSuggestionsPanel').html(html);
-                    if (resp.suggestions) resp.suggestions.forEach(function(sugg) {
-                        logAIInteraction('view', sugg);
-                    });
-                    if (resp.status) resp.status.forEach(function(rem) {
-                        logAIInteraction('view', rem);
-                    });
-                } else {
-                    $('#aiSuggestionsPanel').html('<div class="text-danger">Could not load suggestions.</div>');
-                }
-            }, 'json');
-        });
+        // AI suggestions are served by the real AI Executive Assistant (live data) - no dead endpoints here
+        (function() {
+            var panel = document.getElementById('aiSuggestionsPanel');
+            if (panel) { panel.innerHTML = '<div class="text-center py-3 text-muted"><p class="small mb-2">Ask the live AI Executive Assistant for suggestions based on your live projects.</p><a href="<?= BASE_URL ?>/admin/ai/executive-assistant" class="btn btn-sm btn-info text-white"><i class="fas fa-robot me-1"></i>Ask AI Executive Assistant</a></div>'; }
+        })();
+
         // DataTables (if needed)
         $(document).ready(function() {
             $('#projectsTable').DataTable && $('#projectsTable').DataTable({

@@ -1705,6 +1705,9 @@ $router->get('/admin/dashboard/finance', 'App\\Http\\Controllers\\RoleBasedDashb
 $router->get('/admin/dashboard/hr', 'App\\Http\\Controllers\\RoleBasedDashboardController@hr');
 $router->get('/admin/dashboard/it', 'App\\Http\\Controllers\\RoleBasedDashboardController@it');
 $router->get('/admin/dashboard/operations', 'App\\Http\\Controllers\\RoleBasedDashboardController@operations');
+$router->get('/admin/dashboard/cm',  'App\\Http\\Controllers\\RoleBasedDashboardController@cm');
+$router->get('/admin/dashboard/director', 'App\\Http\\Controllers\\RoleBasedDashboardController@director');
+$router->get('/admin/dashboard/superadmin', 'App\\Http\\Controllers\\RoleBasedDashboardController@superadmin');
 
 // Admin AJAX Dashboard APIs
 $router->get('/admin/api/dashboard-stats', function () {

@@ -140,6 +140,7 @@
     </div>
 </div>
 
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('performanceChart');

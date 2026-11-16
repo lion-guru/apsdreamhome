@@ -225,6 +225,7 @@ $recentCalls = $recentCalls ?? [];
     </div>
 </div>
 
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Trend Chart

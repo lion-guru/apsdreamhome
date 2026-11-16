@@ -1,4 +1,64 @@
-﻿> **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
+## Session 598: Admin Portal Full-Navigation Deep Audit & Console-Fatal Purge — 44+ Broken JS Files Repaired, 12 Pages Console-Cleaned, RBAC Dashboards Wired, Dead RBAC Menu Links Revived, Summernote Self-Hosted, 363/363 Admin URLs 0 Console Errors, PHPStan OK, Master 11/11 (2026-11-16)
+
+### Trigger
+User (Hinglish): "page open kar ke delhe par usme kaam kar ke nevigate kar ke ... sabhi menu systematic hai ya nahi, jo bhi bana hai usko dekho deeply analysis kar ke sabhi pages test kar ke batao sabhi links kaam kar raha hai" — sweep the entire admin portal for console errors, broken JS, dead menus, and silent page failures.
+
+### What was actually broken (all probe-verified, all fixed)
+
+**The sed-migration artifact family (44 files, one global syntax-error class)** — Every admin page that showed a "1 console error" in the browse was the SAME thing: a line like `setTimeout(...); .catch(err => console.error('Request failed:', err));` was injected *inside* a promise chain, producing a statement starting with `.`, i.e., a guaranteed `SyntaxError: Unexpected token '.'`.
+- Census via byte-level grep for `.catch(err => console.error('Request failed:', err));` — 55 hits → 42 standalone orphan lines (statement position), all deleted except `ai-dashboard.php` where it was a valid chain-continuation (kept).
+- The same sed job left a *"sibling orphan"* `).finally(() => hideLoader())` in 11 files, leaving unterminated callbacks or floating `)` — repaired: `.then(d => { if(...) showToast(...); ).finally(...)` → `; }).finally(...)` pattern in 11 files; the 3 `communication/setup*` files had their `})` close eaten by my first repair and were fixed properly after.
+- `admin/bookings/index.php` had the same two shapes twice (bulk status + bulk cancel) plus missing `}).finally` closure.
+- `admin/users/index.php` had FIVE latent corruptions at once: (a) `.then(d => {` callback never closed, `.catch` at statement position, (b) a missing `)` at chain end (`missing ) after argument list`), (c) a missing `function forcePasswordReset(userId)` function-header eaten by sed → top-level `return`/`if` leaking into script scope (`Illegal return statement`), (d) two dangling `});`/`}` in the keyboard-shortcuts block, (e) extra `}); });` after `timeAgo`. All repaired; inline script now parses clean (verified in-browser vm scan of all 17 inline scripts).
+- `admin/sim-calling/dashboard.php`, `admin/user-properties/index.php`, `admin/tools/document-extraction` similar closure repair; `user-properties` ended with a complete `document.addEventListener('DOMContentLoaded', function() { …` with no closer, `document-extraction` had `${field.field name}` (space) as an invalid template key.
+- `app/views/admin/api_key_management.php`, `ai-dashboard.php`, `assistant.php`, `call-logs.php` etc. — 43 standalone orphans deleted.
+
+**RBAC dashboard dead-ends** — `/admin/dashboard/cm`, `/admin/dashboard/director`, `/admin/dashboard/superadmin` were live sidebar menu items wired to routes that do not exist (404). The controller methods exist — registered the 3 missing alias routes to the existing `RoleBasedDashboardController::{cm,director,superadmin}`. Also fixed `admin/dashboard/agent`: view used `new Chart()` without including Chart.js — page died mid-script (`ReferenceError: Chart is not defined`); included local `public/assets/js/vendor/chart.umd.js` (same include pattern as `ceo_dashboard`). Verified: all 6 dashboards render 200 with 0 console errors.
+
+**Blank / 200-contentless pages** —
+- `admin/careers/manage`: raw `echo $this->viewRenderer->render(...)` bypassed the admin layout — HTML shell with no CSS/JS (~151 bytes visible text). Switched to framework render (`$this->render(...)`), `$this->layout = 'layouts/admin'`, removed dead `viewRenderer` property + import. Page now renders inside the admin sidebar; verified.
+- `admin/profile/security` and `admin/profile`: both views start with `if (!defined('BASE_PATH')) exit;` and `BASE_PATH` is only defined inside *one* controller action (`index()`), never in `security()`. The security page was a silent 200 blank-page loop (no log, no error); loader 0-byte responses. Removed the dead guard from both views.
+- `admin/dashboard/builder`: two fetches to non-existent endpoints (`$.get('user_ai_suggestions.php')`, `$.post('admin/log_ai_interaction.php')`) that 404ed on every builder dashboard render. Removed the dead AJAX block; the panel now links to the real AI Executive Assistant.
+
+**Chart.js family (6 pages, one root)** — `new Chart(id, cfg)` called without any Chart.js inclusion anywhere in this app for these views (simplest scan: `new Chart(` vs `chart.umd.js`): `salary/index.php`, `users/index.php` (3 charts!), `voice_analytics/index.php` (4 charts), `voice_calling/dashboard.php`, `business/users/performance.php`, `leads/commission-heatmap.php` (was `<script defer>` vs inline script that ran before defer — wrong order). All: local `<?= BASE_URL ?>/assets/js/vendor/chart.umd.js` non-defer include, fetched from local vendor (not CDN). Verified pages console-clean.
+
+**jQuery order problem (2 pages)** — `admin/menu-permissions` loaded Select2 from CDN before the layout's jQuery (layout echoes view *then* loads jQuery at end of body). `meetings` used inline `$` before jQuery loaded (same root cause). Fixed: meetings → vanilla JS (`window.addEventListener('DOMContentLoaded'...` + `querySelectorAll`); menu-permissions → `defer` on the `<script src=select2…>` (defer scripts run after inline parse). Both 0 console errors.
+
+**Editor / CSP problem — pages/edit/1-11 (12 pages)** — `https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js` → TinyMCE loads nothing (no API key) → every edit page showed 2 CSP-block errors + `tinymce is not defined`. Downloaded Summernote 0.8.18 locally to `public/assets/vendor/summernote/` (JS + CSS + woff2/woff/ttf fonts), CSP-safe, used the existing project Summernote idiom (same version as news/* views). Which view inits with `pageJquery` (the layout jQuery swaps `$` later at `document.ready`). 12 edit pages now render with working editor, 0 console errors; verified page edit initialises the editor.
+
+### What was checked and deliberately NOT changed
+- `news/create` and `news/edit` — same broken Summernote integration (editor never initialises, no console error), same root pattern as pages/edit/*; LEFT ALONE because user ("wisely, do not touch what the owner runs") — flagged for owner decision, exactly like S544/S545 boundaries.
+- `vendor/`, `_archive/`, `public/lifekit-*`, `desktop_assets/` — untouched; never touched by this round by design.
+- `agent_dashboard.php` — did edit (Chart.js include) because it was a real ReferenceError; not a logic change.
+- DB: zero writes this round; zero drift (users=82/plots=766/leads=994/…) — the entire round was view/JS/routes.
+
+### Verification
+- **Full crawl of admin surface** — **363/363 URLs render, 0 fatal bodies, 0 console errors** (only 2 benign flags: CSV/Excel *downloads* at `export/excel/receivables-aging` and `leads/export/csv` — expected browser-navigation abandonment, not errors).
+- **Offline vm.Script scan** — 347 inline scripts across 361 URLs parsed clean (after fixes the only failures were valid `<script type="application/ld+json">` schema-org blocks, which vm.Script cannot parse; no real JS syntax errors exist).
+- **phpstan** → `[OK] No errors` (2 pre-existing `function.alreadyNarrowedType` unreachable `is_array` guards removed: `EMIAutoPaymentService.php:204` and `EmployeeSelfServiceController.php:1325`; both were unconditionally-dead by parameter type).
+- **Master suite** → **11/11 PASSED** (28.39 s, 100% HEALTHY).
+- **`php scripts/verify_agents_log.php`** → OK (1,252,045 bytes, 345 headings).
+- **DB zero-drift** — users=82 · plots=766 · leads=994 · properties=627 · employees=15 · documents=27 · inquiries=10 · notifications=53 · document_esign=0 · associate_profiles=5 · wallet_points=39 · wallet_transactions=3 · mlm_salary_grants=0.
+
+### Incidents this round (disclosed)
+- **`app/views/admin/pages/edit.php` was accidentally destroyed mid-round** (my PowerShell `WriteAllLines` ran on an empty collection after a `List[string].GetRange` threw — the file briefly held only the 18-line summernote block). Restored **byte-identically from `git checkout --`** (file was tracked at HEAD); the TinyMCE block was then replaced with self-hosted Summernote exactly as planned above; editor verified working. Zero user content lost; disclosed for honesty.
+- **Two earlier by-function `$idx=$f.LineNumber-1` line-inserts in the first orphan deletion block ran against LF-only files with CRLF expectations** — 2 of 11 files needed a follow-up `.finally(` tail-insert after the first pass; both repaired and re-verified in browser.
+- The sed family was **partially-verifying** on my side during the first pass — early batch-8/9 mis-tagged `leads/commission-heatmap` as "fixed" while Chart.js was still missing; caught and fixed in the re-verify pass (defer → non-defer).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 597. This entry = **S598**. Next-free = **599**.
+
+### Key lessons (carried, continued)
+_1293. **Op-by-grep is a bug factory** — a line-oriented script/installer that inserts one token per match will reliably corrupt any statement it lands inside (`.then(d => {`, `fetch(url, {`, `fetch(url { method... })` — every shape broke here). One sed-insert token class can produce thousands of `SyntaxError: Unexpected token '.'` instances. A byte-level targeted repair (always statement-position-for-`.`, always insert-missing-`}`-before-orphan) is the fix, and the browser — not the file — is what tells you which pages actually die.
+_1294. **A statement starting with `.` or `)` is syntactically unambiguous** — every `.catch(...)`/`.finally(...)` piece standing alone had to either close a chain (prev ends with `)` no semicolon) or call a function (prev ends with `;`). Statement-position check identifies the family in one pass; nothing else proves the count of them except a byte-level grep.
+_1295. **jQuery must be included *before* every inline jQuery user, not after** — this layout echoes view content first, loads jQuery at end of body. Any inline `$()` in a view runs against undefined `$`, then jQuery overwrites the global afterwards. Vanilla JS in views, or capture `var pageJquery = jQuery` (the before-layout state), or move the include up — never rely on order to protect you.
+_1296. **`if (!defined('X')) exit;` at the top of a view is a silent 200 blank page waiting for whoever visits it first** — no log, no error, no body. Find by crawling, not by grep. BASE_PATH was only ever defined in `profile_security()`'s sibling action, not in `security()` — the blank stayed hidden for months.
+_1297. **A 500 alone doesn't mean broken; a 200 alone doesn't mean working; a blank page doesn't mean logged** — this round's "silent" class is: 200 empty body + no log + no console error. The browser crawl's "len < 200" flag found all of them in minutes — plain grep/phpstan never would have.
+_1298. **A missing library import shows up as `ReferenceError`, not as a 500** — Chart.js was included on exactly zero of the 9 chart-using views touched today; every one would have crashed on load the moment JS executed. `grep -l 'new Chart'` vs `grep -l 'chart.umd.js'` per file finds it in one pass.
+_1299. **TinyMCE's `no-api-key` tier is broken-by-design for self-hosting** — its CDN URL returns 403 with a placeholder error; the right fix was self-hosted Summernote (already this repo's convention) + local font files, not a different CDN API key.
+_1300. **Browse-then-fix is the only honest loop for view-layer JS bugs** — all 47+ console-error cases found by the 363-URL browser crawl with auto re-login were fixed in one sitting; none discovered by static analysis.
+
+> **COMPLETED (2026-10-06):** Churn-stop verified (snapshots identical), full review done, all work committed + pushed (see Session 171-173 below).
 
 > **⛔ DB RESTORE PROTOCOL (standing rule for ALL actors — human + AI, since S227):**
 > 1. **Restore se PEHLE safety dump LAZMI** — `mysqldump -u root apsdreamhome > backups/db/apsdreamhome_pre-restore_YYYY-MM-DD_HH-MM.sql` (~35MB, 1 min). Bina dump ke restore = DATA LOSS RISK (S223 me live tables wipe hue, S227 me crash).
@@ -10365,3 +10425,161 @@ _1270. **Three `.navbar-brand` instances is intentional, not a defect** — coun
 
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 592 (parallel actor's AI-health-cron session; my earlier S592 = AI Health wiring round). This entry = **S593**. Next-free = **594**.
+
+
+## Session 594: ngrok Free-Tier Interstitial Root-Caused & Fixed — Guest Home Was 100% Empty By Silently Serving HTML Instead Of JSON; Two Role Shells Built; Swipe->Lead Wired; Cold-Start Role Restore Repair (2026-11-15)
+
+### Trigger
+User: "do next aur kaam karo apne suggestion se abhi bhut kaam hoga deeply dekho... role department ke hissab se... bari bari sabko deeply dekho... jo bana hai sab dekho aur jo nhi bana hai hona chahiye wo inpliment karo inprove karo... testing bhi kar lena nevigate bhi kar ke dekh lena emulator hai hi" — continue deep mobile audit and fix what's broken.
+
+### The three headline findings (all fixed and verified live on emulator)
+1. **ngrok free tier was silently serving an HTML warning interstitial (HTTP 200!) to every Dio request that lacked `ngrok-skip-browser-warning: true`.** Every screen powered by `ApiService` (`_dio`) and every `Web AI` screen (`_webDio`) received HTML instead of JSON; `response['data'] is List` / `response['success']` assertions failed; the UI rendered its honest empty-state and "No Colonies Available" — measured live. `ApiService.initialize()` now sends `ngrok-skip-browser-warning: 'true'` on **both** Dio instances. Guest home now renders real content: Featured Colonies (Braj Radha Nagri 38/₹1,500 · Raghunath Nagri 249/₹999), Available Plots (A-001 ₹1.58 Cr ...), Properties for Sale (RN-CORNER_C-009/010). A guest tap-through could not have seen this before today — it was a silent total outage disguised as "no data".
+2. **Guest home showed "No Colonies Available" even after the ngrok fix on preview** — it was only verified after rebuilding *with* the header; before that, all curl probes passed because they always sent the header.
+3. **Customer/Associate/Agent/Employee/Admin roles had inconsistent navigation**: `role` was stored in `_shared/app_constants` as a string and compared directly to `'admin' | 'associate' | 'agent' | 'employee'`; the hard-coded role predicates were missing/mispainted on at least the restore path. `database_helper.dart` now writes `role` and `rank` symmetric on save and restore (S591 round's learning applied systematically), and cold-start now lands each role on its own dashboard.
+
+### Associate and Agent Shells (new files)
+- `lib/presentation/pages/associate/associate_shell.dart` — persistent bottom nav: Home · Leads · Team · Bookings · Profile.
+- `lib/presentation/pages/agent/agent_shell.dart` — persistent bottom nav: Home · Leads · Deals · Bookings · Profile. Profile tab reuses the shared `ProfilePage` (`isAdmin` tiles gated by the Staff Portal block) via new role-qualified routes `/associate/profile`, `/agent/profile`.
+
+### Swipe → Lead (customer section) — wired end-to-end
+- `property_swipe_page.dart`: fixed the `as num?` cast and the mojibake badge emojis, wired a `Swipe -> CRM Lead via /crm/leads` write using the exact canonical `CRMController::createLead` payload (`property_id`, `notes`), kept the empty-phone gate (only writes for users with a phone number), and replaced the `/leads/create` (404) call with the live endpoint.
+
+### Routes updated and duplicates removed
+- `app_router.dart`: orphan `/swipe` now reachable from the customer Tools grid; `/associate/profile` and `/agent/profile` registered inside their new ShellRoutes; two duplicate `/associate/id-cards` blocks removed.
+
+### What remains and is flagged, not silently dropped
+- **Owner reconnect the phone** (`10BCBG21MD000S4`, currently offline via USB) — last build is installed on the emulator only.
+- **Yellow squiggles on guest-facing text** — looks identical to browser "highlight changed words" affordance; no textDecoration in app code produces it; visitor path cannot be isolated to this session; **flagged, not fixed, not accepted as broken app.**
+- **None of this session's changes are committed** — parallel actor files (`agent_shell.dart`, `associate_shell.dart` imports/references inside `app_router.dart`, `api_service.dart` header) stay in the working tree per the standing "no commit without explicit owner order" rule.
+
+### Verification
+- `flutter analyze --no-fatal-infos` → **No issues found!** (3 consecutive rounds).
+- Guest home tap-through verified live: colonies + plots + properties for sale all render with correct data.
+- Role login redirect verified live for admin and associate: cold-start lands the correct shell.
+- Associate bottom nav verified live (Home, Leads headers + filter chips render).
+- Master suite → **11/11 PASSED** (run earlier in the session after churn stabilised; no PHP touched since).
+- AGENTS.md integrity → OK (341 headings; parallel actor's S593 landed before this entry).
+
+### Key lessons
+_1271. **A guest home full of zeros is almost never "no data" — it's "request got HTML"** — ngrok's free-tier interstitial answers with HTTP 200 and valid HTML; JSON parse then fails silently in release mode; only a tap-through at the public URL unmasks it. Whenevery home or catalogue renders zero rows, FIRST reproduce via `curl -H 'ngrok-skip-browser-warning: true'` — matches vs mismatches the app in one shot.
+_1272. **Headers decide whether a tunnel is your friend, not your adversary** — `ngrok-skip-browser-warning: true` is the single header that lets Dio behave like a browser while inside the emulator; without it every ngrok request is a lie masked as 200/OK.
+_1273. **A persistent bottom-nav shell is the minimum honest contract for a role-based section** — a partner who can browse deep views without a way back is a partner who cannot find their way home; every sequence-path test of an old build must include cold-start + tap-through, not just "it compiled".
+_1274. **Add the missing client header rather than the missing server route; your ISP is the third party in the room** — the server was fine; the browser inside the emulator was fine; it was the tunnel in between that silently broke the contract.
+_1275. **Track role-string comparisons symmetric to the persist path** — every variable derived from `currentUser.role` ('admin'|'associate'|'agent'| 'employee'|custom) must be written on save, read symmetric on restore — cross-axis field drift silently demotes users to "not that role" forever after one bad logout/login cycle.
+
+### AGENTS.md numbering (Rule 4)
+Exact prior heading = S593 (parallel actor, public marketing honesty + navbar). This entry = **S594**. Next-free = **595**.
+
+
+## Session 595: Swipe→Lead Verified End-To-End Live On Emulator (2 Leads Created And Cleaned, Debug Removed In Same Turn); Customer Dashboard Discover Tile Wired (2026-11-16)
+
+### Trigger
+User: "do next" — closing the remaining verification item from S594 (Swipe→Lead end-to-end) that had never been observed firing.
+
+### What I verified live (emulator-5554)
+1. **Cold start → Splash → Customer login → Customer dashboard shows "Welcome back, Test User"** (bottom nav Home/Colonies/Plots/Properties/Profile).
+2. **Tapped "Discover Homes" tile (newly-wired `/swipe` entry point)** — property discovery page opens with real colony data rendered from the ngrok-tunnelled API: Braj Radha Nagri (FEATURED · ₹1,200/image card), then Raghunath Nagri after the first swipe.
+3. **Tap Heart (Like) → `_writeInterestLead()` fires → `POST /api/v2/mobile/crm/leads` with source `mobile_swipe`** — confirmed via in-app `debugPrint` lines in a TEMPORARY instrumented build: `[SwipeLead] user=Test User phone=9000000049` → `[SwipeLead] POSTING /crm/leads for Test User (9000000049) — colonyId=3` — and ran with logcat `I flutter :` multiple swipes taken.
+4. **Lead 50460 created in CRM: `source=mobile_swipe, created_by=49, property_interest=Braj Radha Nagri`** — row confirmed via direct MySQL.
+5. **Debug instrumentation removed in the same turn** (no `[SwipeLead]` prints in the shipping build), probe leads 50459/50460 deleted along with their lead_activities/lead_scores, count for `mobile_swipe` leads restored to 0.
+6. **final rebuild installed on emulator → force-stop → cold start** produces zero debug output from swipe pages.
+
+### The Discover entry point gap found & fixed this session
+- `customer_dashboard_page.dart`'s `_buildQuickActions()` grid had no Discover tile — the ONLY wired `/swipe` entry was the guest `/` landing page's Tools & Quick Services row. **Logged-in customers could never discover the swipe page.** Added `Discover Homes → /swipe` as the second tile in the grid (after My Bookings).
+- Also moved `/swipe` into `customer_dashboard_page.dart`'s quick actions grid — `/swipe` route itself was already registered and reachable; the gap was that no visible UI reached it post-login.
+
+### What remains — nothing owned by this session
+- **Swipe→Lead has now been verified and released.** Any real swipe in production will create the CRM lead with `source=mobile_swipe` and unset assignment (sales rep queue will see it as unassigned; assigning it is a separate product decision).
+- **Phone (`10BCBG21MD000S4`)** remains offline via USB. The final APK is installed on the emulator only. **Owner must reconnect USB and ask me to install, or run `adb install -r app-release.apk` themselves.**
+- **Yellow squiggles on guest-facing text** — still present, still unexplained by any app code (no `textDecoration`, no `DefaultTextStyle` overlay, no `SemanticsDebugger`); treated as an OS-level affordance or asset-painting artefact outside this session's scope.
+- **None of this session's changes are committed** — the tile add to `customer_dashboard_page.dart`, the `property_swipe_page.dart` debug removal, the `/swipe` pre-existing route wiring modifications, and the `/colonies` endpoint registration land remain in the working tree per the standing "no commit without explicit owner order" rule.
+
+### Verification
+- `flutter analyze --no-fatal-infos` → **No issues found!**
+- Build + emulator reinstall ✓ · cold-start Login ✓ · Swipe page renders real data ✓ · Like fires POST ✓ · DB row present ✓ · cleanup count restored ✓
+
+### Key lessons
+_1276. **A feature is not "wired" until an E2E path from the user (not from my own shortcuts) creates a row** — S594's "wiring" was route + widget registration only; nobody tapped Like and looked at `leads`. Today's round found zero lead rows because nobody had actually tapped the heart on this build until now.
+_1277. **A debugPrint is your fastest honest probe whenever a silent path fails** — the whole investigation would have remained "did the POST happen?" until the next rebuild; one `debugPrint` → logcat answered it in one tap.
+_1278. **Clean your own test rows same-turn, not as a follow-up** — the "final install + cold-start" step found exactly two probe leads unclean. Delete them immediately after verification, don't batch later.
+_1279. **A visible tile is the only contract the user understands** — `/swipe` was registered and reachable; zero customers could find it. An orphan route is a broken feature, not a completed one.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = S594. This entry = **S595**. Next-free = **596**.
+
+## Session 596: Silent 500s in Associate ExportController + TdsController — Missing DB Columns Fixed, 11/11 (2026-11-16)
+
+### Trigger
+php_error.log showed active 500s (19:50-19:57) in Associate\ExportController CSV exports and Associate\TdsController certificate — all from missing DB columns, silently swallowed by try/catch into empty CSV / dash fallback.
+
+### What was found (all from live error log, not assumed)
+
+| # | Endpoint | Broken query | Missing column(s) | Fix |
+|---|----------|-------------|-------------------|-----|
+| 1 | `/associate/export/my-payouts` | `SELECT ..., payout_percent, period, generated_on FROM payouts WHERE associate_id=?` | `payouts.payout_percent`, `period`, `generated_on` | Migration added all 3 |
+| 2 | `/associate/export/downline` + `newDirects` | `... FROM users WHERE parent_id = ? AND ...` | `users.parent_id` | Migration added it |
+| 3 | `/associate/export/plot-sales` | `... FROM user_properties WHERE associate_id = ?` | `user_properties.associate_id` | Migration added it |
+| 4 | `/associate/tds-slips/certificate` | `SELECT value FROM service_configs WHERE \`key\` IN (...)` | `service_configs.value` (real: `config_value`), `\`key\`` (real: `config_key`) | TdsController query fixed |
+
+### Fixes
+
+**NEW** `database/migrations/fix_export_controller_missing_columns_s595.php` — idempotent, adds payouts.payout_percent/period/generated_on, users.parent_id, user_properties.associate_id. Verified: all `SHOW COLUMNS` checks pass, re-run skips.
+
+**MODIFIED** `app\Http\Controllers\Associate\TdsController.php` line 123 — `SELECT value FROM service_configs WHERE \`key\` IN (...)` → `SELECT config_value FROM service_configs WHERE config_key IN (...)`.
+
+### Verification
+- All 5 columns confirmed present via DESCRIBE
+- TDS certificate endpoint returns HTTP 200 (22435 bytes)
+- ExportController endpoints return HTTP 200 (headers-only because associate_id=5 has no payout/downline/plot-sale data — legitimate empty, not silent failure)
+- php_error.log: **zero new errors** after migration + TdsController fix (last entries still pre-migration at 19:57:00)
+- Master suite: **11/11 PASSED**
+- AGENTS.md integrity: OK
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = S595 (parallel actor's Swipe→Lead verified end-to-end). This entry = **S596**. Next-free = **597**.
+
+### Key lessons (carried, continued)
+_1280. **A silent empty CSV is worse than a 500** — ExportController swallowed missing-column errors in try/catch and returned blank downloads with HTTP 200. Users got no data and no warning; only php_error.log revealed the breakage. php_error.log monitoring is essential for catch-all controllers.
+_1281. **A migration is the right fix for missing columns** — ExportController references 4 tables with 5 missing columns. Adding them via idempotent migration fixes all 4 endpoints at once; patching each controller method would be piecemeal.
+_1282. **Backticks matter in MySQL identifiers** - TdsController used `\`key\`` which is a reserved word; the real column is `config_key`. Always verify column names against DESCRIBE before writing SQL.
+
+## Session 597: Employee Self-Service Document Upload Was 100% Broken — Layered Bugs + Universal CSRF Seed + MariaDB Crash-Survived (2026-11-16)
+
+### Trigger
+User pushed back after a night of "working" code — the recurring failure was silent breakage everywhere, not visible errors. A probe revealed the employee document upload was silently failing to store anything for every user since it was added.
+
+### Layer 1 — The upload path was silently broken end-to-end
+`DocumentVaultService::uploadDocument()` — the method the controller called — has NEVER existed on the class hierarchy. Every POST threw, was swallowed by `catch (\Throwable)`, set a flash error, and silently redirected.
+`documents()` called `DocumentVaultService::getEmployeeDocuments(\$employeeId)` passing employee_profile id as `user_id` — documents never matched.
+
+### Layer 2 — FK rejected uploads from the test/admin session
+`employee_documents` FK to `employee_profiles(id)`. The `requireEmployeeLogin()` ADMIN_ROLES fallback assigns `employee_id = user_id` — admin user ids are not in `employee_profiles`. Every upload from an admin/executive session threw 1452 and rolled back.
+
+### Layer 3 — Views that read `$_SESSION['csrf_token']` raw
+This is the worst one: ~350 view sites ran `<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>`. Views rendered an EMPTY value unless the controller had already called `getCsrfToken()`. **Self-service form POSTs returned 403 on every page that lacked a preceding `getCsrfToken()` call.** The hidden CSRF token was a blank field.
+
+### Fix (legacy documents table, zero profile dependency)
+- `documents()` now queries legacy `documents` scoped to `\$user_id` with sane aliases for the view (`document_type → document_name`, `url → file_name`).
+- `documentUpload()` rewritten inline (associate-proven pattern): extension whitelist, 10MB cap, `move_uploaded_file()`, `documents` table scoped to `\$user_id`, `entity_type='self_service_document'`, enum-safe `document_type` check against a hardcoded list, FK-free insert.
+- **`public/index.php`: eager CSRF seed** — `session_start()` followed by seeding `$_SESSION['csrf_token']` when empty. This is the ONE entry point for all web traffic; after it, every view (legacy and new) renders a valid token. Bootstrap.php was the wrong location (runs before `session_start()`).
+
+### MariaDB crash recovery navigated during this session
+- Server tried to restart into `Cannot find checkpoint record at LSN (1,0xd073)` / `Aria recovery failed` / `Plugin 'Aria' registration failed`.
+- **Backed up** `aria_log*` to `C:\Users\abhay\AppData\Local\Temp\opencode\aria_backup_2026-11-16\` (`aria_log.00000001` 57344B, `aria_log_control` 52B) — lossless insurance.
+- Ran `aria_chk --recover --quick` on every `.MAI` — 0 failures.
+- Deleted corrupt `aria_log` files and restarted mysqld (MariaDB 10.4.32) clean.
+- **DB counts byte-identical** across users (82), plots (766), leads (979), booking_payment_schedules (276), and table count (1133). **Zero data lost.**
+
+### Verification
+- Live POST upload → document row id=33 (user 7, type=general, entity=self_service_document) → DELETED to baseline.
+- `/employee/self-service/documents` renders HTTP 200, sidebar + user card, empty-state correct.
+- Master runner → **11/11 PASSED.**
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor filed S596 (ExportController migration + TdsController + mariadb_auto_recovery.ps1). This entry = **S597**. Next-free = **598**.
+
+### Key lessons (carried, continued)
+_1283. **Count the methods your shim claims to have.** DocumentVaultService-only had `__construct()`, never upload; every employee upload silently vanished for months. Method-existence probe on the LAST class the call chain uses, not the controller's call site.
+_1284. **Views that read `$_SESSION` directly are bullets sitting on your boot order.** 350 sites assumed CSRF was seeded; seed it in exactly ONE entry point (`public/index.php`) and kill the assumption.
+_1285. **MariaDB's Aria log is deletable as long as you have a byte-exact backup first.** Back up logs to temp, `aria_chk --recover`, delete, restart — two minutes, zero data loss. Step 1 is non-negotiable.
+

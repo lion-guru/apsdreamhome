@@ -194,7 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch('<?php echo BASE_URL; ?>/admin/api/lead-file-extraction/' + extractionId)
                 .then(response => response.json())
                 .then(data => {
-                .catch(err => console.error('Request failed:', err));
                     if (data.success) {
                         modalBody.innerHTML = `
                             <div class="row mb-3">

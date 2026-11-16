@@ -201,7 +201,7 @@ class EMIAutoPaymentService
             $orderId = $orderResult['data']['id'] ?? null;
 
             // Persist a payment_orders row so the webhook can settle this EMI.
-            if ($installment && is_array($installment) && $orderId) {
+            if ($installment && $orderId) {
                 try {
                     $tid = $this->tenantId();
                     $insSql = "INSERT INTO payment_orders (tenant_id, order_id, gateway, booking_id, user_id, customer_name, amount, currency, status, description, notes, receipt, created_at)

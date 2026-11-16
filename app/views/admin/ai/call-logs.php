@@ -233,7 +233,6 @@ function showCallDetail(id) {
     fetch('<?= BASE_URL ?>/admin/ai-calling/call-detail?id=' + id)
         .then(function(r) { return r.json(); })
         .then(function(data) {
-        .catch(err => console.error('Request failed:', err));
             if (!data.success || !data.call) {
                 document.getElementById('cdBody').innerHTML = '<div class="alert alert-danger">Call not found.</div>';
                 return;

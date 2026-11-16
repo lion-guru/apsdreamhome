@@ -6,7 +6,6 @@ use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Services\HR\CareerService;
 use App\Services\Auth\AuthenticationService;
-use App\Core\ViewRenderer;
 
 /**
  * Career Controller - APS Dream Home
@@ -20,14 +19,14 @@ class CareerController extends BaseController
 
     private $careerService;
     private $authService;
-    private $viewRenderer;
+
 
     public function __construct()
     {
         parent::__construct();
         $this->careerService = new CareerService();
         $this->authService = new AuthenticationService();
-        $this->viewRenderer = new ViewRenderer();
+        $this->layout = 'layouts/admin';
     }
 
     /**
@@ -229,7 +228,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        echo $this->viewRenderer->render('admin/careers/applications', $data);
+        $this->render('admin/careers/applications', $data);
     }
 
     /**
@@ -271,7 +270,7 @@ class CareerController extends BaseController
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        echo $this->viewRenderer->render('admin/careers/applications', $data);
+        $this->render('admin/careers/applications', $data);
     }
 
     /**

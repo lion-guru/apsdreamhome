@@ -180,16 +180,21 @@
     </div>
 </div>
 
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<link href="<?= BASE_URL ?>/assets/js/vendor/summernote/summernote-bs4.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/vendor/summernote/summernote-bs4.min.js"></script>
 <script>
-tinymce.init({
-    selector: '#pageContent',
-    height: 500,
-    menubar: true,
-    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount',
-    toolbar: 'undo redo | blocks | bold italic forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | code | help',
-    branding: false,
-    promotion: false,
-    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; }'
+var pageJquery = jQuery;
+pageJquery(function() {
+    pageJquery('#pageContent').summernote({
+        height: 500,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture']],
+            ['view', ['fullscreen', 'codeview']]
+        ]
+    });
 });
 </script>

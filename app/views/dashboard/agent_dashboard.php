@@ -199,6 +199,7 @@ $data = $data ?? [];
     </div>
 </div>
 
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 // Performance Chart
 const ctx = document.getElementById('performanceChart').getContext('2d');

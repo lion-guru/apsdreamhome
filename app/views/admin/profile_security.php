@@ -3,8 +3,6 @@
 /**
  * Admin Profile Security View
  */
-if (!defined('BASE_PATH')) exit;
-
 $page_title = 'Security Settings';
 $active_page = 'profile_security';
 $success = $_SESSION['success'] ?? null;

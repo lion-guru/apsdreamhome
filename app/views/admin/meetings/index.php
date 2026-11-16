@@ -277,11 +277,10 @@ function confirmAction(url, message) {
 </script>
 
 <script>
-$(document).ready(function() {
+window.addEventListener('DOMContentLoaded', function() {
     // Date picker initialization
-    $('input[type="date"].form-control').each(function() {
-        $(this).attr('type', 'date');
-        $(this).attr('data-datepicker', 'true');
+    document.querySelectorAll('input[type="date"].form-control').forEach(function(el) {
+        el.setAttribute('data-datepicker', 'true');
     });
 });
 </script>

@@ -147,7 +147,6 @@ function approveUser(userId) {
     .then(data => {
         if (data.success) {
             const row = document.getElementById('row-' + userId);
-            .catch(err => console.error('Request failed:', err));
             if (row) {
                 row.style.transition = 'opacity 0.3s';
                 row.style.opacity = '0';

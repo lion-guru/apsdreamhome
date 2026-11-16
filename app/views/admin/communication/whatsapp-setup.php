@@ -175,6 +175,7 @@ document.getElementById('whatsappTestForm').addEventListener('submit', function(
     .finally(function() {
         btn.innerHTML = originalText;
         btn.disabled = false;
-    });
-).finally(() => hideLoader());
+    })
+    .finally(() => hideLoader());
+});
 </script>

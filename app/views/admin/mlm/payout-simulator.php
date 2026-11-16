@@ -149,7 +149,6 @@ document.getElementById('simForm').addEventListener('submit', function(e) {
             return;
         }
         renderResults(d);
-        .catch(err => console.error('Request failed:', err));
         results.style.display = 'block';
     })
     .catch(function(err) {

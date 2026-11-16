@@ -355,6 +355,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 var checked = document.querySelectorAll('.rowCheckbox:checked');
                 if (checked.length === 0) return;
                 showBulkPriceModal();
+            });
+        });
+    }
 });
 </script>
 

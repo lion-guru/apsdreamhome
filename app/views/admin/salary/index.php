@@ -108,12 +108,12 @@
         </div>
     </div>
 </div>
+<script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
     fetch('<?= BASE_URL ?>/admin/salary/stats').then(r=>r.json()).then(d=>{
         if(d.success && d.data){
             var labels = d.data.map(x=>x.label);
-            .catch(err => console.error('Request failed:', err));
             var values = d.data.map(x=>parseFloat(x.total));
             new Chart(document.getElementById('salaryChart'), {
                 type:'line',

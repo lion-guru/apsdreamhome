@@ -80,6 +80,6 @@ document.getElementById('readingForm')?.addEventListener('submit', function(e) {
     const fd = new FormData(this);
     showLoader();
     fetch('<?= BASE_URL ?>/admin/iot/device/reading', { method:'POST', body: fd })
-        .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); else showToast('Failed', 'danger'); ).finally(() => hideLoader());
+        .then(r=>r.json()).then(d=>{ if(d.success) location.reload(); else showToast('Failed', 'danger'); }).finally(() => hideLoader());
 });
 </script>

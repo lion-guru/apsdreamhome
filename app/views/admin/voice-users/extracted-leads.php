@@ -81,7 +81,7 @@ function convertAllVerified() {
         fetch('<?= BASE_URL ?>/admin/voice-users/ajax/convert-lead', {
             method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'csrf_token=' + encodeURIComponent(csrfToken()) + '&extracted_id=' + id
-        }).then(function(r) { return r.json(); }).then(function() { done++; if (done === ids.length) location.reload(); ).finally(() => hideLoader());
+        }).then(function(r) { return r.json(); }).then(function() { done++; if (done === ids.length) location.reload(); }).finally(() => hideLoader());
     });
 }
 function viewLeadTimeline(id) {
@@ -91,13 +91,12 @@ function viewLeadTimeline(id) {
     fetch('<?= BASE_URL ?>/admin/voice-users/ajax/lead-timeline/' + id).then(r => r.json()).then(d => {
         if (d.success && d.data && d.data.length) {
             var html = '<ul class="list-group">';
-            d.data.forEach(function(item) { html += '<li class="list-group-item"><strong>' + (item.action || '') + '</strong> <small class="text-muted">' + (item.created_at || '') + '</small><br>' + (item.details || item.notes || '') + '</li>'; ).finally(() => hideLoader());
-            .catch(err => console.error('Request failed:', err));
+            d.data.forEach(function(item) { html += '<li class="list-group-item"><strong>' + (item.action || '') + '</strong> <small class="text-muted">' + (item.created_at || '') + '</small><br>' + (item.details || item.notes || '') + '</li>'; });
             html += '</ul>';
             document.getElementById('leadTimelineBody').innerHTML = html;
         } else {
             document.getElementById('leadTimelineBody').innerHTML = '<p class="text-muted">No timeline data found.</p>';
         }
-    }).catch(() => { document.getElementById('leadTimelineBody').innerHTML = '<p class="text-muted">Could not load timeline.</p>'; });
+    }).catch(() => { document.getElementById('leadTimelineBody').innerHTML = '<p class="text-muted">Could not load timeline.</p>'; }).finally(() => hideLoader());
 }
 </script>

@@ -200,7 +200,6 @@ $page_title = "SMS Dashboard";
                 })
                 .catch(error => console.error('Error loading stats:', error))
                 .finally(() => hideLoader());
-                .catch(err => console.error('Request failed:', err));
         }
         
         function loadSMSLogs() {
@@ -285,7 +284,7 @@ $page_title = "SMS Dashboard";
             .catch(error => {
                 console.error('Error:', error);
                 showToast('Error sending SMS', 'danger');
-            ).finally(() => hideLoader());
+            }).finally(() => hideLoader());
         }
         
         function viewDetails(id) {

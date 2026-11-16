@@ -86,21 +86,20 @@ function sendMsg(){
     }).then(function(r){return r.json()}).then(function(d){
         if(d.success){input.value='';location.reload();}
         else{showToast('Failed: '+(d.error||'Unknown error'), 'danger');}
-    ).finally(() => hideLoader());
-    .catch(err => console.error('Request failed:', err));
+    }).finally(() => hideLoader());
 }
 function claimConv(){
     showLoader();
     fetch('<?= BASE_URL ?>/admin/agentic-ai/api/claim',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({conversation_id:<?= $_conv['id'] ?? 0 ?>})
-    }).then(function(r){return r.json()}).then(function(d){if(d.success){location.reload();}).finally(() => hideLoader());
+    }).then(function(r){return r.json()}).then(function(d){if(d.success){location.reload();}}).finally(() => hideLoader());
 }
 function resolveConv(){
     showLoader();
     fetch('<?= BASE_URL ?>/admin/agentic-ai/api/resolve',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({conversation_id:<?= $_conv['id'] ?? 0 ?>})
-    }).then(function(r){return r.json()}).then(function(d){if(d.success){location.reload();}).finally(() => hideLoader());
+    }).then(function(r){return r.json()}).then(function(d){if(d.success){location.reload();}}).finally(() => hideLoader());
 }
 </script>

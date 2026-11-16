@@ -340,6 +340,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
             childAspectRatio: 0.85,
             children: [
               _buildActionTile(Icons.book_outlined, 'My\nBookings', AppTheme.primaryColor, () => context.push('/customer-bookings')),
+              _buildActionTile(Icons.style_rounded, 'Discover\nHomes', AppTheme.pink, () => context.push('/swipe')),
               _buildActionTile(Icons.payment, 'Pay\nEMI', AppTheme.warningColor, () => context.push('/emi-schedule')),
               _buildActionTile(Icons.receipt_long_rounded, 'Maintenance\nDues', AppTheme.secondaryColor, () => context.push('/maintenance-dues')),
               _buildActionTile(Icons.support_agent_rounded, 'Resident\nHelpdesk', Colors.red, () => context.push('/township-grievances')),

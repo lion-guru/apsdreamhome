@@ -275,8 +275,8 @@ document.getElementById('sponsorForm').addEventListener('submit', function(e) {
     showLoader();
     fetch('<?= $base ?>/admin/users/<?= $user['id'] ?>/change-sponsor', {
         method: 'POST', headers: {'X-Requested-With': 'XMLHttpRequest'}, body: new URLSearchParams(new FormData(this))
-    });
-    }).then(r => r.json()).then(d => { showToast(d.message || d.error, d.success ? 'success' : 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
+    })
+    .then(r => r.json()).then(d => { showToast(d.message || d.error, d.success ? 'success' : 'danger'); if (d.success) location.reload(); }).catch(() => showToast('Error', 'danger')).finally(() => hideLoader());
 });
 document.getElementById('referralForm').addEventListener('submit', function(e) {
     e.preventDefault();

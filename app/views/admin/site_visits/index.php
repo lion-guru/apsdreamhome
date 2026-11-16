@@ -171,7 +171,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
             } else {
                 showToast('Failed: ' + (d.error || 'Unknown error'), 'danger');
             }
-        ).finally(() => hideLoader());
+        }).finally(() => hideLoader());
     });
 });
 </script>

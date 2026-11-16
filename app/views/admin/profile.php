@@ -3,8 +3,6 @@
 /**
  * Admin Profile View
  */
-if (!defined('BASE_PATH')) exit;
-
 $page_title = 'My Profile';
 $active_page = 'profile';
 $user = $user ?? $user_data ?? [];
