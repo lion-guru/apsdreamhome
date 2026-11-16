@@ -1,3 +1,35 @@
+## Session 606: VAPID Key Endpoint Consistency Fix — /api/push/vapid-key Leaked Internal 'x.y' Format; Now Returns Canonical base64url Uncompressed EC Point (2026-11-16)
+
+### Trigger
+User (Hinglish): "do next" — continued autonomous sweep after S605. Follow-up to the push-notification audit.
+
+### What was broken (probe-verified, fixed)
+
+**`GET /api/push/vapid-key` returned an unusable internal format.**
+- Live probe showed the two VAPID endpoints returning **different, incompatible strings**:
+  - `/push/vapid-key` (web route) → `BDitPb9R3pw3WY0lzCkq_FFC4xLyPxBQ2ycISQmLr9CfMIJ6dswy...` (canonical: base64url of uncompressed 65-byte EC point)
+  - `/api/push/vapid-key` (API route) → `OK09v1HenDdZjSXMKSr8UULjEvI_EFDbJwhJCYuv0J8.MIJ6dswy...` (raw `x.y` dotted pair from `$_ENV['VAPID_PUBLIC_KEY']`, un-decoded)
+- Root cause: `Api\PushNotificationController::vapidPublicKey()` passed the env string through **without calling** `PushSender::decodeVapidKey()` / `getVapidPublicKey()`, while the web route uses `PushSender::getVapidPublicKey()`. `PushSender::decodeVapidKey()` converts dotted `x.y` (or PEM-wrapped) keys into the canonical 65-byte point, and `getVapidPublicKey()` base64url-encodes it for clients. `/api/push/vapid-key` served the raw dotted internal format — not importable as an EC key by any standard client (`applicationServerKey`), never usable for push registration.
+- Confirmed zero callers in the mobile app (`mobile/apsdreamhome_app_v2/**/*.dart` → none) — mobile uses Firebase FCM, not VAPID — so no deployed consumer was silently broken; the endpoint was simply incorrect.
+
+**Fix:** `Api\PushNotificationController::vapidPublicKey()` now builds the key via `App\Services\Communication\PushSender` (single source of truth, same as the web endpoint). Response now: `{"success":true,"publicKey":"<canonical>","vapid_key":"<canonical>"}` — `publicKey` kept for legacy readers, `vapid_key` matches the web contract (`/push/vapid-key`). Distinguishes failure modes explicitly:
+- exception in sender construction → 503 `VAPID configuration error`
+- empty key (misconfig) → 503 `VAPID not configured`
+
+### Verified end-to-end
+- Live probes (before → after): `/api/push/vapid-key` changed from dotted x.y string → canonical `{"success":true,"publicKey":"BDitPb...","vapid_key":"BDitPb..."}`, byte-identical to `/push/vapid-key`.
+- `php -l` clean.
+- **PHPStan** → `[OK] No errors`. **Master** → **11/11 PASSED** (27.47s).
+- Parallel actor's commits (`0fd630038`, `78ea6b5c2` — beneficiary_user_id money-ledger renames) re-verified healthy by this round's gates run.
+
+### Not in scope / unchanged
+- `config/vapid_private.key` remains tracked in git + on GitHub (S605 finding) — still an open owner decision (rotate / BFG / resubscribe plan). NOT actioned here.
+- Web contract `/push/vapid-key` unchanged (already canonical).
+- `/api/push/vapid-key` keeps `publicKey` envelope for full backwards compatibility.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 605. This entry = **S606**. Next-free = **607**.
+
 ## Session 605: Read-Only Security & Hygiene Sweep — VAPID Private Key Tracked in Git Flagged for Owner Decision, Eval/Exec Sinks Audited, .env Untracked Confirmed (2026-11-16)
 
 ### Trigger
