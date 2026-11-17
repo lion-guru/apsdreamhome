@@ -1,9 +1,10 @@
 <?php
-$page_title = $page_title ?? __('testi_submit_title', [], 'Share Your Testimonial');
-$page_heading = $page_heading ?? __('testi_submit_heading', [], 'Share Your Testimonial');
-$content = $content ?? '';
+$page_title = $page_title ?? __('testi_submit_title', [], 'Share Your Review');
+$page_heading = __('testi_submit_heading', [], 'Share Your Review');
 $errors = $errors ?? [];
 $logged_in = $logged_in ?? false;
+$properties = $properties ?? [];
+$sessionName = $_SESSION['user_name'] ?? '';
 ?>
 
 <div class="container py-5">
@@ -20,53 +21,67 @@ $logged_in = $logged_in ?? false;
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="<?= BASE_URL ?>/testimonials/submit">
-                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label"><?= __('testi_your_name', [], 'Your Name') ?> *</label>
-                                <input aria-label="Name" type="text" class="form-control" name="name" required
-                                       value="<?= htmlspecialchars($_POST['name'] ?? ($_SESSION['user_name'] ?? '')) ?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label"><?= __('testi_email', [], 'Email') ?> *</label>
-                                <input aria-label="Email" type="email" class="form-control" name="email" required
-                                       value="<?= htmlspecialchars($_POST['email'] ?? ($_SESSION['user_email'] ?? '')) ?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label"><?= __('testi_project_name', [], 'Project Name') ?></label>
-                                <input aria-label="Project name" type="text" class="form-control" name="project_name"
-                                       value="<?= htmlspecialchars($_POST['project_name'] ?? '') ?>"
-                                       placeholder="e.g. Suryoday Heights Phase 1">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label"><?= __('testi_location', [], 'Location') ?></label>
-                                <input aria-label="Location" type="text" class="form-control" name="location"
-                                       value="<?= htmlspecialchars($_POST['location'] ?? '') ?>"
-                                       placeholder="e.g. Gorakhpur">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label"><?= __('testi_rating', [], 'Rating') ?> *</label>
-                                <div class="rating-input">
-                                    <?php for ($i = 5; $i >= 1; $i--): ?>
-                                        <input aria-label="Rating" type="radio" name="rating" value="<?= $i ?>" id="r<?= $i ?>" <?= ($_POST['rating'] ?? 5) == $i ? 'checked' : '' ?>>
-                                        <label for="r<?= $i ?>" class="me-2">★</label>
-                                    <?php endfor; ?>
+                    <?php if (!$logged_in): ?>
+                        <div class="text-center py-4">
+                            <div class="display-1 text-muted mb-3"><i class="fas fa-lock"></i></div>
+                            <h5 class="mb-3"><?= __('testi_signin_required', [], 'Please sign in to leave a review') ?></h5>
+                            <p class="text-muted"><?= __('testi_signin_desc', [], 'Reviews shown here are written by verified APS Dream Home customers — sign in to add yours.') ?></p>
+                            <a href="<?= BASE_URL ?>/login?redirect=<?= urlencode('/testimonials/submit') ?>" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i> <?= __('testi_signin_cta', [], 'Sign In') ?>
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted small mb-4">
+                            <i class="fas fa-user-check me-1"></i>
+                            <?= __('testi_posting_as', [], 'Posting as') ?> <strong><?= htmlspecialchars($sessionName ?: 'your APS Dream Home account') ?></strong>.
+                            <?= __('testi_moderation_note', [], 'Reviews are published after moderation.') ?>
+                        </p>
+
+                        <form method="POST" action="<?= BASE_URL ?>/testimonials/submit">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="property_id"><?= __('testi_property', [], 'Property or colony this review is about') ?> *</label>
+                                    <select aria-label="<?= __('testi_property', [], 'Property') ?>" class="form-select" name="property_id" id="property_id" required>
+                                        <option value=""><?= __('testi_choose_property', [], '— Choose your property —') ?></option>
+                                        <?php foreach ($properties as $p): ?>
+                                            <option value="<?= (int)$p['id'] ?>" <?= (($_POST['property_id'] ?? '') == $p['id']) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars(trim($p['title'])) ?><?= !empty($p['location']) ? ' — ' . htmlspecialchars($p['location']) : '' ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?php if (empty($properties)): ?>
+                                        <p class="text-muted small mt-1"><?= __('testi_no_properties', [], 'No active listings yet — reviews cannot be submitted right now.') ?></p>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label"><?= __('testi_rating', [], 'Rating') ?> *</label>
+                                    <div class="rating-input">
+                                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                                            <input aria-label="<?= $i ?> <?= __('testi_stars', [], 'stars') ?>" type="radio" name="rating" value="<?= $i ?>" id="r<?= $i ?>" <?= ($_POST['rating'] ?? 5) == $i ? 'checked' : '' ?>>
+                                            <label for="r<?= $i ?>" class="me-2"><?= $i ?> ★</label>
+                                        <?php endfor; ?>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="content"><?= __('testi_your_testimonial', [], 'Your Review') ?> *</label>
+                                    <textarea aria-label="<?= __('testi_your_testimonial', [], 'Your Review') ?>" class="form-control" name="content" id="content" rows="6" required
+                                              maxlength="2000"
+                                              placeholder="<?= __('testi_placeholder', [], 'Share your experience with us...') ?>"><?= htmlspecialchars($_POST['content'] ?? '') ?></textarea>
+                                </div>
+                                <div class="col-12 form-check ms-2">
+                                    <input class="form-check-input" type="checkbox" name="anonymous" id="anonymous" value="1" <?= !empty($_POST['anonymous']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="anonymous"><?= __('testi_anonymous', [], 'Post as "Verified Buyer" — keep my name private') ?></label>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-paper-plane me-2"></i> <?= __('testi_submit_btn', [], 'Submit Review') ?>
+                                    </button>
+                                    <a href="<?= BASE_URL ?>/testimonials" class="btn btn-outline-secondary"><?= __('testi_cancel', [], 'Cancel') ?></a>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <label class="form-label"><?= __('testi_your_testimonial', [], 'Your Testimonial') ?> *</label>
-                                <textarea aria-label="Content" class="form-control" name="content" rows="6" required
-                                          placeholder="<?= __('testi_placeholder', [], 'Share your experience with us...') ?>"><?= htmlspecialchars($_POST['content'] ?? '') ?></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-paper-plane me-2"></i> <?= __('testi_submit_btn', [], 'Submit Testimonial') ?>
-                                </button>
-                                <a href="<?= BASE_URL ?>/testimonials" class="btn btn-outline-secondary"><?= __('testi_cancel', [], 'Cancel') ?></a>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
