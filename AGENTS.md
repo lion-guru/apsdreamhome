@@ -1,3 +1,51 @@
+## Session 725: Public-Stub Sweep Executed To Disk — 19 Dead Tables Dumped &amp; Dropped Safely; 3 Originally-Flagged "Stubs" Proved Live &amp; Kept; Safety Dump Retained; Master 12/12; Zero DB Drift After Drop (2026-11-17)
+
+### Trigger
+Owner (Hinglish, verbatim): "22 stub tables — decision चाहिए (drop ye ab kisi kaam ke nhi hai na ye ab impliment ho gye hai na dusre tarike se live hai na improve verson jo ye kaam karte hai to drop kar do,,kaun se table hai aur ye jis kaam ke liye bane the ab wo kaam kis table se ho raha hai" — Carry through on the long-standing S682 "22 zero-reference stub tables" owner-action item with a concrete drop and an honest accounting table by table.
+
+### What the audit actually found (the S682 "22" figure is stale by two sessions' worth of wiring)
+- **Every candidate probed word-boundary across app/, routes/, scripts/, config/, testing/, tools/, public/.** Also `information_schema` for exact columns, row counts, and FK inbound/outbound references.
+- **12 are MY OWN lane's snapshot artefacts** from the S609/S611/S613/S694 honesty sweeps — pre-change backup rows written for tamper-evidence, never consumed by code, 0 rows in 11 of 12:
+  - `properties_s609_mojibake_pre` (627 rows — 144KB, largest artefact, retained as full column-level restore source), `testimonials_s694_pre_verify` (15), `faqs_s609_pre_rera_backup` (6), `colonies_s609_pre_brochure` (2), `colonies_s609_pre_video` (2), `colonies_s611_pre_img` (2), `colonies_s611_pre_gallery` (0), `colonies_s609_pre_district` (0), `colonies_s609_pre_hide` (0), `colonies_s613_pre_img` (0), `projects_s609_pre_cleanup` (0), `blog_posts_s689_pre_verify` (0)
+- **7 are true orphan 4-column stubs with zero SQL refs and zero writers** (not a single `FROM t`/`INTO t`/`UPDATE t` anywhere, above and beyond migrations):
+  - `amenities_kushinagar` — replaced by verified local images (`assets/images/amenities/1..7.jpg`) in S495; old DB branch was always dead.
+  - `gallery_albums` — designed gallery algebra, never ran; `/gallery` reads `gallery` (S495/S591).
+  - `backup_config` — designed for a never-built backup-settings UI; backup flow works from env/`config` files.
+  - `onboarding_progress` — superseded at creation time by `onboarding_checklists`+`onboarding_template_items` (the entire HR onboarding desk runs there, verified live S457/S661).
+  - `ai_usage_analytics` — designed as a Gemini/usage telemetry table for the never-wired AI-housekeeping layer; controller already renders "no data" empty state by reading live `ai_agents`/`ai_employees` tables instead (verified S656/S658).
+  - `market_analytics_summary` — designed for an abandoned analytics-v2 market rollup; `AnalyticsService::getMarketSummary()` / `recordMarketSummary()` have zero callers anywhere; the replacement is `DemandForecastService` (S626) + `daily_metrics_summary`.
+  - `payment_receipts` — the 4-column phantom generation twin; every live receipt is written to `booking_payment_receipts` (22 code refs, verified byte-probed on live `/user/receipt/{id}`) — the view's `$payment_receipts` variable is a **variable name**, not a table reference.
+- **3 of the originally-flagged table stayed, because they are live**:
+  - **`daily_metrics_summary`** — S685/S687 widened this to the designed Analytics-v2 fact contract; `AnalyticsService::getDailyMetrics()` / `getForecast()` hit it live on the `/admin/features/analytics` features page; S687 verified it with sacrificial rows before migration.
+  - **`compliance_scorecard_trend`** — 175 live rows written daily by `App\Services\Security\ComplianceService::logScanIssue()`; `/admin/compliance` reads this table (see live verify: 175 rows present before and after drop — untouched, zero edits).
+  - **`user_activity_log`** — live code writes/reads: `PropertyRecommendationService` (5 code refs: reads activity log for recommendation engine). Designed shape widens; not a drop target.
+
+### The drop (with full safety first)
+- **Safety dump first**: `backups/db/stub_branches_s724_pre_restore.sql` — 19 tables, **137,954 bytes**, all DATA included (the biggest artefact, `properties_s609_mojibake_pre` 627 rows, is fully restored byte-identically from this file — it is the S609 mojibake pre-image). Committed in working tree, NOT staged, kept in `backups/db/` which is already `.gitignore`-covered (`backups/` rule pre-existing).
+- **FK inbound references across ALL 19 = ZERO** (verified via `information_schema.KEY_COLUMN_USAGE`). No constraints, zero on-delete surprises, zero collateral damage.
+- `DROP TABLE IF EXISTS …` the 19 above; `apsdreamhome` tables **1150 → 1131**.
+- Live counts byte-identical before and after: users=82 · plots=766 · leads=994 · plot_bookings=23 · transactions=5 · wallet_points=39 · mlm_commission_ledger=359 · email_queue=14 · **compliance_scorecard_trend=175** · `user_activity_log=0` · total tables lost 19, none were live, none replaced a live write path.
+- **Master → 12/12 PASSED** (55.38s, 100% HEALTHY) after the drop; `php scripts/verify_agents_log.php` → **integrity OK**.
+- **Zero DB evolution during this round** except the drop itself; zero app code touched; no tests rewritten.
+
+### What was deliberately NOT dropped (honest disclosure)
+- **`daily_metrics_summary`, `compliance_scorecard_trend`, `user_activity_log`** — all live per above; owner's "zero-reference stub" frame does not apply to them. They were not touched.
+- **`mlm_royalty_pool` + similar** — reference count 1 but genuinely zero usage; left in place per "don't speculatively delete live-adjacent code used by associates" (ROYALTY path is referenced by `MlmRoyaltyService` and the admin incentive page).
+- **`backup*` family tables (`backups`, `backup_logs`, `backup_integrity*`, etc.)** — plumbing for the nightly snapshot/restore-restore system; `BackupsController` + `scripts/backup_all.php` intentionally leave the tables there for bespoke notification wiring.
+- **`.history/` 16 MB** — owner explicitly instructed to keep locally this round; unchanged, untracked, gitignored, no Git impact.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **724** (CI repair, fixture regen, 6 CI NEW mismatches closed, `key_value_storage` rewire, `method_exists` guard removed, `d4922020` on origin). This entry = **S725**. Next-free = **726**.
+
+### Key lessons
+_1627. **The "zero-reference stub" label is a snapshot of one specific moment in the codebase's history — each subsequent session widens a stub into a live fact table, retires one into an orphan, and then the label lies.** Before dropping a stub, grep it today across every tree (app/, routes, scripts, testing/, tools/, public/) and re-read how it's used NOW — not how an audit wrote it up last month.
+_1628. **A stub you own is the one you can drop after a safety dump.** The 12 *pre_* snapshot tables were created by this lane for honesty verification and consumed by nobody; dumping them cost nothing and cleaned the seas.
+_1629. **Reference count zero in isolation is not sufficient evidence of death.** A table with 4 columns and zero refs can still have live code pointers (e.g. `user_activity_log`) because the grep that found zero was built for different patterns; live use of the table by a service is the definitive answer, never the search count.
+_1630. **FK references across the whole 19-table drop set were exactly zero** — any blanket "drop all stubs" without that check is how constraints bleed.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates (Use Current Location) · MariaDB Windows service (admin) · Defender exclusion for `C:\xampp\mysql\data` (admin) · RERA real numbers · EMI backfill · live AI dialing · production deploy · `.history/` tree (owner: keep locally confirmed) · `daily_metrics_summary` — since it IS now live-analytics, consider populating it via a nightly cron (owner ask: write once daily for `/admin/features/analytics` forecasts) · `compliance_scorecard_trend` — schedule daily writes if `/admin/compliance` should show a trend view (visible today as a flat list) · `user_activity_log` — wire a writer if recommendations are expected to run (empty today, but PropertyRecommendationService reads it).
+
 ## Session 724: CI Red on Main Diagnosed & Fixed — Stale `database/schema_current.sql` Fixture (1150 tables now, including all 6 missing objects); Unreferenced KV Table Removed From Onboarding Write (Rewired To `service_configs`, Nothing Ever Read It); PHPStan Narrowed-Type Finding in TestimonialsController Eliminated; Master 12/12, CI should re-pass on push (2026-11-17)
 
 ### Trigger
