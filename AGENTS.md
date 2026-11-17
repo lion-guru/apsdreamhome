@@ -1,3 +1,52 @@
+## Session 687: AnalyticsService Silent-Failure Pack Fixed — `/api/v2/analytics/kpi/record`, `/forecast` and Everything Downstream Were Guaranteed-1054 Before; `daily_metrics_summary` Widened to Designed Contract; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next" — after closing the escrow/`/about` fabrication family (S686), the next live-bugs-above-the-waterline lane from the S682 stub audit. The `AnalyticsService` was serving the live admin KPI/Forecast dashboard (`/admin/features/analytics`), live API endpoints (`/api/v2/analytics/kpi/record`, `/api/v2/analytics/forecast`), and the dead-but-callable `/admin/features/realtime-analytics` route — with broken schema bindings everywhere.
+
+### What was broken (each verified against `information_schema`)
+1. **`recordKpi()` inserted phantom columns** `period, metadata, recorded_at` into `employee_kpis` — live table has `period_start`/`period_end`/`target_value`/`achievement_percentage`/`score`/`status`/`comments`/`created_at`/`updated_at`. Every KPI record write 1054'd; the API returned HTTP 500 to the caller.
+2. **`getKpiPerformance()`** — `SELECT ... recorded_at ...` — not a column; the performance-breakdown query was unreachable too.
+3. **`daily_metrics_summary` was a bare stub** (id/tenant_id/created_at/updated_at) but `recordDailyMetric`/`getDailyMetrics` (and thus `generateForecast`) write/read `metric_name, category, value, dimensions, metric_date` — every call 1054'd → **the `/api/v2/analytics/forecast` endpoint was dead the whole time it has existed**, and `listForecasts` inserted into `forecast_results` with phantom `generated_at` on top of it (second independent 1054).
+4. **`getDailyMetrics()`** — `INTERVAL :d DAY` placeholder (never safely bindable).
+5. **`listBenchmarks()`** — `WHERE active = 1 ... ORDER BY category, name` against live columns `benchmark_name, role, metric, baseline_value, target_value, excellent_value` — all three predicates 1054'd.
+6. **`setBenchmark()`** — inserted `metric, benchmark_name, target_value, baseline_value, excellent_value` with NO `tenant_id` — live table requires `tenant_id NOT NULL` → guaranteed 1364; plus an `ON DUPLICATE KEY UPDATE` path that also duplicated `excellent_value`.
+7. **`generateForecast()`** — INSERT used phantom `generated_at` (live: `created_at`); `listForecasts()` ORDER BY the same phantom → `/api/v2/analytics/forecast` double-dead even after the widen.
+8. **`achievement_percentage` decimal(5,2) overflow** — actual=120 vs KPI default_target=5 → 2400% → 1264 strict-mode crash. Clamped at 999.99.
+
+### Fix
+- **Migration `widen_daily_metrics_summary_s685`** (idempotent, additive-only, 0 rows at run time): adds `metric_name`/`category`/`value`/`dimensions`/`metric_date` and `UNIQUE KEY uniq_metric_date(metric_name, metric_date)`. Registered in root `migrations/` (the runner's scan path — a root-level sibling, per repo convention) and applied; `schema_migrations` row recorded.
+- **`AnalyticsService::recordKpi()`** — INSERT rewritten to the live contract (`period_start`=first of month of the passed `Y-m` label; `period_end` from `Y-m-t`; `target_value` from the live `kpis.default_target` lookup; `achievement_percentage` clamped ≤999.99; `score` = achievement/100 clamped ≤1.99 (documented repurposing of the 0.00–9.99 free-semantics column); plain INSERT, `status='active'`, `comments` = JSON of `$metadata`).
+- **`getKpiPerformance()`** — switch to `period_start` GROUP BY / date window; positional `?` + literal `tenantSql()` merge (no HY093).
+- **`generateForecast()`** — `generated_at` → `created_at` INSERT; **`listForecasts()`** ORDER BY fixed to `created_at`.
+- **`getDailyMetrics()`** — `INTERVAL :d` placeholder replaced with a PHP-computed `$cutoff` date.
+- **`listBenchmarks()`** — queries the real columns only (drops `active`/`category` filters, orders by `metric, benchmark_name`; honest comment in code documenting the live shape).
+- **`setBenchmark()`** — rewritten to insert `tenant_id` (live `NOT NULL`) — currently 0 callers; both old bodies were 1364/1054-doomed.
+
+### Verification (live, sacrificial rows, all cleaned to zero)
+- **In-process service probes (bootstrap)**: seeded 4 `probe_s687` metric rows on distinct dates → `getDailyMetrics()` → 4 rows ✓ · `generateForecast('probe_s687', 3)` → `ok=true, id=2, r²~0.05` ✓ · `listForecasts()` → 1 row ✓ · `recordKpi(1, 120.0, 2, '2026-11', ['probe' => 's687'])` → `ok=true, id=4` → DB read-back: `kpi=1 emp=2 actual=120.00 target=5.00 achievement=999.99 (clamped) score=1.99 status=active` ✓ · **row deleted, sacrificial seeds deleted; baseline byte-identical (`metrics=0, forecasts=0`)** ✓
+- `/admin/features/analytics` — **HTTP 200 after rebuild**, 396,371 B, **zero 1054/view-not-found needles**, KPIs tab lists the live 18 `kpis` rows.
+- `php -l` ✓ · **PHPStan [OK]** on `AnalyticsService.php` · **Master → 11/11 PASSED** (37.2s, 100% HEALTHY).
+- Note: the `migrate.php` run printed a `PDOException: There is no active transaction` from the runner's generic rollback-after-DDL path (a known runner artifact — DDL implicitly commits); the table widen + `schema_migrations` row BOTH landed (verified directly). No corruption; this is why the 078/640/645 widen passes "succeeded" identically.
+
+### Not touched (honest)
+- `AnalyticsService::createDashboard()`, `market_analytics_summary`, `analytics_dashboards`, `performance_benchmarks lifecycle` inserts — **zero callers found anywhere** (grep `listBenchmarks|setBenchmark` across `app/`, `routes/`); left as D-class per S682's no-speculative-widen decision, with the benchmark pair fixed anyway because the file was open and both bodies were guaranteed-1364/1054.
+- Parallel actor's in-flight mobile files (`colony_management_page.dart`, `plot_management_page.dart`, `app_widgets.dart`) and their S686 lane NOT touched.
+- `migrations/` root-copy of the widen migration (`migrations/widen_daily_metrics_summary_s685.php`) is deliberately committed — it is the runner's scan path; removing it would silently un-apply the migration on a fresh install.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **686** (department-heads fabrication, `a720520dc`). This entry = **S687**. Next-free = **688**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1512. **A widened stub whose designed contract was "death by 0 rows" is a live-caller fix waiting to be applied.** `daily_metrics_summary` had writers and a reader the same session day it shipped; widening the stub was the minimal honest move — 100% bounded, additive, reversible.
+_1513. **When two columns disagree on intent between service and table, the LIVE TABLE wins and the SERVICE bends — never the reverse.** `employee_kpis` got the honest mapping (period→period_start/end; metadata→comments JSON; score repurposed + clamped).
+_1514. **Clamp the numeric survivor, not the operator.** decimal(5,2) max 999.99 is a wall — the clamp belongs at the computation with a comment, not as a blame clause.
+_1515. **A migration that "fatals" at `rollBack()` can still have committed** — the runner's generic catch triggers after DDL implicitly commits; verify both effects directly (columns present AND schema_migrations row), never trust the exception.
+_1516. **An endpoint can be double-broken and nobody notices** — `/api/v2/analytics/forecast` died on BOTH the missing `daily_metrics_summary` contract AND phantom `generated_at` in the writer. One bug is never the whole story; probe the full path end-to-end before letting it ship.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification · student/Nari Shakti HR wiring · `pages/index.php` 1000+ orphan · GstService.php:155 phpstan (parallel actor's lane) · 22 zero-reference stub tables drop decision.
+
+
 ## Session 686: Fabricated "Department Heads" Fallback Roster Deleted From `/about` — Invented Personas With Invented Roles & Fake Experience (12+/14+/15+ Years), Diverged From Live `team_members` On Every Axis; Dead Code, Replaced With Honest-Empty Skip; Master 11/11 (2026-11-17)
 
 ### Trigger

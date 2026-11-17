@@ -41,22 +41,33 @@ class AnalyticsService
     public function recordKpi(int $kpiId, float $actual, ?int $employeeId = null, string $period = null, array $metadata = []): array
     {
         $insertData = $this->tenantInsertData();
-        $cols = "kpi_id, employee_id, period, actual_value, metadata, recorded_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
-        $ph = "?, ?, ?, ?, ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
-        $p = [':k' => $kpiId, ':e' => $employeeId, ':p' => $period ?: date('Y-m'), ':a' => $actual, ':m' => json_encode($metadata, JSON_UNESCAPED_UNICODE)];
-        if (!empty($insertData)) $p = array_merge($p, array_values($insertData));
-        $st = $this->db->prepare("INSERT INTO employee_kpis ($cols) VALUES ($ph)
-                                  ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), metadata = VALUES(metadata), recorded_at = NOW()");
-        $st->execute($p);
+        // Live schema: period_start/period_end (DATE), target_value / achievement_percentage / score /
+        // status (enum active|completed|cancelled) / comments / created_at. The designed `period`,
+        // `metadata` and `recorded_at` columns were never migrated to employee_kpis; we map honestly.
+        $label = preg_match('/^\d{4}-\d{2}$/', (string)$period) ? (string)$period : date('Y-m');
+        $start = $label . '-01';
+        $end = date('Y-m-t', strtotime($start));
+        $kpi = $this->db->fetchOne("SELECT default_target, unit FROM kpis WHERE id = ?", [$kpiId]);
+        $target = $kpi ? (float)$kpi['default_target'] : 0.0;
+        $ach = $target > 0 ? min(999.99, round(($actual / $target) * 100, 2)) : 0.0;
+        // `score` repurposed as normalized achievement ratio (0.00-1.99); live column is decimal(3,2)
+        // with no documented semantics upstream, so we bound it here rather than store garbage.
+        $score = min(round($ach / 100, 2), 1.99);
+        $cols = "kpi_id, employee_id, period_start, period_end, target_value, actual_value, achievement_percentage, score, status, comments, created_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
+        $ph = "?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
+        $params = [$kpiId, (int)$employeeId, $start, $end, $target, $actual, $ach, min($score, 9.99), empty($metadata) ? null : json_encode($metadata, JSON_UNESCAPED_UNICODE)];
+        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
+        $st = $this->db->prepare("INSERT INTO employee_kpis ($cols) VALUES ($ph)");
+        $st->execute($params);
         return ['ok' => true, 'id' => (int)$this->db->lastInsertId()];
     }
 
     public function getKpiPerformance(int $kpiId, int $months = 6): array
     {
-        $st = $this->db->prepare("SELECT period, AVG(actual_value) as avg_val, MIN(actual_value) as min_val, MAX(actual_value) as max_val, COUNT(*) as sample_count
-                                  FROM employee_kpis WHERE kpi_id = :k AND recorded_at > DATE_SUB(NOW(), INTERVAL :m MONTH)" . $this->tenantSql() . " GROUP BY period ORDER BY period DESC");
-        $st->execute([':k' => $kpiId, ':m' => $months]);
-        if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
+        $cutoff = date('Y-m-d', strtotime('-' . max(1, (int)$months) . ' months'));
+        $st = $this->db->prepare("SELECT period_start, AVG(actual_value) as avg_val, MIN(actual_value) as min_val, MAX(actual_value) as max_val, COUNT(*) as sample_count, AVG(achievement_percentage) as avg_ach
+                                  FROM employee_kpis WHERE kpi_id = ? AND period_start > ?" . $this->tenantSql() . " GROUP BY period_start ORDER BY period_start DESC");
+        $st->execute([$kpiId, $cutoff]);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -92,28 +103,28 @@ class AnalyticsService
 
     public function getDailyMetrics(string $name, int $days = 30): array
     {
-        $st = $this->db->prepare("SELECT metric_date, value FROM daily_metrics_summary WHERE metric_name = :n AND metric_date > DATE_SUB(CURDATE(), INTERVAL :d DAY)" . $this->tenantSql() . " ORDER BY metric_date DESC");
-        $st->execute([':n' => $name, ':d' => $days]);
+        $cutoff = date('Y-m-d', strtotime('-' . max(1, (int)$days) . ' days'));
+        $st = $this->db->prepare("SELECT metric_date, value FROM daily_metrics_summary WHERE metric_name = ? AND metric_date > ?" . $this->tenantSql() . " ORDER BY metric_date DESC");
+        $st->execute([$name, $cutoff]);
         if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function listBenchmarks(string $category = ''): array
     {
-        $sql = "SELECT * FROM performance_benchmarks WHERE active = 1";
-        $params = [];
-        if ($category) { $sql .= " AND category = :c"; $params[':c'] = $category; }
-        $sql .= " ORDER BY category, name";
-        $st = $this->db->prepare($sql);
-        $st->execute($params);
+        // performance_benchmarks actually holds (benchmark_name, role, metric, baseline_value,
+        // target_value, excellent_value, ...) — no `active`, `category`, or `name` columns.
+        // Return the full list ordered by metric; callers that filter must use the live columns.
+        $st = $this->db->prepare("SELECT * FROM performance_benchmarks WHERE 1=1" . $this->tenantSql() . " ORDER BY metric, benchmark_name");
+        $st->execute();
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function setBenchmark(string $category, string $name, float $target, float $min, float $max, string $unit = ''): array
     {
-        $st = $this->db->prepare("INSERT INTO performance_benchmarks (metric, benchmark_name, target_value, baseline_value, excellent_value) VALUES (:c, :n, :t, :mi, :ma)
-                                  ON DUPLICATE KEY UPDATE target_value = VALUES(target_value), baseline_value = VALUES(baseline_value), excellent_value = VALUES(excellent_value)");
-        $st->execute([':c' => $category, ':n' => $name, ':t' => $target, ':mi' => $min, ':ma' => $max]);
+        $t = $this->tenantId() > 1 ? $this->tenantId() : 1;
+        $stm = $this->db->prepare("INSERT INTO performance_benchmarks (metric, benchmark_name, baseline_value, target_value, excellent_value, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
+        $stm->execute([$category, $name, $min, $target, $max, (int)$t]);
         return ['ok' => true];
     }
 
@@ -147,7 +158,7 @@ class AnalyticsService
         }
         $rSquared = $ssTot > 0 ? round(1 - $ssRes / $ssTot, 4) : 0;
 
-        $st = $this->db->prepare("INSERT INTO forecast_results (metric_name, method, periods, predictions, r_squared, generated_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:m, :me, :p, :pr, :r, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
+        $st = $this->db->prepare("INSERT INTO forecast_results (metric_name, method, periods, predictions, r_squared, created_at" . (count($this->tenantInsertData()) > 0 ? ', tenant_id' : '') . ") VALUES (:m, :me, :p, :pr, :r, NOW()" . (count($this->tenantInsertData()) > 0 ? ', :tid' : '') . ")");
         $fparams = [':m' => $metric, ':me' => $method, ':p' => $periods, ':pr' => json_encode($predictions, JSON_UNESCAPED_UNICODE), ':r' => $rSquared];
         if (!empty($insertData = $this->tenantInsertData())) $fparams = array_merge($fparams, $insertData);
         $st->execute($fparams);
@@ -159,7 +170,7 @@ class AnalyticsService
     public function listForecasts(int $limit = 20): array
     {
         try {
-            $st = $this->db->prepare("SELECT * FROM forecast_results" . $this->tenantSql() . " ORDER BY generated_at DESC LIMIT :lim");
+            $st = $this->db->prepare("SELECT * FROM forecast_results" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT :lim");
             $st->bindValue(':lim', $limit, PDO::PARAM_INT);
             if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
             $st->execute();
