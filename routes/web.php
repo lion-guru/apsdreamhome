@@ -1367,8 +1367,11 @@ $router->get('/associate/plot-converter', 'App\\Http\\Controllers\\Associate\\To
 $router->post('/associate/plot-converter', 'App\\Http\\Controllers\\Associate\\ToolController@plotConverter');
 $router->get('/associate/commission-calculator', 'App\\Http\\Controllers\\Associate\\CommissionController@commissionCalculator');
 $router->post('/associate/commission-calculator', 'App\\Http\\Controllers\\Associate\\CommissionController@commissionCalculator');
+$router->get('/associate/tools/emi', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
 $router->post('/associate/tools/emi', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
+$router->get('/associate/tools/stamp-duty', 'App\\Http\\Controllers\\AssociateController@stampDutyCalculator');
 $router->post('/associate/tools/stamp-duty', 'App\\Http\\Controllers\\AssociateController@stampDutyCalculator');
+$router->get('/associate/tools/plot-converter', 'App\\Http\\Controllers\\AssociateController@plotConverter');
 $router->post('/associate/tools/plot-converter', 'App\\Http\\Controllers\\AssociateController@plotConverter');
 $router->get('/associate/tools/commission', 'App\\Http\\Controllers\\AssociateController@commissionCalculator');
 $router->post('/associate/tools/commission', 'App\\Http\\Controllers\\AssociateController@commissionCalculator');

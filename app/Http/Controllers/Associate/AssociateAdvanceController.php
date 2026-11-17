@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Associate;
 
-use App\Http\Controllers\Front\PageController;
+use App\Http\Controllers\BaseController;
 use App\Services\CommissionAdvanceService;
 
 /**
  * Associate Commission Advance & Festival Loan Portal
  */
-class AssociateAdvanceController extends PageController
+class AssociateAdvanceController extends BaseController
 {
     protected string $layout = 'layouts/associate';
     private CommissionAdvanceService $advanceService;
@@ -21,9 +21,14 @@ class AssociateAdvanceController extends PageController
 
     private function associateId(): int
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
         $id = (int)($_SESSION['user_id'] ?? 0);
-        if ($id <= 0) {
-            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
+        $role = $_SESSION['role'] ?? '';
+        if ($id <= 0 || !in_array($role, ['associate', 'agent'], true)) {
+            $_SESSION['error'] = 'Please login as an associate to access advances portal';
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/associate/login');
             exit;
         }
         return $id;

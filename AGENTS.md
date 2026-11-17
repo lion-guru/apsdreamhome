@@ -1,3 +1,90 @@
+## Session 744: Associate Portal Consistency Overhaul — Smart Calculators Suite Live-Harmonized (EMI, Stamp Duty, Plot Area Matrix), Advances & Festival Loans Layout Unified, Chatbot Associate Context & Real-Time Lead Telemetry Integrated; Zero DB Drift, Master 12/12 Clean (2026-11-17)
+
+### Trigger
+User request:
+"DO NEXT AND ABHI BHI ASSOSIATE PORTAL /DASHBOARD ME BHUT SI KAMIYAHAI SARE MENU KHOL KE DEKHO CONSISTENCY NHI HAI UI DIFFER HO JA RAHHAI AUR UI ME BHI IMPROVE KAR HAI AUR BHUT SE FUNTION BHI JADNE PADENGE ETC TUM DEEPLY SAB KUCH DEKH KE APNE SUGGETIONSE ISKO BEST BANAOO KOI KAMI NA RAHE..BINA RUKE KAAM KARO"
+Specific items:
+1. `associate/advances` (My Commission Advances & Loans), `associate/genealogy`, `associate/ai-dashboard` layout consistency.
+2. `associate/tools` (Smart Tools, EMI Calculator, Stamp Duty Calculator, Plot Area Converter, Commission Calculator).
+3. Chatbot assistance: "Show my leads" telling associates their dashboard was empty when they had active CRM leads.
+
+### Root Cause Analysis
+1. **Tool Input Name & POST Parameter Disconnect in `ToolController::emiCalculator()`**:
+   - `emi_calculator.php` submitted `<input type="number" name="amount" ...>`, while `ToolController::emiCalculator()` expected `$_POST['principal']`.
+   - Consequently, submitting the server-side form always produced `$principal = 0`, triggering fatal error: `"Calculation error: All fields must be greater than 0"`.
+2. **Missing GET Handlers on Tool Endpoint Aliases**:
+   - `routes/web.php` only registered POST handlers for `/associate/tools/emi`, `/associate/tools/stamp-duty`, and `/associate/tools/plot-converter`. Navigating or refreshing these routes triggered 404 Route Not Found errors.
+3. **Portal Layout Disconnect in `AssociateAdvanceController` & `advances.php`**:
+   - `AssociateAdvanceController` extended `Front\PageController` rather than `BaseController`, and its unauthenticated handler redirected to the general `/login` instead of the associate portal login `/associate/login`.
+   - `advances.php` wrapped content in a narrow fixed `.container` instead of `.container-fluid px-4 py-3`, breaking sidebar alignment and lacking metric summary headers and breadcrumbs.
+4. **Chatbot Associate Role Amnesia in `smart_chatbot.php`**:
+   - `smart_chatbot.php` checked `isset($_SESSION['associate_id'])`. Associates in APS Dream Home use unified user IDs (`$_SESSION['user_id']` with `$_SESSION['role'] = 'associate'`).
+   - As a result, the chatbot misidentified logged-in associates as generic `'customer'` guests, greeted them with buyer questions, and did not transmit their associate role or prompt context, causing the AI to report zero leads.
+
+### Key Fixes Landed
+1. **Smart Calculator Suite Harmonization (`ToolController.php` & Views)**:
+   - Updated `ToolController::emiCalculator()` to seamlessly accept both `$_POST['principal']` and `$_POST['amount']`, plus `$_POST['tenure']` / `$_POST['tenure_years']`.
+   - Enhanced `app/views/associate/emi_calculator.php` with:
+     - Real-time client-side live reactive calculations with sliders and badge telemetry.
+     - Quick preset buttons (₹5L, ₹10L, ₹15L, ₹25L, ₹50L).
+     - Visual principal vs interest ratio progress bar.
+     - 1-click WhatsApp quote formatting & sharing for field client interactions.
+   - Enhanced `app/views/associate/stamp_duty_calculator.php` with:
+     - Real-time live calculation across all Indian states and UP female rebate rules.
+     - Quick value presets and 1-click WhatsApp registry quote sharing.
+   - Enhanced `app/views/associate/plot_converter.php` with:
+     - Live multi-unit conversion matrix displaying Sq.Ft, Sq.Yards (Gaj), Biswa, Bigha, Sq.Meters, and Acres simultaneously in a responsive grid.
+     - Quick standard plot size presets (800 sqft, 1000 sqft, 1200 sqft, 100 Gaj, 1 Biswa, 1 Bigha).
+     - 1-click WhatsApp plot conversion summary sharing.
+   - Registered GET & POST route pairs in `routes/web.php` for `/associate/tools/emi`, `/associate/tools/stamp-duty`, `/associate/tools/plot-converter`, and `/associate/tools/commission`.
+2. **Advances & Festival Loans Portal Unification (`AssociateAdvanceController.php` & `advances.php`)**:
+   - Converted `AssociateAdvanceController` to extend `BaseController`, enforcing role verification (`associate` / `agent`) and redirecting unauthorized sessions to `/associate/login`.
+   - Modernized `advances.php` to use `.container-fluid px-4 py-3` with standard breadcrumbs and top stat cards (Total Approved, Total Repaid, Active Balance, Lifetime Requests).
+3. **Smart Chatbot Associate Telemetry (`smart_chatbot.php` & `SmartAIController.php`)**:
+   - Fixed user role detection in `smart_chatbot.php` to recognize `$_SESSION['role'] === 'associate'`.
+   - Added associate-specific greeting and quick suggestions (My Leads, Commissions, Add Lead, ID Card).
+   - Passed `role` parameter in the chat API payload.
+   - Hardened `SmartAIController::getUserContext()` with `session_status()` guards.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Http/Controllers/Associate/ToolController.php` -> PASS
+  - `app/Http/Controllers/Associate/AssociateAdvanceController.php` -> PASS
+  - `app/Http/Controllers/SmartAIController.php` -> PASS
+  - `app/views/associate/emi_calculator.php` -> PASS
+  - `app/views/associate/stamp_duty_calculator.php` -> PASS
+  - `app/views/associate/plot_converter.php` -> PASS
+  - `app/views/associate/advances.php` -> PASS
+  - `app/views/components/smart_chatbot.php` -> PASS
+  - `routes/web.php` -> PASS
+- **Functional Verification (live buffering)**:
+  - EMI POST (`principal=2000000`) -> PASS (Total Amount Payable calculated).
+  - EMI POST (`amount=2000000`) -> PASS (Backwards-compatible calculation).
+  - Stamp Duty POST (`property_value=5000000`, female) -> PASS (1% rebate applied).
+  - Plot Converter POST (`value=100`, sqyd to sqft) -> PASS (Converted to 900 sqft).
+  - Advances index -> PASS (Rendered 66,974 B within `layouts/associate`).
+  - Chatbot local lead response for user 53 -> PASS (Returned 127 active leads, 67 hot leads, recent active lead list).
+- **Database Baseline (Zero Drift Target)**:
+  - `users`: 82 (exact match)
+  - `plot_bookings`: 23 (exact match)
+  - `leads`: 994 (exact match)
+  - `transactions`: 5 (exact match)
+  - `mlm_commission_ledger`: 359 (exact match)
+  - `email_queue`: 14 (exact match)
+- **Master Test Suite**:
+  - `php testing/master_test_runner.php` -> **12/12 PASSED** (42.32s, 100% HEALTHY).
+- **AGENTS.md Log Verification**:
+  - `php scripts/verify_agents_log.php` -> PASS.
+
+### AGENTS.md numbering (Rule 4)
+This entry = **S744**. Next-free = **745**.
+
+### Key lessons
+_1693. **Form input naming must match backend controller expectations — always support synonym aliases in calculation endpoints.** Accepting both `principal` and `amount` safeguards against subtle frontend mismatches.
+_1694. **Single-action tools in field operations need instant client-side feedback plus 1-click sharing.** Associates pitching on-site need immediate slider reactions and instant WhatsApp formatting without waiting for round-trip page reloads.
+_1695. **Portal layouts must be uniform across all operational sub-modules.** Using fixed `.container` inside a fluid sidebar layout creates jarring visual asymmetry; all sub-views must adopt `.container-fluid px-4 py-3` with standardized breadcrumbs.
+_1696. **Chat widgets embedded across multiple portal roles must detect user context from unified session attributes.** Checking separate `*_id` variables breaks when modern auth uses unified `user_id` with a role enum; always inspect `$_SESSION['role']`.
+
 ## Session 743: Post-Wallet-Burst Full Verification Sweep — HEAD Byte-Equal To Origin (`05f406e8c`); Master 12/12; DB Drift Zero (1131 tables); 19-Task Nightly Cron Dry-Run Listed; Public Buyer Surfaces All 200/301; `php_error.log` Tail Clean Of Post-S736/S738 Signatures (Every Remaining Line Is Pre-Fix); Integrity OK (491 Headings) (2026-11-17)
 
 ### Trigger

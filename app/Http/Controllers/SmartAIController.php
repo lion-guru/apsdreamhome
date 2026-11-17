@@ -406,7 +406,9 @@ class SmartAIController extends BaseController
      */
     private function getUserContext()
     {
-        @session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
 
         $context = [
             'role' => 'guest',

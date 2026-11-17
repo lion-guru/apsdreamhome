@@ -54,9 +54,11 @@ class ToolController extends BaseController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                $principal = (float)($_POST['principal'] ?? 0);
-                $rate = (float)($_POST['rate'] ?? 8.5) / 100 / 12; // Monthly rate
-                $tenure = (int)($_POST['tenure'] ?? 20) * 12; // Months
+                $principal = (float)($_POST['principal'] ?? $_POST['amount'] ?? 0);
+                $annualRate = (float)($_POST['rate'] ?? 8.5);
+                $rate = $annualRate / 100 / 12; // Monthly rate
+                $tenureYears = (int)($_POST['tenure'] ?? $_POST['tenure_years'] ?? 20);
+                $tenure = $tenureYears * 12; // Months
 
                 if ($principal <= 0 || $rate <= 0 || $tenure <= 0) {
                     throw new Exception('All fields must be greater than 0');
@@ -71,8 +73,8 @@ class ToolController extends BaseController
                     'total_payment' => round($totalPayment, 2),
                     'total_interest' => round($totalInterest, 2),
                     'principal' => $principal,
-                    'rate' => $_POST['rate'] ?? 8.5,
-                    'tenure_years' => $_POST['tenure'] ?? 20,
+                    'rate' => $annualRate,
+                    'tenure_years' => $tenureYears,
                 ];
             } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Calculation error: ' . $e->getMessage();

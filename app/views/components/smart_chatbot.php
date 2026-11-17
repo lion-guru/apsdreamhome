@@ -11,19 +11,24 @@ $isLoggedIn = false;
 $userName = 'Guest';
 $userRole = 'guest';
 
-if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
+$sessionRole = $_SESSION['role'] ?? '';
+if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id']) || in_array($sessionRole, ['admin', 'super_admin'], true)) {
     $isLoggedIn = true;
-    $userName = $_SESSION['admin_name'] ?? 'Admin';
+    $userName = $_SESSION['admin_name'] ?? $_SESSION['user_name'] ?? 'Admin';
     $userRole = 'admin';
     $adminRole = $_SESSION['admin_role'] ?? 'admin';
-} elseif (isset($_SESSION['associate_id'])) {
+} elseif (isset($_SESSION['associate_id']) || $sessionRole === 'associate') {
     $isLoggedIn = true;
-    $userName = $_SESSION['associate_name'] ?? 'Associate';
+    $userName = $_SESSION['associate_name'] ?? $_SESSION['user_name'] ?? 'Associate';
     $userRole = 'associate';
-} elseif (isset($_SESSION['agent_id'])) {
+} elseif (isset($_SESSION['agent_id']) || $sessionRole === 'agent') {
     $isLoggedIn = true;
-    $userName = $_SESSION['agent_name'] ?? 'Agent';
+    $userName = $_SESSION['agent_name'] ?? $_SESSION['user_name'] ?? 'Agent';
     $userRole = 'agent';
+} elseif (isset($_SESSION['employee_id']) || in_array($sessionRole, ['employee', 'telecaller'], true)) {
+    $isLoggedIn = true;
+    $userName = $_SESSION['employee_name'] ?? $_SESSION['user_name'] ?? 'Team Member';
+    $userRole = 'employee';
 } elseif (isset($_SESSION['user_id'])) {
     $isLoggedIn = true;
     $userName = $_SESSION['user_name'] ?? 'Customer';
@@ -75,6 +80,14 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                         💬 Kaun sa page kahan hai (payments, GST, leads)<br>
                         💬 Reports &amp; analytics kahan milega<br>
                         💬 Feature flags / service configs<br><br>
+                        Kya main aapki madad kar sakta hoon? 😊</p>
+                        <?php elseif ($userRole === 'associate'): ?>
+                        Main APS AI hoon, aapka associate business partner! 🤝<br><br>
+                        💬 Aap mujhse pooch sakte hain:<br>
+                        💬 Show my leads &amp; hot prospects<br>
+                        💬 My commissions &amp; payouts info<br>
+                        💬 Colony plots &amp; pricing details<br>
+                        💬 Sunday free site visit booking<br><br>
                         Kya main aapki madad kar sakta hoon? 😊</p>
                         <?php elseif ($userRole === 'employee'): ?>
                         Main APS AI hoon, aapka productivity coach! 📌<br><br>
@@ -555,7 +568,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: `message=${encodeURIComponent(message)}&session_id=${sessionId}`
+                body: `message=${encodeURIComponent(message)}&session_id=${sessionId}&role=${encodeURIComponent('<?= $userRole ?>')}`
             })
             .then(res => res.json())
             .then(data => {
