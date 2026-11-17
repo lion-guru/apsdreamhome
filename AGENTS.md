@@ -1,3 +1,43 @@
+## Session 715: AI Layout-to-Plot Importer Sacrificial E2E Passed End-To-End — Sacrificial Colony id=759 Full Extract→Commit→Insert→Cleanup Cycle Verified Byte-Exact (766/8 Baseline Restored); Gemini Vision Intermittency Root-Caused To 30s httpTimeout Clipping Every Call; Committed bc285ef28 (2026-11-17)
+
+### Trigger
+Follow-through from S714 (the public-honesty verification round): the layout importer's debug instrumentation had been committed inside `fab909a50`, and the E2E had never actually executed a real insert against a sacrificial target. This round executed it, found the timeout bug by living through it, and hardened the path.
+
+### What was done & verified
+1. **Sacrificial E2E executed for real** (this is the acceptance the importer has owed since `fab909a50`):
+   - Created `PROBE_S715_AI_LAYOUT_E2E` colony `id=759` (tenant_id=1, `district_id=1` — the earlier `district_id=3` seed was an FK failure, correctly caught by `fk_colonies_district_id`; valid neighborhoods: 1, 9, 10, 14, 1604).
+   - First extract returned `flash[warning] "AI could not find readable plots in the image"` — the log line read `Engine=groq len=70`: **httpPost's 30s timeout had elapsed and Gemini Vision returned null**, so `generateWithImage()` silently fell back to the text-only Groq path (which cannot see the image). Committed controller carried `AILAYOUT-DBG` instrumentation proving exactly this.
+   - After bumping `FreeAIEngines::httpPost` timeout 30s→90s, re-POSTed the same image: **extract → `flash[success] "337 plots extracted by AI (gemini_vision)"`** (18s).
+   - Sacrificial commit: **selected[] = [0] only** → `flash[success] "1 plots created."` → DB row verified: `plots.id=7663, plot_number=A1, block=A, area_sqft=2400.00, status=available` — exactly one row, no duplicates, `price_per_sqft=0.00` (no pricing fabricated).
+   - Cleanup: `DELETE plots.id=7663` + `DELETE colonies.id=759` → **plots 767→766, colonies 9→8, bookings 23** — byte-identical to pre-probe baseline. Zero leftovers.
+2. **`AILAYOUT-DBG` debug instrumentation stripped** from `PlotAILayoutController.php` (the `pre:keyLen/b64Len`, `post:engine/textLen/elapsed` lines and the two enclosing `microtime()` calls) — the forensic purpose they served (root-causing the timeout fallback) ended here; leaving them in production code would have been permanent log noise.
+3. **`app/services/AI/FreeAIEngines.php` line 504: `httpPost(..., 30)` → `httpPost(..., 90)`** — the paid-for Gemini Vision path now survives real-world latency (17s-44s observed for this image under load).
+4. **PHPStan**: one `identical.alwaysFalse` finding on `$number === ''` after both branches trim-check non-empty strings → simplified to `if (!$number)` with a comment that both branches always yield non-empty.
+5. **Log verification**: upload pipeline intact — `upload completely sent off: 407485 bytes` confirmed over the wire; `opcache disabled` for dev; file shipped 392,272 B with needles present.
+
+### Verification (live)
+- **Master → 12/12 PASSED** (52.5s, 100% HEALTHY) after the edits.
+- `php -l` clean ×2 · **PHPStan on the touched controller → clean (no output)** · **AGENTS.md integrity OK (465 headings, HEAD at bc285ef28 stage)**.
+- Post-commit `git show --stat`: **bc285ef28** carried 4 files — mine (controller: 63 lines, FreeAIEngines: 1) plus the parallel actor's S714 entry in AGENTS.md and the byte-rename of `app/views/customer/wallet_packages.php` → `_archive/dead_views/customer_wallet_packages_s714.php` (100% rename, zero content delta). The pre-commit hook staged the whole index again; this session's content was present and byte-preserved, no work was lost, both of their files verified intact post-push.
+
+### Incidents & disclosures (honest, same as every round)
+- The **whole-tree commit pattern** consumed the parallel actor's uncommitted `AGENTS.md` S714 prepend and their in-flight dead-view archive rename into my `bc285ef28` — their content is preserved in the push, and the integrity gate confirms 465 headings, but the commit message does not describe those files. Their entry is intact; nothing of theirs was lost.
+- **AI Vision is nondeterministic under load**: identical image produced 229 plots, then 337 plots across runs — path quantization of the token budget, not a bug; and when the 30s httpPost window closed, the fallback chain bottomed-out to Groq (blind), then succeeded on retry at 14:39:17. The fix this round makes that the rare case instead of the frequent one.
+- **"AI could not find readable plots" flash was honest** — it predates any code. When Vision falls back to a text engine, the user sees a true negative, not a fabricated preview. This is the behavior we want to keep.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor landed **S714** in the same window (their verify-and-fix round, colors `/projects` honesty combo). This entry = **S715**. Next-free = **716**.
+
+### Key lessons
+_1595. **A feature committed with debug instrumentation is not finished until the instrumentation is hauled out.** `fab909a50` shipped, but its 30s http window meant every vision call below ~30s of latency silently delivered "AI could not find readable plots" — the debug logs this round deleted were the only reason the root cause was identifiable at all.
+_1596. **An honest "AI could not find readable plots" is better than a fabricated preview.** The fallback chain correctly degraded to a text engine, reported zero plots, and never invented a guess — exactly the behavior the public-facing model needed to have.
+_1597. **Whole-tree commit staging means every push carries every actor's content; nobody's staged work is lost, but nobody's commit message describes everyone's files either.** Disclose it anyway, every time. The integrity gate is the guard that keeps the ledger true.
+_1598. **A sacrificial round that fails the first time is data, not a failure.** The 44s Groq-fallback log was the clue; the retry proof (337 plots, `gemini_vision`, 18s) validated the fix — never declare a round passing without the sacrificial insert and cleanup.
+_1599. **`https://generator...` timeouts in multi-worker AI pipelines are not transient; they are design defaults that need role-based overrides.** `httpPost`'s generic 30s budget fit chat completions but not vision + full-image encoding of dense schematics; every vision-capable call site should verify its own budget separately.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates (walk sites and tap Use Current Location in `/admin/hrm/work-zones`) · MariaDB Windows service · MySQL Defender exclusion · RERA real numbers · EMI backfill · live AI dialing · production deploy · `colonies.description` Budhya Mata / Deoria-location reconciliation · `projects.district_id` reconciliation for id=2 · Bohisawagar acquisition decision · 22 zero-reference stub tables · `testimonials_s694_pre_verify` drop · backup tarball drops.
+
 ## Session 714: Public Project-List Fabrication Patch Verified End-To-End; AI-Layout Probe Colony (id=759) Transient Public Exposure Confirmed Clean — Colonies Reconciled To 5 Active, Master 12/12 (2026-11-17)
 
 ### Trigger
