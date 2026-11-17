@@ -197,6 +197,8 @@ class CareerController extends BaseController
      */
     public function applications($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             $_SESSION['errors'] = ['Access denied'];
@@ -238,6 +240,8 @@ class CareerController extends BaseController
      */
     public function applicationDetails($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             $_SESSION['errors'] = ['Access denied'];
@@ -280,6 +284,8 @@ class CareerController extends BaseController
      */
     public function updateStatus($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             return [
@@ -317,6 +323,8 @@ class CareerController extends BaseController
      */
     public function deleteApplication($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             return [
@@ -352,6 +360,8 @@ class CareerController extends BaseController
      */
     public function getApplicationStats($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             return [
@@ -368,6 +378,8 @@ class CareerController extends BaseController
      */
     public function getApplications($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             return [
@@ -392,6 +404,8 @@ class CareerController extends BaseController
      */
     public function getAvailablePositions($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             return [
@@ -408,6 +422,8 @@ class CareerController extends BaseController
      */
     public function downloadResume($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             $_SESSION['errors'] = ['Access denied'];
@@ -465,6 +481,8 @@ class CareerController extends BaseController
      */
     public function exportApplications($request = null)
     {
+        // HR/admin desk — admin chrome, not public shop chrome
+        $this->layout = 'layouts/admin';
         // Check authentication and admin access
         if (!$this->isAuthenticatedOrAdmin()) {
             return [
