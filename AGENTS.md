@@ -1,3 +1,62 @@
+## Session 707: `/project-locations/bohisawagar` Fabricated-Specs Standalone Page Rewritten To Honest "Upcoming Township" Partial In The Colony SEO Family — Invented ₹9,50,000 Price / 25 Acres / 200 Units / March 2025 Possession All Removed, Colony Does Not Exist Anywhere In `colonies` Or `projects`; Master 12/12 (2026-11-17)
+
+### Trigger
+User: "do next" — completing a final hole in the colony-location SEO family found during a full byte-probe matrix of the six `/project-locations/*` pages (`budha-city`, `suryoday-colony`, `raghunath-nagri`, `bohisawagar`, `ram-nagri`, `ganga-nagri`). Five render full site chrome at ~203–205 KB with real `<h1>`s; `bohisawagar` alone was a completely different, **unwired, full-HTML standalone document** at **11,634 B**.
+
+### What was found (byte-verified)
+- The "colony" named **Bohisawagar does not exist** in the live DB anywhere:
+  - `SELECT * FROM colonies WHERE name LIKE '%ohisa%'` → 0 rows (also slug variant → 0 rows)
+  - `SELECT * FROM projects WHERE site_name LIKE '%Bohis%'` → 0 rows (column was `site_name`; the table uses `name` — checked both)
+- Its in-file hardcoded literals, none of which has a data source anywhere:
+  - `$startingPrice = "?9,50,000"` — **mojibake for ₹9,50,000** (U+20B9 became `?` in whatever pipeline saved it); no such price published; zero correlation to any rate card (Suryoday maps ₹1,400–1,650 psf; Bohisawagar claimed ₹9,50,000 total plots)
+  - `$projectArea = "25 Acres"` — nothing verifies this; no colony row, no land parcel rows tied to "Bohisawagar"
+  - `$totalUnits = "200"` — invented unit count; no `plots` rows exist for
+  - `$possessionDate = "March 2025"` — already in the **past** (this is Nov 2026)
+  - `$projectStatus = "Upcoming"` — only status field, but the page simultaneously claimed live booking-ready inventory
+  - Marketing prose: "Premium residential plots… excellent connectivity… well-planned layout" — all unverifiable claims presented as fact
+- Architectural defects beyond the fabrications:
+  - Bypassed the `Front\PageController@locationLanding` pattern used by all five siblings via a `$map` lookup
+  - Opened a **raw DB connection** via `Database::getInstance()->getConnection()` and `die("Database connection failed…")` on error — leaking a raw unstyled error screen at the public URL instead of hitting the app's normal chrome/404 path
+  - Hot-linked AOS from `unpkg.com` (no SRI, no local copy, breaks behind strict CSP) while the rest of the app uses local assets
+  - Had its own complete `<!DOCTYPE>...<body>` contract, rendering a visually alien page with no APS navbar/footer/fonts
+
+### Fix
+- Rewrote `app/views/locations/gorakhpur-bohisawagar.php` as a **partial** in the exact family shape used by `kushinagar-budha-city.php` (`ob_start()` … `echo $content;`), wrapped by the controller's `render()` chrome — same 204 KB ballpark page family as its five siblings:
+  - h1 `Bohisawagar`, subtitle `Upcoming Township in Gorakhpur`
+  - Honest overview: land acquisition in progress; **no rate card, inventory count, possession date or RERA number is published yet**; any figure from any channel is unverified until a colony entry is formally registered; colony-wise RERA verification on request at legal desk (+91 70074 44842) or on up-rera.in — every clause directly from the verified honesty baseline
+  - "What to expect" widget — three verified service facts (no docs invented)
+  - Links to the three live Gorakhpur townships: `/colony/suryoday-colony` · `/project-locations/raghunath-nagri` · `/contact`
+  - Same hero/CTA pattern: `Call for Details` + `Get Details`, identical chrome to sibling colony pages
+  - Mojibake ₹ removed completely; unpkg CDN reference removed; raw `die()` removed; direct DB connection removed
+
+### Live verification (anonymous GET, freshly fetched)
+- `/project-locations/bohisawagar` → **HTTP 200, 203,952 B** — needles PRESENT: `Bohisawagar` · `Upcoming Township` · `+91 70074 44842` · `up-rera.in` · `Suryoday Colony`. Needles ABSENT: `March 2025` · `25 Acres` · `9,50,000` · `200 units` · `Premium residential plots` · `well-planned layout` · `?9,50,000` · `<!DOCTYPE` bystander
+- `php -l` clean · **Master → 12/12 PASSED** — first post-edit run flaked to 11/12 at 110s (no needle/structural failure — timing artefact), then two consecutive full 12/12 passes (44s and the one before) confirmed stability; sibling colonies all re-probed OK
+- Commit `2140e1eb1` (exactly 1 file, pushed, `ls-remote` verified). The parallel actor's in-flight lanes (`app/services/PortalMenuService.php`, associate views, `PlotAILayoutController`, `ai_layout.php`) untouched and unstaged.
+
+### Honest notes
+- The colony is called Bohisawagar in marketing vocabulary only; **it will not appear as a colonies row until land is actually acquired**. When that happens, the owner should seed a `colonies` row and swap this page for the full SEO-view pattern of its siblings — this rewrite is the honest-zero state until then, not a permanent design.
+- The old standalone file was never served content of value (no purchase path — no prices to buy at; every click converted to nothing). Deleting rather than rewriting would still have been honest; the rewrite was chosen to keep the URL (indexed, linked from ads/SEO) presenting something truthful instead of a soft 404 with fabricated specs.
+- `?9,50,000` was a corrupted glyph not a clever price format — evidence of a file that was pasted together without ever being render-tested.
+
+### Incidents / disclosures
+- Parallel actor committed `5af44c4d1` (mobile admin GPS Work Zones, S706) **and** `3aa1e6fe9` (E2E teardown baseline snapshot fix) mid-round; my live probes and master runs ran against those trees — all green; my staged set was strictly my one file.
+- One flaky master run (11/12, 110s) immediately post-edit — investigated; two consecutive clean 12/12 runs proved the tree stable; disclosure not concealment.
+- Worktree holds the parallel actor's freshly-committed and in-flight work (`PortalMenuService.php`, associate layouts/views, `PlotAILayoutController.php`, `ai_layout.php`) — deliberately not staged or committed.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **706** (mobile admin GPS Work Zones + E2E teardown baseline). This entry = **S707**. Next-free = **708**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1574. **A public page with zero database backing is not a page, it's a brochure** — every literal in it is a claim with no source; `/project-locations/bohisawagar` had price, inventory, acreage, possession and status all invented in one file.
+_1575. **Wire the controller before judging the view** — the view was a standalone document, the controller passed it chrome-wrapped partial semantics; the bytes served matched the standalone comment, not the controller pass; the mismatch was the exact bug.
+_1576. **Mojibake (`?9,50,000`) is a forensic marker of never-render-tested copy** — any ₹ you can't decode at a glance was never served to a real browser on the author's machine.
+_1577. **When a sibling family exists, the fix for the outsider is to bring it into the family** — the six `/project-locations/*` pages now all render the same chrome, same length ballpark, same CTA contract; no bespoke one-off architecture remains.
+_1578. **A standalone page that bypasses `render()` bypasses every safety we added app-wide** — the self-connect-`die()` pattern was a raw failure screen, not a 404; partial-styled rewrite restores the app's error machinery for free.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (placeholders live) · EMI backfill · live AI dialing · production deploy · Task Scheduler verification · MySQL repair closure (drop aria_log.bak after 7 days) · 22 stub tables · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · visual-regression baseline refresh · `Bohisawagar` decision (acquire land → seed colonies row → promote page; or retire URL to `/contact` — owner call) · Defender exclusion for mysqld · register MariaDB as Windows service.
+
 ## Session 705: Buyer-Facing "Most Trusted Real Estate Brand" Superlative Eliminated From About Vision; Dead `why_choose_us_subtitle` Lang Keys Deleted From en+hi — DB Crash-And-Recover Lifecycle Survived, Master 12/12 Post-Recovery (2026-11-17)
 
 ### Trigger
