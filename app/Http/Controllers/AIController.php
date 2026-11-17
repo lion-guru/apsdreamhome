@@ -16,6 +16,9 @@ class AIController extends AdminController
     public function __construct()
     {
         parent::__construct();
+        // Public AI chat family renders public chrome; the admin-only
+        // configuration() action overrides to layouts/admin below.
+        $this->layout = 'layouts/base';
         $this->config = require_once __DIR__ . '/../../config/gemini_config.php';
     }
 
@@ -192,6 +195,8 @@ class AIController extends AdminController
             return;
         }
 
+        $this->layout = 'layouts/admin';
+
         $data = [
             'page_title' => 'AI Configuration - APS Dream Home',
             'page_description' => 'Configure AI Assistant Settings',
@@ -334,7 +339,7 @@ class AIController extends AdminController
      */
     protected function isAdmin(): bool
     {
-        $admin_roles = ['superadmin', 'director', 'ithead'];
+        $admin_roles = ['superadmin', 'super_admin', 'admin', 'director', 'ithead'];
         return in_array($this->getUserRole(), $admin_roles);
     }
 
