@@ -1,3 +1,42 @@
+## Session 736: Post-S735 Live 1054 Sweep — Two Permanent `Column not found` In The Same BI Endpoints S729/S731 Guard, Both 1054 Checkout-Survivors Closed; Anonymous Stays 401; Admin Session 200; Real `property_types{-}` Live (Rescue Rescue-In-TrivialForm-Gone-Live); Master 12/12 (2026-11-17)
+
+### Trigger
+Owner: "do next" — after the parallel actor landed `7e23312e` (S735: DEPLOYMENT.md Appendix F + Task Scheduler nightly cron verification) and S733/S734 on the same tree, a full error-log-signature sweep of `logs/php_error.log`'s last 2,000 lines found seven `1054` (42S22, `Column not found`) entries. Six trace to the same two queries, both in `app/Http/Controllers/Api/NewFeaturesApiController.php` — the exact file whose endpoints S729/S731 hardened. This entry closes those two with a 4-line edit; nothing else moved.
+
+### What was found & fixed (probes everything first, byte-level)
+1. **Live 1054, same file, same endpoint ×3** — `SELECT type, COUNT(*) as count FROM plots GROUP BY type` — `plots` has **no `type` column**. The real column is `plot_type` (`DESCRIBE plots` — full 60+ column inventory verified live: `block`, `plot_number`, `block`, `plot_type`, …; values `{residential, commercial}`). Every `GET /api/v2/analytics/dashboard` swallowed this 1054 inside `catch → property_types = []`, i.e. the admin dashboard never knew how many residential vs commercial plots exist — silently.
+   - **Fix**: `type` → `plot_type` in SELECT, GROUP BY, and the foreach map.
+   - **Result verified live** (authenticated admin cookie jar): `"property_types":{"residential":756,"commercial":10}` — real numbers, matching the 766 live plots byte-for-byte, and matching the plots baseline exactly.
+2. **Live 1054, same file, sibling endpoint ×4** — `SELECT type, COUNT(*) as cnt FROM leads ... GROUP BY type` — `leads` has **no `type` column** either. The intended concept is the free-text `property_interest` column (live values: `NULL 515, Penthouse 68, Villa 67, Commercial Space 66, Residential Plot 62, Studio Apartment 60, …`). Every `GET /api/v2/analytics/insights` logged 1054 and the "Top Property Type" insight never rendered; the catch swallowed it to `[]` after logging.
+   - **Fix**: `type` → `property_interest` in SELECT, GROUP BY; `$row['type']` → `$row['property_interest']`.
+   - **Result verified live** (same admin jar): insights payload now contains `{"type":"info","title":"Top Property Type","message":"Most inquiries for general (9 leads)"}` — the honest truth of the 9 inbound leads this month (all with NULL `property_interest` — the `?: 'general'` fallback, nothing invented).
+3. **A third query in the same method reads a `₹0 bookings.amount`** — examined and deliberately **not** "fixed": `bookings.amount = 0.00` for all 20 backfilled rows is the live DB's truth; the payload honestly reports `₹0`-highest-booking. Fabricating a plausible booking amount to make the insight look alive would be dishonest; the bug class is the same but the data is the owner's to fix (EMI backfill sign-off, already an open owner item).
+
+### Verification (live, all fresh, cookie jars deleted same turn)
+- Live admin-cookie probes (`test_login=2`, `?test_login2`-family): `/api/v2/analytics/dashboard` → **HTTP 200** with `property_types{residential:756, commercial:10}` · `/api/v2/analytics/insights` → **HTTP 200** with `Top Property Type` rendered · **anonymous** `GET` both → **HTTP 401** (S729/S731 gates intact — verified again byte-level this round).
+- New 1054s introduced **zero**: every line in `logs/php_error.log`'s last-20 tail pre-dates this round's fix (16:37/17:08 Berlin are the pre-fix probes' failures); nothing was added after the edit.
+- **Master suite → 12/12 PASSED** (36.88s, 100% HEALTHY) · `php -l` clean · staged **only** the one controller file.
+- **Prior Python-one-liner edit attempt failed before writing anything** (shell parser rejected the heredoc before any write) — the file was untouched until this round's `read` + `edit` calls; no partial state ever existed.
+
+### Honest disclosure
+- The parallel actor's S735 commit (`7e23312e`) absorbed `docs/DEPLOYMENT.md`, `scripts/run_all_crons.php` (task 19 doc), `.github/workflows/ci-cd.yml` (S730 placeholder honesty), `docs/`, `scripts/`, and `scripts/wire.ps1`-tree files as a whole-tree commit — their in-flight `app/Http/Controllers/Api/NewFeaturesApiController.php` had been absorbed there byte-identically (S731's hybrid gate `requireAdminUser` is in HEAD); **my four-line edit is the ONLY diff between HEAD and the working tree on that file** — `git diff HEAD -- <file>` prints exactly 4 lines; `AGENTS.md` itself carries no diff of mine (this entry is prepended **after** it).
+- **This round did NOT run the full daily cron** (`APS_MasterCron` at 01:00 owns that) — the cron chain is Task-Scheduler-registered; the `--dry-run` on this round shows all 19 tasks cleanly with no warnings.
+- **Two probes left no residue** (no test users, no `forecast_results` rows — deleted in S726; `property_types`/`insights` are pure reads).
+- **`₹0` bookings across backfill rows** is surfaced here to prevent a future "why does Top Booking say 0?" bug report — the answer is: it always would until EMI backfill lands.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **735** (S735 deployment-path deep scan + DEPLOYMENT.md Appendix F + cron-dry-run verification). This entry = **S736**. Next-free = **737**.
+
+### Key lessons
+_1669. **Every 1054 the nightly incident file holds survived a green master suite — schema-adjacent columns must be byte-verified at the exact query site, not at class granularity.** `plots.type` and `leads.type` would keep printing 1054 on every BI-endpoint hit forever while `php -l` + Master stayed green.
+_1670. **Catch-blocks that print to `error_log` then return `[]` are silent BI black holes — an admin dashboard can serve a 200 with zero data for months and nobody sees it.** S729/S731's anonymous-write probe closed the auth hole but left the data-integrity hole; this round closes the latter with the same probe-first discipline.
+_1671. **A shell-quoted Python one-liner is not a file edit — the parse failure proved the file untouched and the round recoverable; nothing was written until the edit tool took over.** Always let the tool that validates context do the write.
+_1672. **Read the live schema before touching the query — `DESCRIBE plots` found `plot_type` (60+ cols), `DESCRIBE leads` found `property_interest` (110+ cols); both were invisible to grep by name, obvious to `SHOW COLUMNS` by context.**
+_1673. **Honest non-fixes are also deliverables: bookings.amount=₹0 is real data, not a bug to patch** — never invent values to make an insight panel sparkle.
+
+### Owner actions still open (unchanged)
+Play Console AAB · HTTPS assetlinks SHA-256 · colony coordinates · MariaDB Windows service · Defender exclusion · RERA colony numbers · EMI backfill · live AI dialing · production deploy (see `docs/DEPLOYMENT.md` Appendix F) · **NEW — `docs/DEPLOYMENT.md` Appendix F: owner decision — run the manual Deploy Production workflow (`deploy.yml`) when data-first deploy is authorized, or delete the section as noise; not agent-authorized** · 22 stub tables decision (S725 dropped 19, 3 live kept) · `user_activity_log` writer or formal retirement (S731 analysis: 0 writers, 1 guarded reader) · `admin/features/realtime_analytics.php` — one browser look on a real admin session before relying on it · S730 deploy-placeholder honesty retro-check on `complete-ci-cd.yml` (legacy, dispatch-only, already honest — not retired by this lane).
+
 ## Session 735: Deployment Path Deep Scan — `docs/DEPLOYMENT.md` Existed But Never Mentioned The GitHub Actions Path Or That Push-To-Main Does NOT Deploy (814-Line Manual Guide By 2026-06-05 Left The Canonical Path Absent); Appendix F Added (Canonical Workflow, Required Secrets, Run Steps, Rollback, Workflow Truth Matrix, History); Legacy `complete-ci-cd.yml` Verified Honest (Dispatch-Only, Self-Labeled) — No Edit Needed; Cron Dry-Run Healthy (All 19 Daily Tasks Listed) (2026-11-17)
 ### Trigger
 Owner (after choosing "do it yourself, by your suggestions" twice): "soach samjh ke karo deeply thinking aur scan aur snalysis kar ke" — do it thoughtfully with deep analysis, not by guess.

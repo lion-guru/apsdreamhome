@@ -534,10 +534,10 @@ class NewFeaturesApiController extends BaseController
         } catch (\Throwable $e) { $data['pipeline'] = []; }
 
         try {
-            $st = $this->db->query("SELECT type, COUNT(*) as count FROM plots GROUP BY type");
+            $st = $this->db->query("SELECT plot_type, COUNT(*) as count FROM plots GROUP BY plot_type");
             $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
             $data['property_types'] = [];
-            foreach ($rows as $r) { $data['property_types'][$r['type'] ?: 'unknown'] = (int)$r['count']; }
+            foreach ($rows as $r) { $data['property_types'][$r['plot_type'] ?: 'unknown'] = (int)$r['count']; }
         } catch (\Throwable $e) { $data['property_types'] = []; }
 
         return $this->jsonResponse($data);
@@ -561,10 +561,10 @@ class NewFeaturesApiController extends BaseController
         } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
         try {
-            $st = $this->db->query("SELECT type, COUNT(*) as cnt FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY type ORDER BY cnt DESC LIMIT 1");
+            $st = $this->db->query("SELECT property_interest, COUNT(*) as cnt FROM leads WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY property_interest ORDER BY cnt DESC LIMIT 1");
             $row = $st->fetch(\PDO::FETCH_ASSOC);
             if ($row) {
-                $insights[] = ['type' => 'info', 'title' => 'Top Property Type', 'message' => "Most inquiries for " . ($row['type'] ?: 'general') . " ({$row['cnt']} leads)"];
+                $insights[] = ['type' => 'info', 'title' => 'Top Property Type', 'message' => "Most inquiries for " . ($row['property_interest'] ?: 'general') . " ({$row['cnt']} leads)"];
             }
         } catch (\Throwable $e) { error_log('NewFeaturesApiController::analyticsInsights error: ' . $e->getMessage()); }
 
