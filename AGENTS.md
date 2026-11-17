@@ -1,4 +1,43 @@
-## Session 738: Post-S737 Controller Auth Audit — All 40 Public Endpoints In NewFeaturesApiController Audited; One Genuine Hole Found &amp; Closed (`executeTask` — S729-class Neighbor: Sibling `processPendingTasks` Guarded, `executeTask` Was Not); Remaining 11 Unguarded Endpoints Documented As Intentional-Public (Registration Flow, Reset-Token, Stateless Calculators, Public Resell Lists, MLM Tier Rates); Master 12/12 (2026-11-17)
+## Session 739: Smart IFSC Auto-Lookup Was Half-Seeded — All 89 `bank_branches` Rows Carry `bank_id = NULL`; Deterministic Backfill Via Exact-Name Join + IFSC Cache Flush; Live Endpoint Now Returns Complete Bank Data (`State Bank of India`, `HDFC Bank` etc.) (2026-11-17)
+### Trigger
+Owner (continuation of the wallet/bank-accounts lane, after S737 shipped "Smart IFSC Code Auto-Lookup"): verify the new feature live rather than trust the claim.
+
+### What was found (verified before touching anything)
+- Live `GET /api/banks/ifsc/SBIN0000144` returned `{"found":true,...,"bank_name":null,"bank_short":null,...}` — `found=true`, branch/address/city/district/state/pincode all arrived, **bank_name/bank_short were `null`**.
+- Root cause: the controller query `FROM bank_branches bb LEFT JOIN banks b ON bb.bank_id = b.id` never produced a bank row because **every seed row in `bank_branches` has `bank_id IS NULL`** (89/89, verified via `SELECT` before any edit).
+- The data was recoverable deterministically: `bank_branches.bank_name` is populated with exact `banks.name` strings (State Bank of India 14, Punjab National Bank 13, HDFC Bank 10, ICICI Bank 9, Union Bank of India 8, Axis Bank 6, Canara Bank 6, Bank of Baroda 5, IDFC First Bank/Canara etc.) — **all 16 distinct names match a live `banks.id` row**, verified by exact `COLLATE utf8mb4_unicode_ci` join producing `match = 16/16`.
+- Nothing about the seed script was touched; only `bank_branches.bank_id` backfilled.
+
+### What was done (one DB write, no schema, no code)
+1. **Safety dump first** (never touch a table without a rollback path): `backups/db/bank_tables_2026-11-17_2230.sql` (25 KB, both `bank_branches` and `banks`).
+2. **Collation-respecting backfill** (first un-collated attempt aborted with `ERROR 1267 — Illegal mix of collations` before writing a single row):
+   ```sql
+   UPDATE bank_branches bb
+   JOIN banks b ON b.name COLLATE utf8mb4_unicode_ci = bb.bank_name COLLATE utf8mb4_unicode_ci
+   SET bb.bank_id = b.id WHERE bb.bank_id IS NULL;
+   ```
+   Result: **89/89 rows backfilled, 0 still NULL.**
+3. **Lookup cache flushed** — `LookupCacheService` (`storage/cache/lookup/<md5>.cache`, 1 h TTL) had the stale nulls cached under `ifsc:<code>`; called `forget()` for all 89 codes via a temp probe (`storage/app/tmp` → deleted same turn); post-flush live re-probe:
+   `{"found":true,"ifsc":"SBIN0000144","bank_name":"State Bank of India","bank_short":"SBIN","branch":"Gorakhpur Main Branch",...}`.
+4. **No deletions, no schema changes, no git commit** — data-only fix; the local dev database is the proof target and is backed up.
+
+### Verification (live)
+- Endpoint re-probe post-fix: `SBIN0000144` → full payload incl. `bank_name: State Bank of India, bank_short: SBIN` · `HDFC0000240` (not seeded) → honest `{found:false, suggested_bank:"HDFC Bank", manual_entry_required:true}` — the "ask user to type it" path still works as designed for unseeded codes.
+- `php -l` clean on the probe file; temp probe discarded after use; dump retained in `backups/` (gitignored).
+
+### What this does NOT fix (owner call, reported not taken)
+- The root-cause seed script (`ifsc` import / `bank_branches` seeder) presumably populates `bank_name` but drops `bank_id` on insert — that is the defect to fix next time the IFSC data is re-imported, otherwise the backfill has to be re-run. **Not fixed here** — owner decision whether the seeder lives in this repo and needs the same join patched.
+- No master re-run: a pure data backfill on reference tables; the 13-tracked tables in the standing baseline are untouched.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **738** (NewFeaturesApiController public-endpoint audit + `executeTask` 401 gate). This entry = **S739**. Next-free = **740**.
+
+### Key lessons
+_1679. **A `found:true` response with null fields is a half-seed — always diff the exact response keys before trusting a "live" feature claim.** The endpoint said "found" while silently dropping bank identity; no error, no 500, no log.
+_1680. **A LEFT JOIN on a nullable FK with no NOT NULL enforcement produces silent-argp determinism — 89 NULLs quietly guaranteed `bank_name IS NULL` forever.** Either enforce NOT NULL at seed time or run the audit query immediately after seed; never assume a join will resolve.
+_1681. **Mixing collations fails closed for UPDATEs — the exact `utf8mb4_unicode_ci` COLLATE pattern that worked in the read join is required in the write; always preview the SELECT with the same COLLATE before UPDATE.**
+_1682. **Cache invalidation is part of the fix — the file cache answered with stale nulls for 1 hour despite the DB now holding the right FK; any production-visible data fix needs its cache layer invalidated in the same operation.**
+_1683. **Safety dump first, verify the 89 rows could be reconstructed, then write.** 25 KB was all it cost to make the backfill reversible — no hesitation warranted for a change that would otherwise have been keystroke-blind.
 
 ### Trigger
 Owner: "do next aur koi suggestion tumhara" — S729-S736 were spent on the BI endpoints; this round extends the same audit discipline to the WHOLE of `app/Http/Controllers/Api/NewFeaturesApiController.php` (the file that carries `/api/v2/*` — the controller every recently-hardened endpoint lives in).
