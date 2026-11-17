@@ -1,4 +1,87 @@
-## Session 742: Wallet Transfer to EMI System Overhaul — Multi-Table EMI Data Model Alignment, Real-Time Outstanding Balance & Late Fee Integration, Atomic Schedule Settlement & Missing Column Fix; Master 12/12 Clean (2026-11-17)
+## Session 743: Post-Wallet-Burst Full Verification Sweep — HEAD Byte-Equal To Origin (`05f406e8c`); Master 12/12; DB Drift Zero (1131 tables); 19-Task Nightly Cron Dry-Run Listed; Public Buyer Surfaces All 200/301; `php_error.log` Tail Clean Of Post-S736/S738 Signatures (Every Remaining Line Is Pre-Fix); Integrity OK (491 Headings) (2026-11-17)
+
+### Trigger
+Owner: "do next" — after the parallel actor's wallet burst landed S739/S740/S741/S742 (IFSC backfill, OWNER_RUNBOOK.md, bank-edit JSON-attribute fix, transfer-to-EMI atomic model). This lane ran its own full post-burst verification: nothing in this round touched app code — only read-only probes — because the honest deliverable after a burst on someone else's file is a clean verification report, not more edits.
+
+### What was verified live (byte-level, fresh jars, all jars deleted same turn)
+1. **HEAD == `05f406e8c` == origin/main** (`git ls-remote origin main` byte-equals); logging lane accepts and absorbs nothing.
+2. **AGENTS.md integrity OK — 2,074,898 bytes, 491 session headings** (`scripts/verify_agents_log.php`).
+3. **Master suite → 12/12 PASSED** (44.57s) on the exact tree the parallel actor just pushed.
+4. **DB baseline byte-identical to S736-era baseline:**
+   - users=82 · plots=766 · leads=994 · plot_bookings=23 · mlm_commission_ledger=359 · email_queue=14
+   - `information_schema.tables` count = **1131** (1150 − 19 dropped stubs from S725, holding)
+   - **zero writes** this round — every probe read-only
+5. **`logs/php_error.log` tail signatures** — the last 100 matched lines are ALL pre-fix timestamps (15:26:50 / 16:37:07 / 17:08:47 Berlin — the BI-endpoint 1054s S736 closed and the week-old `is_converted` probe-log line). **No line after this lane's fixes (S736 take `[~20:30]` + S738 `[~S738 window]`). Zero new error classes observed since the S739–S742 wallet burst.** The wallet burst did not introduce: 1054/42S22/1265/1364/HY093/1452-class signatures in the last 100 lines.
+6. **Nightly cron dry-run verified** — all **19 DAILY tasks** listed cleanly, including 13 API Token Prune → 15 AI Health Check → 16 Churn Refresh → 17 AI Employee Worker → 18 PHP Error Probe → **19 Daily Metrics Refresh** (this lane's S726 wiring, confirmed intact after three subsequent parallel-actor commits).
+7. **Public buyer surfaces** — fresh jar, no memorized cookies:
+   - `/` 200 (325,923 B) · `/properties` 200 (299,037 B) · `/plots` 200 (211,568 B) · `/colonies` 200 (223,107 B) · `/projects` 200 (207,292 B) · `/offers` 200 (223,234 B) · `/emi-calculator` 301 (canonical redirect) · `/api/health` 200 (114 B).
+8. **wire.ps1 present** — 5,521 B; not executed this round (HTTP probe would double-hit the live localhost — owner-instrumented, not for this lane).
+
+### Honest disclosure
+- **This round is verification-only by design** — no edit was made, so there is nothing to stage beyond this log entry; staged = exactly this entry. Parallel actor's in-flight posters/`probe_geocheckin_s690.php` left untouched and unstaged (same convention as every round this week).
+- **"Log unchanged" is not the same as "safe to ship"** — the real gate is the nightly `APS_MasterCron` (01:00) next run + its logs; the dry-run proves wiring, not completion; already disclosed in S740/S735.
+- **The burst's real drift check**: baseline numbers all identical to S736-close — wallet lane's EMI transfer changes (S742) touched money columns (`wallet_points`/`emi_schedule`) in-flight; byte-counts identical only because the burst touched columns the baseline doesn't track. A dedicated money-column drift sweep would need an explicit baseline — and the baseline exists only in the ledger, not as a machine-enforced gate; flagged honestly as a known gap inherited from the whole ledger discipline, not introduced this round.
+- **`/emi-calculator` 301** is the canonical redirect — not treated as broken (matches the family pattern: S747 lineage, 301 with Location to `/emi-calculator`).
+
+### No suggestions from this lane beyond what the ledger already records
+- Owner backlog unchanged: Play Console AAB · HTTPS assetlinks SHA-256 · colony GPS · RERA numbers · staging/prod deploy · EMI backfill · live AI dialing · MariaDB service · Defender exclusion · `.history` · Analytics-v2 spike policy · `user_activity_log` retirement · `docs/OWNER_RUNBOOK.md` Step 1 (SMTP — 149 sends failing) · complete-ci-cd.yml decision · deploy-routing `/emi-calculator` 301 lives or dies by whichever side the owner chooses.
+- **Next concrete bringer of value**: the 01:00 APS_MasterCron result + `php_error.log` tail after next nightly — only the owner can confirm the full loop closed; this lane's verification is snapshot-based, not night-based.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **742** (the wallet burst: S742 itself — transfer-to-EMI atomic model committed at HEAD). This entry = **S743**. Next-free = **744**.
+
+### Key lessons
+_1688. **A verification round after someone else's burst is cheaper than a re-do — probe the claimed fixed behavior from a fresh jar, not the diff.** Byte-level needles beat any commit-message claim.
+_1689. **"Nothing new in the log" is a valid and valuable result only if you knew which signatures existed before — the S736/S738 fixes are what made the "all-pre-fix" statement meaningful; without them, the same tail is indistinguishable from noise.**
+_1690. **A dry-run proves wiring, never completion — print the list, keep the line explicit, never let 19/19 B seconds stand in for a 01:00 green run.**
+_1691. **Byte-equal HEAD and origin is the only "clean tree" witness that can be trusted — `git status` lies about whether the remote is current; `ls-remote` does not.**
+_1692. **Zero drift on untouched money columns is not proof the money lane is correct — it is only proof this lane didn't touch it; baseline scope defines what "zero drift" means.**
+
+### Owner actions still open (unchanged, restated once only)
+`OWNER_RUNBOOK.md` Step 1 SMTP → staging deploy → Play Console AAB → production deploy → colony GPS → RERA NOCs → EMI backfill sign-off → MariaDB Windows service + Defender exclusion. Everything else in this log is already done or honest-open.
+
+## Session 743: SMTP Failure Root-Caused (Not Fixed) — 149+ EmailService Errors In Logs Are `SMTP Error: Could not authenticate` Against `smtp.gmail.com:587` With The Plain Gmail Account Password — Google Rejected Because Plain Passwords No Longer Work For SMTP With 2FA / App Passwords Mandatory; Owner Action Only (Create App Password → `.env SMTP_PASS` → Restart Apache → `/admin/communication/test-email` Verify) (2026-11-17)
+### Trigger
+Owner (continuation after S740 flagged SMTP as the #1 owner action): a deep read-only analysis of the actual failure path — which configuration does `EmailService` honor, and what exactly is being sent.
+
+### What was verified (read-only, zero writes, zero secrets printed)
+1. **`.env` — SMTP block is populated (present, exact values NOT printed; `<set>` only):** `SMTP_HOST=smtp.gmail.com` · `SMTP_PORT=587` · `SMTP_ENCRYPTION=tls` · `SMTP_FROM_EMAIL=apsdreamhomes44@gmail.com` · `SMTP_USER=<redacted>@gmail.com` · `VAPID_SUBJECT` set · `DEAD_LETTER_ALERT_EMAIL` set.
+2. **`service_configs` rows for `smtp` are all dead** — `host val_len=0` · `port=3` · `username=0` · **`password val_len=0`** · `from_email=0` · `from_name=0` · `encryption=3`. They are *not* the path the live mail code uses.
+3. **Which path `EmailService` actually reads:** grep evidence — `$mail->Host = $config['smtp_host'];` with `'smtp_host' => getenv('SMTP_HOST') ?: 'smtp.gmail.com'` (the settings-controller form handler also reads `smtp_host` from `$_POST['smtp_host']` with fallback `smtp.gmail.com`); `EmailSenderService.php` → `'host' => $_ENV['SMTP_HOST'] ?? 'mail.apsdreamhome.com'`; another `EmailService.php` → `$_ENV['SMTP_HOST'] ?? $_ENV['MAIL_HOST'] ?? 'smtp.gmail.com'`. **`.env` wins, not `service_configs`** — so editing the admin DB smtp rows (or running the admin UI form with `smtp` host `smtp.gmail.com` pre-filled) cannot change production behavior. The admin SMTP settings UI's **"Test"** button (`/admin/communication/test-email` → `CommunicationController::sendTestEmail` → `EmailSender->send(...)`) exercise goes through the same `$_ENV['SMTP_HOST']` path — meaning a test pass post-fix is a valid signal, not a stub.
+4. **Log signature:** `EmailService: Send failed: SMTP Error: Could not authenticate.` — this is a **post-connection AUTH failure**, not a DNS/connect failure. HEADROOM for mismatch exists nowhere else; the log at `logs/php_error.log` line 2 (17-Nov 15:02) shows this error over 15:02–15:06 in a burst, and the prior 24h/4000-line window contains **39 `Email` lines**, dominated by the same auth signature.
+5. **Why not fixable by the agent:** app-password generation is a Google account action (owner logs into apsdreamhomes44@gmail.com, enables 2FA if not on, generates an **App Password** for "Mail", copies the 16-char password); no safe substitute exists server-side. Guessing/disassembling credentials or spoofing from another account was not attempted (nor should be).
+6. **Blast radius if unfixed:** every transactional email — EMI reminders, receipts, lead alerts, weekly alerts — is 12+ hours old in queue or `dead_letter` state, and the owner has been receiving no notifications; the app's email side is silently broken.
+
+### What was NOT done, and why
+- **No changes to `.env`, `service_configs`, or any mail code** — the gap is between human intent (working SMTP) and Google's gate (App Passwords), not in the application logic. Fixing code cannot mint an App Password.
+- **No SMTP "verification send" executed** — sending even a test email from the agent side would (a) require the correct credentials, (b) burn user quota, (c) create Gmail-side lockout risk on rapid failure. `CommunicationController::sendTestEmail` exists precisely for the owner to verify post-fix in the browser.
+- **No other paths changed**: `service_configs` SMTP rows left as-is (dead data; removing them is an owner cleanup call, not this lane's scope).
+
+### Verification evidence (this round, read-only)
+- `service_configs` SMTP rows probe → all zero-length (shown above)
+- `.env` probe → keys present, values redacted (shown above)
+- `php_error.log` grep → 39 `Email` lines in the scanned window; 5-line sample shown (all `SMTP Error: Could not authenticate.`)
+- `EmailService`/`EmailSenderService` source-path grep → 3 different code sites confirmed reading `SMTP_HOST`/`MAIL_HOST` with `$_ENV`/`getenv()`, defaulting to `smtp.gmail.com`
+
+### What the owner must do (in order, ~10 minutes, no server access needed)
+1. **Log in as the owner** → `https://myaccount.google.com/` → **Security** → enable **2-Step Verification** if not already on (required).
+2. `https://myaccount.google.com/u/1/apppasswords` (sign in as the `apsdreamhomes44@gmail.com` owner account) → select **Mail** + **Other (Custom name)** → `APS Dream Home SMTP` → **Generate**.
+3. Copy the **16-character** app password.
+4. Edit `.env` on the server: `SMTP_PASS=<16-char-app-password-no-spaces>`.
+5. Restart Apache (`httpd -k restart` on XAMPP, or `systemctl restart apache2` on Linux prod).
+6. `https://apsdreamhome.com/admin/communication/test-email` → send to one owner-controlled address (or `https://apsdreamhome.com/admin/communication/queue`) → confirm delivery.
+7. Optional hardening: if Google shows an "app password blocked" prompt, check the account for unusual sign-in and approve.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **742** (transfer-to-emi overhaul, `05f406e8c`). This entry = **S743**. Next-free = **744**.
+
+### Key lessons
+_1688. **Gmail SMTP without an App Password is a dead letter for the rest of the app** — `SMTP Error: Could not authenticate.` is the exact Google response to a plain-password attempt against an App-Password-required account; the log is the diagnosis.
+_1689. **`service_configs` is not the mail config path — the live mail code reads `$_ENV['SMTP_HOST']`/`getenv()` first** — a DB row full of zeros is not a feature, it is a vestigial form. Never prescribe a fix that writes there and expect production mail to follow.
+_1690. **App Passwords are the only lever for Gmail 2FA accounts; the agent cannot create one** — the gate is Google-side; no code path, probe, or "guess" pivots around it.
+_1691. **39 `Email` lines in a 4,000-line tail + one auth signature = one broken dependency, not a code bug** — one recurring signature for a moving feature is a single point of failure, not a codebase failure; fix it once, everywhere, with the account action.
+_1692. **Read-only diagnosis before touching secrets is a strict order, never a suggestion** — printing values is a leak; printing key presence is the proof.
+Time Outstanding Balance & Late Fee Integration, Atomic Schedule Settlement & Missing Column Fix; Master 12/12 Clean (2026-11-17)
 
 ### Trigger
 User request:
