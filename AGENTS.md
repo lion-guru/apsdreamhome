@@ -1,3 +1,42 @@
+## Session 673: Public `/careers` Was Showing Admin Sidebar To Visitors — `Career\CareerController` Forced `layouts/admin` On Public Routes; Swapped To `layouts/base` For The Public Careers Family Only; Master 11/11 After MySQL Restart Cleanup (2026-11-17)
+
+### Trigger
+User: "career page me problem h — ek admin ke liye hoga sambhalne ke liye aur ek public to public wale me sidebar menu dikh raha aise hi kai public me ho sakta ho gadbad ho" — pointing at the public careers page rendering the admin sidebar, and flagging that the same defect may exist on other public pages.
+
+### Audit method (before any edit)
+1. `php` route-parser against `routes/web.php` with router-compatible namespace resolution (mirroring `router.php` PREFIX_MAP + `App\Http\Controllers\<name>` fallback) — found **8 truly-public routes whose controller classes contained `layouts/admin`**:
+   - `/cargo` family: `/quick-call`, `/quick-call/log-call`, `/quick-call/send-sms`, `/quick-call/bulk-sms` → `Universal\QuickCallController` (constructor sets `layouts/admin`) — **internal** (session-gated behind `user_id/employee_id/admin_id` else redirect to `/login`), kept as-is.
+   - `/voice-bot` → `Front\VoiceBotController` — sets `layouts/base` in constructor but `layouts/admin` inside `adminDashboard()` — already correct (base for public, admin only for `/admin/voice-bot`).
+   - `/careers`, `POST /careers/submit-application`, `/careers/thank-you` → `Career\CareerController` — **public**, constructor set `layouts/admin` → admin sidebar on every public page.
+2. The correctly-wired public path (`/careers/apply`, `/careers/jobs`, `/careers/job/{id}`, `/careers/thank-you` elsewhere) is served by `Front\CareerController` with public chrome — confirmed HTTP 200 with public navbar before surgery.
+
+### Fix (one file, one line)
+- `app/Http/Controllers/Career/CareerController.php` constructor: `$this->layout = 'layouts/admin'` → `'layouts/base'`.
+- No routes changed; no destinies changed; `/admin/careers*` untouched (that namespace resolves to `Admin\CareerController`, not this class).
+
+### Verification (live, cookie-less — public pages)
+- `/careers` → HTTP 200, admin-chrome needles ABSENT (`aps-admin-body`/rbac_sidebar), public nav present, title "Careers - APS Dream Home", page reads the `pages/careers` public view as intended.
+- `/careers/thank-you` → HTTP 200, title "Application Submitted - APS Dream Home", public nav YES, admin-chrome NO.
+- `/careers/apply` → HTTP 200, public nav YES (Front path, already correct).
+- `/careers/jobs` → HTTP 200, public nav YES.
+- Master 11/11 PASSED after re-starting MySQL (server restarted mid-round; the 2 failed suites at 10/11 were plain DB-down, not this fix; re-run green after `mysqld --defaults-file=...` restart + 4s wait → port 3306 listening, all 11 suites PASS).
+- `php -l` clean · `git diff --cached --name-only` gated commit (`d43acd297`) — only the one file, no parallel in-flight co-commit.
+
+### Honest notes
+- `/quick-call` and `/voice-bot` intentionally keep admin chrome: internal staff tools behind a login/AJAX gate — not a privacy issue, just a chrome choice.
+- `/careers/submit-application` is a POST-only legacy endpoint retained for backward compatibility; current apply flow uses `Front\CareerController@submitCareerApplication` at `/careers/apply` POST (same behavior). No public GET consumer.
+- No other truly-public routes share this defect — the audit found exactly one public offender.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **672** (parallel actor, SmartAI history IDOR gate). This entry = **S673**. Next-free = **674**.
+
+### Key lessons
+_1467. **A public route resolving to a controller whose constructor sets `layouts/admin` renders the admin sidebar to every visitor — invisible without byte-probing for the chrome, and invisible to lint/PHPStan since the "bug" is a string assignment, not a type.** Live probe with body-byte inspection is the only gate that catches it.
+_1468. **Route-level audit needs router-matching namespace resolution, not string matching** — namespace prefixes (`Front\`, `Career\`, `Universal\`) map to nested directories under `app/Http/Controllers/`; a naive flat-file scanner false-flags ~450 routes or misses the true offender.
+_1469. **The /quick-call vs /careers split is a privilege boundary, not a layout choice** — a controller that logs you out when anonymous is not "public"; a controller that renders admin chrome to anonymous visitors IS. Gate on authentication, not on chrome.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views (wire vs archive decision).
 ## Session 672: Privacy Hole Found & Closed — SmartAIController@history Leaked Any Visitor's Full Chat to Any Guest Who Guessed a session_id; Bind-Write-And-Check Gate Added, Verified Live; Gates Green (2026-11-17)
 
 ### Trigger
