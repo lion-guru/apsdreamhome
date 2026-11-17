@@ -230,12 +230,12 @@ class AppWidgets {
     String? prefix,
     TextStyle? style,
   }) {
-    final formattedAmount = amount >= 10000000
-        ? 'Rs.${(amount / 10000000).toStringAsFixed(2)} Cr'
-        : amount >= 100000
-            ? 'Rs.${(amount / 100000).toStringAsFixed(2)} L'
-            : 'Rs.${amount.toStringAsFixed(0)}';
     final symbol = prefix ?? AppConstants.currencySymbol;
+    final formattedAmount = amount >= 10000000
+        ? '$symbol${(amount / 10000000).toStringAsFixed(2)} Cr'
+        : amount >= 100000
+            ? '$symbol${(amount / 100000).toStringAsFixed(2)} L'
+            : '$symbol${amount.toStringAsFixed(0)}';
     const defaultStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,
@@ -243,18 +243,9 @@ class AppWidgets {
     );
     final s = style ?? defaultStyle;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          symbol,
-          style: s.copyWith(fontWeight: FontWeight.bold),
-        ),
-        Text(
-          formattedAmount,
-          style: s.copyWith(fontWeight: FontWeight.bold),
-        ),
-      ],
+    return Text(
+      formattedAmount,
+      style: s,
     );
   }
 

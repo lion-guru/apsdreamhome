@@ -357,7 +357,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                           return DropdownMenuItem(
                             value: plot.id.toString(),
                             child: Text(
-                              '${plot.plotNumber} - ${plot.areaSqft.toStringAsFixed(0)} sqft - Rs.${NumberFormat('#,##,###').format(plot.totalPrice)}',
+                              '${plot.plotNumber} - ${plot.areaSqft.toStringAsFixed(0)} sqft - ₹${NumberFormat('#,##,###').format(plot.totalPrice)}',
                               style: const TextStyle(fontSize: 13),
                             ),
                           );
@@ -401,7 +401,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                                 ),
                               ),
                               Text(
-                                'Rs.${NumberFormat('#,##,###').format(selectedPlot.totalPrice)}',
+                                '₹${NumberFormat('#,##,###').format(selectedPlot.totalPrice)}',
                                 style: const TextStyle(
                                   color: Colors.cyan,
                                   fontWeight: FontWeight.bold,
@@ -576,7 +576,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  'Plot: ${booking['plot_id'] ?? "N/A"} - Rs.${booking['token_amount'] ?? 0}',
+                  'Plot: ${booking['plot_id'] ?? "N/A"} - ₹${booking['token_amount'] ?? 0}',
                   style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],

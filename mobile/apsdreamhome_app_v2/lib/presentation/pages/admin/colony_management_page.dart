@@ -29,6 +29,7 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
     return RefreshIndicator(
       onRefresh: () async => ref.invalidate(coloniesProvider),
       child: Stack(
+        fit: StackFit.expand,
         children: [
           Column(
             children: [
@@ -36,7 +37,10 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
               _buildHeader(),
 
               // Stats Cards
-              _buildStatsRow(),
+              coloniesAsync.maybeWhen(
+                data: (colonies) => _buildStatsRow(colonies),
+                orElse: () => _buildStatsRow(const []),
+              ),
 
               // Filters
               _buildFilters(),
@@ -100,7 +104,7 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -110,42 +114,58 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.location_city,
-            size: 32,
-            color: AppTheme.primaryColor,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Colony Management',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Manage colonies, plots, and master plans',
-                  style: TextStyle(color: Colors.grey.shade600),
-                ),
-              ],
-            ),
-          ),
           Row(
             children: [
-              OutlinedButton.icon(
-                onPressed: () => _showImportDialog(),
-                icon: const Icon(Icons.upload_file),
-                label: const Text('Import'),
+              const Icon(
+                Icons.location_city,
+                size: 28,
+                color: AppTheme.primaryColor,
               ),
               const SizedBox(width: 12),
-              OutlinedButton.icon(
-                onPressed: () => _showExportDialog(),
-                icon: const Icon(Icons.download),
-                label: const Text('Export'),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Colony Management',
+                      style: TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Manage colonies, plots and master plans',
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _showImportDialog(),
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Import'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _showExportDialog(),
+                  icon: const Icon(Icons.download),
+                  label: const Text('Export'),
+                ),
               ),
             ],
           ),
@@ -154,75 +174,92 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(List<ColonyModel> colonies) {
+    final active = colonies.where((c) => c.status == 'active').length;
+    final upcoming = colonies
+        .where((c) => c.status == 'upcoming' || c.status == 'launching')
+        .length;
+    final soldOut = colonies.where((c) => c.status == 'sold_out').length;
+
     final stats = [
       {
-        'label': 'Total Colonies',
-        'value': '24',
+        'label': 'Total',
+        'value': '${colonies.length}',
         'icon': Icons.location_city,
         'color': AppTheme.primaryColor,
       },
       {
         'label': 'Active',
-        'value': '18',
+        'value': '$active',
         'icon': Icons.check_circle,
         'color': AppTheme.successColor,
       },
       {
-        'label': 'Launching Soon',
-        'value': '4',
+        'label': 'Launching',
+        'value': '$upcoming',
         'icon': Icons.rocket_launch,
         'color': AppTheme.infoColor,
       },
       {
         'label': 'Sold Out',
-        'value': '2',
+        'value': '$soldOut',
         'icon': Icons.sell,
         'color': AppTheme.warningColor,
       },
     ];
 
     return Container(
-      padding: const EdgeInsets.all(24),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 2.4,
         children: stats.map((stat) {
-          return Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    stat['icon'] as IconData,
-                    color: stat['color'] as Color,
-                    size: 28,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    stat['value'] as String,
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: stat['color'] as Color,
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  stat['icon'] as IconData,
+                  color: stat['color'] as Color,
+                  size: 26,
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      stat['value'] as String,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: stat['color'] as Color,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    stat['label'] as String,
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                  ),
-                ],
-              ),
+                    Text(
+                      stat['label'] as String,
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         }).toList(),
@@ -232,80 +269,106 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
 
   Widget _buildFilters() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
         children: [
           // Search
-          Expanded(
-            flex: 2,
-            child: TextField(
-              onChanged: (value) => setState(() => _searchQuery = value),
-              decoration: InputDecoration(
-                hintText: 'Search colonies...',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
+          TextField(
+            onChanged: (value) => setState(() => _searchQuery = value),
+            decoration: InputDecoration(
+              hintText: 'Search colonies...',
+              prefixIcon: const Icon(Icons.search),
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          const SizedBox(width: 16),
-
-          // State Filter
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              initialValue: _selectedState,
-              hint: const Text('All States'),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              // State Filter
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  initialValue: _selectedState,
+                  isExpanded: true,
+                  hint: const Text(
+                    'All States',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: null, child: Text('All States')),
+                    DropdownMenuItem(
+                      value: 'Uttar Pradesh',
+                      child: Text('Uttar Pradesh'),
+                    ),
+                    DropdownMenuItem(value: 'Bihar', child: Text('Bihar')),
+                    DropdownMenuItem(
+                      value: 'Madhya Pradesh',
+                      child: Text('Madhya Pradesh'),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _selectedState = value),
                 ),
               ),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('All States')),
-                DropdownMenuItem(
-                  value: 'Uttar Pradesh',
-                  child: Text('Uttar Pradesh'),
-                ),
-                DropdownMenuItem(value: 'Bihar', child: Text('Bihar')),
-                DropdownMenuItem(
-                  value: 'Madhya Pradesh',
-                  child: Text('Madhya Pradesh'),
-                ),
-              ],
-              onChanged: (value) => setState(() => _selectedState = value),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Status Filter
-          Expanded(
-            child: DropdownButtonFormField<String>(
-              initialValue: _selectedStatus,
-              hint: const Text('All Status'),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
+              const SizedBox(width: 8),
+              // Status Filter
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  initialValue: _selectedStatus,
+                  isExpanded: true,
+                  hint: const Text(
+                    'All Status',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: null, child: Text('All Status')),
+                    DropdownMenuItem(value: 'active', child: Text('Active')),
+                    DropdownMenuItem(
+                      value: 'launching',
+                      child: Text('Launching'),
+                    ),
+                    DropdownMenuItem(value: 'upcoming', child: Text('Upcoming')),
+                    DropdownMenuItem(
+                      value: 'sold_out',
+                      child: Text('Sold Out'),
+                    ),
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _selectedStatus = value),
                 ),
               ),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('All Status')),
-                DropdownMenuItem(value: 'active', child: Text('Active')),
-                DropdownMenuItem(value: 'launching', child: Text('Launching')),
-                DropdownMenuItem(value: 'upcoming', child: Text('Upcoming')),
-                DropdownMenuItem(value: 'sold_out', child: Text('Sold Out')),
-              ],
-              onChanged: (value) => setState(() => _selectedStatus = value),
-            ),
+            ],
           ),
         ],
       ),
@@ -322,18 +385,25 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
       );
     }
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(24),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 1.2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: colonies.length,
-      itemBuilder: (context, index) {
-        final colony = colonies[index];
-        return _buildColonyCard(colony);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final crossAxisCount = width >= 1100 ? 3 : (width >= 650 ? 2 : 1);
+        final childAspectRatio = width >= 1100 ? 1.2 : (width >= 650 ? 0.98 : 1.0);
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: colonies.length,
+          itemBuilder: (context, index) {
+            final colony = colonies[index];
+            return _buildColonyCard(colony);
+          },
+        );
       },
     );
   }
@@ -396,11 +466,25 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${colony.location}, ${colony.state}',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-                ),
+                if (colony.location.isNotEmpty ||
+                    colony.state.isNotEmpty ||
+                    colony.district.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    [
+                      colony.location,
+                      colony.state,
+                      if (colony.location.isEmpty && colony.state.isEmpty)
+                        colony.district,
+                    ]
+                        .where((s) => s.isNotEmpty)
+                        .join(', '),
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 12),
 
                 // Stats Row
@@ -507,23 +591,30 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
   }
 
   Widget _buildLoadingGrid() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(24),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 1.2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: 6,
-      itemBuilder: (context, index) {
-        return AppWidgets.shimmerLoading(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final crossAxisCount = width >= 1100 ? 3 : (width >= 650 ? 2 : 1);
+        final childAspectRatio = width >= 1100 ? 1.2 : (width >= 650 ? 0.98 : 1.0);
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
           ),
+          itemCount: 6,
+          itemBuilder: (context, index) {
+            return AppWidgets.shimmerLoading(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          },
         );
       },
     );

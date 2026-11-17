@@ -201,12 +201,16 @@ class _PlotManagementPageState extends ConsumerState<PlotManagementPage> {
         ),
         child: Column(
           children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
             ),
             const SizedBox(height: 2),
