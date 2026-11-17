@@ -705,6 +705,14 @@ class SelfLearningAI
     {
         if (!$this->userId) return;
 
+        // A stale user_id (e.g., a deleted debug account whose session is still
+        // alive) 1452s the FK on ai_user_profiles.user_id and logged the raw SQL
+        // error every chat turn. One cheap existence probe replaces the FK
+        // failure + error_log; learning simply skips for dead ids.
+        if (!$this->db->fetch('SELECT id FROM users WHERE id = ? LIMIT 1', [$this->userId])) {
+            return;
+        }
+
         try {
             $entities = $intentResult['entities'] ?? [];
 
