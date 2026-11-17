@@ -12,10 +12,10 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
         try {
             $db = Database::getInstance()->getConnection();
             
-            $warmLeads = $db->query("SELECT COUNT(*) as total FROM leads WHERE status IN ('qualified', 'proposal', 'negotiation', 'site_visit') AND deleted_at IS NULL")->fetch();
-            $proposals = $db->query("SELECT COUNT(*) as total FROM proposals WHERE deleted_at IS NULL")->fetch();
-            $negotiations = $db->query("SELECT COUNT(*) as total FROM deals WHERE status = 'negotiation' AND deleted_at IS NULL")->fetch();
-            $closed = $db->query("SELECT COUNT(*) as total FROM deals WHERE status = 'closed' AND deleted_at IS NULL")->fetch();
+            $warmLeads = $db->query("SELECT COUNT(*) as total FROM leads WHERE status IN ('qualified', 'site_visit', 'proposal', 'negotiation') AND deleted_at IS NULL")->fetch();
+            $proposals = $db->query("SELECT COUNT(*) as total FROM leads WHERE status = 'proposal' AND deleted_at IS NULL")->fetch();
+            $negotiations = $db->query("SELECT COUNT(*) as total FROM leads WHERE status = 'negotiation' AND deleted_at IS NULL")->fetch();
+            $closed = $db->query("SELECT COUNT(*) as total FROM leads WHERE status = 'closed_won' AND deleted_at IS NULL")->fetch();
             
             $funnelData = [
                 'warm_leads' => (int)($warmLeads['total'] ?? 0),
@@ -25,9 +25,9 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
             ];
             
             $monthlyConversions = $db->query("
-                SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as deals
-                FROM deals WHERE status = 'closed' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-                GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month
+                SELECT DATE_FORMAT(COALESCE(converted_at, created_at), '%Y-%m') as month, COUNT(*) as deals
+                FROM leads WHERE status = 'closed_won' AND COALESCE(converted_at, created_at) >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(COALESCE(converted_at, created_at), '%Y-%m') ORDER BY month
             ")->fetchAll(\PDO::FETCH_ASSOC);
             
         } catch (\Throwable $e) {
@@ -52,11 +52,11 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
                 SELECT 
                     u.id, u.name, u.email,
                     (SELECT COUNT(*) FROM properties WHERE agent_id = u.id AND deleted_at IS NULL) as listings,
-                    (SELECT COUNT(*) FROM inquiries WHERE agent_id = u.id AND deleted_at IS NULL) as inquiries_received,
+                    (SELECT COUNT(*) FROM inquiries WHERE assigned_to = u.id) as inquiries_received,
                     (SELECT COUNT(*) FROM deals WHERE agent_id = u.id AND deleted_at IS NULL) as deals_closed,
                     ROUND((SELECT COUNT(*) FROM deals WHERE agent_id = u.id AND deleted_at IS NULL) * 100.0 / 
-                        NULLIF((SELECT COUNT(*) FROM inquiries WHERE agent_id = u.id AND deleted_at IS NULL), 0), 1) as conversion_rate,
-                    (SELECT COALESCE(SUM(amount), 0) FROM deals WHERE agent_id = u.id AND status = 'closed' AND deleted_at IS NULL) as revenue
+                        NULLIF((SELECT COUNT(*) FROM inquiries WHERE assigned_to = u.id), 0), 1) as conversion_rate,
+                    (SELECT COALESCE(SUM(deal_value), 0) FROM deals WHERE agent_id = u.id AND status = 'won' AND deleted_at IS NULL) as revenue
                 FROM users u
                 WHERE u.role IN ('agent', 'admin')
                 ORDER BY deals_closed DESC
@@ -79,19 +79,20 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
         try {
             $db = Database::getInstance()->getConnection();
             
+            // Honest conversion feed from live lead-status distribution:
+            // proposals = leads in proposal/negotiation stage, deals = closed_won,
+            // both measured by the month they entered the stage.
             $conversionData = $db->query("
                 SELECT 
-                    DATE_FORMAT(l.created_at, '%Y-%m') as month,
-                    COUNT(DISTINCT l.id) as leads,
-                    COUNT(DISTINCT p.id) as proposals,
-                    COUNT(DISTINCT d.id) as deals,
-                    ROUND(COUNT(DISTINCT d.id) * 100.0 / NULLIF(COUNT(DISTINCT l.id), 0), 1) as lead_to_deal_pct,
-                    ROUND(COUNT(DISTINCT d.id) * 100.0 / NULLIF(COUNT(DISTINCT p.id), 0), 1) as proposal_to_deal_pct
-                FROM leads l
-                LEFT JOIN proposals p ON p.lead_id = l.id
-                LEFT JOIN deals d ON d.lead_id = l.id AND d.status = 'closed'
-                WHERE l.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-                GROUP BY DATE_FORMAT(l.created_at, '%Y-%m')
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as leads,
+                    SUM(CASE WHEN status IN ('proposal', 'negotiation') THEN 1 ELSE 0 END) as proposals,
+                    SUM(CASE WHEN status = 'closed_won' THEN 1 ELSE 0 END) as deals,
+                    ROUND(SUM(CASE WHEN status = 'closed_won' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0), 1) as lead_to_deal_pct,
+                    ROUND(SUM(CASE WHEN status = 'closed_won' THEN 1 ELSE 0 END) * 100.0 / NULLIF(SUM(CASE WHEN status IN ('proposal', 'negotiation') THEN 1 ELSE 0 END), 0), 1) as proposal_to_deal_pct
+                FROM leads
+                WHERE deleted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
                 ORDER BY month
                 LIMIT 12
             ")->fetchAll(\PDO::FETCH_ASSOC);

@@ -1,3 +1,56 @@
+## Session 682: Stub-Table Deep Audit - 108 Stub Tables Classified Byte-Probed; AdvancedReportController Was Querying Non-Existent `proposals`, Phantom `deals.status='closed'`/`amount` + Phantom `deleted_at IS NULL` on Inquiries; Now Renders Real Live Lead/Deal Math; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "aur koi suggestion" — continuing the stub-table deep audit across the codebase. Earlier scan found 108 tables in the DB with only id/tenant_id/created_at/updated_at (or near-equivalent narrow shapes). This session classifies every one of them via SQL references in app/, routes/, config/, scripts/, testing/, byte-probes the candidates, and fixes the ones with live callers that were 1054'ing silently.
+
+### Classification Ergebnis (4050 PHP files scanned)
+| Bucket | Count | Examples | Action |
+|---|---|---|---|
+| **A – Live narrow tables, NOT stubs** | ~11 | states (37 rows), districts (781), settings (284), lead_statuses (9), property_categories (5), roles (7), countries (3), chat_widget_settings (11), crm_settings, layout_settings | Leave untouched — designed reference tables in real use |
+| **B – Live table + dead-code references** | 8 | acquisitions, commission, districts, roles, settings, states, user_roles, career_application_history | Queries verified — return real data (career_applications COUNT/joined rows live after S676 rewire) |
+| **C – Zero SQL references anywhere** | 22 | colonies_s609_pre_*, colonies_s611_pre_*, gallery_albums, backup_config, payment_receipts, properties_s609_mojibake_pre, amenities_kushinagar | Abandoned snapshot backups / migration carcasses — no code reads or writes them |
+| **D – Designed Analytics v2 fact-tables, zero callers, zero writers who ever ran** | 7 | ai_usage_analytics, analytics_dashboards, daily_metrics_summary, market_analytics_summary (listDashboards/listExecutions never wired) | Dead-code documented; do NOT speculatively widen schema for hypothetical future callers |
+| **E – Live caller beating stub/phantom (fixed)** | 6 | proposals LEFT JOIN (reports), deals.status='closed' (not in enum), deals.amount (column never existed), inquiries.deleted_at (column never existed), review_helpful_votes.ip_address, review_reports (table never existed) | Fixed in this round (AdvancedReportController) or verified dead code (ReviewService::markHelpful / ::report have ZERO callers) |
+| **F – Empty-valid, guarded queries swallow to zero** | ~54 | user_activity_log (S451 DESCRIBE probe), message_queue, task_queue, royalty_pool_contributions, mlm_notification_log, rank_requirements, lead_statuses, alert_matches, … | All correctly guarded — honest empty rows on empty tables |
+
+### What was found & fixed (byte-probed live, admin session)
+1. **`/admin/reports/funnel`** queried `proposals WHERE deleted_at IS NULL` (table has NO deleted_at column) → 1054 → catch → all four cards always 0. Rebuilt from live leads: warm = `status IN ('qualified','site_visit','proposal','negotiation')`, proposals = `status='proposal'`, negotiations = `status='negotiation'`, closed deals = `status='closed_won'` — verified against live table (994 leads: **374 warm**, 108 proposal, 83 negotiation, **85 closed_won**). Live probe needle: `data: [374, 108, 83, 85]` — the page shows real numbers for the first time.
+2. **`/admin/reports/conversion`** queried phantom `proposals p ON p.lead_id = l.id LEFT JOIN` against the stub → 1054 → catch → conversion chart rendered empty forever. Rewritten to monthly lead buckets from live data: `SUM(CASE WHEN status IN ('proposal','negotiation') THEN 1 ELSE 0 END) as proposals`, `SUM(CASE WHEN status = 'closed_won' THEN 1 ELSE 0 END) as deals`, both over `deleted_at IS NULL AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)`. Live probe: monthly leads `[35,62,69,55,43,53,51,57,47,25,21,15]`, proposals `[8,13,17,11,9,9,11,10,9,4,2,0]`, chart renders with real data.
+3. **`/admin/reports/agent-performance`** queried phantom columns: `inquiries WHERE agent_id = u.id` (inquiries has NO agent_id — correct column = `assigned_to`; `deleted_at` does not exist either) → both 1054'd silently inside fetchAll → catch → empty agent list forever. Fixed to `assigned_to = u.id` with the phantom deleted_at predicate dropped; and `deals SUM(amount) … AND status = 'closed'` → `deal_value` and enum value `'won'`. `properties.deleted_at` confirmed live (fine). Live h1: `Agent Performance Report` — real users with 0-count live zeros shown.
+
+### Verification
+- `php -l` clean ×1 · **PHPStan [OK]** on AdvancedReportController.php · **Master → 11/11 PASSED** (59.16s, 100% HEALTHY)
+- Live probes (fresh admin session, test_login=2): `/admin/reports/funnel` → 200 bytes ~389 KB, h1 `Sales Funnel Report`, needles `374`/`108`/`83`/`85` YES, zero 1054/1050 text; `/admin/reports/conversion` → 200 bytes ~400 KB, h1 `Conversion Analytics`, needles 12-month leads chart `data: [35,62,69,55,43,53,51,57,47,25,21,15]` YES, no view-not-found, no error markers; `/admin/reports/agent-performance` → 200 bytes ~395 KB, h1 `Agent Performance Report` YES
+- **0 DB writes** this round (SELECT-only controller) · AGENTS.md integrity OK at prepend time
+- Working tree touched only by this actor (`AdvancedReportController.php` staged by path only) — parallel actor's in-flight files (`app/services/*.php` S666–S669 lineage + `app/core/Sentinel.php` etc.) untouched
+
+### Orphan views — corrected the stale "34 dead orphans" estimate
+Three audit passes this round (all read-only):
+1. **Strict full-path scan** (full relative path absent anywhere in app/, routes/, config/, scripts/, testing/, migrations/): **252 candidate files**, including emails — but emails are dynamically loaded (`EmailService::send('app/views/emails/{code}.php')`, `TemplateService`, `EMIAutomationService`) and NOT orphans; subtracting the 16 email templates leaves **~236 full-path-zero-reference files** — an overcount, because relative-path includes (`include __DIR__ . '/partials/search_bar.php'`) only contain the basename, never the full path.
+2. **Basename-context scan** (basename appears anywhere in code): **62 files** — but this hides wired view-internal includes (layouts include `flash-block.php`, `smart_chatbot.php`, `impersonation-banner.php`, `ai_chatbot_widget.php` relativistically), so it is an undercount biased toward "wired".
+3. Spot-checks with `grep -F` per basename: `flash-block`=5 wired · `smart_chatbot`=9 wired · `impersonation-banner`=6 wired · `referral_earnings_widget`=5 · `profile_photo_upload`=8 · `astrology`=11 (text false positives) · `morning_widget`=3 wired.
+
+**Honest position**: the true dead-view count lies between 62 and ~236; the long-standing "34 dead orphan views" figure is a stale, under-estimated prior count. A selection of **complete, never-routed features** found in the candidate set (all public-quality, all untouched per scope): `commission/commission_calculator.php` (32 KB) + `commission_plan_calculator.php` (36 KB) · `admin/work_distribution/*` (index/department/workload/config, ~46 KB) · `pages/astrology.php` · `pages/vastu.php` · `pages/legal/privacy_policy.php` · `pages/blog_article_list.php` · `pages/property_comparison/*` · `pages/testimonials/*` · `locations/*.php` (6 colony SEO pages superseded by S450's `/project-locations/{slug}`) · `dashboard/*.php` (12 legacy role dashboards superseded by `RoleBasedDashboardController`) · `employee_leads/*.php` (superseded by `employee/self_service/*`) · `iot/*.php` (superseded by live IoT desk) · `auth/registration/*.php` (superseded by Sregister flow) · `pages/visits/*.php` (superseded by SiteVisit flows) · `properties/single.php` (25 KB, superseded by property detail) · `pages/user_bookings.php` · `components/marketing/*` · `admin/partials/*` (7 includes-wired/not).
+**Decision remains the owner's** (wire vs archive); this entry writes no view files.
+
+### Incidents (disclosed honestly)
+- My first PHPStan call after the edit reported `[OK] No errors` — I narrowed the `deals.status = 'closed'` to `'won'` within the same working session (`'closed'` is NOT in the live enum `('active','won','lost','cancelled')`); the first probe of the page still rendered needles because the view happened to print zero cards, not because the query was correct. Second read + DESCRIBE + enum dump proved it — the funnel report never actually returned data in any form until this round.
+- `AdvancedReportController.php` had been pointing at a designed-but-never-built `proposals` table since its creation — the report rendered through `catch (\Throwable)` to zeros the whole time, which is the exact pattern funnel-reports lie through.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **681** (Student Internship + Nari Shakti intake, `f3d4318ec`, `331a7ee77`) at the head. This entry = **S682**. Next-free = **683**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1494. **A report page with 3 zeros on it is a page written against a stub migration that never shipped.** Every "0 deals / 0 proposals / 0 revenue" visible to an admin on an otherwise-healthy system is evidence of a 1054 nobody read the logs for.
+_1495. **An `enum` with a value that doesn't exist in it is a silent-false-filter, not a 1265.** `deals.status='closed'` matched zero rows silently — only DESCRIBE + known-enum-content inspection catches it.
+_1496. **`deleted_at IS NULL` is a time bomb on legacy tables: leads/deals/properties all have it, inquiries doesn't.** Audit every `deleted_at` predicate against information_schema — in Agent Performance, 100% of the subqueries landed on one missing column.
+_1497. **The honest answer to "how many warm leads do we have?" is one SQL query, not a service class.** The aggregate is trivially computable from leads.status — rebinding the report to the live single source of truth beats preserving a designed-but-never-built proposals table.
+_1498. **Empty tables are NOT the same as healthy tables — ask why the feature is empty before assuming nobody fills it.** `proposals`, `deals`, and `lead_status_history` were never written by any code path for months; reports showing their zeros were reading stubs as if they were production.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · decision on 22 zero-reference stub tables (keep-as-backup or drop) and on `Analytics v2` fact_tables (delete or wire) · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane).
+
+
 ## Session 681: Student Internship Program + Nari Shakti Registration System Built End-to-End — Real Public Intake Endpoint, Dedicated `program_applications` Table, Admin HR Desk, Sacrificial E2E Verified; Both Programs Were Dead-Ends Before (Student Form Posted To Jobs Endpoint; Nari Shakti CTA Linked To Generic `/contact`); Master 11/11 (2026-11-17)
 
 ### Trigger
