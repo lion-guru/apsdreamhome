@@ -5,10 +5,10 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 $isAssociate = (($_SESSION['role'] ?? '') === 'associate');
 $bankBase = $isAssociate ? $baseUrl . '/associate' : $baseUrl;
 $bankListUrl = $isAssociate ? $baseUrl . '/associate/bank-details' : $baseUrl . '/wallet/bank-accounts';
-$bankAddUrl = $baseUrl . '/wallet/bank-accounts/add';
-$bankSetPrimaryUrl = $baseUrl . '/wallet/bank-accounts/set-primary';
-$bankDeleteUrl = $baseUrl . '/wallet/bank-accounts/delete';
-$bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
+$bankAddUrl = $isAssociate ? $baseUrl . '/associate/bank-details/add' : $baseUrl . '/wallet/bank-accounts/add';
+$bankSetPrimaryUrl = $isAssociate ? $baseUrl . '/associate/bank-details/set-primary' : $baseUrl . '/wallet/bank-accounts/set-primary';
+$bankDeleteUrl = $isAssociate ? $baseUrl . '/associate/bank-details/delete' : $baseUrl . '/wallet/bank-accounts/delete';
+$bankUpdateUrl = $isAssociate ? $baseUrl . '/associate/bank-details/update' : $baseUrl . '/wallet/bank-accounts/update';
 ?>
 
 <style>
@@ -231,7 +231,7 @@ $bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
                         </div>
                     </div>
                     <div class="text-end">
-                        <button class="btn btn-edit-bank mb-2" onclick="editBank(<?= $account['id'] ?>, <?= json_encode($account) ?>)">
+                        <button type="button" class="btn btn-edit-bank mb-2" data-account="<?= htmlspecialchars(json_encode($account), ENT_QUOTES, 'UTF-8') ?>" onclick="editBank(<?= (int)$account['id'] ?>, this.dataset.account)">
                             <i class="fas fa-edit me-1"></i>Edit
                         </button>
                         <?php if (empty($account['is_primary'])): ?>
@@ -306,7 +306,7 @@ $bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
                 <select aria-label="Account type" class="form-select" id="accountType" name="account_type">
                     <option value="savings">Savings</option>
                     <option value="current">Current</option>
-                    <option value="salary">Salary</option>
+                    <option value="joint">Joint</option>
                 </select>
             </div>
             
@@ -379,7 +379,7 @@ $bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
                 <select aria-label="Account type" class="form-select" id="editAccountType" name="account_type">
                     <option value="savings">Savings</option>
                     <option value="current">Current</option>
-                    <option value="salary">Salary</option>
+                    <option value="joint">Joint</option>
                 </select>
             </div>
             
@@ -474,6 +474,14 @@ function deleteBank(bankAccountId) {
 }
 
 function editBank(id, data) {
+    if (typeof data === 'string') {
+        try {
+            data = JSON.parse(data);
+        } catch(e) {
+            console.error('Error parsing bank account data', e);
+            data = {};
+        }
+    }
     document.getElementById('editBankId').value = id;
     document.getElementById('editBankName').value = data.bank_name || '';
     document.getElementById('editAccountNumber').value = data.account_number || '';
@@ -481,7 +489,11 @@ function editBank(id, data) {
     document.getElementById('editAccountHolder').value = data.account_holder_name || data.account_holder || '';
     document.getElementById('editIfscCode').value = data.ifsc_code || '';
     document.getElementById('editBranchName').value = data.branch_name || '';
-    document.getElementById('editAccountType').value = data.account_type || 'savings';
+    document.getElementById('editAccountType').value = (data.account_type === 'joint' || data.account_type === 'current') ? data.account_type : 'savings';
+    
+    const statusDiv = document.getElementById('editIfscLookupStatus');
+    if (statusDiv) statusDiv.innerHTML = '';
+
     document.getElementById('editBankModal').classList.add('show');
 }
 
@@ -491,12 +503,12 @@ function hideEditBankModal() {
 
 function updateBankAccount() {
     const bankId = document.getElementById('editBankId').value;
-    const bankName = document.getElementById('editBankName').value;
-    const accountNumber = document.getElementById('editAccountNumber').value;
-    const confirmAccountNumber = document.getElementById('editConfirmAccountNumber').value;
-    const accountHolder = document.getElementById('editAccountHolder').value;
-    const ifscCode = document.getElementById('editIfscCode').value;
-    const branchName = document.getElementById('editBranchName').value;
+    const bankName = document.getElementById('editBankName').value.trim();
+    const accountNumber = document.getElementById('editAccountNumber').value.trim();
+    const confirmAccountNumber = document.getElementById('editConfirmAccountNumber').value.trim();
+    const accountHolder = document.getElementById('editAccountHolder').value.trim();
+    const ifscCode = document.getElementById('editIfscCode').value.trim().toUpperCase();
+    const branchName = document.getElementById('editBranchName').value.trim();
     const accountType = document.getElementById('editAccountType').value;
     
     if (!bankName || !accountNumber || !confirmAccountNumber || !accountHolder || !ifscCode) {
@@ -509,17 +521,32 @@ function updateBankAccount() {
         return;
     }
     
-    if (!confirm('Update bank account? This change will be reviewed by admin.')) return;
+    if (!/^\d{9,18}$/.test(accountNumber)) {
+        alert('Account number must be between 9 and 18 digits');
+        return;
+    }
+
+    if (ifscCode.length < 8 || ifscCode.length > 15) {
+        alert('Please enter a valid IFSC code');
+        return;
+    }
     
     const formData = new FormData();
     formData.append('bank_id', bankId);
     formData.append('bank_name', bankName);
     formData.append('account_number', accountNumber);
     formData.append('account_holder', accountHolder);
+    formData.append('account_holder_name', accountHolder);
     formData.append('ifsc_code', ifscCode);
     formData.append('branch_name', branchName);
     formData.append('account_type', accountType);
     formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
+
+    const updateBtn = document.querySelector('#editBankModal button[onclick="updateBankAccount()"]');
+    if (updateBtn) {
+        updateBtn.disabled = true;
+        updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+    }
     
     fetch('<?= $bankUpdateUrl ?>', {
         method: 'POST',
@@ -529,13 +556,21 @@ function updateBankAccount() {
     .then(data => {
         if (data.success) {
             alert('Bank account updated successfully!');
-            window.location.reload();
+            window.location.href = '<?= $bankListUrl ?>';
         } else {
-            alert('Failed: ' + data.message);
+            alert('Failed: ' + (data.message || 'Unknown error'));
+            if (updateBtn) {
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = '<i class="fas fa-save me-2"></i>Update Bank Account';
+            }
         }
     })
     .catch(error => {
         alert('Error: ' + error);
+        if (updateBtn) {
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = '<i class="fas fa-save me-2"></i>Update Bank Account';
+        }
     });
 }
 
@@ -543,6 +578,12 @@ function updateBankAccount() {
 document.getElementById('addBankModal').addEventListener('click', function(e) {
     if (e.target === this) {
         hideAddBankModal();
+    }
+});
+
+document.getElementById('editBankModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideEditBankModal();
     }
 });
 

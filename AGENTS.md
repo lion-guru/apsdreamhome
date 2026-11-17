@@ -1,3 +1,54 @@
+## Session 741: Bank Account Edit System Fix — Unescaped JSON Attribute Breakdown Resolved, Data-Account Escaping, Server-Side Update Validation & Duplicate Guard, Clean Modal Lifecycle; Master 12/12 Clean (2026-11-17)
+
+### Trigger
+User report:
+"bank account wala edit kaam nhi kar raha"
+Active document: `app/Http/Controllers/WalletController.php` at line 491 (`addBankAccount()`).
+
+### Root Cause Analysis
+1. **Unescaped JSON In HTML Double-Quoted Attribute (`app/views/wallet/bank_accounts.php`)**:
+   - The edit button was rendered as `<button class="btn btn-edit-bank mb-2" onclick="editBank(<?= $account['id'] ?>, <?= json_encode($account) ?>)">`.
+   - In HTML, attributes are delimited by double quotes. `json_encode($account)` generates raw double quotes (`{"id":1,"bank_name":"..."}`), which instantly terminated the `onclick="..."` attribute after `{"`.
+   - The remaining payload was parsed by the browser as corrupted HTML attributes, and clicking the button threw a fatal JavaScript `SyntaxError: Unexpected end of input` or `Unexpected token '}'`, preventing `editBank()` from ever opening the modal.
+2. **Missing Input Normalization & Enum Safety in `updateBankAccount()` (`app/Http/Controllers/WalletController.php`)**:
+   - The server endpoint did not convert IFSC codes to uppercase.
+   - It lacked account number regex validation (`/^[0-9]{9,18}$/`) and conflict detection (`WHERE user_id = ? AND account_number = ? AND id != ?`).
+   - The database column `account_type` is an enum `('savings','current','joint')`. The frontend select contained an unmapped `salary` option which triggered MySQL truncation errors in strict mode.
+3. **Session & Header Safety**:
+   - Added guards `if (session_status() === PHP_SESSION_NONE && !headers_sent())` and `if (!headers_sent()) { header('Content-Type: application/json'); }` across all bank account mutating endpoints (`addBankAccount`, `setPrimaryBank`, `deleteBankAccount`, `updateBankAccount`).
+
+### Key Fixes Landed
+1. **Frontend HTML Attribute & Modal Hardening (`app/views/wallet/bank_accounts.php`)**:
+   - Switched from raw inline `onclick` JSON to `data-account="<?= htmlspecialchars(json_encode($account), ENT_QUOTES, 'UTF-8') ?>"` and `onclick="editBank(<?= (int)$account['id'] ?>, this.dataset.account)"`.
+   - Updated `editBank(id, data)` to safely parse `data` from string if passed as a dataset attribute.
+   - Fixed account type `<select>` options to match the database enum (`savings`, `current`, `joint`).
+   - Added click-outside listener to `editBankModal` for seamless dismissal.
+   - Updated dynamic routing helpers (`$bankUpdateUrl`, `$bankDeleteUrl`, `$bankAddUrl`, `$bankSetPrimaryUrl`) to route through `/associate/bank-details/*` when logged in as an associate.
+   - Added loading spinner and disabled state to the Update button during network transit.
+2. **Backend Controller Hardening (`app/Http/Controllers/WalletController.php`)**:
+   - Strictly enforced uppercase normalization on `ifsc_code`.
+   - Supported both `account_holder_name` and `account_holder` fields.
+   - Enforced 9-18 digits format validation on `account_number`.
+   - Added duplicate guard against user's other registered accounts.
+   - Enforced database enum whitelist `in_array($accountType, ['savings', 'current', 'joint']) ? $accountType : 'savings'`.
+   - Logged audit updates to `user_activity_logs_unified` with masked account last-4 digits.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Http/Controllers/WalletController.php` -> PASS
+  - `app/views/wallet/bank_accounts.php` -> PASS
+- **Database Baseline (Zero Drift Target)**:
+  - `users`: 82 (exact match)
+  - `plot_bookings`: 23 (exact match)
+  - `leads`: 994 (exact match)
+  - `transactions`: 5 (exact match)
+  - `mlm_commission_ledger`: 359 (exact match)
+  - `email_queue`: 14 (exact match)
+- **Master Test Suite**:
+  - `php testing/master_test_runner.php` -> **12/12 PASSED** (41.89s, 100% HEALTHY).
+- **AGENTS.md Log Verification**:
+  - `php scripts/verify_agents_log.php` -> PASS.
+
 ## Session 740: One-Page Owner Runbook Written & Reference-Verified — SMTP → staging → prod → AAB → colony GPS → RERA → Analytics-v2 spike policy; Cron Dry-Run Confirms All 19 Daily Tasks; Master 12/12 (2026-11-17)
 
 ### Trigger

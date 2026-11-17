@@ -489,8 +489,12 @@ class WalletController extends BaseController
      */
     public function addBankAccount()
     {
-        @session_start();
-        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -583,8 +587,12 @@ class WalletController extends BaseController
      */
     public function setPrimaryBank()
     {
-        @session_start();
-        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -614,8 +622,12 @@ class WalletController extends BaseController
      */
     public function deleteBankAccount()
     {
-        @session_start();
-        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -644,27 +656,44 @@ class WalletController extends BaseController
      */
     public function updateBankAccount()
     {
-        @session_start();
-        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
             exit;
         }
 
-        $userId = $_SESSION['user_id'];
+        $userId = (int)$_SESSION['user_id'];
         $bankId = (int)($_POST['bank_id'] ?? 0);
         $bankName = trim($_POST['bank_name'] ?? '');
         $accountNumber = trim($_POST['account_number'] ?? '');
-        $ifscCode = trim($_POST['ifsc_code'] ?? '');
+        $ifscCode = strtoupper(trim($_POST['ifsc_code'] ?? ''));
         $accountHolder = trim($_POST['account_holder'] ?? '');
+        $accountHolderName = trim($_POST['account_holder_name'] ?? $accountHolder);
         $branchName = trim($_POST['branch_name'] ?? '');
         $accountType = trim($_POST['account_type'] ?? 'savings');
 
-        if ($bankId <= 0 || empty($bankName) || empty($accountNumber) || empty($ifscCode) || empty($accountHolder)) {
+        if ($bankId <= 0 || empty($bankName) || empty($accountNumber) || empty($ifscCode) || empty($accountHolderName)) {
             echo json_encode(['success' => false, 'message' => 'All required fields must be filled']);
             exit;
         }
+
+        if (!preg_match('/^[0-9]{9,18}$/', $accountNumber)) {
+            echo json_encode(['success' => false, 'message' => 'Account number must be between 9 and 18 digits']);
+            exit;
+        }
+
+        if (strlen($ifscCode) < 8 || strlen($ifscCode) > 15) {
+            echo json_encode(['success' => false, 'message' => 'Please enter a valid IFSC code']);
+            exit;
+        }
+
+        $validAccountType = in_array($accountType, ['savings', 'current', 'joint']) ? $accountType : 'savings';
 
         try {
             // Verify ownership
@@ -674,31 +703,41 @@ class WalletController extends BaseController
                 exit;
             }
 
-            // Log the change for audit
-            $oldData = $this->db->fetchOne("SELECT * FROM user_bank_accounts WHERE id = ?", [$bankId]);
-            
+            // Check if updated account number conflicts with another bank account of the same user
+            $conflict = $this->db->fetchOne(
+                "SELECT id FROM user_bank_accounts WHERE user_id = ? AND account_number = ? AND id != ? LIMIT 1",
+                [$userId, $accountNumber, $bankId]
+            );
+            if ($conflict) {
+                echo json_encode(['success' => false, 'message' => 'Another account with this account number already exists']);
+                exit;
+            }
+
+            // Update bank details
             $this->db->query("
                 UPDATE user_bank_accounts 
                 SET bank_name = ?, account_number = ?, ifsc_code = ?, account_holder = ?, account_holder_name = ?, branch_name = ?, account_type = ?, updated_at = NOW()
                 WHERE id = ? AND user_id = ?
-            ", [$bankName, $accountNumber, $ifscCode, $accountHolder, $accountHolder, $branchName, $accountType, $bankId, $userId]);
+            ", [$bankName, $accountNumber, $ifscCode, $accountHolderName, $accountHolderName, $branchName, $validAccountType, $bankId, $userId]);
 
             // Log activity
             try {
                 $this->db->query("
                     INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, created_at)
                     VALUES (?, 'bank_account_updated', ?, ?, NOW())
-                ", [$userId, json_encode(['bank_id' => $bankId, 'changes' => 'Bank details updated']), $_SERVER['REMOTE_ADDR'] ?? '']);
-            } catch (\Throwable $e) {
-            // Activity log table might not exist, ignore
-            error_log($e->getMessage());
-            }
+                ", [$userId, json_encode([
+                    'bank_id' => $bankId,
+                    'bank_name' => $bankName,
+                    'account_last4' => substr($accountNumber, -4)
+                ]), $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Throwable $e) {}
 
             echo json_encode(['success' => true, 'message' => 'Bank account updated successfully']);
+            exit;
         } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed to update: ' . $e->getMessage()]);
+            exit;
         }
-        exit;
     }
 
     /**
