@@ -29,6 +29,8 @@
  *    18. PHP Error Probe (nightly php_error.log signature summary; SQL/HY093/
  *        Fatal/SMTP/View classes; writes an in-app admin notification when
  *        any SQL/fatal class is seen)
+ *    19. Daily Metrics Refresh (Analytics v2 fact table - honest counts from
+ *        live tables; keeps /admin/features/analytics + the forecast API fed)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% →' qualified site managers)
@@ -124,6 +126,7 @@ if ($statusOnly || $dryRun) {
         echo "   16. Churn Prediction Refresh (up to 300 open leads)" . PHP_EOL;
         echo "   17. AI Employee Worker (dry-run unless --live)" . PHP_EOL;
         echo "   18. PHP Error Probe (nightly php_error.log signature summary)" . PHP_EOL;
+        echo "   19. Daily Metrics Refresh (Analytics v2 fact table)" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -666,6 +669,30 @@ try {
         } catch (\Throwable $e) {
             echo '  [FAIL] ' . $e->getMessage() . PHP_EOL;
             $errors[] = 'php_error_probe: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 19. DAILY METRICS REFRESH (Analytics v2 fact table - honest counts
+        //     from live tables; keeps /admin/features/analytics + the
+        //     /api/v2/analytics/forecast path supplied with history instead of
+        //     empty charts. Idempotent: re-run rewrites the same day in place.)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}  Daily Metrics Refresh" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $metricsCmd = 'php ' . escapeshellarg($root . '/scripts/daily_metrics_refresh.php') . ' 2>&1';
+            $metricsOut = [];
+            $metricsRc = 0;
+            exec($metricsCmd, $metricsOut, $metricsRc);
+            $log['daily_metrics'] = ['status' => 'completed', 'return_code' => $metricsRc];
+            echo ($metricsRc === 0 ? '  [OK] daily metrics refresh done' : '  [WARN] daily metrics refresh finished with errors') . " (rc={$metricsRc})" . PHP_EOL;
+            foreach (array_slice($metricsOut, -8) as $line) {
+                echo '  | ' . $line . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo '  [FAIL] ' . $e->getMessage() . PHP_EOL;
+            $errors[] = 'daily_metrics: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }

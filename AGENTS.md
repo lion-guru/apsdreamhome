@@ -1,3 +1,51 @@
+## Session 726: Suggestion 1 Executed — Nightly `daily_metrics_summary` Refresh Shipped (Wired AS DAILY Task 19 In Master Cron Runner); 30-Day Honest Backfill (flow metrics only for past dates; snapshot metrics today-only); 211 Rows Live; Idempotent Re-Run; Forecast Probe Verified; Probe Artifacts Deleted; Master 12/12 (2026-11-17)
+
+### Trigger
+Owner: "aur koi suggestion" → suggestions offered (nightly Analytics-v2 cron, compliance trend view, recommendation EXPLAIN, visual baselines, owner backlog) → owner answered "tum apne suggestion se kaam karo" → Suggestion 1 chosen: populate the empty S685-widened `daily_metrics_summary` Analytics-v2 fact table via a nightly cron so `/admin/features/analytics` and `/api/v2/analytics/forecast` carry real, honest history instead of an empty chart for the third month running.
+
+### What was built (2 files, both mine)
+1. **`scripts/daily_metrics_refresh.php`** (new, idempotent, cron-safe):
+   - **Rewrite from a broken first draft** — the draft referenced `config/bootstrap.php`, `app/bootstrap.php`, `config/app.php` and `App\Database\Database`, none of which exist; the repo convention (run_all_crons.php, cron_ai_health.php) is raw PDO from `config/database.php`. Rewritten in that convention with `PDO::ERRMODE_EXCEPTION`.
+   - **Flow metrics** (computable for any date, backfill-safe): `leads_created` · `bookings_created` · `plot_bookings_created` · `transactions_value` (from the business `date` column, not `created_at` — when the money moved, not when the row was keyed in) · `wallet_credits_value` (credits only) · `users_created` · `open_enquiries` — all `DATE(created_at) = ?` / `date = ?` directly on live tables, `SELECT COUNT(*)/SUM`, no estimates.
+   - **Snapshot metrics**: `available_plots` (`status = 'available'`) — recorded **only for today**. A past snapshot of a mutable column is unrecoverable honestly; the previous-30-day window records flow metrics only.
+   - **tenant_id = 1** baked in (production is single-tenant; the source queries are unscoped). Comment warns that multi-tenant requires re-scoping, never a blind `tenantSql()` splice.
+   - **`ON DUPLICATE KEY UPDATE value = VALUES(value)`** against the existing `uniq_metric_date(metric_name, metric_date)` UNIQUE from S685 — re-runs rewrite in place, never duplicate.
+   - `--dry-run` prints without writes · default records today · `--backfill=N` records flow metrics for the last N days.
+2. **`scripts/run_all_crons.php`** — wired as **DAILY task 19** "Daily Metrics Refresh" (docblock list, `--dry-run` listing, execution block mirroring PHP Error Probe task 18: `exec('php scripts/daily_metrics_refresh.php 2>&1')`, `$log['daily_metrics'] = [..., 'return_code' => $metricsRc]`, rc<>0 → `[WARN]`, rc 0 → `[OK]`). No business events — pure read + `INSERT…ON DUPLICATE KEY UPDATE`.
+
+### Honesty disclosures
+- **The backfill faithfully recorded the DB's synthetic test rows**: 2026-11-05 `users_created=20` and 2026-11-14 `plot_bookings_created=20` are the live TEST-HIST synthetic users/bookings (S522/s020 lineage). The seeder records what the DB contains, never a curated subset — filtering test rows would be an unsanctioned invented predicate. No rows were edited to "make the charts honest-looking"; none were filtered either.
+- **`available_plots = 733` today** (766 plots − 33 engaged) — computed, not claimed.
+- **Forecast probe verified then cleaned**: a temp probe (APP_ROOT-defined bootstrap, deleted same turn) called `AnalyticsService::generateForecast('leads_created'| 'plot_bookings_created', 3)` → both returned `{"ok":true,"predictions":[...],"r_squared":...}`. The probe **wrote 2 rows into `forecast_results` (id=3,4) which were deleted to keep zero drift** — forecasts are generated on demand by the admin features page/API, not by the cron; no forecast rows were left behind.
+- **Full daily cron was NOT executed** — it runs penalty accrual, clawback, payroll locks and other business tasks; executing it outside the authorised window is not this session's call. Task-19 wiring verified via `php -l` (both scripts), `--mode=daily --dry-run` (lists task 19), and a manual exec of the exact command the task runs (rc=0).
+- **`transactions_value` and `wallet_credits_value` read 0.00 across all 30 backfilled days** — honest: the transactions table holds 5 rows (none with a `date` in the last 30 days? verified: the seeder queried `WHERE date = ?` and the table simply has no recent rows) and `wallet_transactions` holds 3 credit rows with `created_at` outside the backfill window dates almost entirely (one day showed the 1-row credit elsewhere / zero days in-window — the seeder showed 0 everywhere, which is the truth of those dates).
+
+### Verification
+- `php -l` clean ×2 · re-run is byte-idempotent: 211 rows → run again → 211 rows, unchanged.
+- `daily_metrics_summary` now holds **211 rows, 8 metrics, 2026-10-19 .. 2026-11-17** (snapshot metric only on 2026-11-17, by design).
+- Safety dump before the writes: `backups/db/daily_metrics_summary_empty_s726_pre.sql` (table was empty — 2,585 bytes).
+- **Master suite → 12/12 PASSED** (39.41s, 100% HEALTHY). `php scripts/verify_agents_log.php` → **integrity OK** (475 headings, this entry added on top → 476).
+- Staged **only** my files: `scripts/daily_metrics_refresh.php` (new) + `scripts/run_all_crons.php` (my task-19 hunks); parallel actor's in-flight lane (Associate controllers, `SmartAIController`, `MLMTreeController`, `mobile/*`, `routes/web.php`, etc.) untouched and unstaged.
+
+### Incidents / disclosures
+- My first seeder draft referenced nonexistent bootstrap files and fataled on `--dry-run` before writing anything — caught by the very first probe. No rows, no writes, nothing to roll back; the rewrite was the fix.
+- `generateForecast` probe initially fataled on `APP_ROOT` not defined — definition added in the probe (first-bootstrap order error, no app code touched).
+- `forecast_results` leftover from the probe was found by a `COUNT(*)` sweep and removed in the same pass; table is empty again.
+- **`daily_metrics_summary` DDL dump is gitignored** (`backups/` rule) — safety dump stays local, owner may delete any time.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **725** (mine, stub-drop executed to disk). This entry = **S726**. Next-free = **727**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1631. **A cron that queries the schema directly is cheaper and safer than one that drags the service layer in** — raw PDO from `config/database.php` mirrors run_all_crons.php, avoids APP_ROOT/autoloader coupling entirely, and made `--dry-run` trivial.
+_1632. **A fact table with zero rows is not "honest", it is useless — the fix is honest history backfill, not fabricated charts.** Flow metrics replayed from live tables produced a defensible 30-day history; snapshot metrics refused to invent the past ("snapshot honesty").
+_1633. **Backfill must match the metric's nature, not the tool's convenience** — date-scoped flow metrics replayed 30 days; the single-state snapshot (`available_plots`) recorded for today only. A naive `--backfill=30` over both would have produced a fictional 30-day plot-availability curve.
+_1634. **`uniq_metric_date(metric_name, metric_date)` was the whole idempotency contract** — one line of `ON DUPLICATE KEY UPDATE` after verifying the key with `information_schema.STATISTICS` before writing. Verify the unique key you intend to overload, always.
+_1635. **Probe, then clean the probe** — the forecast probe verified the feature path but left 2 rows in `forecast_results`; a post-probe `SELECT COUNT(*)` sweep caught and removed them in the same round. No probe ends without a leftover-audit.
+
+### Owner actions still open (unchanged + one new)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates · MariaDB Windows service (admin) · Defender exclusion · RERA colony numbers · EMI backfill · live AI dialing · production deploy · `compliance_scorecard_trend` — wire a writer if `/admin/compliance` should show a trend column (S725 family) · **NEW OWNER ITEM — review the 20 TEST-HIST synthetic rows' effect on Analytics-v2 charts**: the Backfill reports them honestly (2026-11-05 users=20, 2026-11-14 bookings=20); if the owner wants the charts to show "organic" days only, the rows must be tagged/excluded by an explicit business rule — this session did not invent one.
+
 ## Session 725: Public-Stub Sweep Executed To Disk — 19 Dead Tables Dumped &amp; Dropped Safely; 3 Originally-Flagged "Stubs" Proved Live &amp; Kept; Safety Dump Retained; Master 12/12; Zero DB Drift After Drop (2026-11-17)
 
 ### Trigger
