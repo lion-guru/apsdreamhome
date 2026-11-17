@@ -226,6 +226,17 @@ class SmartAIController extends BaseController
             error_log("SelfLearningAI error: " . $e->getMessage());
         }
 
+        // Associate pipeline questions must never enter the generic RAG/LLM chain:
+        // RAG composes its prompt from KB chunks only (zero visibility into the
+        // caller's own lead stats) and answers such prompts with a confident-looking
+        // flat refusal even though the data exists and is already in buildContextPrompt.
+        // Route them to the pipeline-aware local responder, which knows the live numbers.
+        if ($response === null && ($userContext['role'] ?? '') === 'associate'
+            && (stripos($message, 'lead') !== false || stripos($message, 'crm') !== false || stripos($message, 'pipeline') !== false)) {
+            $response = $this->getSmartLocalResponse($message, $userContext, $language);
+            $modelUsed = 'associate_pipeline';
+        }
+
         // 2. RAG Agent (data-backed answers from knowledge base + live property/plot data)
         // Only accept PROSE answers (knowledge base / colony info). Plot/property/pricing
         // listings are redundant here - getPropertyListings() attaches them as cards below,
@@ -762,7 +773,11 @@ class SmartAIController extends BaseController
                 $size = $userContext['data']['network_size'] ?? 0;
                 return "Aapka Network:\n\nTotal users: {$size}\n\nReferral Link:\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nSocial media par share karein:\n* WhatsApp\n* Facebook\n* Instagram\n\nJitne zyada referrals, utna zyada commission!";
             }
+        }
 
+        // Intent: associate pipeline / leads -> live lead counts + recent leads.
+        // (Was accidentally nested inside the 'network/team/referral' branch, so
+        // "Show my leads" could never reach it and fell through to the generic fallback.)
         if (strpos($msg, 'lead') !== false || strpos($msg, 'leads') !== false) {
             $totalLeads = (int)($userContext['data']['total_leads'] ?? 0);
             $hotLeads = (int)($userContext['data']['hot_leads'] ?? 0);
@@ -778,7 +793,6 @@ class SmartAIController extends BaseController
                 $reply .= "Aap poori lead list yahan dekh sakte hain:\n" . $base . "/associate/leads";
                 return $reply;
             }
-        }
         }
 
         // Default response
