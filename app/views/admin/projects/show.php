@@ -21,8 +21,12 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <h1 class="h3 mb-1 fw-bold">
             <i class="fas fa-building text-primary me-2"></i><?= $pName ?>
             <span class="badge bg-<?= $stColor ?> ms-2 fs-6"><?= $stLabel ?></span>
-            <?php if (!empty($project['rera_number'])): ?>
-                <span class="badge bg-success ms-1 fs-6"><i class="fas fa-certificate me-1"></i>RERA: <?= htmlspecialchars($project['rera_number']) ?></span>
+            <?php
+            $reraShow = trim((string)($project['rera_number'] ?? ''));
+            $reraPending = $reraShow === '' || stripos($reraShow, 'PENDING') === 0;
+            if ($reraShow !== ''):
+            ?>
+                <span class="badge bg-<?= $reraPending ? 'warning text-dark' : 'success' ?> ms-1 fs-6"><i class="fas fa-<?= $reraPending ? 'clock' : 'certificate' ?> me-1"></i>RERA: <?= $reraPending ? 'NOC Pending - Legal Desk' : htmlspecialchars($reraShow) ?></span>
             <?php endif; ?>
         </h1>
         <nav aria-label="breadcrumb">

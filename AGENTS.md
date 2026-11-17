@@ -1,3 +1,34 @@
+## Session 702: Admin RERA Badge Semantics Cured — Green "RERA: Pending-Verification" Success Badge on /admin/projects/{id} and /admin/colonies/{id} Replaced With Amber "NOC Pending — Legal Desk" / Real-Number Badges; DB Down (Port 3306 Refused) — Static-Only Verification, Owner Repair Window Overdue, Master NOT Re-Run (2026-11-17)
+
+### Trigger
+Audit from S701's RERA honesty banner lane, carried into the current turn's "do next". At this session's start, port 3306 was freshly unreachable (MariaDB in crash-loop, last socket creation at 18:18:37 followed by `Table './mysql/plugin' / './mysql/servers' is marked as crashed and should be repaired` errors and a PHP-refused dependency on every DB-touching page). The user's "my sql chal raha hai" was an optimistic snapshot from ~18:12 uptime; it is no longer reachable.
+
+### What the audit found (admin-side, 2 operator-confusing views)
+- **`admin/projects/show.php`**: any non-empty `rera_number` — including the `PENDING-VERIFICATION` placeholder seeded by S695 — rendered as a **green `bg-success` badge with a certificate icon** next to the page title. An operator sees "RERA: PENDING-VERIFICATION" dressed as a success certificate. Padding the placeholder next to `bg-success` lies to the one person who reads the badge most carefully.
+- **`admin/colonies/show.php`**: literal echo of `$colony['rera_number'] ?? 'Pending'` with zero distinction between the placeholder sentinel and a real registration. "Pending" behind a colony the admin may want to inspect this minute is not just uninformative — it is still a green RERA nobody understands the semantics of.
+- Other admin views print the raw value (`milestones_list.php`, `legal-colony-pipeline/detail.php:259`) — left alone because those desks are what populated the placeholder and the raw value there is a data-field, not a status claim.
+
+### Fix
+- `admin/projects/show.php` — badge split into two branches with `stripos($reraShow, 'PENDING') === 0` predicate: pending shows `badge bg-warning text-dark` + clock icon + `RERA: NOC Pending - Legal Desk`; real value retains `bg-success` + certificate icon.
+- `admin/colonies/show.php` — rewrite echo into explicit ternary: `''` → `'Not registered (Legal Desk pending)'`; starts-with-`PENDING` → amber `RERA NOC Pending - Legal Desk` badge; anything else → green badge with the raw number.
+
+### Verification — honest state (DB down this session; render-only change)
+- `php -l` clean on both files · **NO live probe run** — port 3306 refused at every check this session; user's stated "my sql chal raha hai" did not hold at time of check. Source is render-only; the view logic contains zero DB-dependent SQL. Master test suite NOT re-run (DB-dependent failures already disclosed in S701 post-gate verification).
+- Committed anyway because it is a pure render-side change that can only improve the operator's view; the user is not being told S702's work made the DB healthy — nothing in this file touches MariaDB.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **701** (public RERA placeholder gate probe + master 12 wiring). This entry = **S702**. Next-free = **703**.
+
+### Key lessons
+_1562. **A "pending" value wearing `bg-success` is not honest design — it's a green checkmark sold as an amber warning.** Admin pages are boundary surfaces too; the sentinel gates live in `substr !== 'PENDING'` everywhere else for a reason.
+_1563. **Render-side gates in admin UIs are free insurance that a live DB cannot cancel.** Static-syntax + explicit ternary + `php -l` is sufficient for badge semantics; no DB needed to verify the view math.
+_1564. **When the user says "mysql is fine" but `Test-NetConnection 3306` returns False and the errlog shows `Table './mysql/plugin' marked as crashed and should be repaired` — report the narrow truth, not the comforting one.** S700 runbook's 87 restarts and the current dead socket are the continuity; this session did not attempt the owner-attended repair and does not look like it can land without it.
+
+### Owner actions still open (sorted by blast radius)
+1. **MySQL repair window mandatory** (`docs/MYSQL_REPAIR_RUNBOOK.md`, owner-attended) — 87 restarts since 16:00 today, `mysql.plugin`/`mysql.servers` marked crashed, port refused. This is no longer "check it next session"; this is blocks-dev-work critical.
+2. Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification (DAILY 15/16/17/18) · 22 stub tables decision · `testimonials_s694_pre_verify` drop · `mysql_pre_s560_backup` drop (same window).
+
+
 ## Session 701: Buyer-Facing RERA Placeholder Gate Shipped & Wired Into Master Suite — `Public RERA Placeholder Probe` Live In Integration Tests; All 20 Public Pages Clean Of `PENDING-VERIFICATION`; Master 12/12 (2026-11-17)
 
 ### Trigger

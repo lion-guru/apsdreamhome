@@ -62,7 +62,7 @@ $cid = (int)($colony['id'] ?? 0);
                             <p><strong>Location:</strong> <?= htmlspecialchars(($colony['district_name'] ?? '') . ', ' . ($colony['state_name'] ?? '')) ?></p>
                             <p><strong>Total Area:</strong> <?= htmlspecialchars($colony['total_area_acres'] ?? '') !== '' ? htmlspecialchars($colony['total_area_acres']) . ' acres' : 'Not specified' ?></p>
                             <p><strong>Total Plots:</strong> <?= (int)($colony['total_plots'] ?? 0) ?></p>
-                            <p><strong>RERA:</strong> <?= htmlspecialchars($colony['rera_number'] ?? 'Pending') ?></p>
+                            <p><strong>RERA:</strong> <?php $rn = trim((string)($colony['rera_number'] ?? '')); echo $rn === '' ? 'Not registered (Legal Desk pending)' : ((stripos($rn, 'PENDING') === 0) ? '<span class="badge bg-warning text-dark">RERA NOC Pending - Legal Desk</span>' : '<span class="badge bg-success">' . htmlspecialchars($rn) . '</span>'); ?></p>
                             <p><strong>Pipeline Stage:</strong> <span class="badge bg-info"><?= htmlspecialchars(ucfirst($colony['pipeline_stage'] ?? 'planning')) ?></span></p>
                             <p><strong>Status:</strong> <span class="badge bg-<?= ($colony['is_active'] ?? 0) ? 'success' : 'secondary' ?>"><?= ($colony['is_active'] ?? 0) ? 'Active' : 'Inactive' ?></span></p>
                         </div>
