@@ -1,3 +1,46 @@
+## Session 677: Verification Round After Parallel Actor's S676 Careers Wave — Gates Held, Public AI Surfaces All Render Public Chrome With Live Needles, No Defects Found; No Code Changes (2026-11-17)
+
+### Trigger
+User: "do next" — immediately after the parallel actor's S676 commit wave (`24acaf6b`, 3 page-1054 families closed + careers admin desk wired end-to-end end-to-end), asked to continue. This round exists to make sure my AI lanes + public-facing chrome did not regress under that commit wave, and only then to decide whether any new work was needed.
+
+### What was actually verified (byte-level, not status-code-level)
+1. **Head integrity**: HEAD == origin/main == `24acaf6b`; AGENTS.md pre-S672 integrity OK; 428 headings; `git status --short` shows only parallel actor in-flight lane files (`app/services/*.php` S666-S669 lineage + `app/core/Sentinel.php` etc.) — zero of mine involved.
+2. **Gates re-run fresh**:
+   - php -l on my last touched files: clean
+   - **PHPStan**: only remaining error is `GstService.php:155` — parallel actor's in-flight file, not mine
+3. **Master suite**: **11/11 PASSED** (43.41s)
+4. **Public AI surfaces (fresh HTTP probe, cookie-less)**:
+   - `/ai-chat` 200, 199,557 B — public chrome, `cwWrap`, assistant needles
+   - `/ai-chat-enhanced` 200, 207,029 B — public chrome, `cwWrap`, assistant needles
+   - `/ai-chat/popup` 200, 202,465 B — public chrome, `cwWrap`, assistant needles
+   - `/property-ai-chat` 200, 202,656 B — public chrome, `cwWrap`, assistant needles
+5. **Admin AI hub (authenticated admin session, test_login=2)**: 200, 403,051 B — `aps-admin-body` + `APS AI Assistant` needles + AI Operations + Predictive AI + Voice provider honesty line all present (compare S656/S660 entries)
+6. **Homepage** (public widget): 328,187 B — `cwWrap` + `APS Assistant` + `/api/smart-ai/chat` + `/api/ai/health` needles all present
+
+### What this round did NOT do, deliberately
+- Nothing written. No new features, no re-fixes, no re-probes of already-green scope.
+- The settings audit or any duplicate sweep work was NOT done; the parallel actor has those lanes in flight.
+- The 34 dead orphan views remain parked by the parallel actor's explicit decision; flagged, not invented.
+
+### Honest status — no outstanding engineering task on my lane is untracked
+- Public-facing AI chrome: all correct (public chrome on public pages, admin-chrome on admin pages)
+- Privacy (AI history IDOR): closed, live-verified
+- Offline AI chatbot honesty + degraded flag: live-verified end-to-end
+- Voice provider honesty line: shipped and verified
+- Cron task 17 (AI employee worker): wired and verified live-run
+
+### What remains (owner-gated only — no engineering owner pending)
+- Play Console AAB upload
+- HTTPS assetlinks SHA-256
+- EMI backfill for 20 historical bookings (owner per-row sign-off)
+- Live AI dialing — Twilio creds + `--execute`
+- Task Scheduler verification (DAILY tasks 15/16/17)
+- 34 dead orphan views decision
+- outstanding PHPStan error in parallel actor `GstService.php:155`
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **676** (careers admin desk end-to-end). This entry = **S677**. Next-free = **678**.
+
 ## Session 676: Careers Admin Desk Was A Complete Dead-End - Whole Data Path 1054'd (Public View Expected Live Schema, Legacy Service Wrote Dead Schema); HR Desk Now Works End-To-End: List/Filter/Paginate/Detail/Status/CSRF Resume Download - Plus 3 Live Page-1054 Families Found & Closed (Gallery, Map Images, Construction Services); Master 11/11 (2026-11-17)
 
 ### Trigger
