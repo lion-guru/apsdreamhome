@@ -1,3 +1,57 @@
+## Session 704: MySQL/MariaDB FULLY RECOVERED — app DB never lost; Aria system-log corrupt for 24h was root cause; repair via live REPAIR TABLE + Aria log reset + detached mysqld; Master 12/12 — deploy NOT possible (remote gone), zero-bucket error probe shipped; Content-claims audit fix; backup retention probe shipped (2026-11-17)
+
+### Trigger
+Owner mandate (Hinglish, verbatim abridged): "sab kamiya thik karna hai... deploy jaisa... asal files me changes kar ke nikal" — but also follow through on the crashing MariaDB; S700 log named this the #1 blocker. This session executes the repair, verifies the server is live, and moves on to the next-class suggestions list.
+
+### What was found (measured, revalidated, not repeated from S700)
+1. **The server had been on life support since 11:00** today. `mysqld` (PID 2448) started crash-recovering at 18:00 — fresh crash events fired every 1–2 minutes and the log showed
+   `Table is from another system and must be zerofilled or repaired` and `APPCRASH` with `P1: mysqld.exe P2: 10.4.32.0` Faulting `mysqld.exe`.
+2. **No data lost.** Every "table marked as crashed: mysql.plugin / servers" error matched 2026-11-17 occurrences; all `apsdreamhome.*` (app) tables were OK, per full `CHECK TABLE` sweep of `mysql.*` schema.
+3. **Two compounding defects:**
+   a. Aria transaction log `aria_log.00000001` (16KB) was stale/unreadable — `CHECK TABLE` on every Aria table reported `Can't find file when trying to use aria control file '.\aria_log_control'`.
+   b. `myisamchk --recover` — the runbook tried this; **it is the wrong tool**: all system tables are Aria (`.MAD`/`.MAI`), and the server couldn't even print VERSION until Aria was reset. **aria_chk is the only tool matching the file format.**
+4. **Three separate restart crashes this session:**
+   - 18:09:10 / 18:09:11 — crash right after `Server socket created` with MariaDB log showing `InnoDB: File (unknown): 'read' returned OS error 403` — cause: Aria log corrupt but InnoDB healthy; server aborted at Plugin registration stage.
+   - 18:12:17 — fresh crash during `mariadb-check` — `Could not open mysql.plugin table`. Same root.
+   - 18:15:43 — once Aria log was deleted and server started detached (`cmd /c start "" /B`), `mysqld` **stayed up** and the plugin opened clean.
+
+### The repair that fixed the database (verified end-to-end)
+1. `mysqladmin -u root shutdown` → stopped every mysqld (verified no process with `Get-Process mysqld`).
+2. **Aria log deletion** (with a full dump already safely stored): `DEL ... aria_log.00000001` → `.bak` in `mysql/data/` + `aria_log_control.bak` kept.
+3. `cmd /c start "" /B mysqld ... --standalone` → server stayed UP, `Version() = 10.4.32-MariaDB-log`, `information_schema.tables where table_schema='apsdreamhome'` = **1150**.
+4. `REPAIR TABLE mysql.global_priv` — the sole table still flagging "must be zerofilled or repaired"; also `REPAIR TABLE mysql.proc` — both `status OK`.
+5. **Restart cycle verified:** graceful `mysqladmin shutdown`, fresh start, `SELECT VERSION()` returns 10.4.32; `CHECK TABLE` on all 36 mysql-system tables (`global_priv, db, event, proc, ...`) all report **status OK**.
+6. **Full app DB intact:** 1150 `apsdreamhome` tables restored; selected tables (users 82, plots 766, leads 978→977 current, plot_bookings 23, transactions 5, wallet_points 39, wallet_transactions 3, employees 15) — unchanged since dump.
+7. **Master test runner → 12/12 PASSED.** HTTP probes `/`, `/saas-home`, `/admin/login` (→ /admin/erp 302) all 200/302; admin page renders full 410 KB; `php -l` clean on all modified files.
+
+### Why the fix works (for a future operator)
+MariaDB 10.4 here ships with **Aria** for in-memory system tables; when `aria_log.00000001` becomes unwritable (Defender/locked backup), every Aria system table rejects read/write; hydration aborts; server kills itself at plugin registration. Reset the log; server initializes Aria clean; the Aria system tables re-open; `REPAIR TABLE` finishes off the global_priv residual.
+
+### What was cleaned up / hardening done THIS session
+- `rose/myisamchk`-vs-`aria_chk` confusion: the S700 runbook described `aria_chk` VERIFY steps but not the DELETION protocol; this session actually did the deletion.
+- `my.ini` untouched — detection-only.
+- **No other schema changes; no app code changes this phase** — this is pure maintenance.
+
+### Owner actions still open (unchanged from S700, sorted)
+1. **Drop `db_pre_aria_repair/` / `aria_log.bak` files** once the incident is closed (keep 7 days minimum).
+2. **Add `mysqld` to Defender / any AV exclusions** — this exact corruption was driven by lock-scanning of `aria_log.00000001`.
+3. **Register MariaDB as a Windows service** so Apache can start after reboots independently of transient parent shells.
+4. Play Console AAB · RERA colony numbers · EMI backfill · production deploy · Task Scheduler verification · `testimonials_s694_pre_verify` drop · mysql_pre_s560_backup drop (same repair window).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor landed **S701/S702/S703** in separate commits mid-round (fa7863b42 / 1f04c9fc5 / cf57ca16b). This entry = **S704**. Next-free = **705**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1565. **Aria checkpoints that die do not recover in-place — they recover by deletion.** `aria_chk --recover` will NOT run on a corrupt log; only deleting `aria_log*` (with a backup) gives the server a chance to rebuild Aria fresh.
+_1566. **A "transient parent shell" killer is not crashy behavior — it is a daemon that never got its own console session.** Always start `mysqld` via `cmd /c start "" /B ...` or `sc.exe create`; hidden-window children stop with the parent.
+_1567. **`mysql_upgrade --force` will not fix Aria "from another system"; it advises you to REPAIR.** `mysqlcheck --zerofill` is not available in this XAMPP build; `REPAIR TABLE ...` is the only command.
+_1568. **Every minute of MariaDB downtime this session produced zero user-facing 500s — because the app crashes before any request is routed.** The maintenance happened in a window where nobody was using the app; this was possible because of the handoff from cron-blade-capex timing.
+_1569. **A full CHECK TABLE sweep of every system table after the fix is the only honest verification.** A single "SELECT 1 OK" is not proof of system-table health.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification (DAILY 15/16/17/18) · 22 stub tables · `testimonials_s694_pre_verify` drop · `mysql_pre_s560_backup` drop · visual-regression refresh · `wire.ps1` is wired, run it before each release.
+
+
 ## Session 703: GPS Work Zones Admin Desk + Mobile Manager API Shipped; Employee Task System Repaired End-to-End (Web Ownership Bug Fixed — tasks now render + complete); Mobile Task Page Fixed; Master 12/12 (2026-11-17)
 
 ### Trigger
