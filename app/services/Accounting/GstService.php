@@ -147,6 +147,15 @@ class GstService
         return ['valid' => true, 'gstin' => $gstin];
     }
 
+    public function getCurrentQuarter(): string
+    {
+        $month = (int)date('n');
+        if ($month >= 4 && $month <= 6) return 'Q1';
+        if ($month >= 7 && $month <= 9) return 'Q2';
+        if ($month >= 10) return 'Q3';
+        return 'Q4';
+    }
+
     private function getCurrentFinancialYear(): string
     {
         $year = (int)date('Y');

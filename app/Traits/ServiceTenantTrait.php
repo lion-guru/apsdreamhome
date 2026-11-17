@@ -116,6 +116,15 @@ trait ServiceTenantTrait
     }
 
     /**
+     * Positional-placeholder WHERE fragment with table alias: " AND alias.tenant_id = ?" or "".
+     * Pair with tenantParams().
+     */
+    protected function tenantWhereForAlias(string $alias): string
+    {
+        return $this->tenantId() > 1 ? " AND {$alias}.tenant_id = ?" : "";
+    }
+
+    /**
      * Positional-placeholder WHERE fragment: " AND tenant_id = ?" or "".
      * Pair with tenantParams().
      */

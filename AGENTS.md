@@ -1,3 +1,71 @@
+## Session 683: Multi-Tenant Scoping Sweeper Across Whole App — 75+ `tenantSql()` x `tVal()` & Broken INSERT Sites Cured in 10 Core Services; `GstService` Method Implemented & PHPStan [OK] Clean Across Whole Tree; Master 11/11 (2026-11-17)
+
+### Trigger
+Continuation of the multi-tenant architectural audit (S669–S671) and resolving the outstanding PHPStan failure in `GstService.php:155` that blocked whole-tree verification. Whole-app scan revealed that beyond HR services, 10 core services suffered from the HY093 bug family (`tenantSql()` interpolated literal `AND tenant_id = N` paired with `$this->tVal()` / `$this->tenantParams()` bound parameter) and invalid trailing `tenantSql()` in `INSERT INTO` statements.
+
+### What was found & fixed
+1. **`app/services/Accounting/GstService.php`**:
+   - Implemented missing `getCurrentQuarter(): string` returning `Q1` (Apr–Jun), `Q2` (Jul–Sep), `Q3` (Oct–Dec), `Q4` (Jan–Mar) matching Indian financial year.
+   - Cured PHPStan error at line 155 (`smallerOrEqual.alwaysTrue`: comparison `<= 12` on `date('n')` month >= 10 was redundant).
+   - Entire file now **PHPStan [OK] No errors**, unblocking whole-tree clean runs.
+2. **`app/Traits/ServiceTenantTrait.php`**:
+   - Added `tenantWhereForAlias(string $alias): string` returning `" AND {$alias}.tenant_id = ?"` when `tenantId > 1`. Eliminates ambiguous column errors (`1052: Column 'tenant_id' in where clause is ambiguous`) in multi-table queries.
+3. **`app/services/KYCService.php`** (2 sites):
+   - Lines 190 & 201: Replaced `{$this->tenantSql()}` with `{$this->tenantWhere()}` on `kyc_requests` and `ocr_documents` queries.
+4. **`app/services/SalaryAdvanceService.php`** (1 site):
+   - Line 406: Swapped `tenantSql()` for `tenantWhereForAlias('sar')` on pending repayments query with `salary_advances` JOIN, curing HY093 and preventing column ambiguity.
+5. **`app/services/OTPService.php`** (8 sites):
+   - Line 147: Stripped invalid trailing ` . $this->tenantSql()` from `INSERT INTO otp_verifications` (tenant column and value are already handled by `tenantInsertData()`).
+   - Lines 158, 167, 175, 183, 358, 369, 385: Converted `tenantSql()` -> `tenantWhere()` across OTP lookups, attempt counters, and cleanup queries.
+   - Enclosed compound condition `(expires_at < NOW() OR used_at IS NOT NULL)` in parentheses with `tenantWhere()` to prevent cross-tenant accidental deletion.
+6. **`app/services/RequestMiddlewareService.php`** (4 sites):
+   - Line 89: Removed duplicate parameter array merging and stripped trailing `tenantSql()` from rule insertion.
+   - Line 120: Added `WHERE 1=1" . $this->tenantWhere()` in `getMiddlewareRules()` (previously rendered invalid SQL `FROM middleware_rules  AND tenant_id = 2`).
+   - Lines 150, 173, 200: Converted `tenantSql()` -> `tenantWhere()` across update, delete, and test methods.
+7. **`app/core/Sentinel.php`** (1 site):
+   - Line 247: Rewrote `blockIP()` to insert `tenant_id` into column list and placeholders when `tenantId > 1` instead of appending `tenantSql()` after `VALUES (...)`.
+8. **`app/services/Backoffice/DailyOperationsService.php`** (24 sites):
+   - Lines 130, 162, 171, 217, 248, 249, 272, 280, 309, 372: Replaced `tenantSql()` with `tenantWhere()` across attendance, leave approval/rejection, salary structure, payslip draft/history updates, and payslip disbursement.
+   - Line 456–465: Deleted dead duplicate `countLeads()` code and aligned query to `tenantWhere()`.
+   - Lines 390, 427, 487, 511, 520, 531: Converted lead pipeline creation, updates, activity scheduling, stage advance, pipeline summary, and lead summary to `tenantWhere()`.
+   - Line 569: Bound `tenantWhereForAlias('dol')` with `array_merge($this->tVal(), $this->tVal())` for user join scoping.
+   - Lines 583, 588, 606, 607, 610: Converted report definitions and executions to `tenantWhere()`.
+   - Line 617: Aligned `getReportHistory()` to `tenantWhereForAlias('re')` and corrected parameter order to `array_merge($this->tVal(), [$reportId], $this->tVal())`.
+   - Line 626: Converted all 6 dashboard stats queries to `tenantWhere()`.
+9. **`app/services/IoTService.php`** (21 sites):
+   - Lines 56, 114, 198: Removed broken trailing ` . $this->tenantSql()` from `INSERT` statements on `iot_device_catalog`, `iot_devices`, and `iot_automations`.
+   - Lines 23, 33, 49, 64: Converted catalog queries to `tenantWhere()`.
+   - Lines 71, 84, 91, 107, 122, 131: Converted devices listing (with alias `d`), count, single fetch, update, delete, and last_seen ping to `tenantWhere()` / `tenantWhereForAlias('d')`.
+   - Lines 164, 171, 177, 192, 206, 211: Converted automations listing (with alias `a`), count, fetch, update, delete, and trigger timestamp to `tenantWhere()` / `tenantWhereForAlias('a')`.
+   - Line 218: Converted all 7 IoT dashboard stat counts to `tenantWhere()`.
+10. **`app/services/Campaign/CampaignService.php`** (18 sites):
+    - Line 1720: Rewrote `addRecipient()` to conditionally insert `tenant_id` column and bind properly instead of appending `{$tenantSql}` after `VALUES (...)`.
+    - Line 627: Fixed `getAllDripCampaigns()` query and parameter order (`$params = [$tenantId, $limit]`).
+    - Lines 161, 171, 181, 213, 245, 260, 274, 288, 310, 355, 358, 365, 418, 640, 1146, 1154, 1197, 1339, 1354, 1698, 1727: Converted all prepared campaign statements to `tenantWhere()`.
+    - Lines 1544, 1552, 1560, 1570, 1591, 1599: Fixed marketing lead metric counts and group-by queries (previously `tenantSql()` was placed after `GROUP BY`).
+
+### Verification
+- `php -l` clean ×10 files.
+- `vendor/bin/phpstan analyse` → **[OK] No errors** across all 10 files.
+- `php testing/master_test_runner.php` → **11/11 PASSED (100% HEALTHY)** (132.15s).
+- Database baseline verified: **0 drift** across all 6 core tables:
+  - `users`: 82 (diff: 0)
+  - `plot_bookings`: 23 (diff: 0)
+  - `leads`: 994 (diff: 0)
+  - `transactions`: 5 (diff: 0)
+  - `mlm_commission_ledger`: 359 (diff: 0)
+  - `email_queue`: 14 (diff: 0)
+- Staged strictly by path: only the 10 lane files + `AGENTS.md` staged. Foreign working-tree files (`lang/`, `mobile/`, etc.) left untouched for other actors.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor logged through **S682** (commit `c1142ea12`). This entry = **S683**. Next-free = **684**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1499. **An INSERT statement does not have a WHERE clause — appending `tenantSql()` after `VALUES (...)` creates immediate syntax errors.** In multi-tenant raw PDO, tenant scoping on INSERT belongs in the column and parameter lists via `tenantInsertData()`.
+_1500. **In queries joining multiple tables that each have `tenant_id`, unqualified `tenantWhere()` causes 1052 column ambiguity.** Adding `tenantWhereForAlias('alias')` ensures clean qualification and matches `$this->tVal()`.
+_1501. **When preparing queries with both tenant scoping and LIMIT / pagination, parameter order must strictly match placeholder positions.** If `tenantWhere()` is in the WHERE clause and `LIMIT ?` is at the end, tenant parameter must precede `$limit` in `$params`.
+
+
 ## Session 682: Stub-Table Deep Audit - 108 Stub Tables Classified Byte-Probed; AdvancedReportController Was Querying Non-Existent `proposals`, Phantom `deals.status='closed'`/`amount` + Phantom `deleted_at IS NULL` on Inquiries; Now Renders Real Live Lead/Deal Math; Master 11/11 (2026-11-17)
 
 ### Trigger

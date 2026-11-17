@@ -403,7 +403,7 @@ class SalaryAdvanceService
             SELECT sar.*, sa.type as advance_type
             FROM salary_advance_repayments sar
             JOIN salary_advances sa ON sar.advance_id = sa.id
-            WHERE sar.employee_id = ? AND sar.status IN ('pending','overdue') AND sar.due_date <= CURDATE()" . $this->tenantSql() . "
+            WHERE sar.employee_id = ? AND sar.status IN ('pending','overdue') AND sar.due_date <= CURDATE()" . $this->tenantWhereForAlias('sar') . "
             ORDER BY sar.due_date
         ", array_merge([$employeeId], $this->tVal()));
     }

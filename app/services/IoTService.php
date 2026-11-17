@@ -20,7 +20,7 @@ class IoTService
 
     public function getCatalog(array $filters = []): array
     {
-        $sql = "SELECT * FROM iot_device_catalog WHERE 1=1" . $this->tenantSql();
+        $sql = "SELECT * FROM iot_device_catalog WHERE 1=1" . $this->tenantWhere();
         $params = $this->tenantParams();
         if (!empty($filters['category'])) { $sql .= " AND category = ?"; $params[] = $filters['category']; }
         if (isset($filters['is_active'])) { $sql .= " AND is_active = ?"; $params[] = $filters['is_active']; }
@@ -30,7 +30,7 @@ class IoTService
 
     public function getCatalogItem(int $id): ?array
     {
-        return $this->db->fetchOne("SELECT * FROM iot_device_catalog WHERE id = ?" . $this->tenantSql() . " LIMIT 1", array_merge([$id], $this->tenantParams()));
+        return $this->db->fetchOne("SELECT * FROM iot_device_catalog WHERE id = ?" . $this->tenantWhere() . " LIMIT 1", array_merge([$id], $this->tenantParams()));
     }
 
     public function saveCatalogItem(array $data): int
@@ -46,14 +46,14 @@ class IoTService
         $params = array_merge($params, array_values($insertData));
 
         if (!empty($data['id'])) {
-            $sql = "UPDATE iot_device_catalog SET name=?, category=?, manufacturer=?, model=?, protocol=?, description=?, specs=?, is_active=?, updated_at=NOW() WHERE id=?" . $this->tenantSql();
+            $sql = "UPDATE iot_device_catalog SET name=?, category=?, manufacturer=?, model=?, protocol=?, description=?, specs=?, is_active=?, updated_at=NOW() WHERE id=?" . $this->tenantWhere();
             $params[] = $data['id'];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
-            $this->db->execute("UPDATE iot_device_catalog SET name=?, category=?, manufacturer=?, model=?, protocol=?, description=?, specs=?, is_active=?, updated_at=NOW() WHERE id=?" . $this->tenantSql(), $params);
+            $this->db->execute($sql, $params);
             return (int)$data['id'];
         }
         $this->db->execute(
-            "INSERT INTO iot_device_catalog (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")" . $this->tenantSql(),
+            "INSERT INTO iot_device_catalog (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")",
             $params
         );
         return (int)$this->db->lastInsertId();
@@ -61,14 +61,14 @@ class IoTService
 
     public function deleteCatalogItem(int $id): void
     {
-        $this->db->execute("DELETE FROM iot_device_catalog WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantParams()));
+        $this->db->execute("DELETE FROM iot_device_catalog WHERE id = ?" . $this->tenantWhere(), array_merge([$id], $this->tenantParams()));
     }
 
     // ==================== DEVICES ====================
 
     public function getDevices(array $filters = [], int $page = 1, int $limit = 20): array
     {
-        $tidSql = $this->tenantSql();
+        $tidSql = $this->tenantWhereForAlias('d');
         $tParams = $this->tenantParams();
         $sql = "SELECT d.*, c.name as catalog_name, COALESCE(p.name, '') as property_name
                 FROM iot_devices d
@@ -81,14 +81,14 @@ class IoTService
         if (!empty($filters['colony_id'])) { $sql .= " AND d.colony_id = ?"; $params[] = $filters['colony_id']; }
         $sql .= " ORDER BY d.created_at DESC LIMIT $limit OFFSET " . (($page - 1) * $limit);
         $data = $this->db->fetchAll($sql, $params) ?: [];
-        $total = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM iot_devices WHERE 1=1" . $this->tenantSql(), $tParams)['c'] ?? 0);
+        $total = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM iot_devices WHERE 1=1" . $this->tenantWhere(), $tParams)['c'] ?? 0);
         return ['data' => $data, 'total' => $total, 'page' => $page, 'limit' => $limit];
     }
 
     public function getDevice(int $id): ?array
     {
         return $this->db->fetchOne(
-            "SELECT d.*, c.name as catalog_name FROM iot_devices d LEFT JOIN iot_device_catalog c ON c.id = d.catalog_id WHERE d.id = ?" . $this->tenantSql() . " LIMIT 1",
+            "SELECT d.*, c.name as catalog_name FROM iot_devices d LEFT JOIN iot_device_catalog c ON c.id = d.catalog_id WHERE d.id = ?" . $this->tenantWhereForAlias('d') . " LIMIT 1",
             array_merge([$id], $this->tenantParams())
         );
     }
@@ -104,14 +104,14 @@ class IoTService
         $params = array_merge($params, array_values($insertData));
 
         if (!empty($data['id'])) {
-            $sql = "UPDATE iot_devices SET catalog_id=?, property_id=?, colony_id=?, name=?, device_uid=?, category=?, status=?, firmware_version=?, location=?, meta=?, updated_at=NOW() WHERE id=?" . $this->tenantSql();
+            $sql = "UPDATE iot_devices SET catalog_id=?, property_id=?, colony_id=?, name=?, device_uid=?, category=?, status=?, firmware_version=?, location=?, meta=?, updated_at=NOW() WHERE id=?" . $this->tenantWhere();
             $params[] = $data['id'];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
-            $this->db->execute("UPDATE iot_devices SET catalog_id=?, property_id=?, colony_id=?, name=?, device_uid=?, category=?, status=?, firmware_version=?, location=?, meta=?, updated_at=NOW() WHERE id=?" . $this->tenantSql(), $params);
+            $this->db->execute($sql, $params);
             return (int)$data['id'];
         }
         $this->db->execute(
-            "INSERT INTO iot_devices (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")" . $this->tenantSql(),
+            "INSERT INTO iot_devices (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")",
             $params
         );
         return (int)$this->db->lastInsertId();
@@ -119,7 +119,7 @@ class IoTService
 
     public function deleteDevice(int $id): void
     {
-        $this->db->execute("DELETE FROM iot_devices WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantParams()));
+        $this->db->execute("DELETE FROM iot_devices WHERE id = ?" . $this->tenantWhere(), array_merge([$id], $this->tenantParams()));
     }
 
     public function recordReading(int $deviceId, string $metric, float $value, ?string $unit = null, ?string $recordedAt = null): int
@@ -128,7 +128,7 @@ class IoTService
             "INSERT INTO iot_readings (device_id, metric, value, unit, recorded_at) VALUES (?, ?, ?, ?, ?)",
             [$deviceId, $metric, $value, $unit, $recordedAt ?? date('Y-m-d H:i:s')]
         );
-        $this->db->execute("UPDATE iot_devices SET last_seen_at = ? WHERE id = ?" . $this->tenantSql(), array_merge([date('Y-m-d H:i:s'), $deviceId], $this->tenantParams()));
+        $this->db->execute("UPDATE iot_devices SET last_seen_at = ? WHERE id = ?" . $this->tenantWhere(), array_merge([date('Y-m-d H:i:s'), $deviceId], $this->tenantParams()));
         // Session 222: best-effort threshold alerts — never fails the reading write.
         try {
             (new IoTAlertService())->evaluateReading($deviceId, $metric, $value);
@@ -161,20 +161,20 @@ class IoTService
 
     public function getAutomations(array $filters = [], int $page = 1, int $limit = 20): array
     {
-        $tidSql = $this->tenantSql();
+        $tidSql = $this->tenantWhereForAlias('a');
         $tParams = $this->tenantParams();
         $sql = "SELECT a.*, d.name as device_name FROM iot_automations a LEFT JOIN iot_devices d ON d.id = a.device_id WHERE 1=1" . $tidSql;
         $params = $tParams;
         if (isset($filters['is_active'])) { $sql .= " AND a.is_active = ?"; $params[] = $filters['is_active']; }
         $sql .= " ORDER BY a.created_at DESC LIMIT $limit OFFSET " . (($page - 1) * $limit);
         $data = $this->db->fetchAll($sql, $params) ?: [];
-        $total = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM iot_automations WHERE 1=1" . $tidSql, $tParams)['c'] ?? 0);
+        $total = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM iot_automations WHERE 1=1" . $this->tenantWhere(), $tParams)['c'] ?? 0);
         return ['data' => $data, 'total' => $total, 'page' => $page, 'limit' => $limit];
     }
 
     public function getAutomation(int $id): ?array
     {
-        return $this->db->fetchOne("SELECT * FROM iot_automations WHERE id = ?" . $this->tenantSql() . " LIMIT 1", array_merge([$id], $this->tenantParams()));
+        return $this->db->fetchOne("SELECT * FROM iot_automations WHERE id = ?" . $this->tenantWhere() . " LIMIT 1", array_merge([$id], $this->tenantParams()));
     }
 
     public function saveAutomation(array $data): int
@@ -189,33 +189,33 @@ class IoTService
 
         if (!empty($data['id'])) {
             $this->db->execute(
-                "UPDATE iot_automations SET name=?, property_id=?, device_id=?, trigger_type=?, trigger_config=?, action_type=?, action_config=?, is_active=?, updated_at=NOW() WHERE id=?" . $this->tenantSql(),
-                array_merge(array_slice($params, 0, count($columns)), [$data['id']], $this->tenantParams())
+                "UPDATE iot_automations SET name=?, property_id=?, device_id=?, trigger_type=?, trigger_config=?, action_type=?, action_config=?, is_active=?, updated_at=NOW() WHERE id=?" . $this->tenantWhere(),
+                array_merge($params, [$data['id']], $this->tenantParams())
             );
             return (int)$data['id'];
         }
         $this->db->execute(
-            "INSERT INTO iot_automations (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")" . $this->tenantSql(),
-            array_merge($params, $this->tenantParams())
+            "INSERT INTO iot_automations (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")",
+            $params
         );
         return (int)$this->db->lastInsertId();
     }
 
     public function deleteAutomation(int $id): void
     {
-        $this->db->execute("DELETE FROM iot_automations WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantParams()));
+        $this->db->execute("DELETE FROM iot_automations WHERE id = ?" . $this->tenantWhere(), array_merge([$id], $this->tenantParams()));
     }
 
     public function markAutomationTriggered(int $id): void
     {
-        $this->db->execute("UPDATE iot_automations SET last_triggered_at = NOW() WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantParams()));
+        $this->db->execute("UPDATE iot_automations SET last_triggered_at = NOW() WHERE id = ?" . $this->tenantWhere(), array_merge([$id], $this->tenantParams()));
     }
 
     // ==================== DASHBOARD STATS ====================
 
     public function getStats(): array
     {
-        $tidSql = $this->tenantSql();
+        $tidSql = $this->tenantWhere();
         $tParams = $this->tenantParams();
         return [
             'total_devices' => (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM iot_devices WHERE 1=1" . $tidSql, $tParams)['c'] ?? 0),

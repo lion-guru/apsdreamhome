@@ -86,8 +86,8 @@ class RequestMiddlewareService
             ];
             $params = array_merge($params, array_values($insertData));
             $this->db->execute(
-                "INSERT INTO middleware_rules (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")" . $this->tenantSql(),
-                array_merge($params, array_values($insertData))
+                "INSERT INTO middleware_rules (" . implode(',', $columns) . ") VALUES (" . implode(',', array_fill(0, count($columns), '?')) . ")",
+                $params
             );
 
             return ['id' => $params[0], 'name' => $params[1], 'type' => $params[2], 'priority' => $params[5], 'status' => $params[6], 'created_at' => $params[7]];
@@ -117,7 +117,7 @@ class RequestMiddlewareService
                     priority,
                     status,
                     created_at
-                 FROM middleware_rules " . $this->tenantSql() . "
+                 FROM middleware_rules WHERE 1=1" . $this->tenantWhere() . "
                  ORDER BY priority ASC, created_at DESC",
                 $this->tVal()
             );
@@ -148,7 +148,7 @@ class RequestMiddlewareService
             $params = [$data['name'], $data['type'], json_encode($data['conditions']), json_encode($data['actions']), $data['priority'], $data['updated_at'], $ruleId];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $this->db->execute(
-                "UPDATE middleware_rules SET name = ?, type = ?, conditions = ?, actions = ?, priority = ?, updated_at = ? WHERE id = ?" . $this->tenantSql(),
+                "UPDATE middleware_rules SET name = ?, type = ?, conditions = ?, actions = ?, priority = ?, updated_at = ? WHERE id = ?" . $this->tenantWhere(),
                 $params
             );
 
@@ -170,7 +170,7 @@ class RequestMiddlewareService
     {
         try {
             $this->db->execute(
-                "DELETE FROM middleware_rules WHERE id = ?" . $this->tenantSql(),
+                "DELETE FROM middleware_rules WHERE id = ?" . $this->tenantWhere(),
                 array_merge([$ruleId], $this->tVal())
             );
 
@@ -197,7 +197,7 @@ class RequestMiddlewareService
         try {
             // Get the rule to test
             $rule = $this->db->fetchOne(
-                "SELECT * FROM middleware_rules WHERE id = ?" . $this->tenantSql() . " LIMIT 1",
+                "SELECT * FROM middleware_rules WHERE id = ?" . $this->tenantWhere() . " LIMIT 1",
                 array_merge([$ruleId], $this->tVal())
             );
 

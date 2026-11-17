@@ -187,7 +187,7 @@ class KYCService
     public function crossCheckOcr(int $kycRequestId): array
     {
         $kyc = $this->db->fetchOne(
-            "SELECT * FROM kyc_requests WHERE id = ? {$this->tenantSql()}",
+            "SELECT * FROM kyc_requests WHERE id = ? {$this->tenantWhere()}",
             array_merge([$kycRequestId], $this->tVal())
         );
 
@@ -198,7 +198,7 @@ class KYCService
         $userId = (int)$kyc['user_id'];
 
         $ocrDocs = $this->db->fetchAll(
-            "SELECT * FROM ocr_documents WHERE uploaded_by = ? {$this->tenantSql()} ORDER BY created_at DESC",
+            "SELECT * FROM ocr_documents WHERE uploaded_by = ? {$this->tenantWhere()} ORDER BY created_at DESC",
             array_merge([$userId], $this->tVal())
         );
 

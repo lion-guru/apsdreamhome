@@ -158,7 +158,7 @@ class CampaignService
             return true;
         }
         $params[] = $id;
-        $sql = "UPDATE marketing_campaigns SET " . implode(', ', $fields) . " WHERE id = ?" . $this->tenantSql();
+        $sql = "UPDATE marketing_campaigns SET " . implode(', ', $fields) . " WHERE id = ?" . $this->tenantWhere();
         $params = array_merge($params, $this->tenantId() > 1 ? [$this->tenantId()] : []);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -168,7 +168,7 @@ class CampaignService
 
     public function getCampaign(int $id): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaigns WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT * FROM marketing_campaigns WHERE id = ?" . $this->tenantWhere());
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -178,7 +178,7 @@ class CampaignService
 
     public function listCampaigns(array $filters = [], int $limit = 100, int $offset = 0): array
     {
-        $where = ['1=1' . $this->tenantSql()];
+        $where = ['1=1' . $this->tenantWhere()];
         $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         if (!empty($filters['type'])) {
             $where[] = 'type = ?';
@@ -210,7 +210,7 @@ class CampaignService
 
     public function deleteCampaign(int $id): bool
     {
-        $tsql = $this->tenantSql();
+        $tsql = $this->tenantWhere();
         $tparams = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $this->pdo->prepare("DELETE FROM marketing_campaign_recipients WHERE campaign_id = ?{$tsql}")->execute(array_merge([$id], $tparams));
         $this->pdo->prepare("DELETE FROM marketing_campaigns WHERE id = ?{$tsql}")->execute(array_merge([$id], $tparams));
@@ -242,7 +242,7 @@ class CampaignService
 
     public function scheduleCampaign(int $id, string $sendAt): bool
     {
-        $sql = "UPDATE marketing_campaigns SET scheduled_at = ?, status = 'scheduled' WHERE id = ?" . $this->tenantSql();
+        $sql = "UPDATE marketing_campaigns SET scheduled_at = ?, status = 'scheduled' WHERE id = ?" . $this->tenantWhere();
         $stmt = $this->pdo->prepare($sql);
         $params = [$sendAt, $id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
@@ -257,7 +257,7 @@ class CampaignService
         if (!$c || !in_array($c['status'], ['sending', 'scheduled'], true)) {
             return false;
         }
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'paused' WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'paused' WHERE id = ?" . $this->tenantWhere());
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -271,7 +271,7 @@ class CampaignService
         if (!$c || $c['status'] !== 'paused') {
             return false;
         }
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?" . $this->tenantWhere());
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -285,7 +285,7 @@ class CampaignService
         if (!$c) {
             return false;
         }
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'cancelled' WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'cancelled' WHERE id = ?" . $this->tenantWhere());
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -307,7 +307,7 @@ class CampaignService
             return ['ok' => false, 'error' => 'Campaign is ' . $campaign['status']];
         }
 
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = 'sending' WHERE id = ?" . $this->tenantWhere());
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -352,17 +352,17 @@ class CampaignService
             $rid = (int) $this->pdo->lastInsertId();
             $delivered = $this->dispatch($channel, $contact, $campaign['subject'] ?? '', $body, $u);
             if ($delivered) {
-                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'delivered', delivered_at = NOW() WHERE id = ?" . $this->tenantSql())->execute(array_merge([$rid], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'delivered', delivered_at = NOW() WHERE id = ?" . $this->tenantWhere())->execute(array_merge([$rid], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 $stats['delivered']++;
             } else {
-                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'failed' WHERE id = ?" . $this->tenantSql())->execute(array_merge([$rid], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+                $this->pdo->prepare("UPDATE marketing_campaign_recipients SET status = 'failed' WHERE id = ?" . $this->tenantWhere())->execute(array_merge([$rid], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 $stats['failed']++;
             }
             $stats['sent']++;
         }
 
         $this->updateStats($id, $stats);
-        $tsql = $this->tenantSql();
+        $tsql = $this->tenantWhere();
         $tparams = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $this->pdo->prepare("UPDATE marketing_campaigns SET total_recipients = ?, status = 'sent', sent_at = NOW(), completed_at = NOW() WHERE id = ?{$tsql}")
             ->execute(array_merge([count($audience), $id], $tparams));
@@ -415,7 +415,7 @@ class CampaignService
 
     public function getAudience(array $criteria, string $audienceType = 'all_users'): array
     {
-        $where = ["status = 'active'", '1=1' . $this->tenantSql()];
+        $where = ["status = 'active'", '1=1' . $this->tenantWhere()];
         $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         switch ($audienceType) {
             case 'by_role':
@@ -624,10 +624,11 @@ class CampaignService
     public function getAllDripCampaigns(int $limit = 50): array
     {
         try {
-            $sql = "SELECT * FROM drip_campaigns" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT ?";
+            $sql = "SELECT * FROM drip_campaigns WHERE 1=1" . $this->tenantWhere() . " ORDER BY created_at DESC LIMIT ?";
             $stmt = $this->pdo->prepare($sql);
-            $params = [$limit];
+            $params = [];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
+            $params[] = $limit;
             $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
@@ -637,7 +638,7 @@ class CampaignService
 
     public function getDripCampaignById(int $id): ?array
     {
-        $sql = "SELECT * FROM drip_campaigns WHERE id = ?" . $this->tenantSql();
+        $sql = "SELECT * FROM drip_campaigns WHERE id = ?" . $this->tenantWhere();
         $stmt = $this->pdo->prepare($sql);
         $params = [$id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
@@ -1143,7 +1144,7 @@ class CampaignService
 
     private function updateDeliveryStatus($deliveryId, $status, $errorMessage = null)
     {
-        $stmt = $this->pdo->prepare("UPDATE campaign_deliveries SET status = ? WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE campaign_deliveries SET status = ? WHERE id = ?" . $this->tenantWhere());
         $params = [$status, $deliveryId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -1151,7 +1152,7 @@ class CampaignService
 
     private function updateCampaignStatus($campaignId, $status, $deliveredCount = 0)
     {
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = ?, total_sent = ?, updated_at = NOW() WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = ?, total_sent = ?, updated_at = NOW() WHERE id = ?" . $this->tenantWhere());
         $params = [$status, $deliveredCount, $campaignId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -1194,7 +1195,7 @@ class CampaignService
         }
 
         try {
-            $stmt = $this->pdo->prepare("UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?" . $this->tenantSql());
+            $stmt = $this->pdo->prepare("UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?" . $this->tenantWhere());
             $params = [$status, $deliveryId];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             return $stmt->execute($params);
@@ -1336,7 +1337,7 @@ class CampaignService
 
     public function getLead(int $leadId): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM marketing_leads WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT * FROM marketing_leads WHERE id = ?" . $this->tenantWhere());
         $params = [$leadId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
@@ -1351,7 +1352,7 @@ class CampaignService
     public function getLeads(array $filters = [], int $limit = 50, int $offset = 0): array
     {
         try {
-            $where = ['1=1' . $this->tenantSql()];
+            $where = ['1=1' . $this->tenantWhere()];
             $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             if (!empty($filters['status'])) {
                 $where[] = 'status = ?';
@@ -1541,7 +1542,7 @@ class CampaignService
 
     private function getTotalLeads(): int
     {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM marketing_leads" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM marketing_leads WHERE 1=1" . $this->tenantWhere());
         if ($this->tenantId() > 1) $stmt->execute([$this->tenantId()]);
         else $stmt->execute();
         return (int)($stmt->fetchColumn() ?? 0);
@@ -1549,7 +1550,7 @@ class CampaignService
 
     private function getNewLeadsToday(): int
     {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM marketing_leads WHERE DATE(created_at) = CURDATE()" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM marketing_leads WHERE DATE(created_at) = CURDATE()" . $this->tenantWhere());
         if ($this->tenantId() > 1) $stmt->execute([$this->tenantId()]);
         else $stmt->execute();
         return (int)($stmt->fetchColumn() ?? 0);
@@ -1557,7 +1558,7 @@ class CampaignService
 
     private function getNewLeadsThisWeek(): int
     {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM marketing_leads WHERE YEARWEEK(created_at) = YEARWEEK(CURDATE())" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as count FROM marketing_leads WHERE YEARWEEK(created_at) = YEARWEEK(CURDATE())" . $this->tenantWhere());
         if ($this->tenantId() > 1) $stmt->execute([$this->tenantId()]);
         else $stmt->execute();
         return (int)($stmt->fetchColumn() ?? 0);
@@ -1567,7 +1568,7 @@ class CampaignService
     {
         $stmt = $this->pdo->prepare("
             SELECT SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as rate
-            FROM marketing_leads" . $this->tenantSql());
+            FROM marketing_leads WHERE 1=1" . $this->tenantWhere());
         if ($this->tenantId() > 1) $stmt->execute([$this->tenantId()]);
         else $stmt->execute();
         return (float)($stmt->fetchColumn() ?? 0);
@@ -1588,7 +1589,7 @@ class CampaignService
 
     private function getLeadSources(): array
     {
-        $stmt = $this->pdo->prepare("SELECT source, COUNT(*) as count FROM marketing_leads GROUP BY source" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT source, COUNT(*) as count FROM marketing_leads WHERE 1=1" . $this->tenantWhere() . " GROUP BY source");
         if ($this->tenantId() > 1) $stmt->execute([$this->tenantId()]);
         else $stmt->execute();
         return $stmt->fetchAll();
@@ -1596,7 +1597,7 @@ class CampaignService
 
     private function getPipelineStages(): array
     {
-        $stmt = $this->pdo->prepare("SELECT status, COUNT(*) as count FROM marketing_leads GROUP BY status" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("SELECT status, COUNT(*) as count FROM marketing_leads WHERE 1=1" . $this->tenantWhere() . " GROUP BY status");
         if ($this->tenantId() > 1) $stmt->execute([$this->tenantId()]);
         else $stmt->execute();
         return $stmt->fetchAll();
@@ -1695,7 +1696,7 @@ class CampaignService
 
     public function updateStatus(int $id, string $status): bool
     {
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = ? WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET status = ? WHERE id = ?" . $this->tenantWhere());
         $params = [$status, $id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         return $stmt->execute($params);
@@ -1713,18 +1714,19 @@ class CampaignService
     public function addRecipient(int $campaignId, array $recipientData): int
     {
         $tid = $this->tenantId();
-        $tenantSql = $tid > 1 ? " AND tenant_id = ?" : "";
-        $params = [$campaignId];
-        if ($tid > 1) $params[] = $tid;
-
-        $stmt = $this->pdo->prepare("INSERT INTO marketing_campaign_recipients (campaign_id, user_id, email, phone, name, channel, status) VALUES (?, ?, ?, ?, ?, ?, 'pending'){$tenantSql}");
-        $stmt->execute(array_merge($params, [$recipientData['user_id'] ?? null, $recipientData['email'] ?? null, $recipientData['phone'] ?? null, $recipientData['name'] ?? null, $recipientData['channel'] ?? 'email']));
+        if ($tid > 1) {
+            $stmt = $this->pdo->prepare("INSERT INTO marketing_campaign_recipients (campaign_id, user_id, email, phone, name, channel, status, tenant_id) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)");
+            $stmt->execute([$campaignId, $recipientData['user_id'] ?? null, $recipientData['email'] ?? null, $recipientData['phone'] ?? null, $recipientData['name'] ?? null, $recipientData['channel'] ?? 'email', $tid]);
+        } else {
+            $stmt = $this->pdo->prepare("INSERT INTO marketing_campaign_recipients (campaign_id, user_id, email, phone, name, channel, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')");
+            $stmt->execute([$campaignId, $recipientData['user_id'] ?? null, $recipientData['email'] ?? null, $recipientData['phone'] ?? null, $recipientData['name'] ?? null, $recipientData['channel'] ?? 'email']);
+        }
         return (int)$this->pdo->lastInsertId();
     }
 
     public function updateStats(int $id, array $stats): void
     {
-        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET sent_count = ?, delivered_count = ?, opened_count = ?, clicked_count = ?, failed_count = ?, unsubscribed_count = ? WHERE id = ?" . $this->tenantSql());
+        $stmt = $this->pdo->prepare("UPDATE marketing_campaigns SET sent_count = ?, delivered_count = ?, opened_count = ?, clicked_count = ?, failed_count = ?, unsubscribed_count = ? WHERE id = ?" . $this->tenantWhere());
         $params = [
             $stats['sent'] ?? 0,
             $stats['delivered'] ?? 0,

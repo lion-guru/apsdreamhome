@@ -127,7 +127,7 @@ class DailyOperationsService
 
     public function getAttendance($employeeId, $month)
     {
-        return $this->fetchAll("SELECT * FROM employee_attendance WHERE employee_id=?" . $this->tenantSql() . " AND DATE_FORMAT(attendance_date,'%Y-%m')=? ORDER BY attendance_date", array_merge([$employeeId, $month], $this->tVal()));
+        return $this->fetchAll("SELECT * FROM employee_attendance WHERE employee_id=? AND DATE_FORMAT(attendance_date,'%Y-%m')=?" . $this->tenantWhere() . " ORDER BY attendance_date", array_merge([$employeeId, $month], $this->tVal()));
     }
 
     public function getMonthlyAttendance($month)
@@ -159,7 +159,7 @@ class DailyOperationsService
 
     public function approveLeave($leaveId, $approverId)
     {
-        $sql = "UPDATE employee_leave_requests SET status='approved',approved_by=?,approval_date=CURDATE() WHERE id=?" . $this->tenantSql();
+        $sql = "UPDATE employee_leave_requests SET status='approved',approved_by=?,approval_date=CURDATE() WHERE id=?" . $this->tenantWhere();
         $params = [$approverId, $leaveId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $this->execute($sql, $params);
@@ -168,7 +168,7 @@ class DailyOperationsService
 
     public function rejectLeave($leaveId, $approverId, $reason)
     {
-        $sql = "UPDATE employee_leave_requests SET status='rejected',approved_by=?,approval_date=CURDATE(),remarks=? WHERE id=?" . $this->tenantSql();
+        $sql = "UPDATE employee_leave_requests SET status='rejected',approved_by=?,approval_date=CURDATE(),remarks=? WHERE id=?" . $this->tenantWhere();
         $params = [$approverId, $reason, $leaveId];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $this->execute($sql, $params);
@@ -214,7 +214,7 @@ class DailyOperationsService
         // Prefer the approved salary_structures row when one exists (either id
         // space — legacy rows use users.id, newer rows use employees.id).
         // Falls back to the legacy CTC formula when no structure is found.
-        $struct = $this->fetchOne("SELECT * FROM salary_structures WHERE employee_id IN (?,?) AND status='active'" . $this->tenantSql() . " ORDER BY effective_date DESC LIMIT 1", array_merge([$empTableId, $employeeId], $this->tVal()));
+        $struct = $this->fetchOne("SELECT * FROM salary_structures WHERE employee_id IN (?,?) AND status='active'" . $this->tenantWhere() . " ORDER BY effective_date DESC LIMIT 1", array_merge([$empTableId, $employeeId], $this->tVal()));
         if ($struct) {
             $basic = round((float)($struct['basic_salary'] ?? 0), 2);
             $hra = round((float)($struct['hra'] ?? 0), 2);
@@ -245,8 +245,8 @@ class DailyOperationsService
         // $empTableId (resolved above from employees.user_id) is authoritative.
         $eid = (int)$empTableId;
         // LOP must see BOTH leave pipelines: backoffice requests AND HR-portal leaves.
-        $leaves = $this->fetchAll("SELECT total_days FROM employee_leave_requests WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantSql(), array_merge([$eid, $month, $year], $this->tVal()));
-        $leaves2 = $this->fetchAll("SELECT total_days FROM employee_leaves WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantSql(), array_merge([$eid, $month, $year], $this->tVal()));
+        $leaves = $this->fetchAll("SELECT total_days FROM employee_leave_requests WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantWhere(), array_merge([$eid, $month, $year], $this->tVal()));
+        $leaves2 = $this->fetchAll("SELECT total_days FROM employee_leaves WHERE employee_id=? AND status='approved' AND MONTH(start_date)=? AND YEAR(start_date)=?" . $this->tenantWhere(), array_merge([$eid, $month, $year], $this->tVal()));
         $lopDays = 0;
         foreach (array_merge($leaves, $leaves2) as $l) $lopDays += (int)$l['total_days'];
 
@@ -269,7 +269,7 @@ class DailyOperationsService
             $periodId = (int)$this->pdo->lastInsertId();
         }
 
-        $existing = $this->fetchOne("SELECT id, status FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?" . $this->tenantSql(), array_merge([$empTableId, $month, $year], $this->tVal()));
+        $existing = $this->fetchOne("SELECT id, status FROM employee_payslips WHERE employee_id=? AND period_month=? AND period_year=?" . $this->tenantWhere(), array_merge([$empTableId, $month, $year], $this->tVal()));
 
         if ($existing) {
             // PAID SLIPS ARE IMMUTABLE - never touch them. One row per
@@ -277,7 +277,7 @@ class DailyOperationsService
             if (($existing['status'] ?? '') === 'paid') {
                 return ['error' => 'Payslip already paid for ' . $month . '/' . $year . ' — paid slips cannot be modified'];
             }
-            $sql = "UPDATE employee_payslips SET basic_salary=?,hra=?,allowances=?,deductions=?,tds=?,pf=?,esi=?,professional_tax=?,net_salary=?,days_present=?,lop_days=?,payroll_period_id=?,status='draft' WHERE id=?" . $this->tenantSql();
+            $sql = "UPDATE employee_payslips SET basic_salary=?,hra=?,allowances=?,deductions=?,tds=?,pf=?,esi=?,professional_tax=?,net_salary=?,days_present=?,lop_days=?,payroll_period_id=?,status='draft' WHERE id=?" . $this->tenantWhere();
             $params = [$basic,$hra,$allowances,$deductions,$tds,$pf,$esi,$pt,$net,$daysPresent,$lopDays,$periodId,$existing['id']];
             $params = array_merge($params, $this->tVal());
             $this->execute($sql, $params);
@@ -306,7 +306,7 @@ class DailyOperationsService
             $empExt = $this->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$employeeId]);
         }
         if (!$empExt) return [];
-        return $this->fetchAll("SELECT * FROM employee_payslips WHERE employee_id=?" . $this->tenantSql() . " ORDER BY period_year DESC,period_month DESC", array_merge([$empExt['id']], $this->tVal()));
+        return $this->fetchAll("SELECT * FROM employee_payslips WHERE employee_id=?" . $this->tenantWhere() . " ORDER BY period_year DESC,period_month DESC", array_merge([$empExt['id']], $this->tVal()));
     }
 
     public function getAllPayslips($month = '', $year = '')
@@ -369,7 +369,7 @@ class DailyOperationsService
 
             $voucherNumber = $txnResult['voucher_number'] ?? null;
 
-            $sql = "UPDATE employee_payslips SET status = 'paid', paid_date = CURDATE(), payment_mode = ?, transaction_ref = ?, paid_by = ? WHERE id = ?" . $this->tenantSql();
+            $sql = "UPDATE employee_payslips SET status = 'paid', paid_date = CURDATE(), payment_mode = ?, transaction_ref = ?, paid_by = ? WHERE id = ?" . $this->tenantWhere();
             $params = [$dbPaymentMode, $voucherNumber, $adminId, $payslipId];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $stmt = $this->pdo->prepare($sql);
@@ -387,7 +387,7 @@ class DailyOperationsService
 
     public function createLead(array $data)
     {
-        $count = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE 1=1" . $this->tenantSql(), $this->tVal());
+        $count = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE 1=1" . $this->tenantWhere(), $this->tVal());
         $num = ($count['cnt'] ?? 0) + 1;
         $leadNumber = 'APS-LD-' . str_pad($num, 4, '0', STR_PAD_LEFT);
         $scoreMap = ['new'=>50,'contacted'=>60,'qualified'=>70,'viewing'=>80,'negotiation'=>90,'closed_won'=>100,'closed_lost'=>0,'on_hold'=>50];
@@ -424,7 +424,7 @@ class DailyOperationsService
         }
         if (!$sets) return false;
         $params[] = $leadId;
-        $sql = "UPDATE lead_pipeline SET " . implode(',',$sets) . " WHERE id=?" . $this->tenantSql();
+        $sql = "UPDATE lead_pipeline SET " . implode(',',$sets) . " WHERE id=?" . $this->tenantWhere();
         $params = array_merge($params, $this->tVal());
         $this->execute($sql, $params);
         return true;
@@ -453,11 +453,11 @@ class DailyOperationsService
 
     public function countLeads(array $filters = [])
     {
-        $sql = "SELECT COUNT(*) AS cnt FROM lead_pipeline" . $this->tenantSql(); $params = $this->tVal();
-        if (!empty($filters['status'])) { $sql .= " WHERE status=?"; $params[]=$filters['status']; }
-        // Wait, the WHERE clause above replaces, need to handle properly
-        // Actually fix: use AND if tenant already in WHERE
-        $sql = "SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE 1=1" . $this->tenantSql();
+
+
+
+
+        $sql = "SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE 1=1" . $this->tenantWhere();
         $params = $this->tVal();
         if (!empty($filters['status'])) { $sql .= " AND status=?"; $params[]=$filters['status']; }
         $row = $this->fetchOne($sql, $params);
@@ -484,7 +484,7 @@ class DailyOperationsService
         }
         $id = $this->execute("INSERT INTO lead_pipeline_activities ($columns) VALUES ($values)", $params);
         if (!empty($data['next_follow_up'])) {
-            $sql = "UPDATE lead_pipeline SET follow_up_date=?,follow_up_count=follow_up_count+1 WHERE id=?" . $this->tenantSql();
+            $sql = "UPDATE lead_pipeline SET follow_up_date=?,follow_up_count=follow_up_count+1 WHERE id=?" . $this->tenantWhere();
             $params = [$data['next_follow_up'], $leadId];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $this->execute($sql, $params);
@@ -508,7 +508,7 @@ class DailyOperationsService
         $sets = "status=?,score=?"; $params = [$newStage, $scoreMap[$newStage]??50];
         if (in_array($newStage, ['closed_won','closed_lost'])) { $sets .= ",closed_date=CURDATE()"; }
         $params[] = $leadId;
-        $sql = "UPDATE lead_pipeline SET $sets WHERE id=?" . $this->tenantSql();
+        $sql = "UPDATE lead_pipeline SET $sets WHERE id=?" . $this->tenantWhere();
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $this->execute($sql, $params);
         $this->addLeadActivity($leadId, ['activity_type'=>'status_change','subject'=>"Stage: $oldStage -> $newStage",'description'=>"Advanced from $oldStage to $newStage",'created_by'=>$lead['assigned_to']??null]);
@@ -517,7 +517,7 @@ class DailyOperationsService
 
     public function getLeadPipelineSummary()
     {
-        $tsql = $this->tenantSql();
+        $tsql = $this->tenantWhere();
         $tparams = $this->tVal();
         $stages = $this->fetchAll("SELECT stage,COUNT(*) AS count,AVG(score) AS avg_score,AVG(DATEDIFF(COALESCE(closed_date,CURDATE()),created_at)) AS avg_days FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY stage ORDER BY FIELD(stage,'new','contacted','qualified','viewing','negotiation','closed_won','closed_lost','on_hold')", $tparams);
         $total = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE 1=1 {$tsql}", $tparams);
@@ -528,7 +528,7 @@ class DailyOperationsService
 
     public function getLeadSummary()
     {
-        $tsql = $this->tenantSql();
+        $tsql = $this->tenantWhere();
         $tparams = $this->tVal();
         return [
             'by_source' => $this->fetchAll("SELECT lead_source,COUNT(*) AS count FROM lead_pipeline WHERE 1=1 {$tsql} GROUP BY lead_source ORDER BY count DESC", $tparams),
@@ -566,8 +566,8 @@ class DailyOperationsService
 
     public function getOperationsLog($date = '', array $filters = [])
     {
-        $sql = "SELECT dol.*,u.name AS assigned_name,c.name AS colony_name FROM daily_operations_log dol LEFT JOIN users u ON dol.assigned_to=u.id{$this->tJoin('u')} LEFT JOIN colonies c ON dol.colony_id=c.id WHERE 1=1" . $this->tenantSql();
-        $params = $this->tVal(); $wh = [];
+        $sql = "SELECT dol.*,u.name AS assigned_name,c.name AS colony_name FROM daily_operations_log dol LEFT JOIN users u ON dol.assigned_to=u.id{$this->tJoin('u')} LEFT JOIN colonies c ON dol.colony_id=c.id WHERE 1=1" . $this->tenantWhereForAlias('dol');
+        $params = array_merge($this->tVal(), $this->tVal()); $wh = [];
         if ($date) { $wh[]="dol.log_date=?"; $params[]=$date; }
         if (!empty($filters['log_type'])) { $wh[]="dol.log_type=?"; $params[]=$filters['log_type']; }
         if (!empty($filters['status'])) { $wh[]="dol.status=?"; $params[]=$filters['status']; }
@@ -580,12 +580,12 @@ class DailyOperationsService
 
     public function getReportList()
     {
-        return $this->fetchAll("SELECT * FROM report_definitions WHERE is_active=1" . $this->tenantSql() . " ORDER BY report_name", $this->tVal());
+        return $this->fetchAll("SELECT * FROM report_definitions WHERE is_active=1" . $this->tenantWhere() . " ORDER BY report_name", $this->tVal());
     }
 
     public function executeReport($reportId, array $params, $executedBy)
     {
-        $report = $this->fetchOne("SELECT * FROM report_definitions WHERE id=?" . $this->tenantSql(), array_merge([$reportId], $this->tVal()));
+        $report = $this->fetchOne("SELECT * FROM report_definitions WHERE id=?" . $this->tenantWhere(), array_merge([$reportId], $this->tVal()));
         if (!$report) return ['error' => 'Report not found'];
         $insertData = $this->tenantInsertData();
         $columns = "report_id,executed_by,parameters_used,status";
@@ -603,18 +603,18 @@ class DailyOperationsService
             foreach ($params as $key => $val) { $sql = str_replace(":$key", "?", $sql); $pdoParams[] = $val; }
             $result = $this->fetchAll($sql, $pdoParams);
             $rowCount = count($result);
-            $this->execute("UPDATE report_executions SET end_time=NOW(),row_count=?,status='completed' WHERE id=?" . $this->tenantSql(), array_merge([$rowCount, $execId], $this->tVal()));
-            $this->execute("UPDATE report_definitions SET last_run_at=NOW() WHERE id=?" . $this->tenantSql(), array_merge([$reportId], $this->tVal()));
+            $this->execute("UPDATE report_executions SET end_time=NOW(),row_count=?,status='completed' WHERE id=?" . $this->tenantWhere(), array_merge([$rowCount, $execId], $this->tVal()));
+            $this->execute("UPDATE report_definitions SET last_run_at=NOW() WHERE id=?" . $this->tenantWhere(), array_merge([$reportId], $this->tVal()));
             return ['rows'=>$result,'row_count'=>$rowCount,'execution_id'=>$execId];
         } catch (\Throwable $e) {
-            $this->execute("UPDATE report_executions SET end_time=NOW(),status='failed',error_message=? WHERE id=?" . $this->tenantSql(), array_merge([$e->getMessage(), $execId], $this->tVal()));
+            $this->execute("UPDATE report_executions SET end_time=NOW(),status='failed',error_message=? WHERE id=?" . $this->tenantWhere(), array_merge([$e->getMessage(), $execId], $this->tVal()));
             return ['error'=>$e->getMessage()];
         }
     }
 
     public function getReportHistory($reportId, $limit = 20)
     {
-        return $this->fetchAll("SELECT re.*,u.name AS executed_by_name FROM report_executions re LEFT JOIN users u ON re.executed_by=u.id{$this->tJoin('u')} WHERE re.report_id=?" . $this->tenantSql() . " ORDER BY re.created_at DESC LIMIT $limit", array_merge($this->tVal(), [$reportId]));
+        return $this->fetchAll("SELECT re.*,u.name AS executed_by_name FROM report_executions re LEFT JOIN users u ON re.executed_by=u.id{$this->tJoin('u')} WHERE re.report_id=?" . $this->tenantWhereForAlias('re') . " ORDER BY re.created_at DESC LIMIT $limit", array_merge($this->tVal(), [$reportId], $this->tVal()));
     }
 
     /* ── DASHBOARD ─────────────────────────────────────── */
@@ -623,7 +623,7 @@ class DailyOperationsService
     {
         $today = date('Y-m-d');
         $month = date('Y-m');
-        $tsql = $this->tenantSql();
+        $tsql = $this->tenantWhere();
         $tparams = $this->tVal();
         $todayOps = $this->fetchOne("SELECT COUNT(*) AS cnt FROM daily_operations_log WHERE log_date=?" . $tsql, array_merge([$today], $tparams));
         $activeLeads = $this->fetchOne("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE stage NOT IN ('closed_won','closed_lost')" . $tsql, $tparams);

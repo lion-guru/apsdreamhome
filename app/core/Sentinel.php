@@ -244,7 +244,11 @@ class Sentinel
         $this->blockedIPs[] = $ip;
         
         // Save to database
-        $stmt = $this->db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at) VALUES (?, ?, NOW())" . $this->tenantSql());
+        if ($this->tenantId() > 1) {
+            $stmt = $this->db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at, tenant_id) VALUES (?, ?, NOW(), ?)");
+        } else {
+            $stmt = $this->db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at) VALUES (?, ?, NOW())");
+        }
         $params = [$ip, 'Automatic security block'];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
         $stmt->execute($params);
