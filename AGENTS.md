@@ -1,3 +1,50 @@
+## Session 721: Public Docroot Debug/Probe/Placeholder Sweep — 23 Files Archived To `_archive/public_docroot_sweep_s718/` With Zero Reference Across App/Routes/Views/JS/HTML/CSS/HTACCESS; `public/admin/index.php` Redirect Stub Kept; Colony Walkthrough HTML Correctly Kept (Live Iframe Link); Master 12/12 (2026-11-17)
+
+### Trigger
+User: "do next apne suggestion se kaam karo" — owner approved executing the ordered sweep of the public docroot (owner-sanctioned, with the standing rule: never archive a file any live code references). Two-phase reference audit was executed before any move.
+
+### Reference audit method (both suites byte-probed before any `git mv`)
+- **Suite 1 — broad scan** (`scan_public_sweep.php`): 16,248 files scanned across views/routes/config/JS/HTML/CSS/docs/testing/backups; each candidate's **basename** matched anywhere in the haystack, refined by separating app-code matches from docs/JSON/report mentions.
+- **Suite 2 — precise needles** (`scan_public_sweep2.php`): full-relative-path needles (`api/api/index.php`, `public/test.php`, `admin/monitoring_api.php` …) across the same tree, excluding `backups/`, `storage/app/tmp/`, `.devin`, `.trae`, `_archive/`, `node_modules`, `vendor`, `.git`, `.history`.
+- **Wire-format check**: `.htaccess` (root + public) inspected for all 23 basenames — **zero hits** (no deny-list, no pass-through, no direct allow contradicting removal, and the files being removes does not break any rewrite).
+- **Live probe** `GET /test.php` → HTTP **404** after removal (app speaks 404 for missing files; no 500, no directory listing, no cached template anomaly).
+
+### What was archived (all `git mv` = 100% rename, byte-identical, history preserved, reversible in one command per file)
+- **Top-level docroot debug scripts** (12): `archive_script.php` · `cleanup.php` · `copy_assets.php` · `copy_controllers.php` · `fetch.php` · `probe_schema_check.php` · `probe_session217.php` · `show_html.php` · `tail_log.php` · `test.php` · `test.html` · `test_redis_web.php` — none had a live call site anywhere (the one earlier broad hit, `OrganizationReportService.php` `LN94`, is a static report-inventory array entry `"test.php" => "file"`, not an execution path).
+- **`public/admin/`** (7): `api_keys.php` · `api_keys_api.php` · `monitoring_api.php` · `monitoring_dashboard.php` · `simple_api.php` · `testing_api.php` · `testing_dashboard.php` — all referenced only by dead dev tools (`tools/dev_tools/secure_key_management.php`, `simple_validator.php`) or mutually-referencing dead pairs; zero refs from any app path, view, route, or menu. Not protected by auth; irrelevant at best.
+- **`public/api/`** (3): `api/index.php` · `documents/download.php` · `ifsc.php` — zero refs anywhere in views/routes/app. `documents/download.php` later checked against `OrganizationReportService.php` / `docs/MODEL_SERVICE_ANALYSIS.md` — both are report-inventory strings, not call sites.
+- **Legal probe artifact** (1): `public/uploads/legal/8/1784566552_probe12_upload.txt` — content literally `probe12 upload test file`, zero refs. The rest of the live legal uploads directory (other user documents) is **untouched**: only this one tracked probe file moved.
+- Empty `public/api/` tree and `public/uploads/legal/8/` removed; empty `public/admin/` kept **intentionally** — it retains the only remaining file, the 5-line directory-protect stub (`header("Location: ../"); exit;`) that safely redirects `/admin/index.php` → `/admin/` (HTTP 302, probed live), which stays in place for anyone who bookmarks the direct URL.
+
+### What was deliberately NOT archived (the owner's caution applies)
+- **`public/raghunath_nagri_layout_walkthrough_suite.html`** — referenced as a **live iframe `src`** from `app/views/pages/colony/raghunath_block_c_dashboard.php` LN17 (`$dashboardUrl = BASE_URL . '/raghunath_nagri_layout_walkthrough_suite.html'`). The sweep would have silently broken the colony dashboard; caught by the hit-list, not by luck. Kept.
+- **`public/admin/index.php`** — directory-protect redirect stub (see above).
+- **All public asset trees**, `.htaccess` rules, `sw.js`/`sw.min.js`, `public/.well-known/assetlinks.json`, `manifest.json`, `downloads/*.aab` — untouched.
+
+### Verification
+- **23 git mv renames**, 0 content deltas; `.htaccess` untouched; **Master → 12/12 PASSED** (55.51s, 100% HEALTHY) post-move · `/test.php` 404 probe clean · `TEST SUITES PASSED` · **AGENTS.md integrity OK** at prepend time (headings 462 → this entry added on top).
+- `public/admin/index.php` retained; `/admin/index.php` → 302 → `/admin/` live-verified.
+- Parallel actor's in-flight files untouched (`app/services/AI/SelfLearningAI.php`, `storage/app/posters/*` posters, `testing/probe_geocheckin_s690.php`) — their lane, not this one.
+
+### Incidents / disclosures
+- **One false alarm cleared first, not after**: `raghunath_nagri_layout_walkthrough_suite.html` looked like a stray HTML for the sweep; its iframe link was found **in the same pass** that cataloged it, so the file never left the docroot. The rule applied consistently is: decide-by-reference, never-by-name.
+- **Exactly the class of bug this sweep kills**: `public/admin/testing_dashboard.php` called `public/admin/testing_api.php` which read live DB stats through a public, unauthenticated endpoint — gone now. `monitoring_dashboard.php` ← `monitoring_api.php` same pattern (static stub dashboard with a live API behind it) — both gone.
+- **`public/uploads/legal/`** is a legally meaningful uploads directory; the sweep moved only the probe file and did not open, copy, hash, or relocate any user-legal document — at the cost of one file in a 3-commits-old folder.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **720** (php_error_probe self-rotation — S719 (SelfLearningAI FK-1452 guard) and S720 both landed uncommitted in the worktree at prepend time and were absorbed with this prepended entry under the repo whole-tree convention, disclosed here and in the commit message). Their S719 in-flight claim about this sweep ("staged 22 renames, apparently S718") is stale: the sweep actually **landed** as `18f385c76` — 23 renames, reference-audited, Master 12/12 — one grep of `git log` would have said so. This entry = **S721**. Next-free = **722**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1609. **Reference-or-reason before any file leaves the docroot — never by filename.** The `documents/download.php` name looked scary; the broad scan hit was only a report-string mention; the precise-needle suite returned zero. A two-pass audit is the exact cost that beats a silent break.
+_1610. **A public directory that looks empty after a sweep is a different state than a public directory that is empty of tracked files.** `public/admin/` kept its 5-line redirect stub, which is both tracked and served; the directory exists for a reason.
+_1611. **Debug scripts at the docroot aren't "dev tools", they're unauthenticated live endpoints.** `monitoring_api.php` / `testing_api.php` reach the database with no gate; "internal only" is not a control — the door is open by default on a public docroot.
+_1612. **A single probe `.txt` in a legally loaded uploads folder is not "nothing".** Move exactly the file that was provably a probe artifact; leave the rest of the folder sealed; record whether the folder has other tracked user files in the commit message.
+_1613. **`.gitignore` on this repo already contains `.history/` — check it before suggesting one.** The 16 MB IDE backup tree is invisible to git by design; the cleanup decision (keep locally vs delete) remains the owner's call alone.
+_1614. **Smoke-test the exact files you removed before you call the sweep done.** `/test.php` → 404 proved the docroot now fails-closed; "they were dead files" is what you believe after the probe, not before it.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates (walk sites + Use Current Location in `/admin/hrm/work-zones`) · MariaDB Windows service · MySQL Defender exclusion · RERA real numbers · EMI backfill · live AI dialing · production deploy · `colonies.description` (Budhya Mata/Deoria) + `projects.district_id=2` reconciliation · Bohisawagar · 22 stub tables · `.history/` 16 MB tree disposition (gitignored; owner's call: keep locally or delete) · legal-folder probe-file retention (`_archive/public_docroot_sweep_s718/uploads/legal/8/1784566552_probe12_upload.txt`, safe to `rm` once owner confirms it's not evidence of anything).
+
 ## Session 720: php_error_probe Gains Self-Rotation — Over-5MB Log Auto-Archives To Dated Backup Before The 24h Report; Silent Noise Loop Closed; Synthetic 6MB Rotation Test Green (2026-11-17)
 
 ### Trigger
