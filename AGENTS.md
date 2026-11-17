@@ -1,3 +1,37 @@
+## Session 705: Buyer-Facing "Most Trusted Real Estate Brand" Superlative Eliminated From About Vision; Dead `why_choose_us_subtitle` Lang Keys Deleted From en+hi — DB Crash-And-Recover Lifecycle Survived, Master 12/12 Post-Recovery (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the public-honesty lane on the About page, the second-highest-trust page after the homepage. A repo-wide content-claims audit (`scripts/audit_content_claims.php` by the parallel actor's phase-2) had flagged two superlative/unverifiable buyer-facing hits this session caught by hand (the audit predates the About Vision rewrite).
+
+### What was found & fixed
+1. **`app/views/pages/about.php` — Vision block, LN758**: "To become the **most trusted** real estate brand in Eastern UP…" → "To become **a trusted** real estate brand in Eastern UP…" — superlative removed while keeping aspirational tone; zero-name, zero-metric claim, fully honest.
+2. **`lang/en.php` `why_choose_us_subtitle`** ("What makes us the most trusted real estate partner") — **zero render sites anywhere in the codebase** (`grep __('why_choose_us_subtitle')` → 0 matches; the only remaining reference is `why_choose_us` the heading key, untouched). Deleted from `lang/en.php`.
+3. **`lang/hi.php` `why_choose_us_subtitle`** (Devanagari mirror) — deleted; both stacks `php -l` clean after deletion.
+
+### Verification (post-DB-recovery, live)
+- `/about` → **HTTP 200, 262,413 B** — needles ABSENT: `most trusted real estate brand`; needles PRESENT: `a trusted real estate brand` · `80+ Families` · `Since 2022` (the two honest numbers used consistently across the sweep).
+- `php -l` clean ×3 · **Master → 12/12 PASSED** (61.86s, 100% HEALTHY) on the very tree that lived through the MariaDB crash-recovery cycle.
+- Commit `9ed806bf8` (exactly 3 files, pushed; pre-commit hook linted all 3) · `origin/main` == `9ed806bf8`.
+- **AGENTS.md integrity OK** at prepend time (456 headings; parallel actor's S704 committed `051f0b560` sits between this lane's prior sessions).
+
+### Honest notes
+- When the DB first went down this session (18:09–18:15), the audits found the live server dead; the parallel actor's S704 repair (aria_log reset, REPAIR TABLE, 36/36 system tables CHECK OK) restored it; nothing in this session touched MariaDB and nothing was at risk — all gating re-ran **after** recovery, on a byte-identical-to-baseline dataset (users 82 · plots 766 · properties 627 · plot_bookings 23 · leads 994 · transactions 5 · wallet_points 39 · blog_posts 12 · colonies 8).
+- **This commit's push also carried the parallel actor's `051f0b560` ("repair runbook RESOLVED post-mortem") to origin** — the hook pushes the whole branch; their commit was ahead of origin when this commit was created. Their authorship and content are untouched; disclosure, not co-authorship.
+- `app/views/languages/en.php:150` (`since 2022`, honest) and `:227` (legacy stack: "Trusted across Uttar Pradesh", honest) left alone — the legacy `views/languages/` stack is consumed only by `Utility\LanguageController` (translation admin desk), never by public pages.
+- ~22 content-claims flags remain **by design**: admin-internal labels, TinyMCE license text, builder-product feature copy, honest `since 2022` markers, and the guard-gated RERA detail renders — documented in the parallel actor's S700 phase-2 sweep; buyer-visible superlatives end-to-end are now zero.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **704** (MySQL/MariaDB full recovery — Aria log reset, master 12/12). This entry = **S705**. Next-free = **706**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1570. **A superlative is a claim even when aspirational** — "most trusted" speaks for the customer's mouth; drop the modifier, keep the aspiration.
+_1571. **A lang key with zero `__()` call sites is not "probably used" — it is dead; grep before you keep it.** The full 2-file deletion survives only because the scan actually returned zero hits.
+_1572. **A dump verified restorable is worth more than a crash journal** — today's DB went down hard and came back Byte-identical because someone actually rehearsed the restore; the repair itself then cost minutes, not data.
+_1573. **A push carries the whole branch — including another lane's resolved work.** When the push hook runs on your commit, it ships ahead-of-origin work; that's the repo's designed behavior — but know it's happening and say so.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (placeholders live) · EMI backfill · live AI dialing · production deploy · Task Scheduler verification (DAILY 15–18) · 22 stub tables · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · **add mysqld to Defender exclusions** (S704 root-cause: lock-scan of `aria_log.00000001`) · register MariaDB as a Windows service · visual-regression baseline refresh.
+
 ## Session 704: MySQL/MariaDB FULLY RECOVERED — app DB never lost; Aria system-log corrupt for 24h was root cause; repair via live REPAIR TABLE + Aria log reset + detached mysqld; Master 12/12 — deploy NOT possible (remote gone), zero-bucket error probe shipped; Content-claims audit fix; backup retention probe shipped (2026-11-17)
 
 ### Trigger
