@@ -73,11 +73,11 @@ $today = date('Y-m-d');
         <i class="fas fa-arrow-left me-1"></i> <?= __('assoc_lead_back', [], 'Back to Leads') ?>
     </a>
 
-    <?php if ($success): ?>
-        <div class="alert alert-success alert-dismissible fade show border-0 rounded-3"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success alert-dismissible fade show border-0 rounded-3"><i class="fas fa-check-circle me-2"></i><?= is_array($success) ? implode('<br>', array_map('htmlspecialchars', $success)) : htmlspecialchars((string)$success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
-    <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger alert-dismissible fade show border-0 rounded-3"><i class="fas fa-exclamation-circle me-2"></i><?= is_array($error) ? implode('<br>', array_map('htmlspecialchars', $error)) : htmlspecialchars((string)$error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <!-- CRM Header -->

@@ -34,11 +34,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <a href="<?= $base ?>/associate/properties" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i><?= __('assoc_ap_my_properties', [], 'My Properties') ?></a>
     </div>
 
-    <?php if ($success): ?>
-        <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i><?= is_array($success) ? implode('<br>', array_map('htmlspecialchars', $success)) : htmlspecialchars((string)$success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
-    <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error ?? '') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i><?= is_array($error) ? implode('<br>', array_map('htmlspecialchars', $error)) : htmlspecialchars((string)$error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     <?php endif; ?>
 
     <form action="<?= $base ?>/associate/add-property" method="POST" enctype="multipart/form-data" class="prop-form">

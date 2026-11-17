@@ -1,3 +1,45 @@
+## Session 708: Associate Portal Audit & Hardening — Sidebar User Role & Email Decoupled, Schedule Syntax Leak Fixed, Native Tools Hub Linked, Flash Message Type-Safety across 7 Views, Complete Hindi Sidebar Localization; Master 12/12 (2026-11-17)
+
+### Trigger
+User request: "assosaite ka view dekho aur sidebar menu dekho koi kami hai to batao sugestion do" followed by "ok karo sab" — comprehensive audit and end-to-end hardening of all 70 Associate Portal views, associate sidebar navigation, and localization.
+
+### What was found & fixed
+1. **Sidebar User Info Card Bug (`app/views/layouts/associate.php:516`)**:
+   - `.user-role` rendered `$_SESSION['user_email'] ?? $_SESSION['associate_role'] ?? 'Associate'`. Because `user_email` is always set in logged-in sessions, it displayed the associate's email address inside the `.user-role` container instead of their rank or role.
+   - Fixed to display the formatted role/rank: `ucfirst(str_replace('_', ' ', $_SESSION['associate_role'] ?? $_SESSION['role'] ?? 'Associate'))` and added a clean muted `.user-email` subtitle line.
+2. **Raw PHP Code Leak in UI (`app/views/associate/schedule.php:156`)**:
+   - `echo "<div class='text-muted' style='font-size:0.65rem;'>+" . (count($dayEvents) - 3) . " <?= __('assoc_sched_more', [], 'more') ?></div>";`
+   - Short tag was embedded inside a double-quoted echo string, causing raw PHP code `<?= __('assoc_sched_more', [], 'more') ?>` to render on the client screen when a calendar day had >3 events.
+   - Fixed to properly concatenate `htmlspecialchars(__('assoc_sched_more', [], 'more'))`.
+3. **External Redirect & Missing Native Tools Hub (`app/Services/PortalMenuService.php:230`)**:
+   - Associate sidebar linked "EMI Calculator" to `/tools-hub` (public website page), breaking out of the Associate Portal layout.
+   - Meanwhile, the native in-portal Smart Tools Hub (`/associate/tools` with EMI calculator, stamp duty calculator, plot size converter, commission calculator) had zero menu presence.
+   - Replaced `/tools-hub` with `/associate/tools` ("Smart Tools & Calculators") with icon `fas fa-toolbox`.
+4. **Fatal TypeError Prevention in `import_preview.php:5`**:
+   - Line 4-5 did `count($rows)` and `count($skipped)` without array guards, causing `TypeError: count(): Argument #1 ($value) must be of type Countable|array, int given` if count integers were passed. Added explicit `is_array()` guards.
+5. **Flash Message Type-Safety across 7 Associate Views**:
+   - `add_lead.php`, `add_property.php`, `edit_property.php`, `import_leads.php`, `lead_detail.php`, `profile.php`, `settings.php`:
+   - Replaced unchecked `htmlspecialchars($error)` and `htmlspecialchars($success)` with array-safe formatters (`is_array($error) ? implode('<br>', array_map('htmlspecialchars', $error)) : htmlspecialchars((string)$error)`), preventing fatal TypeErrors when validation arrays or booleans are passed.
+6. **Complete Hindi Sidebar Localization (`lang/hi.php` & `lang/en.php`)**:
+   - Discovered that all 41 `menu_*` keys and all 8 sidebar section headers (`Main`, `Earnings`, `Network`, `Field Ops`, `Properties`, `Business`, `Tools`, `Reports`) were completely missing in `lang/hi.php` and `lang/en.php`.
+   - Added all 41 `menu_*` translation keys and 8 section headers in both `lang/en.php` and `lang/hi.php`, ensuring that switching language to Hindi renders the full Associate Portal navigation in Hindi.
+7. **Orphan Corrupted Layout Cleanup**:
+   - The obsolete duplicate layout `app/views/associate/layouts/associate.php` (which contained triplicate `/associate/tools` and duplicate `/associate/offers` links and was unused by any controller) was cleanly archived to `_archive/dead_views/associate_layout_legacy.php`.
+
+### Verification (live)
+- `php -l` clean on all 13 modified PHP files.
+- `storage/app/tmp/test_associate_view_renders.php` → 69/69 views rendered with 0 exceptions.
+- `testing/portal_menu_links_probe.php` → 504 checked, 0 broken.
+- `testing/public_pending_rera_probe.php` → 0 source literals flagged, 20 live buyer routes clean.
+- **Master Test Runner** → **12/12 PASSED** (52.56s, 100% HEALTHY).
+- Database baseline check → exact zero drift (users 82, plot_bookings 23, leads 994, transactions 5, mlm_commission_ledger 359, email_queue 14).
+- `scripts/verify_agents_log.php` verified.
+
+### Key lessons
+_1579. **Never place PHP short tags (`<?= ... ?>`) inside double-quoted echo strings** — PHP does not parse nested tags within strings; it emits them verbatim to the browser as raw unrendered code.
+_1580. **Portal sidebars should never link away to public website pages when native in-portal tools exist** — linking `/tools-hub` threw associates out of their authenticated workspace; linking `/associate/tools` keeps them in-portal.
+_1581. **Check translation fallback coverage for dynamic menu systems** — `__('menu_' . $key, null, $label)` gracefully falls back to English, but silently leaves 100% of the sidebar in English when the user selects Hindi unless explicit keys are provided.
+
 ## Session 708: robots.txt & manifest.json De-Localized — Production Host Paths Restored, Devs Hostnames Purged, Hardcoded `E:/backups` Sitemap Error Path Removed; Master 12/12 (2026-11-17)
 
 ### Trigger

@@ -101,15 +101,15 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
     </div>
 
     <!-- Flash Notifications -->
-    <?php if ($success): ?>
+    <?php if (!empty($success)): ?>
         <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($success) ?>
+            <i class="fas fa-check-circle me-2"></i><?= is_array($success) ? implode('<br>', array_map('htmlspecialchars', $success)) : htmlspecialchars((string)$success) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
-    <?php if ($error): ?>
+    <?php if (!empty($error)): ?>
         <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?>
+            <i class="fas fa-exclamation-circle me-2"></i><?= is_array($error) ? implode('<br>', array_map('htmlspecialchars', $error)) : htmlspecialchars((string)$error) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>

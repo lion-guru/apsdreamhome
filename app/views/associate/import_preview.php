@@ -1,6 +1,6 @@
 <?php
-$rows = $rows ?? [];
-$skipped = $skipped ?? [];
+$rows = is_array($rows ?? null) ? $rows : [];
+$skipped = is_array($skipped ?? null) ? $skipped : [];
 $validCount = (int)($valid_count ?? count($rows));
 $skippedCount = (int)($skipped_count ?? count($skipped));
 $token = $token ?? '';

@@ -513,7 +513,10 @@ $GLOBALS['_html_doc_started'] = true;
                 <i class="fas fa-handshake"></i>
             </div>
             <div class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['associate_name'] ?? 'Associate'); ?></div>
-            <div class="user-role"><?php echo htmlspecialchars($_SESSION['user_email'] ?? $_SESSION['associate_role'] ?? 'Associate'); ?></div>
+            <div class="user-role"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $_SESSION['associate_role'] ?? $_SESSION['role'] ?? 'Associate'))); ?></div>
+            <?php if (!empty($_SESSION['user_email'])): ?>
+            <div class="user-email text-white-50" style="font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;"><?php echo htmlspecialchars($_SESSION['user_email']); ?></div>
+            <?php endif; ?>
         </div>
 
         <!-- RBAC-Driven Portal Menu (associate role) -->

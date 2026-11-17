@@ -153,7 +153,7 @@ $today = date('Y-m-d');
                         echo "<div class='cal-event $cls' title='" . htmlspecialchars($ev['title'] ?? '') . "'>" . htmlspecialchars(mb_substr($ev['title'] ?? '', 0, 20)) . "</div>";
                     }
                     if (count($dayEvents) > 3) {
-                        echo "<div class='text-muted' style='font-size:0.65rem;'>+" . (count($dayEvents) - 3) . " <?= __('assoc_sched_more', [], 'more') ?></div>";
+                        echo "<div class='text-muted' style='font-size:0.65rem;'>+" . (count($dayEvents) - 3) . " " . htmlspecialchars(__('assoc_sched_more', [], 'more')) . "</div>";
                     }
                     echo "</div>";
                 }

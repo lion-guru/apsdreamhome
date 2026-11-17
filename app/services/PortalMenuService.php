@@ -227,7 +227,7 @@ class PortalMenuService
             $this->item('documents', 'Business', 'My Documents', '/associate/documents', self::ICON_FOLDER_OPEN),
 
             // Tools & Reports
-            $this->item('emi-calculator', 'Tools', 'EMI Calculator', '/tools-hub', 'fas fa-calculator'),
+            $this->item('tools', 'Tools', 'Smart Tools & Calculators', '/associate/tools', 'fas fa-toolbox'),
             $this->item('id-card', 'Tools', 'My ID Card', '/associate/id-card', self::ICON_ID_CARD),
             $this->item('posters', 'Tools', 'Marketing Posters', '/associate/posters', 'fas fa-image'),
             $this->item('export-earnings', 'Reports', 'Export Earnings', '/associate/export/my-earnings', 'fas fa-file-download'),
