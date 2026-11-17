@@ -138,7 +138,7 @@ $base = BASE_URL;
                 </div>
                 <div class="benefit-item">
                     <i class="fas fa-gift"></i>
-                    <span>Join 10,000+</span>
+                    <span>Est. 2022</span>
                 </div>
             </div>
 

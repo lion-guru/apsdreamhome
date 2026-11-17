@@ -22,7 +22,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
                         <div class="mb-3">
                             <label class="form-label">Customer Name <span class="text-danger">*</span></label>
-                            <input aria-label="Customer name" type="text" name="customer_name" class="form-control" required placeholder="e.g. Rajesh Kumar">
+                            <input aria-label="Customer name" type="text" name="customer_name" class="form-control" required placeholder="Full name">
                         </div>
 
                         <div class="row mb-3">

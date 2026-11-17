@@ -9078,7 +9078,7 @@ return array(
   'assoc_al_back' => 'लीड पर वापस',
   'assoc_al_contact_info' => 'संपर्क जानकारी',
   'assoc_al_full_name' => 'पूरा नाम',
-  'assoc_al_name_placeholder' => 'जैसे राजेश कुमार',
+  'assoc_al_name_placeholder' => 'पूर्ण नाम',
   'assoc_al_phone' => 'फ़ोन नंबर',
   'assoc_al_phone_placeholder' => '10-अंकीय मोबाइल नंबर',
   'assoc_al_email' => 'ईमेल पता',

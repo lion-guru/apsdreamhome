@@ -22,7 +22,7 @@ $bookings = $bookings ?? [];
 
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Customer Name <span >*</span></label>
-                    <input aria-label="Customer name" type="text" name="customer_name" class="aps-cp-form-input" required placeholder="e.g. Rajesh Kumar">
+                    <input aria-label="Customer name" type="text" name="customer_name" class="aps-cp-form-input" required placeholder="Full name">
                 </div>
 
                 <div class="aps-cp-form-row">
