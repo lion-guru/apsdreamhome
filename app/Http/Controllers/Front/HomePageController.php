@@ -344,6 +344,44 @@ class HomePageController extends BaseController
         ]);
     }
 
+    /**
+     * Public Vastu Shastra page - Vedic directional guidance for plot buyers.
+     * Static, self-contained content (previously unrouted view file).
+     */
+    public function vastu()
+    {
+        $this->render('pages/vastu', [
+            'page_title' => 'Vastu Shastra for Homes - APS Dream Home',
+            'page_description' => 'Vastu guidance for plot selection and home direction.',
+        ]);
+    }
+
+    /**
+     * Public company projects portfolio - live `sites` table rows grouped by
+     * state -> district. No invented projects: honestly empty state otherwise.
+     */
+    public function companyProjects()
+    {
+        try {
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+            $projects = $this->db->fetchAll(
+                "SELECT * FROM sites WHERE status IN ('active','completed')" . $tidSql . " ORDER BY state, district",
+                $tidParams
+            ) ?: [];
+            $data['projects'] = $projects;
+        } catch (\Throwable $e) {
+            error_log('Company projects error: ' . $e->getMessage());
+            $data['projects'] = [];
+        }
+        $this->render('pages/company_projects', [
+            'page_title' => 'Our Projects - APS Dream Home',
+            'page_description' => 'Explore APS Dream Home townships across Uttar Pradesh.',
+            'projects' => $data['projects'],
+        ]);
+    }
+
     public function sitemap()
     {
         $this->render('pages/sitemap', [

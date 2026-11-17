@@ -393,6 +393,8 @@ $router->get('/downloads', 'Front\\PageController@downloads');
 $router->get('/under-construction', 'Front\\PageController@underConstruction');
 $router->get('/thank-you', 'Front\\PageController@thankYou');
 $router->get('/customer-reviews', 'Front\\PageController@customerReviews');
+$router->get('/vastu', 'Front\\PageController@vastu');
+$router->get('/company-projects', 'Front\\PageController@companyProjects');
 
 // Buy/Sell/Rent/Invest
 $router->get('/buy', 'Front\\PropertyController@buyProperty');

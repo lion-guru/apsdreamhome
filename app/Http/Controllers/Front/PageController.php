@@ -86,6 +86,16 @@ class PageController extends BaseController
         return $this->homePageController->comingSoon();
     }
 
+    public function vastu()
+    {
+        return $this->homePageController->vastu();
+    }
+
+    public function companyProjects()
+    {
+        return $this->homePageController->companyProjects();
+    }
+
     /* ============================================================
        PROPERTY PAGES (delegates to PropertyPageController)
        ============================================================ */
