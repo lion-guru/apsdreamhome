@@ -1,3 +1,41 @@
+## Session 699: "Join 10,000+" Registration Badge Fabrication Cured; "e.g. Rajesh Kumar" Placeholders Neutralized Across Collection / Add-Lead Forms; en+hi lang Keys Converted; Master 11/11 (2026-11-17)
+
+### Trigger
+The phase-2 honesty sweep fixed the large copy surface (S695/S698 across lang stacks + views) but missed the quick-register benefit bar and four form placeholders that name a representative "typical buyer" persona — **Rajesh Kumar** — the same invented persona as S694. Plus one time-bomb claim: `Join 10,000+` on the public `/register/smart` quick-registration card, a claim that is unverifiable anywhere in `users` (live count = 82).
+
+### What was found & fixed (byte-verified)
+- **`smart_register_phone.php`** (public `/register/smart`): benefit item `<span>Join 10,000+</span>` → `<span>Est. 2022</span>` — same honest badge used across the site; zero new fact asserted (2022 is the incorporation year, already used in the homepage stats bar and footer).
+- **Form placeholders naming Rajesh Kumar** (4 sites):
+  - `app/views/admin/finance/collection-form.php` — `placeholder="e.g. Rajesh Kumar"` → `placeholder="Full name"`
+  - `app/views/agent/collections/create.php` — same swap
+  - `app/views/associate/collections/create.php` — same swap
+  - `app/views/associate/add_lead.php` — already goes through `__('assoc_al_name_placeholder')`; key fixed at the lang level instead
+- **Lang keys**: `assoc_al_name_placeholder` · `en.php` → `'Full name'` (this exact value was independently fixed by the parallel actor's phase-2 sweep and rides in their `6f7de0707`; my edit converged — the file is byte-identical to HEAD now) · **`lang/hi.php`** → `'पूर्ण नाम'` (Devanagari for "Full Name"), applied byte-safely with a UTF-8 aware preg_replace
+- Both stacks `php -l` clean · homepage needles re-verified · **`/register/smart` → HTTP 200, 16,381 B** with needles **PRESENT**: `Est. 2022`, `100% Secure`, `10 Seconds`; **ABSENT**: `Join 10,000+`, `Rajesh Kumar`.
+- **Master → 11/11 PASSED** (52.31s, gates re-run after the parallel actor's S698 landed — clean) · staged strictly by name (5 files; parallel actor's geo-checkin lane + RBAC sidebar + `scripts/seed_work_zones_menu_s699.php` untouched) · commit `948135cc9` pushed, `ls-remote` verified.
+
+### Incidents / disclosures
+- **My `lang/en.php` edit converged with the parallel actor's** phase-2 honesty sweep (same key, same string); git diff on that file prints empty. Only `lang/hi.php` carries a new line — honest, not a co-commit hazard.
+- The `.history/` IDE-backup tree still contains Rajesh Kumar strings; not tracked to the app, not executable, never re-surfaced by any route — excluded per repo precedent.
+- `users` table has 82 rows; `plot_bookings` 23; everything stated publicly this round (`Est. 2022`, users-based placeholders) comes from the same verification posture as the rest of the S694-S697 sweep.
+
+### Honest notes — public surface after this round
+- The full quickly-scanned fabrication surface (S689, S687, S678, S686, S682, S665, S654, S650, S643 …) is now closed end-to-end including the small register-card copy and four form placeholders.
+- `associate/add_lead` placeholder still announces through `__()` and now renders "Full name" / "पूर्ण नाम" in the live page — byte-verified.
+- Nothing else in the public surface contains a name-of-person or an unverified count as a marketing chip as of this probe pass; the audit continues lane by lane.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **698** (PENDING-VERIFICATION RERA / LLM-context guard, `06c09d8e1`). This entry = **S699**. Next-free = **700**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1549. **Claim-of-size must be literally true or honestly reworded — "Join 10,000+" was a direct fabrication** (users=82). A badge is still a claim; the rule under a 180KB scope does not shrink when the text is 5 characters long.
+_1550. **A placeholder is not free of liability either.** `e.g. Rajesh Kumar` was the same invented persona from S694; every buyer-visible copy is a claim surface regardless of whether it looks like a claim or a hint.
+_1551. **Byte-safe Devanagari replace must be regex-anchored with the `u` flag, never a raw byte splice.** `preg_replace('...', $hi, -1, $count)` with the `u` modifier produced exactly one replacement and kept the file loadable.
+_1552. **When two lanes independently fix the same fact, the byte shifts cleanly but the process must disclose it.** My en.php converged with the parallel actor's; git tracked zero bytes for it, and the entry says so — the next actor reads the transcript, not the diff hunks, to rebuild intent.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA numbers (PENDING-VERIFICATION in placeholders, legal desk delivers real ones) · EMI backfill · live AI dialing · production deploy · Task Scheduler verification · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · Analytics v2 widget-grid renderer (owner spec) · audit sweep continuation (remaining surfaces from `scripts/audit_content_claims.php`) · visual-regression baseline refresh.
+
 ## Session 698: PENDING-VERIFICATION RERA placeholder no longer leaks into the AI chain — RAGService colony context now collapses pending values to honest "Legal Desk verification" phrasing; Master 11/11 (2026-11-17)
 
 ### Trigger
