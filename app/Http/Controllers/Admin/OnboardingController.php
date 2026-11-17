@@ -400,11 +400,15 @@ class OnboardingController extends BaseController
         $key = 'onboarding_step_' . $step . '_filled';
         $json = json_encode(['ok' => true]);
         $note = json_encode(['note' => 'Onboarding wizard step completed']);
+        // Never a standalone `key_value_storage` table — it does not exist in any
+        // environment and the write fatal-1054s every time (CI gate, S465).
+        // The closest honest store is service_configs (same config_key/config_value
+        // shape + unique (service_name, config_key) upsert semantics).
         $db->execute("
-            INSERT INTO key_value_storage (tenant_id, config_key, config_value, note, created_at, updated_at)
-            VALUES (?,?,?,?, NOW(), NOW())
+            INSERT INTO service_configs (tenant_id, service_name, config_key, config_value, group_name, description, created_at, updated_at)
+            VALUES (?, 'onboarding', ?, ?, 'onboarding', ?, NOW(), NOW())
             ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), updated_at = NOW()
-        ", [$tid, $key, $json, $note]);
+        ", [$tid, $key, $json, substr($note, 0, 250)]);
     }
 
     private function collectItemsFromPost(): array

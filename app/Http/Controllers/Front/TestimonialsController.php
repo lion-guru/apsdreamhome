@@ -29,7 +29,7 @@ class TestimonialsController extends BaseController
         $stats = ['avg_rating' => 0.0, 'approved_reviews' => 0];
 
         try {
-            $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
+            $tid = $this->tenantId();
             $tidSql = $tid > 1 ? " AND pr.tenant_id = ?" : "";
             $tidParams = $tid > 1 ? [$tid] : [];
 
