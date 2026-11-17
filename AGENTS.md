@@ -1,3 +1,33 @@
+## Session 698: PENDING-VERIFICATION RERA placeholder no longer leaks into the AI chain — RAGService colony context now collapses pending values to honest "Legal Desk verification" phrasing; Master 11/11 (2026-11-17)
+
+### Trigger
+Continuation of the public-honesty lane after the S693 archive deletion and parallel actor's S694–S697 sweeps. An audit of every render path touching `rera_number` found four admin/mobile paths that echo the raw column, but one server-side path that silently fed the S695 S&amp;G placeholder into a buyer-facing LLM prompt.
+
+### What was found
+- S695 seeded `colonies.rera_number = 'PENDING-VERIFICATION'` on all 8 colony rows (legal desk pending; never a real registration). The public views guard `substr($rera, 0, 7) !== 'PENDING'` (projects.php:146, project_detail.php ×2, projects/detail.php:155, properties/detail.php:353) — buyer-facing pages never print it.
+- **BUT `RAGService::detectColonyCandidate()`** builds the AI-context string `- RERA number: <col>` with NO PENDING filter. Every S_AI endpoints consumer that injects `colonyContext()` (SmartAI live replies, lead scoring, RAG search answers) was hand-fed `PENDING-VERIFICATION`, making the model advertise a phantom registration number to the buyer, or hallucinate a plausible one to fill the gap.
+- Live probe of `/api/smart-ai/chat` showed the LLM happened to route to the Legal Desk today (answer was honest), but the source-of-truth string itself was still poisonous — model luck, not a guarantee.
+
+### What was built
+- **`RAGService::publicReraContext(?string $rera): string`** (new private helper): `null`/`''`/`stripos($rera, 'PENDING') === 0` → `'Not registered/available - colony-wise RERA verification available on request at the Legal Desk'`. Any other value passes through unchanged. The colony-context builder calls it instead of inlining the raw column.
+
+### Live verification
+- `php -l` clean · **PHPStan → [OK] No errors** · **Master → 11/11 PASSED** (41.32s) · four sacrificial AI probes (`Suryoday Colony ka RERA number kya hai?` · `Raghunath Nagri RERA details?` · `Which colonies are RERA registered?` · `Budh Bihar Colony RERA approved hai?`) → all HTTP 200, **`PENDING-VERIFICATION` ABSENT in every response**, Legal Desk / up-rera.in / RERA-verification routing present where the question demanded it.
+- No DB writes; no routes; no schema; exactly one service file touched + this entry. Parallel actor's in-flight honesty fixes NOT staged.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **697** (parallel actor, dead home_testimonial_* lang keys deleted). This entry = **S698**. Next-free = **699**.
+
+### Key lessons
+_1545. **A placeholder you can grep is a placeholder you must guard at EVERY consumer, not just the view.** S695 added the PHP `substr()!==PENDING` guard in 4 view files; the AI chain was a consumer nobody checked — the bucket `PENDING-VERIFICATION` persisted as raw prompt text until now.
+_1546. **Model honesty is not a control.** Today's Groq/Gemini answered by routing to the Legal Desk despite the poisoned context; nothing stops tomorrow's model from reciting the placeholder as a real registration number. Fix the data boundary, not the model.
+_1547. **A context builder is a public API surface.** Anything it puts in the system prompt is buyer-visible. Filter at the builder — every downstream consumer inherits the fix for free.
+_1548. **Syntax is not semantics, but `- RERA number: PENDING-VERIFICATION` in a prompt is also a lie.** The literal placeholder string itself fails the auditor reading the wire traffic, even if the LLM paraphrases around it.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (all PENDING-VERIFICATION; legal desk to deliver real ones) · EMI backfill · live AI dialing · production deploy · Task Scheduler verification · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · `home_testimonial_*` remaining consumers check · **audit `/admin/ai/*` admin pages for any `rera_number` rendered unguarded to admins (admins know status, but misleading "RERA Registered" badges on pending rows would confuse operators — needs an admin-session probe)** · content-claims audit — remaining flags all admin-only/local options (verified this round).
+
+
 ## Session 697: Dead `home_testimonial_*` Language Keys Deleted From en+hi — Zero Live References After S694 Homepage Rewrite; Both Stacks Lint Clean; Master 11/11 (2026-11-17)
 
 ### Trigger

@@ -645,7 +645,7 @@ class RAGService
         $context = "- Colony: " . ($row['name'] ?? $match['name']) . "\n"
             . "- Status: " . ($row['status'] ?? 'active') . "\n"
             . "- Location: " . trim(($row['city'] ?? '') . ', ' . ($row['state'] ?? 'Uttar Pradesh'), ", ") . "\n"
-            . "- RERA number: " . ($row['rera_number'] ?? 'Not registered/available') . "\n"
+            . "- RERA number: " . self::publicReraContext($row['rera_number'] ?? null) . "\n"
             . "- Total plots: " . ($row['total_plots'] ?? 'N/A') . "\n"
             . "- Available plots: " . ($row['available_plots'] ?? 'N/A') . "\n"
             . "- Starting price/sqft: ₹" . number_format((float)($row['starting_price'] ?? 0), 2) . "\n"
@@ -654,6 +654,21 @@ class RAGService
         return ['name' => (string)($row['name'] ?? $match['name']), 'context_text' => $context];
     }
 
+    /**
+     * RERA context string safe to expose to the weaker stages of the AI chain.
+     * The pipeline seeds colonies with rera_number = 'PENDING-VERIFICATION' as an
+     * audit placeholder for rows awaiting the legal-desk certificate. Presenting
+     * that literal to a buyer is meaningless, so pending-prefixed values collapse
+     * to the honest "verification available on request" phrasing instead.
+     */
+    private static function publicReraContext(?string $rera): string
+    {
+        $rera = trim((string)($rera ?? ''));
+        if ($rera === '' || stripos($rera, 'PENDING') === 0) {
+            return 'Not registered/available - colony-wise RERA verification available on request at the Legal Desk';
+        }
+        return $rera;
+    }
     /**
      * Cosine similarity between two vectors
      */
