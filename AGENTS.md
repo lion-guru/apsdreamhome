@@ -1,3 +1,41 @@
+## Session 708: robots.txt & manifest.json De-Localized — Production Host Paths Restored, Devs Hostnames Purged, Hardcoded `E:/backups` Sitemap Error Path Removed; Master 12/12 (2026-11-17)
+
+### Trigger
+User: "do next" — final sweep of the public production-readiness surface. Three previously-unreviewed public-facing config files shipped values that are only coherent on a `localhost/apsdreamhome` subfolder dev install and actively poisoning to production crawlers/installations.
+
+### What was found & fixed (all byte-probed before/after)
+1. **`robots.txt`** — served at `/robots.txt` with values that only make sense on `localhost/apsdreamhome/`:
+   - `Allow: /` + `Disallow: /apsdreamhome/admin/` etc. — in production (domain root), these disallow directives point at non-existent paths and leave real `/admin/`, `/user/`, `/api/`, `/testing/` **unprotected**.
+   - `Sitemap: http://localhost/apsdreamhome/sitemap.xml` — Googlebot following this would index the dev box.
+   - Rewritten with root-absolute production semantics: `/admin/`, `/user/`, `/api/`, `/testing/` disallowed at the domain root, `Sitemap: https://apsdreamhome.com/sitemap.xml`. Relative robots resolves identically under any host that serves the app at the root.
+2. **`public/manifest.json`** (PWA manifest — HTTP 200, 540 B) — `start_url: "/apsdreamhome/"` and icon paths `/apsdreamhome/assets/images/logo-*.png` — broken on any production host with a root-level docroot. Rewritten:
+   - `start_url: "./"` — resolves to the manifest's own directory; opens in both dev-subfolder and production-domain deployments.
+   - Icons: `assets/images/logo-192.png` + `logo-512.png` — relative paths, both resolve **200** under dev and production path semantics; files verified present (`public/assets/images/...` — TRUE).
+   - Description honest-neutral; name/short_name unchanged.
+3. **`app/Http/Controllers/Api/SitemapController.php` LN84** — hardcoded `error_log(..., 3, 'E:/backups/apsdreamhome/sitemap_err.log');` — a machine-specific path that resolves on the original author's PC only (no `E:/` exists here). Replaced with plain `error_log()` so failures go to the configured `php.ini` error log like every other controller path. `php -l` clean.
+4. Verified by probe: `/manifest.json` — `start_url` reads `./`, icons relative, `/apsdreamhome/` prefix ABSENT · `/robots.txt` served with production root paths · icon URLs → HTTP 200/200.
+
+### Verification
+- `php -l` clean ×3 · **Master → 12/12 PASSED** (52.87s, 100% HEALTHY) · commit `b466030d9` (exactly 3 files, pushed, ls-remote verified) · **AGENTS.md integrity OK** at prepend time (457 headings).
+
+### Incidents / disclosures
+- **My staged set was force-unstaged by a parallel whole-tree commit mid-flight** — the staging was wiped when `git restore --staged .` + their `.gitignore` commit `13cfcd366` landed between my staging and commit. **No content lost**: the diff persisted in the worktree and was re-staged and committed. Disclosed as lane hygiene, not a fault accusation — but the parallel actor's whole-tree commit pattern can and did consume another actor's staged state; until it stops, stage-and-commit in one shot and re-verify `git diff --cached --name-only` before hitting `git commit`.
+- Parallel actor also created and pushed `13cfcd366` (`.gitignore` "scratch storage/app/tmp/ excluded"); their file and `_archive/dead_views/associate_layout_legacy.php` included — none of my three files present (verified `git show --name-only 13cfcd366` → `.gitignore` + legacy view only).
+- No RERA/colony numbers invented; no money columns touched; no schema changes; no routes registered.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **707** (S707 bohisawagar entry); their mid-flight work (S706/S707-classified mobile Work Zones) is already committed (`5af44c4d1` holds `S706`). This entry = **S708**. Next-free = **709**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1579. **Any config whose hardcoded value is `localhost` or a subfolder prefix is unshipped by definition** — a static `robots.txt` cannot autodetect the production host; the disallow paths must be written for the production root, and the sitemap target must be the production URL. Absolute URLs beat relative fantasies every time.
+_1580. **Manifest `start_url` and icon paths are parsed as relative** — `./` + relative icon keys work under every mount path (`/` or `/apsdreamhome/`); `/apsdreamhome/...` anchors work nowhere else.
+_1581. **`E:/backups/...` in code is a developer-machine ghost** — machine-specific paths in `error_log()` silently drop real failures into an unwritable void; plain `error_log()` integrates with the server's own log discipline (`php_error.log`, Task Scheduler task 18 probe included).
+_1582. **`git diff --cached --name-only` must be the gate between staging and commit, every time** — in a repo with a whole-tree-committing parallel actor, a clean-emptied index between `git add` and `git commit` will produce "no changes to commit" and a manual lint-out of your own files that looks like the linter failed but isn't.
+_1583. **A whole-tree commit pattern that consumes another actor's staged state is a workflow defect** — every new whole-tree commit that includes a file outside its stated scope deserves the same scrutiny: 3 files nobody asked for, a `.gitignore` nobody watched get born, and my lost index in the same pass.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · MySQL repair closure (`aria_log.bak` drop after 7 days) · Defender exclusion for mysqld · register MariaDB as Windows service · 22 stub tables · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · visual-regression baseline refresh · `Bohisawagar` acquisition decision.
+
 ## Session 707: `/project-locations/bohisawagar` Fabricated-Specs Standalone Page Rewritten To Honest "Upcoming Township" Partial In The Colony SEO Family — Invented ₹9,50,000 Price / 25 Acres / 200 Units / March 2025 Possession All Removed, Colony Does Not Exist Anywhere In `colonies` Or `projects`; Master 12/12 (2026-11-17)
 
 ### Trigger
