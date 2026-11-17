@@ -1,3 +1,49 @@
+## Session 680: Public Fabrication Sweep Continued — Fake Student Testimonials Deleted From `/careers` (Invented Priya Sharma / Rahul Kumar / Anjali Singh With Named Colleges & Quotes), "Registered & Certified" → "Registered & Compliant" On `/about`, "Certified Agent" / "Premium Partner" → "Verified Partner" / "Official Partner" On `/become-associate`; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the public-honesty lane. A wider needle sweep (`No.1`, `Certified`, `Award`, `trusted by`, `testimonial`, `guarantee`) found three more live fabricated claims, all fixed and byte-verified.
+
+### What was found & fixed
+1. **`/careers` — invented student testimonials** (`app/views/pages/careers.php`, LN409–453 + JS LN587–608):
+   - Three named students with invented quotes and named colleges: **Priya Sharma** (BBA, Gorakhpur), **Rahul Kumar** (MBA, Lucknow), **Anjali Singh** (B.Com, Deoria) — none exist in `team_members`/`users`, none were ever a student at this company, and the auto-rotating carousel displayed them to every visitor.
+   - **Fix**: the fake carousel is deleted entirely (markup + `showStudentTestimonial`/`nextStudentTestimonial`/`prevStudentTestimonial` + 5-second `setInterval` auto-rotate JS) and replaced with an honest **Student Internship Program** card (title/desc/4 checkpoints via `__()` inline defaults — the file never used lang keys; students program is real, non-fee-based, mentorship-included).
+2. **`/about` — "Registered & Certified" heading** (`LN1021`): CIN `U70109UP2022PTC163047`, ROC Kanpur, and the Colony-wise RERA "verification on request" card are all honest — only the word "Certified" implied third-party certification that does not exist. Now **"Registered & Compliant"** (same-length swap).
+3. **`/become-associate` — certification role copy**: hero line "Premium **Certified** APS Dream Home Agent" → "**Verified** APS Dream Home Partner"; the 3-D ID-card back read "**Certified Agent**" / "**Premium Partner**" → "**Verified Partner**" / "**Official Partner**". No actual third-party certification program exists on this page — plain honest role titles.
+
+### Live verification (byte-level needles)
+- `/careers` → 200, 255,371 B — `Priya Sharma` ABSENT · `Rahul Kumar` ABSENT · `Anjali Singh` ABSENT · `student_testimonial` keys ABSENT · `Student Internship Program` YES · `What Students Say` ABSENT.
+- `/about` → 200, 262,424 B — `Compliant</span>` YES · `Certified</span>` ABSENT · `Registered & ` YES · `Priya Sharma` ABSENT.
+- `/become-associate` → 200, 207,633 B — `Verified APS Dream Home Partner` YES · `Verified Partner` YES · `Official Partner` YES · `Certified Agent` / `Certified APS` ABSENT.
+
+### Verification
+- `php -l` clean ×3 · **Master → 11/11 PASSED** (52.54s, 100% HEALTHY) · **PHPStan**: my files clean — whole tree still red only on parallel actor `GstService.php:155` (their lane, untouched).
+- **AGENTS.md integrity OK** at prepend time.
+- Commit `6a12ead7d` (3 files, pushed, `ls-remote` verified).
+- No schema, no routes, no data, no lang files touched (this view file only uses inline `__()` defaults — no keys were invented).
+
+### Residual site-wide fabrication scan (post-fix)
+`Select-String -Path "app/views/pages/*.php" -Pattern "No. ?1|#1|ISO|Award|certified|1000+|5000+|testimonial|trusted by"` returns **zero live-page hits** outside of:
+- `pages/index.php` LN32/396 — dead orphan (`happy_clients => '1000+'`), no controller renders it, pending the owner's orphan-view decision — NOT touched.
+- CSS class names like `.cert-card` / `.cert-icon` (styling hooks, not claims) and `about.php` JSON-LD "RERA-registered plots" already neutralised earlier to "RERA verification with clear titles" (S577 lineage).
+
+### What this does NOT do
+- No ESLint/axe walk of `/careers` after the JS deletion (the whole block was removed; no new JS shipped).
+- The Student Apply modal flow itself is untouched — only the testimonial section above it was removed.
+- Parallel actor still holds `app/services/*.php` in-flight (NOT staged, NOT committed) — `daily_operations`, `campaign`, `iot`, etc. untouched.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **678** (`/customer-reviews`) and **679 is S679 (this lane, /team + /interior-design)**. This entry = **S680**. Next-free = **681**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1489. **An auto-rotating marquee of invented quotes is the worst fabrication class — it looks like social proof, names real-seeming people, campuses and cities, and nobody ever checks.** Delete the carousel machine, not just the quotes: markup + JS + interval, or the next revision resurrects "Priya".
+_1490. **"Certified" is always an external claim; "Compliant" / "Registered" are the corporate-honest words.** A CIN and ROC registration can truthfully be stated "Registered" — but "Certified" was invented to sell; replace the adjective, not the whole reality.
+_1491. **Role copy on membership funnels must clear the same honesty bar as marketing stats.** "Premium Certified Agent" implied a certification the company has never issued externally; "Verified Partner / Official Partner" conveys the same prestige honestly.
+_1492. **Removing content must not orphan its engine.** The carousel's JS (`showStudentTestimonial`, 5s `setInterval`) was deleted in the same edit as its markup — code you can't see is code you forget, and it rots into console errors.
+_1493. **`Select-String` on PowerShell is the honesty gate** — it enumerates every remaining need-string in one pass; "no live-page hits" is a claim only earned AFTER you delete the hits, not before.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (all NULL — never fabricate) · EMI backfill for 20 historical bookings · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views decision (includes `index.php` 1000+) · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane).
+
 ## Session 679: Public `/team` and `/interior-design` Fabricated Marketing Stats Eliminated — Team Numbers Now Computed Live In Controller (8 Members / 101 Combined Years Live), Interior Design Rewritten To Honest Township Metrics, en+hi Lang Keys Added; Master 11/11 (2026-11-17)
 
 ### Trigger
