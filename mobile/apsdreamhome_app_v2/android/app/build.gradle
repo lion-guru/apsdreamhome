@@ -104,6 +104,11 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
+            // Debug builds install side-by-side with the production app
+            // (different signature + different package id) instead of
+            // replacing it via INSTALL_FAILED_UPDATE_INCOMPATIBLE.
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
         }
     }
 }
