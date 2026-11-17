@@ -487,6 +487,10 @@
                         <label class="form-label fw-semibold"><?= __('student_motivation', null, 'Why do you want to join?') ?></label>
                         <textarea aria-label="Motivation" class="form-control" name="motivation" rows="3" placeholder="Tell us about your interest in real estate..."></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold"><?= __('student_suggestion', null, 'Your suggestion (optional)') ?></label>
+                        <textarea aria-label="Suggestion" class="form-control" name="suggestion" rows="2" placeholder="A suggestion about the program, the team, or the website?"></textarea>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer border-top-0 px-4 pb-4">
@@ -562,7 +566,7 @@ document.getElementById('studentSubmitBtn')?.addEventListener('click', function(
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
 
-    fetch('<?= BASE_URL ?>/careers/submit-application', { method: 'POST', body: formData })
+    fetch('<?= BASE_URL ?>/program-application', { method: 'POST', body: formData })
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.success) {

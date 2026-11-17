@@ -5796,6 +5796,11 @@ $router->get('/property-workflow/schedule-visit/{id}', 'Property\\PropertyWorkfl
 // Admin Report Center (Reports\ReportController)
 $router->get('/admin/report-center', 'App\\Http\\Controllers\\Reports\\ReportController@dashboard');
 
+// Public programs intake — Student Internship Program + Nari Shakti (S681)
+$router->post('/program-application', 'Front\\ProgramApplicationController@store');
+$router->get('/admin/programs/applications', 'App\\Http\\Controllers\\Admin\\ProgramApplicationController@index');
+$router->post('/admin/programs/applications/{id}/status', 'App\\Http\\Controllers\\Admin\\ProgramApplicationController@updateStatus');
+
 // Careers Management (Career\CareerController)
 $router->get('/careers', 'Career\\CareerController@index');
 $router->post('/careers/submit-application', 'Career\\CareerController@submitApplication');

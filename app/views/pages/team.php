@@ -523,7 +523,7 @@ foreach ($team_members ?? [] as $tm) {
                         </div>
                     </div>
                 </div>
-                <a href="<?= BASE_URL ?>/contact" class="btn btn-lg btn-outline-danger mt-4 rounded-pill"><i class="fas fa-fist-raised me-2"></i>Join Nari Shakti</a>
+                <button class="btn btn-lg btn-outline-danger mt-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#nariShaktiModal"><i class="fas fa-fist-raised me-2"></i>Join Nari Shakti</button>
             </div>
             <div class="col-lg-6">
                 <div class="row g-3">
@@ -794,6 +794,94 @@ foreach ($team_members ?? [] as $tm) {
         </div>
     </div>
 </section>
+
+<!-- NARI SHAKTI APPLICATION MODAL -->
+<div class="modal fade" id="nariShaktiModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header text-white" style="background:#dc2626">
+                <h5 class="modal-title"><i class="fas fa-fist-raised me-2"></i>Join Nari Shakti</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">APS Dream Home is looking for women who want to build a career in real estate — flexible hours, free training, no joining fee. Fill in your details and our HR team will call you.</p>
+                <form id="nariShaktiForm" novalidate>
+                    <input type="hidden" name="program_type" value="nari_shakti">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                            <input aria-label="Name" type="text" class="form-control" name="name" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
+                            <input aria-label="Phone" type="tel" class="form-control" name="phone" placeholder="9876543210" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                            <input aria-label="Email" type="email" class="form-control" name="email" placeholder="you@example.com" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">City / District</label>
+                            <input aria-label="City" type="text" class="form-control" name="city" placeholder="Gorakhpur / Lucknow / ...">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">How would you like to contribute?</label>
+                        <textarea aria-label="Motivation" class="form-control" name="motivation" rows="3" placeholder="Work from home, site visits, lead generation, social selling..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Your suggestion (optional)</label>
+                        <textarea aria-label="Suggestion" class="form-control" name="suggestion" rows="2" placeholder="Any suggestion about the program, the team, or the website?"></textarea>
+                    </div>
+                </form>
+                <div class="text-center d-none" id="nariShaktiSuccess">
+                    <i class="fas fa-check-circle text-success display-5 mb-3"></i>
+                    <h5>Application received!</h5>
+                    <p class="text-muted mb-0">Our HR team will call you within 24 working hours.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 px-4 pb-4">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn px-4 text-white" style="background:#dc2626" id="nariShaktiSubmitBtn">
+                    <i class="fas fa-paper-plane me-1"></i>Submit Application
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var nariBtn = document.getElementById('nariShaktiSubmitBtn');
+if (nariBtn) {
+    nariBtn.addEventListener('click', function () {
+        var form = document.getElementById('nariShaktiForm');
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        var formData = new FormData(form);
+        var csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+        formData.append('csrf_token', csrfToken);
+        var btn = this;
+        var orig = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+        fetch('<?= BASE_URL ?>/program-application', { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                form.reset();
+                document.getElementById('nariShaktiSuccess').classList.remove('d-none');
+                document.getElementById('nariShaktiForm').classList.add('d-none');
+                btn.classList.add('d-none');
+            } else {
+                alert(data.message || data.error || 'Something went wrong. Please try again.');
+            }
+        })
+        .catch(function() { alert('Network error. Please try again.'); })
+        .finally(function() { btn.disabled = false; btn.innerHTML = orig; });
+    });
+}
+</script>
 
 <script>
 document.querySelectorAll('.filter-btn').forEach(btn => {
