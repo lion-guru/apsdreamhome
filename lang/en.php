@@ -1806,7 +1806,6 @@ return array(
   'why_choose_transparent' => 'Transparent Pricing',
   'why_choose_transparent_desc' => 'No hidden charges. What you see is what you pay — clear documentation always.',
   'why_choose_us' => 'Why Choose Us',
-  'why_choose_us_subtitle' => 'What makes us the most trusted real estate partner',
   'why_invest' => 'Why Real Estate?',
   'why_invest_subtitle' => 'Compare real estate with other investment options — results speak louder than words!',
   'why_invest_title' => 'Land, Plot ya Property Mein Paisa Kyo Lagayein?',

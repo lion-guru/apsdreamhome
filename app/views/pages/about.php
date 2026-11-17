@@ -755,7 +755,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         <i class="fas fa-eye"></i>
                     </div>
                     <h3 class="fs-4">Our Vision</h3>
-                    <p>To become the most trusted real estate brand in Eastern UP, known for integrity, quality 
+                    <p>To become a trusted real estate brand in Eastern UP, known for integrity, quality 
                     construction, and community development. We envision thriving neighborhoods where families 
                     grow, children play, and communities flourish.</p>
                 </div>
