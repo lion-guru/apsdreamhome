@@ -40,7 +40,7 @@ _1579. **Never place PHP short tags (`<?= ... ?>`) inside double-quoted echo str
 _1580. **Portal sidebars should never link away to public website pages when native in-portal tools exist** — linking `/tools-hub` threw associates out of their authenticated workspace; linking `/associate/tools` keeps them in-portal.
 _1581. **Check translation fallback coverage for dynamic menu systems** — `__('menu_' . $key, null, $label)` gracefully falls back to English, but silently leaves 100% of the sidebar in English when the user selects Hindi unless explicit keys are provided.
 
-## Session 708: robots.txt & manifest.json De-Localized — Production Host Paths Restored, Devs Hostnames Purged, Hardcoded `E:/backups` Sitemap Error Path Removed; Master 12/12 (2026-11-17)
+## Session 709: robots.txt & manifest.json De-Localized — Production Host Paths Restored, Devs Hostnames Purged, Hardcoded `E:/backups` Sitemap Error Path Removed; Master 12/12 (2026-11-17)
 
 ### Trigger
 User: "do next" — final sweep of the public production-readiness surface. Three previously-unreviewed public-facing config files shipped values that are only coherent on a `localhost/apsdreamhome` subfolder dev install and actively poisoning to production crawlers/installations.
@@ -66,7 +66,7 @@ User: "do next" — final sweep of the public production-readiness surface. Thre
 - No RERA/colony numbers invented; no money columns touched; no schema changes; no routes registered.
 
 ### AGENTS.md numbering (Rule 4)
-Parallel actor holds headings through **707** (S707 bohisawagar entry); their mid-flight work (S706/S707-classified mobile Work Zones) is already committed (`5af44c4d1` holds `S706`). This entry = **S708**. Next-free = **709**. Commit gated by `php scripts/verify_agents_log.php`.
+Parallel actor holds headings through **708** (associate portal audit, prepended mid-round). This entry = **S709**. Next-free = **710**. Commit gated by `php scripts/verify_agents_log.php`.
 
 ### Key lessons
 _1579. **Any config whose hardcoded value is `localhost` or a subfolder prefix is unshipped by definition** — a static `robots.txt` cannot autodetect the production host; the disallow paths must be written for the production root, and the sitemap target must be the production URL. Absolute URLs beat relative fantasies every time.
