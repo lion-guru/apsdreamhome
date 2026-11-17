@@ -1,3 +1,33 @@
+## Session 697: Dead `home_testimonial_*` Language Keys Deleted From en+hi — Zero Live References After S694 Homepage Rewrite; Both Stacks Lint Clean; Master 11/11 (2026-11-17)
+
+### Trigger
+S694 removed the homepage render path for three fabricated buyer personas but left the language keys in place, keyed "stale, kept per hard-delete decision". A repo-wide scan (PHP-based, covers views/controllers/scripts/config/database, excluding `lang/` itself and the untracked IDE `.history/` backup tree) returned **zero** hits for every `home_testimonial*` key — they were confirmed dead and deleted.
+
+### What was deleted
+- **`lang/en.php`** — `home_testimonials`, `home_testimonial_1..3`, `home_testimonial_tick_1..4`, `home_testimonial_1..3_name`, `home_testimonial_1..3_location` (10 lines removed).
+- **`lang/hi.php`** — the same 10 keys in Devanagari (`home_testimonial_1`: "सूर्योदय कॉलोनी में एक प्लॉट खरीदा...", `home_testimonial_2`: "उत्कृष्ट सेवा!...", `home_testimonial_3`: "बेहतरीन निवेश का अवसर!..." etc.).
+- **`home_testimonials_badge` KEPT** — the one key the honest S694 verified-reviews strip still renders (LN2133 of `app/views/pages/home.php`).
+
+### Verification
+- `php -l` clean on both stacks · Homepage HTTP 200 **325,955 B** — needles ABSENT: `Rajesh Kumar` · `Priya Singh` · `Amit Verma` · raw `home_testimonial` / `home_testimonials_badge` tokens · needles PRESENT: `Honest Reviews, Straight From Buyers` · `Read Verified Reviews`.
+- **Master → 11/11 PASSED** (46.02s) · staged strictly by name (`lang/en.php`, `lang/hi.php`) · commit `8e79bf18a` pushed, `ls-remote` verified · **AGENTS.md integrity OK** at prepend time (448 headings).
+- Only `.history`/IDE backups reference the deleted keys; not executable, not committed to this lane.
+
+### Incidents / disclosures
+- A first deletion pass used a broken regex (`\d+` after `home_testimonial` without the underscore) and removed only the tick/name/location keys, leaving `home_testimonial_1..3` and `home_testimonials` intact; caught by the same verification step and finished in a second, correct pass — both passes were followed by `php -l` and a homepage probe.
+- Megatest health green; no DB touched; no routes touched; no views touched.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **696** (/testimonials rewire, `d97ce2fe0`). This entry = **S697**. Next-free = **698**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1542. **A key with zero references is delete-ready — but the grep must cover every runtime consumer, not just views.** A PHP recursive scan with the lang stacks excluded is the honest gate; PowerShell one-liners silently time out on huge trees.
+_1543. **Verify after delete, not before.** First pass left 4 keys behind with "success" printed; only the post-delete grep caught it.
+_1544. **Deleting dead keys collapses attack surface for fakery.** With no `home_testimonial_1` anywhere, no future dev can accidentally re-render "Rajesh Kumar" from a stale string.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA verification (numbers pending — placeholders live until legal desk delivers) · EMI backfill · live AI dialing · production deploy · Task Scheduler verification · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · Analytics v2 widget-grid renderer · content-claims audit (`scripts/audit_content_claims.php` exists now, untracked).
+
 ## Session 696: Fabricated `/testimonials` Public Page Rewired End-To-End To Live Approved `property_reviews` — 15 Invented Buyer Personas (Rameshwar Prasad / Kamala Devi / Shyam Sundar / Ganga Tripathi) Deleted After Byte-Backup; Submit Form Now Login-Gated + Property-Scoped + Moderation-Pending; Master 11/11 (2026-11-17)
 
 ### Trigger
