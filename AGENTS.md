@@ -1,3 +1,42 @@
+## Session 696: Fabricated `/testimonials` Public Page Rewired End-To-End To Live Approved `property_reviews` — 15 Invented Buyer Personas (Rameshwar Prasad / Kamala Devi / Shyam Sundar / Ganga Tripathi) Deleted After Byte-Backup; Submit Form Now Login-Gated + Property-Scoped + Moderation-Pending; Master 11/11 (2026-11-17)
+
+### Trigger
+Roadmap item from S694: the last fabricated-social-proof surface in the app — `/testimonials` wired to the `testimonials` table (15 rows of invented first-time-buyer praise: "Excellent service and transparent", "Best real estate company in Gorakhpur", "Highly recommend!") with placeholder avatars and zero relation to any real user, reviewer or purchase. The homepage nav links it via `nav_testimonials`.
+
+### What was found & fixed
+- **`TestimonialsController@index`** (Front) rewritten to the live `property_reviews` contract (the S678 `/customer-reviews` pattern): `approved`-only, joined to `properties` for the colony/project context, anonymous reviewers rendered as "Verified Buyer", featured list = rating-≥4 + newest, stats computed from real data (`avg_rating` from `AVG(rating)`, `approved_reviews` from `COUNT(*)`); honest empty state preserved. No references to `testimonials` remain in the index path.
+- **`TestimonialsController@submit`** rewritten: requires a signed-in session (`$_SESSION['user_id']`, else renders the sign-in gate with `/login?redirect=/testimonials/submit`), explicit CSRF `hash_equals` check, required `property_id` validated against active `properties`, rating clamped to 1–5, content stripped of tags + capped at 2000 chars, writes through `ReviewService::createReview()` with `status='pending'`, `/admin/reviews` moderation desk is the gate to publication.
+- **`pages/testimonials/submit.php`** rewritten to the new contract: login gate when signed-out; property `<select>` (fed from `activeProperties()`) when signed-in; anonymous checkbox ("Post as Verified Buyer"); session-name display; honest "published after moderation" note; rate-limit-friendly copy.
+- **Fabricated rows deleted after byte-backup**: `CREATE TABLE testimonials_s694_pre_verify LIKE testimonials; INSERT ... SELECT * FROM testimonials;` → 15 rows stored; `DELETE FROM testimonials;` → live table now 0 rows (backup table holds the 15 for owner-drop / restore decision).
+- No routes changed; no schema changed; admin desks (`/admin/reviews`) verified live (200, renders property_reviews content incl. the real pending row id=3).
+
+### Live verification (anonymous GET, freshly cleaned browser session)
+- `/testimonials` → **HTTP 200, 203,204 B** — needles PRESENT: `Verified Buyer` · `Great investment opportunity` · `Decent property` · `Share Your Story`. needles ABSENT: `Rameshwar Prasad` · `Kamala Devi` · `Shyam Sundar` · `Ganga Tripathi` · the fabricated text fragments. Byte count matches the S678 `/customer-reviews`-class honest page.
+- `/testimonials/submit` (anonymous) → **HTTP 200, 197,065 B** — sign-in gate needles PRESENT (`Please sign in to leave a review`, `/login?redirect=%2Ftestimonials%2Fsubmit`).
+- Bogus-token POST → **302 Location: /** from the router CSRF gate; **zero rows** written (`property_reviews` count and the pending-row count unchanged).
+- Truncation probe: `property_reviews` = 3 (2 approved seeded on 2026-05-29 + 1 pending seeded that day; all predate this session — verified, none touched); `testimonials` = 0; `testimonials_s694_pre_verify` = 15 (backup intact).
+- **Master → 11/11 PASSED** (72.4s). `php -l` clean ×2. **AGENTS.md integrity OK** at prepend time (446 headings before this entry; parallel actor's S695 prepended mid-round).
+- Staged strictly by name: exactly the controller + view; parallel actor's in-flight files (`RBAC sidebar`, `mobile/app_constants.dart`, `scripts/run_all_crons.php`, `routes/*`, `app/views/admin/hrm/` etc.) untouched and UNSTAGED.
+
+### Incidents / disclosures
+- Parallel actor committed S695 twice mid-round (`0bb777987`, `10ec5c361` — Analytics v2). Their files were excluded from every staging step; exactly my 2 files were staged and committed, twice co-present with their untracked hunks — no co-commit occurred.
+- The pre-existing `testimonials_s694_pre_verify` naming implied a pre-verify drop is intended once the owner confirms; owner-drop decision tracked below.
+- The 3 2026-05-29 demo rows in `property_reviews` were left untouched (they are live public content owned by the schema owner; removing them is not this lane's call).
+- A bogus-token probe showed the router's CSRF gate returning 302 → `/` before the controller runs — consistent with S657/S660's documented behavior; the controller-level `hash_equals` is defense-in-depth, never the sole gate.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **695** (Analytics v2 close-out, `0bb777987`). This entry = **S696**. Next-free = **697**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1537. **A public page fed by a fabricated table is a press release written by nobody.** Every row was deleted, not restyled; the rewire reuses the proven S678 approved-only `property_reviews` contract instead of inventing a parallel moderation path.
+_1538. **Never truncate before the backup exists.** `CREATE TABLE ... LIKE` + `INSERT ... SELECT *` costs 2 seconds; it is the entire rollback story; without it the fix is archaeology.
+_1539. **Anonymous reviewers are a UI decision, not a schema one.** `anonymous=1` rows render as "Verified Buyer" — honest (a person did write this) without naming a stranger; the view and the PTree must agree on that word, neither fabricates.
+_1540. **Sign-in-gated reviews are the strongest social-proof bar a 4-year-old company can honestly ship.** A public "anyone, any property, any words" form invites fiction; requiring an account + property selection + moderation is what makes the numbers on `/customer-reviews` defensible.
+_1541. **A truncated table is not proof any views survived** — `/admin/reviews` had to be re-probed after deletion (200 OK, property_reviews render, empty testimonials list tolerated); verify the readers, not the writer.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (PENDING-VERIFICATION placeholders now live; legal desk delivers real ones) · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification · `testimonials_s694_pre_verify` drop decision · `backups/orphan_views_s686_pre_delete_*.tar` drop decision · 22 zero-reference stub tables decision · `Analytics v2` widget-grid renderer (owner spec) · content-claims audit (`scripts/audit_content_claims.php`, not run).
+
 ## Session 695: Analytics v2 "Feature That 404'd On Every Click" Closed End-To-End — Stub `analytics_dashboards` Widened, Live Readers Rewritten Off Phantom Columns, "New Dashboard" Button + Modal Shipped & Verified Zero-Leftover; PENDING RERA Placeholders Guarded Everywhere; Master 11/11 (2026-11-17)
 
 ### Trigger
