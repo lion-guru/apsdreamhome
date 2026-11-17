@@ -1,3 +1,46 @@
+## Session 684: Hinglish-English Stack Final Fabrication Sweep — "Over 15 Years of Excellence" Claims On Footer / About / Company-Info / API Live Since Company Was Est. 2022; All Seven Sites Rewritten To "4+ Years of Integrated Township Development (Est. 2022)" — Buying/Est. Evidence Of Company; Honest Needles Kept (Founder 15+ Years; Investment-Horizon Dropdown); Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next suggestion do" — continuing the fabrication sweep after S683's tenant sweeper. A full character scan of **both** lang stacks found the one remaining fabricated age-claim family: **"With over 15 years of excellence in real estate"** used in company-age language on public surfaces.
+
+### What was found & fixed
+1. **English stack `lang/en.php`** — three identical fabricated strings, all live:
+   - `LN21 about_company_desc` — renders in mobile API & about sections
+   - `LN355 company_info` — renders in mobile API `MobileFeatureEndpointsController.php LN616` (the `company_info` AST payload the Flutter app consumes)
+   - `LN698 footer_company_desc` — **renders on EVERY public page footer via `footer.php LN61`** (`$sc('footer_about', __('footer_company_desc'))`)
+   All three now say: **"With 4+ years of integrated township development in Uttar Pradesh..."** (consistent with the S678-era "Est. 2022", 4-year reality).
+2. **Hindi stack `lang/hi.php` mirrors** — same three claims in Devanagari:
+   - `LN21 about_company_desc`, `LN353 company_info`, `LN696 footer_company_desc` → now read "4+ वर्षों के एकीकृत टाउनशिप विकास के साथ..."; plus `LN1628 trusted_reliable_desc` was "15+ वर्षों का ईमानदार व्यवहार" → "**4+ वर्षों का ईमानदार व्यवहार और खुश परिवार।**" (matching en.php's "4+ years of honest dealings").
+3. **Verified honest and deliberately KEPT** (do not blanket-delete number "15"):
+   - `leader_exp_1` / `about_leader_1_exp` → "15+ Years Experience" — Founder **Abhaay Singh** genuinely has 15+ years (live team_members). Real claim.
+   - `home_years_15` → "15 Years" — investment-horizon option (5/10/15/20/25) in the tool dropdowns, not a company-age claim.
+   - `investment_calc_desc` / `home_tool_investment_desc` → "5, 10, 15 saal ka growth" — investment-horizon copy.
+   - `home_years_10/20/25` — same family.
+   - `why_choose_15_years` / `why_choose_15_years_desc` — already honest ("4+ Years of Trusted Service / 80+ happy families..."), en.php untouched; hi.php's `why_choose_15_years_desc` was already fixed in S683-era.
+4. **Post-fix `Select-String` needles** — **zero** occurrences of `15 years of excellence`, `over 15 years` in either stack; homepage + about both serve 200 with needles ABSENT (`'over 15 years' present: False`, `'15 years of excellence' present: False`, `'1000+' present: False`).
+
+### Verification
+- `php -l` clean ×2 (en.php, hi.php) · **Master → 11/11 PASSED** (35.23s, 100% HEALTHY) · **AGENTS.md integrity OK** at prepend time.
+- Commit `8496d9d3f` (2 files, pushed, `ls-remote` verified) — exactly `lang/en.php` and `lang/hi.php`; parallel actor's staged S683 suite files (ServiceTenantTrait, Sentinel, 9 services, AGENTS.md) untouched and not co-committed.
+
+### Related (owner-gated / not this round)
+- 15-year claims for **Nari Shakti, founder logos, awards** still exist nowhere on public pages — nothing else in the stack carries calendar fiction.
+- `footer_premium_colonies`, `footer_plots_available` etc. around the footer block are marketing-neutral; untouched.
+- Mobile `company_info` API now reports honest 4+ years to the Flutter app with no code change on the mobile side.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **683** (multi-tenant sweeper). This entry = **S684**. Next-free = **685**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1502. **A key can sound honest in one language and dishonest in another — mirror-check both stacks independently, every pass of the fabrication sweep.** The en.php was S683-era clean; hi.php still carried **four live copies** of the identical "15 years" lie, one of them rendering on every public footer.
+_1503. **Footer about-text is a claim on EVERY page — the most faithful carrier of "how old are you"** — it reached every visitor and the mobile app before a single about-page audit caught it.
+_1504. **Deleting a number is not the fix; replacing it with the verified live fact is** — `4+` with Est.-2022 provenance is the only defensible number for this company today.
+_1505. **"15" is not a forbidden digit; evidence decides** — founder experience (15+) and the 5/10/15-year investment dropdown are honest uses, and the sweep must say so rather than strip indiscriminately.
+_1506. **If a claim would not survive being read aloud to an auditor, it doesn't ship** — "With over 15 years of excellence" said of a 2022 incorporation fails that bar by a decade.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane) · decision on stub-table callers (their S682 report) · student/Nari Shakti HR notification wiring (Twilio-gated).
+
 ## Session 683: Multi-Tenant Scoping Sweeper Across Whole App — 75+ `tenantSql()` x `tVal()` & Broken INSERT Sites Cured in 10 Core Services; `GstService` Method Implemented & PHPStan [OK] Clean Across Whole Tree; Master 11/11 (2026-11-17)
 
 ### Trigger
