@@ -1,3 +1,47 @@
+## Session 674: Cross-Portal Layout-Chrome Audit — Only My S673 Regression Found (Admin Careers Desk Was Rendering In Public Chrome); 9 Admin Methods Locked To Admin Chrome Now; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next" — after S673's public careers fix, the question "aise hi kai public me ho sakta ho gadbad ho" asked for a full-family audit: **which non-public route renders public/wrong chrome, and vice-versa.**
+
+### Audit method (before any edit)
+1. `php` route-parser mirroring `routes/router.php` namespace resolution (8 prefixes: Admin/Auth/Front/Employee/Api/MLM/AI/Property/Tech/Universal/Career/Reports/Marketing) — resolves every handler to its true controller file, loads the file, walks the extends-chain (parse `class X extends Y`, resolve parent via `use` FQCN / same-namespace file / `App\\Http\\Controllers\\` fallback), and takes the FIRST `$this->layout = 'layouts/X'` string it finds in the chain.
+2. Every route bucketed by path prefix: `admin|employee|associate|agent|user|farmer|api|public(=everything else)`, compared against expected chrome (`layouts/admin|employee|associate|agent|customer|farmer|base|n/a`).
+
+### What was found (full sweep)
+- **Admin (11 flagged)** — investigated each:
+  - `/admin/network/tree` → `MLMTreeController` (role-aware by design; admin hits inherit `layouts/admin` from `AdminController`; associates/agents hit `layouts/associate`, others `layouts/base`) — **correct**, not a bug.
+  - `/admin/voice-bot` → `Front\VoiceBotController@adminDashboard` — admin chrome set inside the method at line 85 — walker reported outer `layouts/base` in the file, actual runtime = admin — **correct**.
+  - `/admin/careers/manage*` (9 routes: `manage`, `manage/jobs`, `manage/applications`, `manage/applications/{id}`, `manage/applications/{id}/resume`, `POST manage/applications/{id}/status|delete`, `manage/stats`, `POST manage/export`) — **TRUE FINDING**: my S673 base-layout commit broke these; they were resolving to the constructor's new `layouts/base` → public marketing chrome for HR job-application views. **This was a regression I introduced**; caught by this audit before any user hit a broken HR desk.
+- **Employee (8)** — all `/employee/telecalling/*` staff-desk routes resolve to `Universal\*Controller` with `layouts/admin` — **intentional** (same family as Quick-Call/Universal staff desks, login-gated, admin chrome by design).
+- **User (10)** — `/user/saved-properties`, `/user/favorites`, `/user/transactions`, `/user/profile`, `/user/inquiries` etc. resolve to `layouts/base` — **design decision by the author** (user portal wraps public marketing chrome for those legacy pages; kept, logged, not changed).
+- **Farmer (7)** — `FarmerDashboardController` intentionally sets `layouts/base` on all 6 methods + profile POST — external stakeholder shown public chrome. **Intentional**.
+- **Public (63)** — all login-gated internally or customer-facing by design: `/plots/*` (customer shell), `/marketing/*` (customer shell), `/wallet/*` (associate shell), `/quick-call` (admin chrome, staff tool), `/ai/assistant` (customer shell), `/user/*` (already S673-related). **No visitor-facing page renders wrong chrome.**
+
+### Fix (one file, 9 methods — my S673 regression reverted)
+- `app/Http/Controllers/Career/CareerController.php`: each of the 9 admin methods (`applications`, `applicationDetails`, `updateStatus`, `deleteApplication`, `getApplicationStats`, `getApplications`, `getAvailablePositions`, `downloadResume`, `exportApplications`) now sets `$this->layout = 'layouts/admin';` as the first statement in the body with the comment `// HR/admin desk — admin chrome, not public shop chrome`.
+- The constructor stays `layouts/base` so public careers pages keep their public chrome; HR lands on `/admin/careers/manage*` now see the admin sidebar again.
+
+### Verification (live, cookie-less for admin = test_login=2 admin session)
+- `/admin/careers/manage` → HTTP 200, 387,371 B, needles: `Job Applications - APS Dream Home` + `aps-admin-body` YES
+- `/admin/careers/manage/applications` → HTTP 200, same needles YES
+- `/admin/careers/manage/jobs`, `/admin/careers/manage/stats` → HTTP 200, Content-Length: 0, no callers in codebase (grep = 0 view/JS consumers) — **pre-existing dead AJAX endpoints returning `[]`-shaped arrays; NOT patched** (no caller to define the contract for).
+- Master **11/11 PASSED** (40.8s) · `php -l` clean · `git diff --cached --name-only` gated commit `8b5a7e388`
+
+### Honest notes
+- `./admin/careers/manage/jobs`, `/admin/careers/manage/stats` are `return ['success' => ...];` bare-array handlers (no `json_encode`, no `echo`) — 0-byte responses. No view/JS fetches them (verified `app/views/admin/careers/*.php` + `find app/ js css` -> only `applications/{id}` "View" links are used). Left dead; flagged for owner decision before any JSON contract is invented.
+- `/user/*` rendering public chrome is not new in this session; it matched the author's pre-existing pattern. Logged, not silently changed.
+- The audit found 3385 "unknown" routes (layout unresolved after chain walk) — mostly closures/Function routes and `Front\*\*PageController` variants your walker couldn't resolve, not evidence of a defect; the 63 owner-tagged mismatches were inspected individually, 1 was my own regression, rest documented as intentional.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **673** (my S673 careers fix). This entry = **S674**. Next-free = **675**.
+
+### Key lessons
+_1470. **Fix a chrome assignment at the right seam**: changing a shared class's `layout` in the constructor is not chrome-only for "intentioned public class" when admin routes flow through the same class; force the chrome per-method where the privilege boundary lives.
+_1471. **A walker that returns the first `$this->layout` in a file reports the public one** — per-route audit needs per-method inspection, not per-file, or it false-positives (e.g. VoiceBotController) and/or false-negatives real overrides.
+_1472. **A visitor-facing page renders wrong chrome silently** — byte-probe the rendered HTML (aps-admin-body / rbac_sidebar / navbar needles) on EVERY public URL after any layout change, not just lint/phpstan.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views (wire vs archive decision) · decision on `/admin/careers/manage/jobs` + `/stats` 0-byte dead AJAX endpoints.
 ## Session 673: Public `/careers` Was Showing Admin Sidebar To Visitors — `Career\CareerController` Forced `layouts/admin` On Public Routes; Swapped To `layouts/base` For The Public Careers Family Only; Master 11/11 After MySQL Restart Cleanup (2026-11-17)
 
 ### Trigger
