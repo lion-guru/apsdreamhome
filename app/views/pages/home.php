@@ -970,10 +970,10 @@ document.addEventListener('DOMContentLoaded', function(){
                     <div class="col-md-7">
                         <div class="testimonial-ticker-wrap">
                             <div id="testimonial-ticker" >
-                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_1') ?></p>
-                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_2') ?></p>
-                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_3') ?></p>
-                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-quote-left me-2 text-primary"></i><?= __('home_testimonial_tick_4') ?></p>
+                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-check-circle me-2 text-primary"></i><?= __('home_verified_tick_1') ?></p>
+                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-certificate me-2 text-primary"></i><?= __('home_verified_tick_2') ?></p>
+                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-calendar-check me-2 text-primary"></i><?= __('home_verified_tick_3') ?></p>
+                                <p class="fw-bold mb-0 testimonial-ticker-item"><i class="fas fa-map-marker-alt me-2 text-primary"></i><?= __('home_verified_tick_4') ?></p>
                             </div>
                         </div>
                     </div>
@@ -2125,64 +2125,32 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     </script>
 
-    <!-- Testimonials (Modern Cards) -->
+    <!-- Verified Reviews Strip (honest - links to live /customer-reviews) -->
     <section class="py-5" aria-labelledby="testimonials-title">
         <div class="container">
-            <div class="text-center mb-5 reveal">
+            <div class="text-center mb-4 reveal">
                 <div class="capsule-badge mb-3">
                     <i class="fas fa-quote-left"></i> <?= __('home_testimonials_badge') ?>
                 </div>
-                <h2 id="testimonials-title" class="fw-bold mb-3"><?= __('testimonials_title') ?></h2>
+                <h2 id="testimonials-title" class="fw-bold mb-3"><?= __('home_verified_reviews_title') ?></h2>
+                <p class="text-muted"><?= __('home_verified_reviews_desc') ?></p>
             </div>
-            <div class="row g-4 stagger-children">
-                <div class="col-md-4 mb-4 reveal">
-                    <div class="testimonial-card-modern">
+            <div class="row justify-content-center reveal">
+                <div class="col-lg-8">
+                    <div class="testimonial-card-modern text-center">
                         <div class="text-warning mb-3 section-subtitle">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_1') ?></p>
-                        <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL;?>/assets/images/placeholder/hero.svg"
-                                alt="<?= __('home_testimonial_1_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" >
-                            <div>
-                                <h3 class="fs-6 mb-0 fw-bold"><?= __('home_testimonial_1_name') ?></h3>
-                                <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_1_location') ?></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 reveal">
-                    <div class="testimonial-card-modern">
-                        <div class="text-warning mb-3 section-subtitle">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_2') ?></p>
-                        <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL;?>/assets/images/placeholder/hero.svg"
-                                alt="<?= __('home_testimonial_2_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" >
-                            <div>
-                                <h3 class="fs-6 mb-0 fw-bold"><?= __('home_testimonial_2_name') ?></h3>
-                                <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_2_location') ?></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 reveal">
-                    <div class="testimonial-card-modern">
-                        <div class="text-warning mb-3 section-subtitle">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
-                        </div>
-                        <p class="card-text mb-4 testimonial-text"><?= __('home_testimonial_3') ?></p>
-                        <div class="d-flex align-items-center">
-                            <img src="<?php echo BASE_URL;?>/assets/images/placeholder/hero.svg"
-                                alt="<?= __('home_testimonial_3_name') ?>"
-                                class="rounded-circle me-3" width="50" height="50" >
-                            <div>
-                                <h3 class="fs-6 mb-0 fw-bold"><?= __('home_testimonial_3_name') ?></h3>
-                                <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_3_location') ?></small>
-                            </div>
+                        <blockquote class="blockquote mb-4">
+                            <p class="mb-4 fs-5 fw-semibold"><?= __('home_verified_quote') ?></p>
+                        </blockquote>
+                        <div class="d-flex justify-content-center align-items-center gap-3">
+                            <a href="<?= BASE_URL ?>/customer-reviews" class="btn btn-premium rounded-pill px-4 py-2">
+                                <?= __('home_verified_cta') ?> <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                            <a href="<?= BASE_URL ?>/blog/colony-plots-vs-individual-land#colony-registries" class="btn btn-outline-primary rounded-pill px-4 py-2">
+                                <?= __('home_verified_guide_cta') ?>
+                            </a>
                         </div>
                     </div>
                 </div>
