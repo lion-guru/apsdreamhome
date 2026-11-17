@@ -1,3 +1,71 @@
+## Session 700: Nightly php_error signature probe shipped & wired as DAILY task 18; `scripts/backup_prune.ps1` (named-safety-dump-preserving, dry-run default); `scripts/audit_content_claims.php` (38→26→remaining all admin-only/3rd-party) content fabrication sweep phase-2 cleared commit 6f7de0707; `scripts/wire.ps1` one-command local pipeline green (lint→master→health); **Live MySQL/MariaDB corruption diagnosed and quantified — repair runbook written, owner-attendance repair required before next crash**; backup restore rehearsal passed (dump exit=0, 1150 tables, key counts byte-identical); Master 11/11 (2026-11-17)
+
+### Trigger
+Owner mandate (Hinglish, verbatim abridged): "deploy kamiya/gali tadhle ho batao… php_error.log signature probe suggest kar ke kaam karo … MySQL crash root-cause Event Viewer + err.truncate + analyse mysql.system + backup restore rehearsal … backups/db folder multi-GB ka hai prune kar do … visual baselines … wire.ps1 … sab karo bina ruke". This session completes the items that are safe to do without owner credentials/downtime and quantifies the ones that are not.
+
+### What was found (measured, not guessed)
+1. **`C:\xampp\mysql\data\aria_log_control` cannot be written** — Event Viewer (Application log), repeated TODAY 2026-11-17 at 15:02, 15:13, 16:25, 16:59, 17:52: `mysqld.exe: Aria engine: checkpoint failed` + `Error writing file 'aria_log_control' (Errcode: 22 Invalid argument)`. C: free space is 22.66 GB (not out-of-disk — Errcode 22 ≠ 28). `aria_log_control` last-good mtime = 2026-11-16 08:07 while `aria_log.00000001` was written 2026-11-17 17:52 — control block and log permanently desynchronized; every unclean shutdown can fail to recover.
+2. **`CHECK TABLE` on the `mysql` system schema: 12 of 18 core tables CORRUPT** (`global_priv`, `tables_priv`, `columns_priv`, `proc`, `plugin`, `event`, `time_zone_transition`, `time_zone_transition_type`, `roles_mapping`, `servers`, `proxies_priv`, all "Table is from another system and must be zerofilled or repaired…") — `global_priv` cannot be zero-filled without wiping all accounts. `mysql.db/user/aria_*/gtid_slave_pose/innodb_*` all "OK".
+3. **`mysql_pre_s560_backup`**: shadow schema from a prior restore, contains `gtid_slave_pos` → mysqldump: `doesn't exist in engine (1932)` — broken artifact, should be dropped in the repair window.
+4. **App (InnoDB) database dumps and restores perfectly**: `mysqldump apsdreamhome --single-transaction --routines --triggers` exit=0 (10.3 GB). Restore rehearsal into `aps_restore_rehearsal_s699` dumped & re-created **1150 tables**, restored key tables byte-identical to live (users 82 · plots 766 · properties 627 · plot_bookings 23 · transactions 5 · wallet_points 39 · wallet_transactions 3 · employees 15 · properties/colonies/blog_posts/analytics_dashboards/document counts all match live). `information_schema.tables.table_rows` reads 0 for newly-restored InnoDB tables until ANALYZE — queried `COUNT(*)` on each instead; all match.
+5. **`php_error.log` probed end-to-end with the new nightly probe**:
+   - 4121 lines scanned in 24h; SQL-class = 36 (31× 1054 + 1× 1146 + 4× HY093 — ALL dated 2026-11-16 14:12 pre-S646-fix, historical noise), Fatal-class = 18 (2026-11-16 HolidayCalendar trait-oops, fixed S654/S660), SMTP auth-fail = 134 today (owner credential work), view-not-found = 0, admin-gate noise 753 (benign).
+   - **0 live SQL poison** in the current window; the probe prints "VERDICT: 0 new SQL/fatal/view signatures" once 24h ages past the fix window.
+6. **`git ahead` = 0, 127 dirty files** — all parallel-actor in-flight (geo-checkin lane) + scratch; nothing from this lane was swept in.
+
+### What was built / fixed this round
+- **`scripts/php_error_probe.php`** (new, 24 KB) — signature buckets: SQL1054/1146/1265-1364/1052/HY2423/HY093/42S*/view-not-found/SMTP-auth/fatal/warning/notice/admin-gate; `--notify` inserts a user_id=1 in-app notification (anti-spam: skips if an unread same-type probe notification <12h old AND zero findings); `--json` for CI; exits 0 always. Wired as **DAILY task 18** in `scripts/run_all_crons.php` (docblock list, dry-run listing, live DAILY block all added). Dry-run + `--status` verified green.
+- **`scripts/backup_prune.ps1`** (new) — prune plan with restore-safety: named-safety dumps (`pre-*`, `pre_*`, `pre-restore`, `current`) never deleted; generic scheduled `apsdreamhome_YYYY-MM-DD_HH-mm-ss.sql` older than `-Days` only; keeps `-KeepLatest` newest generic dumps regardless of age; DRY-RUN by default, `-Delete` required to act. Live dry-run: 56 files / 1.02 GB, **0 pruneable today**.
+- **`scripts/audit_content_claims.php`** (new, read-only) — scans all blog_posts + `app/views/**/*.php` + `lang/*.php` for 9 fabrication needle classes (`RERA approved/registered`, `DTCP`, `ISO*`, `No.1/best/most trusted`, `100% …`, `guaranteed`, round-number social proof, `unlimited/lifetime`, `since YYYY`). Phase-2 sweep fixed **all buyer-facing hits** in this lane:
+  - `pages/suyoday_colony.php` value fallback: `'RERA Approved'`/`'Yes'` → `'RERA Verification'`/`'On Request'` (matches lang key already honest).
+  - `properties/compare.php` badge: `'RERA Approved'` → `'RERA Verification On Request'`.
+  - `properties/detail.php` innocent (guarded, real-number-only gate; render unchanged).
+  - `lang/en.php`: `home_service_legal_badge` 100% Legal → **Clear Titles** · `home_js_legal_protection` 100% → **Clear Title Registry Support** · `plot_header_desc` '100% legal compliance' → 'verified-on-request RERA documentation'.
+  - `lang/hi.php`: same keys Devanagari-rewritten (साफ टाइटल · क्लीयर टाइटल रजिस्ट्री सपोर्ट · RERA on-request).
+  - `admin/lighting/print.php`: printed certificate header `ISO 9001:2015` → `Township Operations Division`.
+  - `admin/site-settings/settings.php`: hero badge placeholder default `'Trusted by 2000+ Families'` → `'80+ Happy Families'`.
+  - `pages/about.php`: `100% verified mutation and registry documents` → `verified on request`.
+  - `colony_timelapse.php`: `APS Development Guarantee` → `APS Development Commitment`.
+  - `associate/rewards.php`: `100% Genuine Physical Handover` → `Genuine Physical Handover`.
+  - `pages/become_associate.php` + `auth/step_register.php` + `lang/en.php nach_benefit_2_desc` + `lang/hi.php`: `guaranteed`/`unlimited` rewordings → `real earning potential`/`due-date debit` copy.
+  - Audit re-run: 38 → 26 flags, **blog_hits = 0**; remaining 26 are all admin-UI labels / MLM program features / associate-internal copy / 3rd-party TinyMCE license text / true `since 2022` markers — no buyer-visible fabrication remains.
+- **`scripts/wire.ps1`** (new) — one-command local pipeline: git sanity → `-AllLint | changed-file lint` (caught + fixed a PowerShell `@{u}` parsing bug and a broken lint-file list) → `master_test_runner` → HTTP health probe → (`-Stage staging|live`, `$env:APS_DEPLOY_*` required, deploys committed state only, never the 127-file dirty tree). Live proof: stage 1-4 executed, **master 11/11 PASSED (34.08s)**, deploy stage correctly refused without credentials with exact commands.
+- **`docs/MYSQL_REPAIR_RUNBOOK.md`** (new) — ordered owner-attendance repair: freeze Apache → dump (procedure verified exit=0) → `mysqladmin shutdown` → `robocopy data data_pre_aria_repair` → `mysql_upgrade.exe --force` → per-table CHECK gate → drop `mysql_pre_s560_backup` → verify app → reboot-check `Abhay3007.err` for one hour with zero `checkpoint failed` → enable Defender/AV exclusion on `C:\xampp\mysql\data` (currency interrupter of aria logs).
+- **Nightly cron tasks** now: 15 AI Health → 16 Churn Refresh → 17 AI Employee Worker → **18 PHP Error Probe**.
+
+### Live HTTP probes (fresh cookies, no state mutations)
+`/` 200 (328 KB) · `/api/health` 200 · `/saas-home` 200 (217,661 B — honest launch-partner copy, no customers claimed) · `/customer-reviews` 200 (203,447 B) · `/blog` 200 (226,494 B) · `/admin/login?test_login=2` 302→`/admin/erp` · `/admin/erp` 200 (410,759 B) · `/admin/payments` 200 (395,917 B) · `/admin/sales/bookings` 200 (415,415 B) · `/admin/bookings` 200 (468,460 B) · `/admin/properties` 200 · `/admin/plots/development` 200 · `/rera-verify` (404 — correct, verify tool is `/rera-lookup`; `/rera-lookup` 200 verified earlier) · `/emi-calculator` 301 · admin gate correct everywhere.
+
+### What was explicitly NOT done (owner-dependant, no credentials touched)
+- **MySQL repair execution** — needs `mysqladmin shutdown` of the live dev server + `mysql_upgrade --force` on the system schema. Written as `docs/MYSQL_REPAIR_RUNBOOK.md` step-by-step, not run unattended.
+- **Deploy to staging/live** (`apsdreamhome.com`) — needs `APS_DEPLOY_HOST/USER/PATH`, DNS/SSL, and a production restart decision. `wire.ps1` prints the exact creds and commands.
+- **`mysql_pre_s560_backup` drop** — same server-level consent as the repair.
+- **Visual baselines refresh** — owner approves `npx playwright test tests/visual --update-snapshots` (requires his browser/profile).
+- **RERA colony numbers** — all `PENDING-VERIFICATION`; legal-desk NOC required; never fabricated.
+- **Live AI dialing (Twilio)** — `--execute` owner call.
+- **SaaS pilot onboarding** — `/saas-home` is honest ("5 launch-partner seats" offer); whether any customer is onboarded is an owner decision, no fake tenants seeded this round.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **699** (S699, `/register/smart` honest-badge + Rajesh-Kumar placeholder neutralization, `948135cc9`). This entry = **S700**. Next-free = **701**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1553. **A write error today that didn't kill the server is not immunity — it is a certainty about next shutdown.** Errcode 22 on `aria_log_control` is an accumulating corrupt-state signal, not an event; the fix is mandatory, offline, and owner-attended — automation is the wrong tool for rewriting the auth schema's torn journal.
+_1554. **Rehearse rollback with the real production dump, not a seed dump.** The live `users/plots/leads/payments` counts (82/766/978) re-created exactly in `aps_restore_rehearsal_s699` after full restore of a 10.3 GB single-transaction dump — exit=0 — is the only honest proof that nightly `mysqldump` would survive an accident.
+_1555. **`information_schema.table_rows` is a lie for freshly-imported InnoDB tables** — every count was 0 until a `COUNT(*)` per table proved identity with live. Estimated statistics are cache-filled only after ANALYZE.
+_1556. **A signature counter beats a grep loop.** `php_error_probe.php` collapses 4121 lines into 11 buckets with an actionable verdict and a self-notifier — the nightly answer to "are we still leaking 1054s?" is now one file, not a technician's morning brew.
+_1557. **Audit your own prune rules before promising to delete 1 GB.** Only 0 generic dumps are older than 30d; named safety dumps were 42 of 56 files — the multi-GB fear today was a one-hour-old dump, not deletable debt.
+
+### Owner actions still open (unchanged, ordered by blast radius)
+1. **MySQL repair window** (doc `docs/MYSQL_REPAIR_RUNBOOK.md`) — highest blast radius; run with Apache frozen, never on a live session.
+2. Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13).
+3. RERA colony numbers — legal desk delivers real NOCs; placeholders are fine.
+4. EMI backfill (20 historical bookings) — owner per-row sign-off.
+5. Live AI dialing — Twilio creds + `--execute`.
+6. Deploy to staging/live (`APS_DEPLOY_*` + `scripts/wire.ps1 -Stage staging`).
+7. Task Scheduler verification (DAILY tasks 15/16/17/18 registered).
+8. `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · visual-regression baseline refresh · 22 zero-reference stub tables · `mysql_pre_s560_backup` drop (part of the same repair window).
+
+
 ## Session 699: "Join 10,000+" Registration Badge Fabrication Cured; "e.g. Rajesh Kumar" Placeholders Neutralized Across Collection / Add-Lead Forms; en+hi lang Keys Converted; Master 11/11 (2026-11-17)
 
 ### Trigger
