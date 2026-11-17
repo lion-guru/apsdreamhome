@@ -763,7 +763,7 @@ class SmartAIController extends BaseController
                 return "Aapka Network:\n\nTotal users: {$size}\n\nReferral Link:\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nSocial media par share karein:\n* WhatsApp\n* Facebook\n* Instagram\n\nJitne zyada referrals, utna zyada commission!";
             }
 
-        if ((strpos($msg, 'lead') !== false || strpos($msg, 'leads') !== false) && $role === 'associate') {
+        if (strpos($msg, 'lead') !== false || strpos($msg, 'leads') !== false) {
             $totalLeads = (int)($userContext['data']['total_leads'] ?? 0);
             $hotLeads = (int)($userContext['data']['hot_leads'] ?? 0);
             $recent = $userContext['data']['recent_leads'] ?? [];
