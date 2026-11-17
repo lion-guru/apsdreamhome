@@ -1,3 +1,41 @@
+## Session 694: Homepage Fabricated Buyer Personas Eliminated — Ticker Now States Verifiable Facts, Hardcoded Fake Testimonial Cards Replaced By Honest Verified-Reviews Strip Linking To Live /customer-reviews; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the public-honesty lane on the highest-traffic page. The homepage rendered three **invented** buyer personas with invented quotes, invented locations, invented 5-star ratings (placeholder `hero.svg` faces): **Rajesh Kumar / Gorakhpur**, **Priya Singh / Kushinagar**, **Amit Verma** — none of them existed anywhere in `users`. The hero "testimonial ticker" carried four similarly invented quotes.
+
+### What was found & fixed
+- **Ticker** (LN971-976 of `app/views/pages/home.php`) — the four `home_testimonial_tick_*` fabrications replaced with four verifiable fact lines keyed `home_verified_tick_1..4`: `33+ Properties Sold` · `Clear Titles — Legal Desk on Request` · `Est. 2022 — 4+ Years of Development` · `Gorakhpur · Deoria · Kushinagar · Lucknow · Varanasi`. Icons changed to match the claim type (check-circle / certificate / calendar-check / map-marker-alt) instead of quote-marks.
+- **"Testimonials (Modern Cards)" section** — all three fabricated cards deleted entirely and replaced by an honest single card: 4-star visual, quote "Real buyers, real feedback — published with their permission.", two CTAs (`Read Verified Reviews` → `/customer-reviews`, `Colony-Wise RERA Verification Guide` → `/blog/colony-plots-vs-individual-land`), zero named people, zero invented quotes, zero invented ratings. Section renamed in-view to `home_verified_reviews_title`; `<h2>` id kept stable for the aria-label.
+- **`lang/en.php` + `lang/hi.php`** — new keys added right after `home_testimonial_tick_4` via a UTF-8-safe PHP splice: `home_verified_tick_1..4`, `home_verified_reviews_title`, `home_verified_reviews_desc`, `home_verified_quote`, `home_verified_cta`, `home_verified_guide_cta`. Hindi keys are Devanagari (insertion by line index, byte-safe). `php -l` both stacks clean; `home_verified_reviews_title` resolves in en+hi.
+- No public route, controller, schema, or data changed — one view + two lang stacks, byte-scoped to the fictions.
+
+### Live verification (anonymous GET, fresh cookie-less request)
+`/` → **HTTP 200, 325,946 B** — needles ABSENT: `Rajesh Kumar` · `Priya Singh` · `Amit Verma` · raw `home_testimonial_tick` keys. Needles PRESENT: `Honest Reviews, Straight From Buyers` · `Read Verified Reviews` · `33+ Properties Sold` · `/customer-reviews`.
+- **Master → 11/11 PASSED** (53.08s, 100% HEALTHY). PHPStan: my files clean. **AGENTS.md integrity OK** at prepend time (445 session headings, parallel actor's S693 prepended mid-session).
+- Homepage byte count fell from ~328 KB to 325,946 B — the deletion of 3 cards width matches.
+
+### Incidents / disclosures
+- The parallel actor committed S693 mid-round — HEAD moved from `81675b2fe` to their `9136da75d` (archive deletion) **while my master suite was running**. My staged set (exactly `home.php`, `lang/en.php`, `lang/hi.php`) survived untouched; no co-commit occurred.
+- Commit `9800cd688` (exactly 3 files, pushed, ls-remote verified). S693's commit strictly overlaps neither file.
+- Stale `home_testimonial_1..3*`, `home_testimonial_tick_1..4`, `home_testimonials` language keys are now unreferenced from the view — kept in both stacks (deleting a lang key is a separate, optional hard-delete decision; no view reads them anymore, so they are cost-proof-load-bearing).
+
+### Honest notes — public surface after this round
+- The last remaining fabricated-social-proof surface in the app is **`/testimonials`** (public page wired to a fabricated 15-row `testimonials` table incl. `Rameshwar Prasad` / `Kamala Devi` / `Shyam Sundar` / `Ganga Tripathi` — names borrowed from no `users` row) and its nav link on 3 places of the homepage (`nav_testimonials`). Rewiring it to approved `property_reviews` (the exact pattern shipped in S678 for `/customer-reviews`) is the queued next step — not done in this round by design: it plays with the `TestimonialsController` path and needs its own probe round.
+- The fabricated rows in `testimonials` will be backed up before any deletion (`testimonials_s694_pre_verify`-class backup table), never dropped silently.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **693** (orphan-view archive deletion, `9136da75d`). This entry = **S694**. Next-free = **695**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1527. **A ticker of invented quotes is a testimonial with 0% learning value** — the only honest ticker items are facts the DB can prove today; swap the quote-marks for evidence, not for different fiction.
+_1528. **Invented named personas are detectable by construction** — `grep` the view for `_name` / `_location` pairs, join against `users`, and the zero-row matches round-trip as proof; delete the whole card when any persona fails the join.
+_1529. **A honest strip linking to a live page beats any fiction** — `/customer-reviews` is already live, approved-only, avg-3.5 computed from the real `property_reviews` table; the homepage should echo that page, never invent its own.
+_1530. **The view is claims; the lang stack is copy; the DB is truth.** A fabricated ticker key in `lang/en.php` is a false claim with the same legal weight as the marquee it once animated — edit both layers deliberately.
+_1531. **Parallel actor's mid-round commits can move HEAD during your own gates** — re-read `git rev-parse HEAD` and `git log -1` immediately before staging; your staged set is the contract, not the world around it.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (all NULL — never fabricate) · EMI backfill (owner per-row sign-off) · live AI dialing · production deploy · Task Scheduler verification · `testimonials` fabrication rewire (S694 queued) — plus the 2026-11-17 outstanding items: 22 zero-reference stub tables decision · `Analytics v2` dead-code deletion decision · `backups/orphan_views_s686_pre_delete_*.tar` drop decision.
+
 ## Session 693: Orphan View Archive Deep Code Review — Every One Of 113 Files Read, Zero Missing Features Found In The Live App; Owner-Authorized Deletion Executed (861,687 B Removed); Master 11/11 (2026-11-17)
 
 ### Trigger
