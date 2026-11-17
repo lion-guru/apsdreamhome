@@ -1,3 +1,59 @@
+## Session 693: Orphan View Archive Deep Code Review — Every One Of 113 Files Read, Zero Missing Features Found In The Live App; Owner-Authorized Deletion Executed (861,687 B Removed); Master 11/11 (2026-11-17)
+
+### Trigger
+User (Hinglish): "agar sabbka kaam ho raha hai to delete karte hai deeply dekh liye ho na code unme ka kuch aisa chize jo hona chahiye aur abhi jo live chal bhi raha usme nhi ho wo bhi deeply dekh lena soach samjh ke apne se fix kar lena jaise bhi karna ho jaha bhi karna ho uske baad delete kar do agar ab kaam ka nhi hai to now start bina ruke kaam karo" — if everything's done elsewhere, delete them, but first deeply review the archived code for any missing feature the live app needs, fix it yourself, then delete.
+
+### What the deep code review found (every one of the 113 archive files was read)
+**Zero missing features.** Three disjoint classes explain 100% of the archive:
+
+1. **Dead-by-creation** — the view expected data variables that NO controller anywhere ever passes:
+   - `admin/fraud_detection.php` (`$fraud_alerts`) — zero references in `app/`; the live path is `POST /api/fraud/detect` (MLController)
+   - `admin/iot_analytics.php` (`$devices`, `$telemetry`) — live `/admin/iot` serves 200 (390 KB, live IoTController); the view was never wired
+   - `admin/social_analytics.php` (`$social_stats`) — zero references anywhere
+   - `admin/distributed_network.php` (`$networks`) — zero references anywhere
+   - `admin/sustainability_dashboard.php` / `sustainability_reporting.php` (`$sustainability_data` / `$reporting_data`) — zero references in `app/`/`routes/`; live ESG desk is `/admin/sustainable` + `/admin/sustainable/certifications` (200)
+   - `admin/leads/reports.php` (`$reportType`, `$report`) — superseded by `/admin/reports/funnel` · `conversion` · `agent-performance` (all probed 200)
+   - `admin/reports_financial.php` · `reports_inquiries.php` · `reports_properties.php` · `reports_users.php` — superseded by `/admin/reports/*`
+   - All 14 `admin/dashboard/widgets/*` partials — expect `$widgetData[...]` from a generator that never existed; the live `/admin/dashboard/customize` renders only from live sources (probed 200)
+   - `admin/backoffice/lead-activity-form.php` · `admin/dashboard_content.php` · `dashboard_standalone.php` (both duplicate each other and `admin/dashboard/customize`)
+   - `iot/*` (13 views), `auth/registration/*` (4) — superseded by `/admin/iot` and `/register/smart` (probed 200)
+2. **Duplicate prototypes of live systems** (live copies probed 200): `admin/network/royalty-pool.php` → live `/admin/mlm/royalty-pool` (route + `MLMCommissionController@royaltyPool` + `RoyaltyPoolService` + `mlm_royalty_pool` 1 row + `mlm_royalty_contributions` 11 rows with real contribution history) · `admin/network/ranks/edit.php` → live `/admin/network/ranks` · `dashboard/*_dashboard.php` (12) → `RoleBasedDashboardController` · `projects/microsite/partials/*` — no route, no include anywhere
+3. **Never-referenced scripts-as-views**: `admin/sql/add_profile_picture_column.php` (legacy migration carcass), `admin/assets/img/default-avatar.php` (superseded by `public/assets/images/user/default-avatar.jpg`), `admin/api/sentiment_api.php` (dead test endpoint), `registration/register_form.php`, `pages/security-dashboard.php`, `pages/associate_list_property.php`, `pages/associate_settings.php`, `pages/become_associate_embed.php`, `partials/_register_styles.php` (zero refs), `errors/400.php` · `errors/401.php` · `errors/maintenance.php` (no live references; the error handler renders `errors/404.php` / `errors/generic.php`), `languages/hi.php` (stale copy; live Devanagari stack lives in `lang/hi.php`, refreshed by S684), `pages/index.php` (fabricated stats, archived S692), `users/activities.php`, `users/documents.php`, `pages/user_bookings.php`, `pages/blog_article_list.php`, `pages/legal/privacy_policy.php`, `pages/ai/assistant.php`, `payment/checkout.php`, `payment/webhook.php`, `pdf_templates/receipt.php`, `tools/emi_calculator.php`, `employee/self_service/expense_create.php`, `careers.details.php`, `careers.index.php`, `media/details.php` — every one probed live or grep-matched to its live successor.
+
+### What was deliberately kept (not deleted)
+- The 4 colony SEO views (`app/views/locations/*`) — already restored in S690 (were mis-archived); all 6 public `/project-locations/*` pages probed 200 with real `<h1>`s.
+- The rest of `_archive/` (old `dead_*/legacy_*/orphaned_*` history from earlier sessions) — outside this owner's mandate; history preserved.
+- The parallel actor's in-flight files — untouched.
+
+### Backup & deletion
+- Courtesy tarball saved **outside the repo**: `backups/orphan_views_s686_pre_delete_2026-11-17_*.tar` (975,360 bytes; `backups/` is gitignored).
+- `git rm -r _archive/orphan_views_s686` → **113 files, 861,687 bytes removed** (empty directories pruned).
+- No route, controller, migration or include referenced any deleted path — verified before removal (archive-string audit: 71 matches, all classified non-live — see S690).
+- **Master → 11/11 PASSED** (38.73s) after deletion; zero 500s introduced; **AGENTS.md integrity OK**.
+
+### Q&A given in the session (for the record)
+1. **Q:** What should `analytics_dashboards` / `market_analytics_summary` / `createDashboard()` be? **A:** No — never wired, never reachable, designed schema was lost, 4-column stubs today, zero rows. Live `/admin/features/analytics` + `/admin/reports/*` supersede; do not implement; cosmetic drop of the two stub tables + dead `createDashboard()` is the owner's call.
+2. **Q:** How do the 116 archived views' jobs get done now? **A:** Every family is live and probed: reports (`/admin/reports/funnel|conversion|agent-performance`), dashboards (`/admin/dashboard` → `/admin/erp`, `RoleBasedDashboardController`), commission desk (`/admin/commission-plans`), payout desk (`/admin/mlm/royalty-pool` — real pool row + 11 contribution rows), ESG desk (`/admin/sustainable`), IoT desk (`/admin/iot`), customize widgets (`/admin/dashboard/customize` includes only `kpi_widget`/`chart_widget`/`table_widget`/`recent_activity`).
+
+### Incidents & disclosures
+- **S688 mis-archive is now fully resolved** — those 4 live SEO views were restored before deletion; the archive no longer exists at all.
+- No code, schema, data or route was modified in this round — deletion only.
+- The empty `_archive/orphan_views_s686/` directories were pruned by hand after `git rm -r` (git doesn't track empty dirs).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds through **692** (admin sidebar AI consistency + CSRF sweep, `/saas-home` sanitized + 502 menu-links automated). This entry = **S693**. Next-free = **694**.
+
+### Key lessons
+_1522. **Deleting an archive is a conclusion, not an action — the review is the work.** Every file was read or line-matched to its live successor before the single `git rm -r` was run; the deletion command itself is 2 seconds of work.
+_1523. **A view's "deadness" has three independent graves: never-wired (expected-var mismatch), duplicate prototype, and never-referenced.** Audit each separately; a single grep will mis-classify at least one family.
+_1524. **If a table has live rows, its UI probably matters** — `mlm_royalty_pool` (1 real pool row + 11 contribution rows) made the archived royalty prototype a moot point; the live desk at `/admin/mlm/royalty-pool` reads the same tables and is healthy.
+_1525. **Always stage-then-verify before `git rm`** — 113 deletions confirmed as `D` in `git diff --cached --name-only` before commit; the 4 restored location views were never touched by the deletion.
+_1526. **A tarball outside the repo beats "deleted forever" for cheap insurance** — `backups/orphan_views_s686_pre_delete_*.tar` (975 KB, gitignored) means the owner can restore any file in 30 seconds, forever.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (all NULL — never fabricate) · EMI backfill (owner per-row sign-off) · live AI dialing · production deploy · Task Scheduler verification · 22 zero-reference stub-table decision · `Analytics v2` dead-code deletion decision · admin menu cache bust after future web.php edits · drop `backups/orphan_views_s686_pre_delete_*.tar` when the owner confirms the archive is not missed
+
+
 ## Session 692: Admin Sidebar AI Section Consistency Cured, Driver Trip Check-In CSRF Bug Fixed, Orphan `pages/index.php` Sanitized & Archived, 502 Portal & Admin Menu Links Automated In Master Suite; Master 11/11 (2026-11-18)
 
 ### Trigger
