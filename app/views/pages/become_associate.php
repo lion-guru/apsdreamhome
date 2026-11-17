@@ -11,7 +11,7 @@ $current_page = 'become_associate';
             <!-- Left: Content -->
             <div class="hero-text-content">
                 <h1><i class="fas fa-rocket me-3"></i>Transform Your Career</h1>
-                <p class="mb-4">Begin your journey from a regular enthusiast to a Verified APS Dream Home Partner. Experience the transformation and unlock unlimited earning potential today.</p>
+                <p class="mb-4">Begin your journey from a regular enthusiast to a Verified APS Dream Home Partner. Experience the transformation and build real earning potential as your network grows.</p>
                 
                 <button class="btn btn-journey mb-3" id="btn-start-journey" onclick="startAgentJourney()">
                     <i class="fas fa-magic me-2"></i>Start Your Journey

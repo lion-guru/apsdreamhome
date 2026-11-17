@@ -43,7 +43,7 @@ $uptime = (float)($log['uptime_percent'] ?? 100.0);
         <div class="header">
             <h1>APS DREAM HOME PRIVATE LIMITED</h1>
             <h3>Township Electrical Infrastructure & Street Illumination Wing</h3>
-            <p>Corporate Office: Civil Lines, Gorakhpur, Uttar Pradesh | ISO 9001:2015 Real Estate Township Operations</p>
+            <p>Corporate Office: Civil Lines, Gorakhpur, Uttar Pradesh | Township Operations Division</p>
         </div>
 
         <div class="cert-title">

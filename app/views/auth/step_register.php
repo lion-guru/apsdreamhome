@@ -820,7 +820,7 @@ $base = BASE_URL;
                                 </div>
                                 <div class="motivation-item">
                                     <i class="fas fa-chart-line"></i>
-                                    <span>Unlimited earning potential as you grow</span>
+                                    <span>Real earning potential that grows with your team</span>
                                 </div>
                             </div>
 

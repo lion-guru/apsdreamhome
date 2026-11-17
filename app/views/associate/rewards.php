@@ -430,7 +430,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
             <div class="row g-3 small text-muted">
                 <div class="col-md-4">
                     <div class="p-3 bg-light rounded h-100">
-                        <strong class="text-dark d-block mb-1"><i class="fas fa-certificate text-warning me-1"></i> 100% Genuine Physical Handover</strong>
+                        <strong class="text-dark d-block mb-1"><i class="fas fa-certificate text-warning me-1"></i> Genuine Physical Handover</strong>
                         All vehicles (Pulsar, Bullet, Luxury Car) and electronics (Mobile, Tablet, Laptop) are brand new, purchased through authorized company dealership partners with warranty and RTO paperwork.
                     </div>
                 </div>

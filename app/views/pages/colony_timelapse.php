@@ -278,7 +278,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
             </div>
 
             <div class="card border-0 shadow-sm rounded-4 p-4">
-                <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt text-success me-2"></i>APS Development Guarantee</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-shield-alt text-success me-2"></i>APS Development Commitment</h6>
                 <ul class="list-unstyled small text-muted mb-0">
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i>40ft &amp; 30ft Wide Bitumen Tarred Roads</li>
                     <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Dedicated Heavy-Duty Electric Transformer</li>

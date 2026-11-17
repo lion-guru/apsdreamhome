@@ -129,8 +129,8 @@ $page_description = $page_description ?? 'Premium residential plots in Gorakhpur
                     <div class="feature-icon mb-3">
                         <i class="fas fa-certificate fa-3x text-success"></i>
                     </div>
-                    <h5><?= __('surya_detail_rera', [], 'RERA Approved') ?></h5>
-                    <p class="text-muted"><?= __('surya_detail_rera_val', [], 'Yes') ?></p>
+                    <h5><?= __('surya_detail_rera', [], 'RERA Verification') ?></h5>
+                    <p class="text-muted"><?= __('surya_detail_rera_val', [], 'On Request') ?></p>
                 </div>
             </div>
         </div>

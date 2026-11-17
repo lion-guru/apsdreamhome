@@ -141,7 +141,7 @@
                                         <?php if (isset($property['rera_status']) && $property['rera_status']): ?>
                                             <div class="mt-2">
                                                 <span class="badge bg-info">
-                                                    <i class="fas fa-certificate me-1"></i>RERA Approved
+                                                    <i class="fas fa-certificate me-1"></i>RERA Verification On Request
                                                 </span>
                                             </div>
                                         <?php endif; ?>

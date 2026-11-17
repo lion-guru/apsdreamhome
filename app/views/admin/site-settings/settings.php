@@ -394,7 +394,7 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Trust Badge Text</label>
-                        <input aria-label="Settings hero badge" type="text" name="settings[hero_badge]" class="form-control" value="<?= sc($settings, 'hero_badge', 'Trusted by 2000+ Families') ?>">
+                        <input aria-label="Settings hero badge" type="text" name="settings[hero_badge]" class="form-control" value="<?= sc($settings, 'hero_badge', '80+ Happy Families') ?>">
                     </div>
                 </div>
             </div>

@@ -459,7 +459,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         </div>
                         <div>
                             <h3 class="mb-0 fw-bold text-white fs-6">RERA &amp; Transparent Registry</h3>
-                            <small class="text-light opacity-75">100% verified mutation and registry documents</small>
+                            <small class="text-light opacity-75">Mutation &amp; registry documents verified on request</small>
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-3">

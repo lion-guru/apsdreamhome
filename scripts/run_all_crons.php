@@ -26,6 +26,9 @@
  *        recomputable lead_churn_predictions cache - keeps the admin
  *        Morning Brief AI Insight Panel + the lead-desk AI Council fresh)
  *    17. AI Employee Worker (Aira->Vivaan->Sahil chain, dry-run unless --live)
+ *    18. PHP Error Probe (nightly php_error.log signature summary; SQL/HY093/
+ *        Fatal/SMTP/View classes; writes an in-app admin notification when
+ *        any SQL/fatal class is seen)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% →' qualified site managers)
@@ -120,6 +123,7 @@ if ($statusOnly || $dryRun) {
         echo "   15. AI Health Check" . PHP_EOL;
         echo "   16. Churn Prediction Refresh (up to 300 open leads)" . PHP_EOL;
         echo "   17. AI Employee Worker (dry-run unless --live)" . PHP_EOL;
+        echo "   18. PHP Error Probe (nightly php_error.log signature summary)" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -638,6 +642,30 @@ try {
         } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'ai_employee: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 18. PHP ERROR PROBE (nightly php_error.log signature summary;
+        //     scans last 24h, buckets SQL/HY093/Fatal/SMTP/View classes,
+        //     writes admin notification (user_id=1) when any SQL/fatal
+        //     class is seen. Read-only otherwise.)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}  PHP Error Probe (24h signature summary)" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $probeCmd = 'php ' . escapeshellarg($root . '/scripts/php_error_probe.php') . ' --notify 2>&1';
+            $probeOut = [];
+            $probeRc = 0;
+            exec($probeCmd, $probeOut, $probeRc);
+            $log['php_error_probe'] = ['status' => 'completed', 'return_code' => $probeRc, 'output_tail' => implode("\n", array_slice($probeOut, -4))];
+            echo "  [OK] php_error_probe done (rc={$probeRc})" . PHP_EOL;
+            foreach (array_slice($probeOut, -6) as $line) {
+                echo '  | ' . $line . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo '  [FAIL] ' . $e->getMessage() . PHP_EOL;
+            $errors[] = 'php_error_probe: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }
