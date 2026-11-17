@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
@@ -564,8 +565,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ],
             ),
             const SizedBox(height: 14),
-            _buildDemoAccountsBar(),
-            const SizedBox(height: 16),
+            if (kDebugMode) ...[
+              _buildDemoAccountsBar(),
+              const SizedBox(height: 14),
+            ],
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -1053,10 +1056,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+          if (kDebugMode) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
               children: [
                 _buildDemoChip(
                   label: 'Customer',
@@ -1064,21 +1068,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   pass: 'Aps@2026',
                   icon: Icons.person_rounded,
                 ),
-                const SizedBox(width: 6),
                 _buildDemoChip(
                   label: 'Associate',
                   email: 'testassociate@example.com',
                   pass: 'Aps@2026',
                   icon: Icons.handshake_rounded,
                 ),
-                const SizedBox(width: 6),
                 _buildDemoChip(
                   label: 'Admin',
                   email: 'admin@apsdreamhome.com',
                   pass: 'Aps@2026',
                   icon: Icons.shield_rounded,
                 ),
-                const SizedBox(width: 6),
                 _buildDemoChip(
                   label: 'Employee',
                   email: 'employee@apsdreamhome.com',
@@ -1087,7 +1088,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ],
             ),
-          ),
+          ],
         ],
       ),
     );
