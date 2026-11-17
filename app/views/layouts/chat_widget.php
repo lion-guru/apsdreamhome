@@ -614,7 +614,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         // EMI / payment
         if (/emi|loan|installment|bhurgta|महीना|किस्त/.test(m)) return 'Humare sales plan me roughly 20% down-payment hota hai, baaki installments 12-60 months mein EMI ke roop se. Exact EMI depends on plot price aur tenure. Dedicated EMI Calculator: <?= BASE_URL ?>/emi-calculator — ya humari team aapko call karegi EMI breakdown ke saath. Call: ' + phone;
         // Pricing
-        if (/price|rate|cost|कितने|कितने में|kitne/.test(m)) return 'Gorakhpur plots ~₹55 Lakh se start hote hain; townships me price/sqft vary karta hai (₹1,200-₹1,500). Exact plot ka price us colony aur location pe depend karta hai. Latest price list: <?= BASE_URL ?>/properties — ya call karein: ' + phone;
+        if (/price|rate|cost|कितने|कितने में|kitne/.test(m)) return 'Gorakhpur plots ki starting ₹999/sqft se hai (total ₹10 Lakh+ depending on colony aur sized). Townships me price/sqft colony corner hai — live list here: <?= BASE_URL ?>/properties - ya call karein: ' + phone;
         // Visits
         if (/visit|site|dekh|appointment/.test(m)) return 'Site visit 100% free hai — Saturday-Sunday tak. Book karein: ' + phone + ' number ya <?= BASE_URL ?>/schedule-visit. Sunday pe hum free cab pickup arrange karte hain.';
         // Refund / cancellation
