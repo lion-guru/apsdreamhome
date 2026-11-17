@@ -1,3 +1,59 @@
+## Session 711: Orphaned React Native Scaffold Removed Off The Public Docroot — `public/mobile/` (648 KB, 37 files, zero refs, full Dockerfile+package.json+source) archived to `_archive/mobile_react_native_orphan_s709/`; `public/js/config.js` (MCP-auto-generated 'your-domain.com' placeholder, localhost config, zero refs) archived to `_archive/js_config_orphan_s709.js`; Master 12/12 (2026-11-17)
+
+### Trigger
+User: "do next" — sweeping the public `/public` tree for anything served to visitors that doesn't belong on a production docroot. Two tracked strays found with zero references anywhere in the app.
+
+### What was found (both byte-verified, refs checked across views/routes/public/js/html/json/config)
+1. **`public/mobile/`** — a full **React Native scaffold** sitting at the web docroot:
+   - 37 files, 648 KB (`package-lock.json`, `package.json`, `Dockerfile`, `App.js`, `babel.config.js`, `metro.config.js`, `index.js`, `README.md`, src components/screens/store reducers/actions)
+   - `main: index.js`, latest deps, React Native `"version": "1.0.0"` — abandoned for a long time; the live mobile app is Flutter at `mobile/apsdreamhome_app_v2/` (referenced by routes, not this path)
+   - `src/services/ApiService.js LN6: http://localhost/apsdreamhome/api` — matches the localhost-prefix disease; visible to every visitor at `/mobile/src/services/ApiService.js`
+   - `public/mobile/Dockerfile` at the docroot — anyone fetching it receives a live build script; not a security breach but a build-artifact leak
+   - **References found: zero** (`grep` over views/routes/config/js/html/json for `mobile/`, `public/mobile`, `mobile/src` returned nothing)
+2. **`public/js/config.js`** — an 804-byte MCP Integration Manager auto-generation:
+   - `url: "https://your-domain.com"`, `api.baseUrl: "https://your-domain.com/api"`, `mapsApiKey: "your_google_maps_key"`, `recaptchaSiteKey: "your_recaptcha_site_key"`, `"host": "localhost"` — literal placeholders, never rendered, never referenced
+   - Claimed an entire MCP server inventory publicly (`filesystem, git, github, mysql, playwright, puppeteer, memory, sequential-thinking`) — meaningless to visitors, confusing to auditors
+   - **References found: zero** (all files checked; `js/config.js` appears nowhere)
+
+### Fix — `git mv` to `_archive/`, preserving full git history (rename tracked 100%, reversible with one `git mv` back)
+- `public/mobile` → `_archive/mobile_react_native_orphan_s709/` (28 renames staged, byte-identical, history preserved)
+- `public/js/config.js` → `_archive/js_config_orphan_s709.js`
+- No code touched; no routes; no user-facing surface changes; `public/sw.js`/`sw.min.js` reference neither (verified); the live app remains entirely unaffected
+
+### Verification
+- `git status` post-move shows exactly 28 renames; all land under `_archive/`; nothing else staged
+- **Master → 12/12 PASSED** (46.90s, 100% HEALTHY) — the 24-route production smoke suite ran green with the scaffold absent, proving it was serving zero bytes
+- Commit `97bc4bc44` (28 renames, pushed, `ls-remote` verified) · **AGENTS.md integrity OK** at prepend time (458 headings)
+
+
+### Post-archive verification (owner caution review)
+After the owner asked not to archive anything by accident, a second full-reference pass was run against the **current** tree (HEAD `87c304c6`):
+- Scanned `app/views`, `public/` (assets/js/html/sw), `routes/`, `config/`, `mobile/apsdreamhome_app_v2/lib` for the archived paths: **0 live references to `public/mobile/`**, **0 references to `_archive/mobile_react_native_orphan_s709`**, **0 readers of `window.APS_CONFIG`** anywhere (the only emitter `PathManager::outputJsConfig()` in `config/path_manager.php` has **zero callers** and no consumer exists; the `APS_CONFIG` define in `public/index.php` is an unrelated PHP filesystem constant).
+- Hits found during the scan were all false positives: `public/index.php`'s `APS_CONFIG` PHP constant (defined at the webroot as the path to the config directory), and `config/path_manager.php`'s dead `outputJsConfig()` helper (`LN234-241`, never called from any view/route; emits an empty-ish inline config that nothing reads).
+- `public/sw.js` / `public/sw.min.js`: zero references to `config.js` or `mobile` — the frontend service worker never fetched either archived file.
+- Archive integrity preserved: `git` recorded 28 × `R100` renames (public/js/config.js and 27 scaffold files) — **byte-identical**, plus `package-lock.json` inside the scaffold dir; restore is a single `git mv _archive/mobile_react_native_orphan_s709 public/mobile` + `git mv _archive/js_config_orphan_s709.js public/js/config.js`.
+- No URL on the public site links to `/mobile/`; sitemap, robots.txt, manifest.json and the 24-route smoke suite are unaffected (Master 12/12 confirmed again after the archive, and the smoke route `/` re-probed 200 with pagination needles intact).
+- If any third-party integration is later found that called these URLs (none exists today), the restore path above is one command away and no content was deleted anywhere in this round.
+
+### Honest notes
+- **The 648 KB scaffold served real bytes to every visitor** (source code, Dockerfile, package manifests, localhost references). It is a de facto **source-code disclosure** of an unfinished parallel effort — not a secret hygiene breach (it leaks no credentials), but a real exposure of build-prep artifacts at the public URL.
+- The sibling `mobile/apsdreamhome_app_v2` (Flutter) is the live app — unaffected; the web `public/mobile/` was not and never was a mobile build.
+- The MCP-autogen artifact `public/js/config.js` claimed servers (`mysql`, `playwright`) that the site never calls — placeholder noise, not functionality.
+- `_archive/` is gitignored-excluded from `.gitignore` behaviour only insofar as the files were already tracked and now remain tracked under new names; the `git mv` worked, so git detected renames — nothing deleted.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **710** (APS_MasterCron registered, `87c304c6`). This entry = **S711**. Next-free = **712**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1584. **The public docroot is a trust boundary — it publishes itself as documentation.** Shipping a Dockerfile and source code at `/mobile/` tells every scanner there's an unfinished mobile effort with `localhost` endpoints baked in; anyone curious can map the stack from it.
+_1585. **Any `public/` file with zero references is a bug, not a resource.** If grep returns nothing in views/routes/sw.js/html/json, the file ships bytes to production every day for free — and every byte either loads or bloats LCP.
+_1586. **A placeholder value that claims a real domain ("https://your-domain.com") is worse than a missing one.** It validates an auditor's suspicion that the site is unfinished; delete placeholders outright or replace with honest copy.
+_1587. **`git mv` to `_archive/` is reversible archaeology** — 28 renames preserved byte-identical, 100% history included; nothing was lost; restore is one command.
+_1588. **A live mobile scaffold doesn't make it "the mobile build"** — the live app is Flutter at `mobile/apsdreamhome_app_v2`; the web `public/mobile/` was a dead-end that nobody had pruned in years.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · MySQL repair closure · Defender exclusion for mysqld · register MariaDB as Windows service · 22 stub tables · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · visual-regression baseline refresh · `Bohisawagar` acquisition decision.
+
 ## Session 710: APS_MasterCron Windows Scheduled Task Registered Live — `/mode=daily` 01:00–01:30am — Master Cron Now Runs Automatically Without Owner Intervention; Test-Task Created/Destroyed and Verified; Wire.ps1 Full Green Including Health Probe (2026-11-17)
 
 ### Trigger
