@@ -1,20 +1,20 @@
 {
   "name": "APS Dream Home",
   "short_name": "APS Dream",
-  "description": "Premium Real Estate in UP - APS Dream Home",
-  "start_url": "/apsdreamhome/",
+  "description": "Premium Real Estate in UP - APS Dream Home projects by APS Dream Homes Pvt. Ltd.",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#6B4EE6",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/apsdreamhome/assets/images/logo-192.png",
+      "src": "assets/images/logo-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/apsdreamhome/assets/images/logo-512.png",
+      "src": "assets/images/logo-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

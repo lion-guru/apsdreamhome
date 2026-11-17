@@ -81,7 +81,7 @@ class SitemapController extends BaseApiController {
                 echo '</url>' . "\n";
             }
         } catch (\Throwable $e) {
-            @error_log('SitemapController: ' . $e->getMessage() . "\n", 3, 'E:/backups/apsdreamhome/sitemap_err.log');
+            error_log('SitemapController: ' . $e->getMessage());
         }
         
         echo '</urlset>';

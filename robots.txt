@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
-Disallow: /apsdreamhome/admin/
-Disallow: /apsdreamhome/user/
-Disallow: /apsdreamhome/api/
-Disallow: /apsdreamhome/testing/
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+Disallow: /testing/
 
-Sitemap: http://localhost/apsdreamhome/sitemap.xml
+Sitemap: https://apsdreamhome.com/sitemap.xml
