@@ -17,7 +17,7 @@
  * The script NEVER exits non-zero for probe findings (cron-safe).
  */
 
-$opts = getopt('', ['lines::', 'notify', 'json', 'hours::', 'root::']);
+$opts = getopt('', ['lines::', 'notify', 'json', 'hours::', 'root::', 'rotate_bytes::']);
 $root = rtrim($opts['root'] ?? 'C:/xampp/htdocs/apsdreamhome', '/\\');
 $logFile = $root . '/logs/php_error.log';
 $hours = isset($opts['hours']) ? (float)$opts['hours'] : 24.0;
@@ -155,6 +155,31 @@ if ($asJson) {
         echo "VERDICT: ACTION REQUIRED — signatures found. See samples (--json).\n";
     }
     echo str_repeat('=', 72) . "\n";
+}
+
+// ---- self-rotate when oversized -------------------------------------------
+// Read happens from the in-memory buffer, so the archive captured here is the
+// exact evidence that produced the report above. Renaming the live file is
+// safe on Windows: Apache/PHP writer handles keep the open handle to the
+// renamed inode; the next process starts on a fresh php_error.log. Never
+// destroys data — rotates to a dated archive under backups/logs/ instead.
+$rotateMax = isset($opts['rotate_bytes']) ? (int)$opts['rotate_bytes'] : 5 * 1024 * 1024; // 5 MB
+$size = @filesize($logFile);
+if ($size !== false && $size > $rotateMax) {
+    $archiveDir = $root . '/backups/logs';
+    if (!is_dir($archiveDir)) @mkdir($archiveDir, 0775, true);
+    $dst = $archiveDir . '/php_error.log.' . date('Ymd') . '.bak';
+    $n = 1;
+    while (file_exists($dst)) {
+        $dst = $archiveDir . '/php_error.log.' . date('Ymd') . '-' . $n . '.bak';
+        $n++;
+        if ($n > 50) break;
+    }
+    if (@rename($logFile, $dst)) {
+        echo "rotate: log (" . round($size / 1024) . " KB) archived to " . basename($archiveDir) . "/" . basename($dst) . "\n";
+    } else {
+        fwrite(STDERR, "rotate: could not archive log (non-fatal)\n");
+    }
 }
 
 // ---- optional admin notification (anti-spam guarded) ---------------------

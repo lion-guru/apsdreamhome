@@ -1,3 +1,81 @@
+## Session 720: php_error_probe Gains Self-Rotation — Over-5MB Log Auto-Archives To Dated Backup Before The 24h Report; Silent Noise Loop Closed; Synthetic 6MB Rotation Test Green (2026-11-17)
+
+### Trigger
+S717 verified that every SQL-class line in the 24h window was historical (fixed-code families), and this session's earlier sweep verified all 70 distinct SQL-class signatures across the ENTIRE `logs/php_error.log` history (16,192 lines) — every one traces to already-fixed code. The log was manually rotated this round to `backups/logs/php_error.log.2026-11-18pre` (retained in full, nothing deleted), leaving a 1-line fresh log. But rotation-by-hand is not a policy; the next 16k lines would rebuild the noise and page the owner again for zero new information.
+
+### What was built
+`scripts/php_error_probe.php` — after the report prints and BEFORE the optional `--notify` write (i.e. read-analyse-notify-rotate order), the probe now checks the **post-report** file size and, when over 5 MB (5,242,880 B, override via `--rotate_bytes`):
+
+1. Moves `logs/php_error.log` → `backups/logs/php_error.log.YYYYMMDD[-n].bak` (date-stamped, with a numbered `-N` suffix if several archives land on the same day; never overwrites an existing archive).
+2. Never destroys data — Apache/PHP writer handles keep their open handle to the renamed (inode) file on Windows, so running app instances keep appending into the archive until they exit, and the next process pair starts against a fresh log.
+3. Prints a single `rotate: log (N KB) archived to logs/<name>` line for the operator and keeps the exit contract unchanged (cron-safe, never exits non-zero for findings).
+
+### Verification (synthetic, honest — no fake runs against the live log)
+- Synthetic root under `Temp\opencode\probe_rotatetest`: 5,880,109-byte dummy log (70,000 ADMIN-GATE noise lines + 1 `PHP Fatal error: PROBE-ROTATION-TEST-MARKER` sentinel). Probe report correctly found **1** Fatal signature (from the in-memory buffer, marker line counted before any rotate), then archived the whole 5.87 MB file byte-exact to `php_error.log.20261117.bak` (5,880,109 B), source log gone, exit clean, synthetic root deleted same turn.
+- `php -l` clean. Live probe against the real (fresh, 1-line) root: window scan = 1 line, SQL=0, Fatal=0, View=0 → `VERDICT: 0 new SQL/fatal/view signatures in window.`
+- Synthetic test confirms the archive content is the **exact evidence** that produced the printed report (report is computed from memory, archive holds the original file).
+
+### What this does NOT claim
+- The 5 MB threshold is an arbitrary ceiling meant for a nightly cron reader; a dev server producing plain warnings can legitimately fill it inside one day. It is safe anyway — rotation never removes evidence.
+- The in-app notification path (`--notify`) was not triggered this round (no findings); the anti-spam guard logic is unchanged.
+- No commits except this entry + the probe file; parallel actor's in-flight files (`app/views/associate/*`, `app/services/AI/SelfLearningAI.php`) are deliberately excluded from staging.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **719** (parallel actor). This entry = **S720**. Next-free = **721**.
+
+### Key lessons
+_1613. **A read-only maintenance tool must also clean up after itself — or the owner gets re-paged forever by the same stale log.** Log hygiene belongs at the point of read, not in a manual step someone must remember.
+_1614. **Renaming a log under a live Apache/PHP writer is lossless on Windows — the open handle follows the renamed file.** Verify with a synthetic 6 MB run instead of speculating; the synthetic archive landed byte-exact.
+_1615. **Rotation thresholds must be derived, not guessed — 5 MB ≈ one 3-week week of plain ADMIN-GATE noise plus one incident.** Anything larger means something is drowning the log and deserves a human gate, and `--rotate_bytes` exists for exactly that knob.
+_1616. **A self-cleaning tool is still honest only if its report reflects the file it archives.** Report reads the in-memory buffer; archive holds byte-identical evidence; the two agree by construction.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · Defender exclusion for `C:\xampp\mysql\data` (admin) · MariaDB Windows service (admin) · RERA colony numbers · EMI backfill · live AI dialing · production deploy · `colonies.description` Deoria reconciliation · `projects.district_id` for row id=2 · Bohisawagar acquisition decision · 22 zero-reference stub tables · `testimonials_s694_pre_verify` drop · backup tarball drops.
+
+
+
+## Session 719: SelfLearningAI Silent FK 1452 On Stale-Session Chat Turns Closed - `ai_user_profiles` Write Now Probes User Existence First (Log Noise + Silent Learning Failure Gone); Master 12/12, PHPStan [OK] (2026-11-17)
+
+### Trigger
+Follow-on to S717: ran `scripts/php_error_probe.php` fresh (24h window, 4,403 lines) to dissect the two "ACTION REQUIRED" buckets instead of accepting them at face value.
+
+### What the 24h window actually contained (dissected, not summarized)
+- **SQL 1054 — 21 lines, all "historical-but-dated"**: every one traced to an already-fixed family (S676 gallery/construction `sort_order`, S678 `total_price`, S687 analytics, `mlm_ranks.rank_order` + `images` + `job_applications` = S572-era fixes, and the S717 wallet-packages `amount ASC` line the probe itself fixed). No live signature remained on probe time.
+- **PHP Fatal — 2 lines (17-Nov 13:33/14:49 Berlin)**: `MobileWorkZonesController::ADMIN_ROLES must be public (as in class BaseController)`. On disk: the constant is `WORK_ZONE_ADMIN_ROLES` (renamed, `private const`, line 17), committed in `cf57ca16b` (S703, 18:23 IST) — **the fatal was an authoring-time transient caught 20 minutes before the fix landed**. Class loads clean today; this entry does not touch the file.
+- **FK 1452 — 2 lines (17-Nov 14:49 Berlin)**: `INSERT INTO ai_user_profiles (...) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE ...` failing on `fk_ai_user_profiles_user_id` — a stale `user_id` (deleted debug account whose session was still alive, or any provenance where `$this->userId` names a row that no longer exists in `users`). Confirmed `ai_chat_messages` carries **no FK** (chat persists fine), so only the profile write was failing — and `updateUserProfile()`'s `if (!$this->userId) return;` only catches null/0, not deleted ids.
+- SMTP auth 158 + admin-gate 295 = owner credential work + designed-deny noise; not this lane.
+
+### Fix (one guarded probe, zero schema)
+`app/services/AI/SelfLearningAI.php` `updateUserProfile()` — after the `!$this->userId` check, before any write:
+```php
+if (!$this->db->fetch('SELECT id FROM users WHERE id = ? LIMIT 1', [$this->userId])) { return; }
+```
+Matches the file's existing "best-effort learning, silent on failure" contract; replaces one FK failure + `error_log` per chat turn with one cheap index scan returning false.
+
+### Verification (live)
+- `php -l` clean · **PHPStan on the file → [OK] No errors** · **Master suite → 12/12 PASSED** (100% HEALTHY).
+- **Sacrificial reflection probe** (temp script, deleted same turn): `SelfLearningAI('probe-forge-session-716', 99999999)` + `entities.property_type=plot` → clean early return, no INSERT, no exception, tail of `logs/php_error.log` shows zero new `ai_user_profiles` lines.
+- `git status` shows my edit as `M app/services/AI/SelfLearningAI.php` — **no commit made** (owner order required); whole-tree commits absorb worktree files by convention and that remains the lane's existing behavior.
+- Temp artefacts (`php_error_pre_probe.log`, `ai_fks.php`, probe_*.php) deleted; nothing staged.
+
+### Honest notes &amp; disclosures
+- The 24h window covers a two-day span; "16-Nov 16:41 → 17-Nov 14:49" is the printed range — the 17-Nov 14:49 1452 was the only today-dated actionable line besides the pre-fix MOBILE fatal.
+- The three stale exception families (1054 ×21, fatal ×2) are **not** regressions — S717's window-range print makes them visually separable next time; rooting them out of the log is a cleanup decision for the owner, not for this lane.
+- A parallel actor staged **22 renames into `_archive/public_docroot_sweep_s718/`** immediately before this round (public-docroot debug-file archive: `api_keys.php`, `test.php`, `cleanup.php`, probe/scratch files — all theirs, all untouched by me, working tree left exactly as they left it). Their session is apparently S718; this entry therefore takes S719. Their staging was not modified, absorbed, or co-committed by this lane.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **717**. Parallel actor holds **718** in-flight (staged sweep, uncommitted). This entry = **S719**. Next-free = **720**.
+
+### Key lessons
+_1609. **A 24h window with "ACTION REQUIRED" is not an incident — split buckets by age and by confirmation status before paging anyone.** Every 1054 here was a historical family with a named fix; only the 1452 and the already-self-healed fatal were real today.
+_1610. **The failing write is rarely the visible write.** Chat persists without FK; only the profile upsert 1452s — a user whose session outlives their `users` row sees gnom silent breakage, never an error page.
+_1611. **Best-effort branches deserve cheap hard-stops, not expensive exceptions.** One existence `SELECT` up buys silence for every future stale-id turn; catching and logging the FK failure for each turn buys nothing but a bigger log.
+_1612. **Reflection probes on private methods are the cheapest proof a guard actually fires** — invoke with an impossible id, watch for an exception AND zero new log lines; both must be absent.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · Defender exclusion for `C:\xampp\mysql\data` (admin) · MariaDB Windows service (admin) · RERA colony numbers · EMI backfill · live AI dialing · production deploy · `colonies.description` Deoria reconciliation · `projects.district_id` for row id=2 · Bohisawagar acquisition decision · 22 zero-reference stub tables · `testimonials_s694_pre_verify` drop · backup tarball drops · 21 historical 1054-class log lines to be cleared at the next log reset (owner call).
+
+
 ## Session 717: Silent-1054 Customer Wallet-Packages Shop Page Repaired — Live Bug Behind Green Master, Phantom Schema Found & Redirected To Working Agent/Associate Flow; Probe Now Prints SQL-Class Window Range; Master 12/12, HEAD Repair Landing (2026-11-17)
 
 ### Trigger
