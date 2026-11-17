@@ -5843,6 +5843,7 @@ $router->get('/admin/features/notifications', 'Admin\\NewFeaturesController@noti
 $router->get('/admin/features/security', 'Admin\\NewFeaturesController@security');
 $router->get('/admin/features/finance', 'Admin\\NewFeaturesController@finance');
 $router->get('/admin/features/analytics', 'Admin\\NewFeaturesController@analyticsDashboard');
+$router->post('/admin/features/analytics/dashboard/create', 'Admin\\NewFeaturesController@analyticsDashboardCreate');
 $router->get('/admin/features/realtime-analytics', 'Admin\\NewFeaturesController@realtimeAnalytics');
 $router->get('/admin/audit-log', 'Admin\\AuditLogController@index');
 $router->get('/admin/audit-log/{id}', 'Admin\\AuditLogController@detail');

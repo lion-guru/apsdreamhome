@@ -350,7 +350,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             </div>
             <?php endif; ?>
 
-            <?php if (!empty($property['rera_number'])): ?>
+            <?php if (!empty($property['rera_number']) && substr((string)$property['rera_number'], 0, 7) !== 'PENDING'): ?>
             <div class="pd-rera">
                 <i class="fas fa-shield-alt"></i>
                 <div class="rera-text">

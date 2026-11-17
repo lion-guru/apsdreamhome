@@ -108,7 +108,7 @@ $related_projects = $normRelated;
                     <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'secondary'; ?> fs-6 px-3 py-2">
                         <?php echo $project->status === 'active' ? __('colony_available') : e(ucfirst($project->status ?? 'Active')); ?>
                     </span>
-                    <?php if (!empty($project->rera_number)): ?>
+                    <?php if (!empty($project->rera_number) && substr((string)$project->rera_number, 0, 7) !== 'PENDING'): ?>
                     <span class="badge bg-light text-dark fs-6 px-3 py-2 shadow-sm border border-warning">
                         <i class="fas fa-certificate text-warning me-1"></i> RERA: <?= htmlspecialchars($project->rera_number) ?>
                     </span>
@@ -593,7 +593,7 @@ $related_projects = $normRelated;
                                 <td><?php echo htmlspecialchars($project->total_area); ?> Acres</td>
                             </tr>
                             <?php endif; ?>
-                            <?php if (!empty($project->rera_number)): ?>
+                            <?php if (!empty($project->rera_number) && substr((string)$project->rera_number, 0, 7) !== 'PENDING'): ?>
                             <tr>
                                 <td><strong>RERA Reg.:</strong></td>
                                 <td><code><?= htmlspecialchars($project->rera_number) ?></code></td>

@@ -152,7 +152,7 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                                         <td><strong>Possession:</strong></td>
                                         <td><?= $project['possession_date'] ? date('M Y', strtotime($project['possession_date'])) : 'TBD' ?></td>
                                     </tr>
-                                    <?php if (!empty($project['rera_number'])): ?>
+                                    <?php if (!empty($project['rera_number']) && substr((string)$project['rera_number'], 0, 7) !== 'PENDING'): ?>
                                         <tr>
                                             <td><strong>RERA Number:</strong></td>
                                             <td><?= htmlspecialchars($project['rera_number'] ?? '') ?></td>

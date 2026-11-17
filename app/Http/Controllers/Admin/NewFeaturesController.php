@@ -163,6 +163,49 @@ class NewFeaturesController extends AdminController
         return $this->render('admin/features/analytics', $this->data);
     }
 
+    /**
+     * POST /admin/features/analytics/dashboard/create - create a custom dashboard
+     * from the Analytics admin page. requireAdmin + CSRF. Widget list is whitelist-
+     * filtered so garbage tokens never hit the JSON column.
+     */
+    public function analyticsDashboardCreate()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+
+        $name = trim((string)($_POST['name'] ?? ''));
+        $widgetsRaw = trim((string)($_POST['widgets'] ?? ''));
+        $isPublic = !empty($_POST['is_public']) ? 1 : 0;
+
+        if ($name === '' || strlen($name) > 200) {
+            $this->setFlash('error', 'Dashboard name is required (max 200 characters).');
+            $this->redirect('/admin/features/analytics');
+            return;
+        }
+
+        $allowed = ['kpis', 'forecasts', 'availability', 'revenue', 'pipeline'];
+        $widgets = array_values(array_unique(array_filter(
+            array_map('trim', explode(',', $widgetsRaw)),
+            fn($w) => in_array($w, $allowed, true)
+        )));
+        if (empty($widgets)) {
+            $widgets = ['kpis'];
+        }
+
+        try {
+            $result = $this->analytics()->createDashboard($this->getUserId(), $name, $widgets, (bool)$isPublic);
+            if (($result['ok'] ?? false) === true) {
+                $this->setFlash('success', 'Dashboard "' . $name . '" created.');
+            } else {
+                $this->setFlash('error', 'Dashboard creation failed: ' . ($result['error'] ?? 'unknown'));
+            }
+        } catch (\Throwable $e) {
+            error_log("NewFeaturesController::analyticsDashboardCreate: " . $e->getMessage());
+            $this->setFlash('error', 'Dashboard creation failed - see error log.');
+        }
+        $this->redirect('/admin/features/analytics');
+    }
+
     public function realtimeAnalytics()
     {
         $this->requireAdmin();

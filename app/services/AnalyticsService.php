@@ -204,15 +204,23 @@ class AnalyticsService
     public function listDashboards(int $userId = 0): array
     {
         try {
-            $sql = "SELECT * FROM analytics_dashboards WHERE 1=1" . $this->tenantSql();
+            // Live schema: analytics_dashboards(id, tenant_id, user_id, name, widgets, is_public, created_at, updated_at)
+            // Tenant scoping via tenantWhere() (interpolated literal matches bind ?), not tenantSql() + named parameter mix.
+            $tid = $this->tenantId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $params = [];
-            if ($userId) { $sql .= " AND (owner_user_id = :u OR is_public = 1)"; $params[':u'] = $userId; }
-            $sql .= " ORDER BY created_at DESC";
+            if ($tid > 1) $params[] = $tid;
+            if ($userId > 0) {
+                $sql = "SELECT * FROM analytics_dashboards WHERE (user_id = ? OR is_public = 1)" . $tidSql . " ORDER BY created_at DESC";
+                array_unshift($params, $userId);
+            } else {
+                $sql = "SELECT * FROM analytics_dashboards WHERE 1=1" . $tidSql . " ORDER BY created_at DESC";
+            }
             $st = $this->db->prepare($sql);
-            if ($this->tenantId() > 1) $params[':stid'] = $this->tenantId();
             $st->execute($params);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
+            error_log("AnalyticsService::listDashboards failed: " . $e->getMessage());
             return [];
         }
     }
@@ -231,10 +239,12 @@ class AnalyticsService
 
     public function getDashboard(int $id): ?array
     {
-        $st = $this->db->prepare("SELECT * FROM analytics_dashboards WHERE id = :id" . $this->tenantSql());
-        $sparams = [':id' => $id];
-        if ($this->tenantId() > 1) $sparams[] = $this->tenantId();
-        $st->execute($sparams);
+        $tid = $this->tenantId();
+        $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+        $params = [$id];
+        if ($tid > 1) $params[] = $tid;
+        $st = $this->db->prepare("SELECT * FROM analytics_dashboards WHERE id = ?" . $tidSql);
+        $st->execute($params);
         $r = $st->fetch(PDO::FETCH_ASSOC);
         if (!$r) return null;
         $r['widgets'] = json_decode($r['widgets'] ?? '[]', true) ?: [];

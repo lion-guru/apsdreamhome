@@ -67,6 +67,10 @@ ob_start();
     </div>
 
     <div class="tab-pane fade" id="dash">
+      <div class="mb-3 d-flex justify-content-between align-items-center">
+        <div><h5 class="mb-1">Custom Dashboards</h5><small class="text-muted">Build extra panels to track whatever your team needs.</small></div>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newDashboardModal"><i class="fas fa-plus me-1"></i>New Dashboard</button>
+      </div>
       <div class="row">
         <?php if (empty($dashboards)): ?>
           <div class="col-12"><div class="alert alert-info">No custom dashboards created yet</div></div>
@@ -83,6 +87,37 @@ ob_start();
         <?php endforeach; endif; ?>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal fade" id="newDashboardModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="<?= htmlspecialchars(BASE_URL . '/admin/features/analytics/dashboard/create') ?>" class="modal-content">
+      <?= \App\Helpers\SecurityHelper::csrfField() ?>
+      <div class="modal-header">
+        <h5 class="modal-title">Create Dashboard</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="dash_name" class="form-label">Name *</label>
+          <input class="form-control" id="dash_name" name="name" required maxlength="200" placeholder="e.g. Sales pipeline for Q4">
+        </div>
+        <div class="mb-3">
+          <label for="dash_widgets" class="form-label">Widgets (comma-separated)</label>
+          <input class="form-control" id="dash_widgets" name="widgets" placeholder="kpis, forecasts, availability">
+          <small class="text-muted">Pick from: <code>kpis</code>, <code>forecasts</code>, <code>availability</code>, <code>revenue</code>, <code>pipeline</code></small>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="dash_public" name="is_public" value="1">
+          <label class="form-check-label" for="dash_public">Public to tenant</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
+      </div>
+    </form>
   </div>
 </div>
 <?php

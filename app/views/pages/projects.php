@@ -143,7 +143,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                                 <?php if ($project['available_plots'] > 0): ?>
                                     <small class="text-success"><i class="fas fa-check-circle me-1"></i><?= $project['available_plots'] ?> available</small>
                                 <?php endif; ?>
-                                <?php if ($project['rera_number']): ?>
+                                <?php if (!empty($project['rera_number']) && substr((string)$project['rera_number'], 0, 7) !== 'PENDING'): ?>
                                     <small class="text-info"><i class="fas fa-certificate me-1"></i>RERA</small>
                                 <?php endif; ?>
                             </div>
