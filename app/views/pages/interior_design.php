@@ -33,16 +33,16 @@
                     <a href="#tools" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-calculator me-2"></i><?= __('id_free_tools') ?></a>
                 </div>
                 <div class="row mt-5 g-3">
-                    <div class="col-4"><h3 class="text-warning mb-0">200+</h3><small class="text-white-50"><?= __('id_projects_done') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">10+</h3><small class="text-white-50"><?= __('id_designers') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">98%</h3><small class="text-white-50"><?= __('id_satisfaction') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">5+</h3><small class="text-white-50"><?= __('id_colonies_built') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">4+</h3><small class="text-white-50"><?= __('id_years_business') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">80+</h3><small class="text-white-50"><?= __('id_verified_buyers') ?></small></div>
                 </div>
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="position-relative">
                     <img loading="lazy" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&h=400&q=80" alt="Interior Design" class="img-fluid rounded-4 shadow-lg glass-panel p-2">
                     <div class="position-absolute bottom-0 end-0 bg-white text-dark p-3 rounded-3 m-3 shadow">
-                        <i class="fas fa-star text-warning me-1"></i> <?= __('id_award_winning') ?>
+                        <i class="fas fa-building text-warning me-1"></i> <?= __('id_township_builder') ?>
                     </div>
                 </div>
             </div>

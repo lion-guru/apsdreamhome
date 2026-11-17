@@ -278,12 +278,22 @@ class HomePageController extends BaseController
             $teamGroups = [];
         }
 
+        // Real public-facing stats (no fabricated fallbacks — experience is a
+        // free-text varchar like '20+ years', so digit-strip and sum).
+        $membersCount = count($teamMembers);
+        $totalExp = 0;
+        foreach ($teamMembers as $m) {
+            $totalExp += (int) preg_replace('/\D/', '', (string)($m->experience ?? ''));
+        }
+
         $this->render('pages/team', [
             'page_title' => 'Our Team - APS Dream Home',
             'page_description' => 'Meet the team behind APS Dream Home.',
             'team_members' => $teamMembers,
             'category_groups' => $category_groups,
             'team_groups' => $teamGroups,
+            'members_count' => $membersCount,
+            'total_exp' => $totalExp,
         ]);
     }
 

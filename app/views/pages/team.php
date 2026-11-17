@@ -381,13 +381,13 @@ foreach ($team_members ?? [] as $tm) {
         <div class="row g-4">
             <div class="col-6 col-md-3">
                 <div class="stat-card">
-                    <div class="stat-number"><?= $members_count > 0 ? $members_count . '+' : '50+' ?></div>
+                    <div class="stat-number"><?= (int)($members_count ?? 0) . '+' ?></div>
                     <div class="stat-label">Team Members</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
-                    <div class="stat-number"><?= $total_exp > 0 ? $total_exp . '+' : '75+' ?></div>
+                    <div class="stat-number"><?= (int)($total_exp ?? 0) . '+' ?></div>
                     <div class="stat-label">Years Combined Exp</div>
                 </div>
             </div>
@@ -399,8 +399,8 @@ foreach ($team_members ?? [] as $tm) {
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card">
-                    <div class="stat-number">98%</div>
-                    <div class="stat-label">Client Satisfaction</div>
+                    <div class="stat-number">80+</div>
+                    <div class="stat-label">Verified Buyers</div>
                 </div>
             </div>
         </div>
