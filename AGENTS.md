@@ -1,3 +1,40 @@
+## Session 701: Buyer-Facing RERA Placeholder Gate Shipped & Wired Into Master Suite — `Public RERA Placeholder Probe` Live In Integration Tests; All 20 Public Pages Clean Of `PENDING-VERIFICATION`; Master 12/12 (2026-11-17)
+
+### Trigger
+Follow-through on S698/S699: the `PENDING-VERIFICATION` sentinel seeded by S695 on all 8 colony rows must never print or leak to buyers. S698 fixed the AI-chain consumer; S699 fixed two remaining registration-page fabrications. This round closes the loop with an automated gate so the entire class can never silently regress.
+
+### What was built
+- **`testing/public_pending_rera_probe.php`** (new, ~95 lines):
+  - **Check A — source literal scan**: `RecursiveCallbackFilterIterator` walks `app/views/**/*.php` (admin views excluded — admins legitimately see the placeholder flag) + `lang/*.php` and flags ANY raw `PENDING-VERIFICATION` literal. Today: **0**.
+  - **Check B — live HTTP smoke**: curl probes **20 buyer-facing routes** through the running app and fails on any body containing the literal — plus asserts every route answers 2xx/3xx (previously verified live: colony-detail 200s, 6 location SEO pages 200, `/properties` 200, `/projects` 200, `/blog` 200, `/tools-hub` 200, `/become-associate` 200, `/emi-calculator` 301). Today: **20/20 clean**.
+  - `--json` flag for CI; exit 1 on any failure/exit 0 on pass (cron-safe, same contract as `audit_content_claims.php`).
+- **Wired into `testing/master_test_runner.php`** under `Integration & E2E Workflows` as the second suite (`Portal Menu Links Probe` → **`Public RERA Placeholder Probe`** → Township Lifecycle), preserving the smoke-tier ordering. Runner was clean at edit time; edit is one line; no other suites touched.
+
+### Verification (live)
+- `php -l` clean on both files · standalone probe run → `source literals flagged: 0` · `live pages clean: 20` · `PUBLIC RERA PLACEHOLDER PROBE: PASS`
+- **Master → 12/12 PASSED** (59.37s, 100% HEALTHY) — first time the suite is 12, up from 11; the new suite is a net-new gate, not a re-lettering.
+- AGENTS.md integrity checked before commit.
+- No schema, no routes, no app code changed — the probe is pure test infrastructure.
+
+### What this gate covers that S698/S699 didn't
+- Any future view copy-pasting the placeholder into a buyer-visible template.
+- Any future lang key defaulting to a raw colony value.
+- Any future refactor that echoes `colonies.rera_number` without the PENDING guards already restored by S699 (`/colony/*` and `/project-locations/*` buyer pages).
+- Regression to 404/500 on any of the 20 buyer routes (the same probe asserts basic 2xx/3xx semantics).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **700** (parallel actor, nightly php_error probe + backup prune + wire.ps1 + MySQL repair runbook). This entry = **S701**. Next-free = **702**.
+
+### Key lessons
+_1558. **A fix without a gate is a promise; a fix with a gate is a contract.** The PENDING-VERIFICATION RERA placeholder silently reached the LLM context (S698) because nothing HTTP-probed or source-scanned buyer-facing output for it; the first regressive edit now fails the suite instead of reaching the public.
+_1559. **Gate designs should assert the class, not the twin instance.** This probe doesn't care which view escapes a PENDING value — it scans every buyer-facing PHP/lang file AND every live buyer route; the exact defect family is what's tested.
+_1560. **Admin views are deliberately exempt.** Gate exceptions must be documented in the gate itself, or the next "fix everything flagged" pass strips legit markers; here, only admin views may show "PENDING-VERIFICATION" flagged to operators.
+_1561. **Master counter must change when you add a suite — blindly pasting a suite without wiring the runner lies about coverage.** 11/11 → 12/12 is the visible proof this gate exists.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · MySQL repair window (`docs/MYSQL_REPAIR_RUNBOOK.md`, owner-attended) · RERA colony numbers (legal desk; placeholders remain intentionally) · EMI backfill · live AI dialing · production deploy · `testimonials_s694_pre_verify` drop · `backups/orphan_views_s686_pre_delete_*.tar` drop · 22 zero-reference stub tables · visual-regression baseline refresh · `mysql_pre_s560_backup` drop (same repair window).
+
+
 ## Session 700: Nightly php_error signature probe shipped & wired as DAILY task 18; `scripts/backup_prune.ps1` (named-safety-dump-preserving, dry-run default); `scripts/audit_content_claims.php` (38→26→remaining all admin-only/3rd-party) content fabrication sweep phase-2 cleared commit 6f7de0707; `scripts/wire.ps1` one-command local pipeline green (lint→master→health); **Live MySQL/MariaDB corruption diagnosed and quantified — repair runbook written, owner-attendance repair required before next crash**; backup restore rehearsal passed (dump exit=0, 1150 tables, key counts byte-identical); Master 11/11 (2026-11-17)
 
 ### Trigger
