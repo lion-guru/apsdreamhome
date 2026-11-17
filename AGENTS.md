@@ -1,3 +1,40 @@
+## Session 692: Admin Sidebar AI Section Consistency Cured, Driver Trip Check-In CSRF Bug Fixed, Orphan `pages/index.php` Sanitized & Archived, 502 Portal & Admin Menu Links Automated In Master Suite; Master 11/11 (2026-11-18)
+
+### Trigger
+User: "admin ke view me kamiya khojo aur sidebar menu me bhi dekaur dekho kaha kaha consitency gadbad hai ya aur koi problem ya kamiya to improve kiya jaye" ("find flaws in admin views and check sidebar menus, see where consistency is broken or any other problems to improve") & "ui me kamiya find karo...". In-depth audit of all 397 admin menu routes, 1,151 view forms, and sidebar hub mappings revealed 4 critical defects.
+
+### What was found & fixed
+
+1. **Admin Sidebar Section Inconsistency ('ai' vs 'ai_tech'):**
+   - Out of 397 active items in `admin_menu_items` across 26 sections, 38 AI features belonged to `section = 'ai_tech'`, but exactly one item — **ID 367 (`RAG Knowledge Base`, `/admin/rag`)** — was tagged `section = 'ai'`.
+   - In `app/views/admin/layouts/rbac_sidebar.php`, `'ai'` was unmapped in `$hubDefinitions` (fell into default hub instead of AI) and missing from `$sectionNames` (rendered as bare unstyled "Ai" text without emoji).
+   - **Fix:**
+     - In `admin_menu_items`, updated ID 367 `section` to `'ai_tech'`, unifying all 39 AI features under one section.
+     - In `rbac_sidebar.php`, mapped `'ai'` in `$hubDefinitions['control']['sections']` and added `'ai' => '🤖 AI & Technology'` in `$sectionNames` for robust backward-compatibility.
+     - Flushed sidebar caches (`admin_sidebar_all` and role caches).
+
+2. **Driver Trip Check-In CSRF Block (`admin/fleet/driver_trip.php`):**
+   - Comprehensive audit of all 1,151 `<form method="POST">` instances across the entire codebase revealed exactly **two POST forms missing CSRF tokens**: the Trip Status form (`/driver/trip/{id}/trip-status`) and Passenger Pickup Status form (`/driver/trip/{id}/passenger/{site_visit_id}/status`) in `app/views/admin/fleet/driver_trip.php`.
+   - Because neither endpoint is exempt in `Router::dispatch()` CSRF middleware, every driver attempting to start a trip, mark completion, or record passenger pickup was getting rejected with "Security token expired".
+   - **Fix:** Injected `<?= \App\Helpers\SecurityHelper::csrfField() ?>` into both forms. 100% of all 1,151 POST forms in the application are now CSRF-protected.
+
+3. **Orphan `pages/index.php` Sanitization & Archival:**
+   - `app/views/pages/index.php` (legacy prototype homepage view with zero controller references) had hardcoded fabricated claims: `'happy_clients' => '1000+'`, `'years_experience' => '15+'`, `'projects_completed' => '50+'` at lines 32 and 396.
+   - **Fix:** Sanitized all occurrences to live, honest numbers (`80+` happy clients, `4+` years experience, `5+` projects completed) and archived the file via `git mv` to `_archive/orphan_views_s686/pages/index.php`, fully resolving the long-standing open orphan decision item.
+   - Also restored the 4 live colony SEO landing views (`gorakhpur-raghunath-nagri.php`, `gorakhpur-suryoday-colony.php`, `lucknow-ram-nagri.php`, `varanasi-ganga-nagri.php`) to `app/views/locations/`, ensuring public `/project-locations/{slug}` routes serve full content.
+
+4. **Automated Menu Link Regression Probe in Master Test Suite:**
+   - `testing/portal_menu_links_probe.php` previously only checked portal menus against `routes/web.php`.
+   - **Fix:** Upgraded the probe to scan all active route files (`routes/web.php`, `routes/land.php`, `routes/gap_builds.php`, `routes/ai.php`, `routes/employee.php`) and test both Portal Menu links (Customer, Associate, Agent, Employee) and all 397 Admin Menu items.
+   - Verified: **502 links checked, 0 broken**. Integrated into the Master Test Runner suite.
+
+### Verification
+- `php testing/portal_menu_links_probe.php` → **502 checked, 0 broken**
+- `php -l` clean across all modified views and test probe
+- PHPStan `[OK] No errors` on `testing/portal_menu_links_probe.php`
+- Master test runner: **11/11 PASSED** (33.12s, 100% HEALTHY)
+- Database baseline verified: `users: 82`, `plot_bookings: 23`, `leads: 994`, `transactions: 5`, `mlm_commission_ledger: 359`, `email_queue: 14` (0 drift)
+
 ## Session 691: Fabricated Legal Claim Induced In Blog Post #12 Cured — "APS Dream Home Colonies Offer DTCP/RERA Approved Layouts" Was Unverified By Any Colony; Replaced With Honest RERA-On-Request Copy With UP RERA Portal + Legal Desk Phone; Master 11/11 (2026-11-18)
 
 ### Trigger

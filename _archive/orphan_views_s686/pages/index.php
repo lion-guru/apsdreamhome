@@ -29,9 +29,9 @@
                         <?php 
                         $heroStats = $hero_stats ?? [
                             'properties_sold' => '33',
-                            'happy_clients' => '1000+',
-                            'years_experience' => '15+',
-                            'projects_completed' => '50+'
+                            'happy_clients' => '80+',
+                            'years_experience' => '4+',
+                            'projects_completed' => '5+'
                         ];
                         ?>
                         <div class="trust-indicators mt-4">
@@ -393,9 +393,9 @@
                 <?php 
                 $stats = $hero_stats ?? [
                     'properties_sold' => '33',
-                    'happy_clients' => '1000+',
-                    'years_experience' => '15+',
-                    'projects_completed' => '50+'
+                    'happy_clients' => '80+',
+                    'years_experience' => '4+',
+                    'projects_completed' => '5+'
                 ];
                 ?>
                 <div class="col-md-3 mb-4">

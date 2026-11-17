@@ -121,7 +121,7 @@ $hubDefinitions = [
     'control' => [
         'label' => '5. System & HR',
         'icon' => 'fas fa-cogs',
-        'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai_tech', 'employee', 'hr', 'training', 'quality', 'health', 'audit_log', 'backup', 'cache'],
+        'sections' => ['users', 'roles', 'settings', 'system', 'hrm', 'security', 'ai', 'ai_tech', 'employee', 'hr', 'training', 'quality', 'health', 'audit_log', 'backup', 'cache'],
     ],
     'operations' => [
         'label' => '6. Operations & SaaS',
@@ -168,6 +168,7 @@ $sectionNames = [
     'sales'       => '🏷️ Sales & Bookings',
     'services'    => '🛠️ Local Services & Directory',
     'system'      => '🔧 System Admin',
+    'ai'          => '🤖 AI & Technology',
     'ai_tech'     => '🤖 AI & Technology',
     'security'    => '🔒 Security',
     'employee'    => '👨‍💼💼 Employee Portal',
