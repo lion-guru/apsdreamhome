@@ -182,15 +182,21 @@ class PortalMenuService
             $this->item('dashboard', 'Main', 'Dashboard', '/associate/dashboard', 'fas fa-tachometer-alt'),
             $this->item('crm', 'Main', 'CRM Dashboard', '/associate/crm', 'fas fa-funnel-dollar'),
             $this->item('ai-dashboard', 'Main', 'AI Dashboard', '/associate/ai-dashboard', 'fas fa-brain'),
+            $this->item('ai-coach', 'Main', 'AI Sales Coach', '/associate/ai-coach', 'fas fa-robot'),
             $this->item('leads', 'Main', 'My Leads', '/associate/leads', 'fas fa-user-friends', $this->countTable('leads', 'assigned_to')),
+            $this->item('leads-add', 'Main', 'Add Lead', '/associate/leads/add', 'fas fa-plus-circle'),
             $this->item('leads-import', 'Main', 'Import Leads', '/associate/leads/import', 'fas fa-file-import'),
             $this->item('leads-bulk-wa', 'Main', 'Bulk WhatsApp', '/associate/leads/bulk-whatsapp', 'fab fa-whatsapp'),
+            $this->item('leads-revive', 'Main', 'Revive Leads', '/associate/leads/revive', 'fas fa-sync-alt'),
             $this->item('leads-export', 'Main', 'Export Leads', '/associate/leads/export', 'fas fa-file-export'),
             $this->item('followups', 'Main', 'Follow-ups', '/associate/followups', 'fas fa-calendar-check', $this->countTable('crm_tasks', 'assigned_to', 'status', 'pending')),
             $this->item('properties', 'Main', 'My Properties', '/associate/properties', 'fas fa-building', $this->countTable('user_properties', 'posted_by')),
 
             // Earnings & Finance
             $this->item('commissions', 'Earnings', 'Commissions', '/associate/commissions', 'fas fa-rupee-sign'),
+            $this->item('salary', 'Earnings', 'Career Salary Plan', '/associate/salary', 'fas fa-hand-holding-usd'),
+            $this->item('allowances', 'Earnings', 'Office & Travel Allowances', '/associate/allowances', 'fas fa-gas-pump'),
+            $this->item('rewards', 'Earnings', 'Rank Rewards', '/associate/rewards', 'fas fa-trophy'),
             $this->item('advances', 'Earnings', 'Festival Advances', '/associate/advances', self::ICON_HAND_HOLDING_USD),
             $this->item('offers', 'Earnings', 'Offers', '/associate/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
@@ -201,6 +207,7 @@ class PortalMenuService
             $this->item('network', 'Network', 'Network Tree', '/associate/network/tree', 'fas fa-project-diagram'),
             $this->item('genealogy', 'Network', 'Interactive Genealogy', '/associate/genealogy', 'fas fa-sitemap'),
             $this->item('team', 'Network', 'Team Members', '/associate/team', 'fas fa-users'),
+            $this->item('team-pipeline', 'Network', 'Team Pipeline', '/associate/team/pipeline', 'fas fa-stream'),
             $this->item('rank-eligibility', 'Network', 'Rank & Eligibility', '/associate/rank-eligibility', 'fas fa-trophy'),
             $this->item('mlm-plan', 'Network', 'Commission Plan', '/associate/mlm-plan', 'fas fa-file-invoice-dollar'),
             $this->item('referral', 'Network', 'Refer & Earn', '/associate/referral', 'fas fa-user-friends'),
@@ -232,6 +239,11 @@ class PortalMenuService
             $this->item('posters', 'Tools', 'Marketing Posters', '/associate/posters', 'fas fa-image'),
             $this->item('export-earnings', 'Reports', 'Export Earnings', '/associate/export/my-earnings', 'fas fa-file-download'),
             $this->item('export-team', 'Reports', 'Export Team', '/associate/export/active-team', 'fas fa-file-export'),
+
+            // Account & Settings
+            $this->item('profile', 'Account', 'My Profile & KYC', '/associate/profile', 'fas fa-user-circle'),
+            $this->item('settings', 'Account', 'Account Settings', '/associate/settings', 'fas fa-cog'),
+            $this->item('logout', 'Account', 'Logout', '/associate/logout', 'fas fa-sign-out-alt'),
         ];
     }
 

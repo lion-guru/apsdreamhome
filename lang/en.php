@@ -9410,4 +9410,22 @@ return array(
   'menu_posters' => 'Marketing Posters',
   'menu_export-earnings' => 'Export Earnings',
   'menu_export-team' => 'Export Team',
+
+  /* Additional Associate Portal Menu & Topbar Keys */
+  'Account' => 'Account & Security',
+  'menu_ai-coach' => 'AI Sales Coach',
+  'menu_leads-add' => 'Add Lead',
+  'menu_leads-revive' => 'Revive Leads',
+  'menu_salary' => 'Career Salary Plan',
+  'menu_allowances' => 'Office & Travel Allowances',
+  'menu_rewards' => 'Rank Rewards',
+  'menu_team-pipeline' => 'Team Pipeline',
+  'menu_profile' => 'My Profile & KYC',
+  'menu_settings' => 'Account Settings',
+  'menu_logout' => 'Logout',
+  'assoc_top_profile' => 'My Profile & KYC',
+  'assoc_top_id_card' => 'Digital ID Card',
+  'assoc_top_settings' => 'Account Settings',
+  'assoc_top_logout' => 'Logout',
+  'assoc_quick_add_lead' => '+ New Lead',
 );

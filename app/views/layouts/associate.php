@@ -211,59 +211,6 @@ $GLOBALS['_html_doc_started'] = true;
             transition: margin-left 0.3s ease;
         }
 
-        /* Top Header */
-        .top-header {
-            background: #fff;
-            padding: 15px 25px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .page-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin: 0;
-        }
-
-        .breadcrumb {
-            margin: 0;
-            font-size: 0.85rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            background: #fff;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .btn-icon:hover {
-            background: #f1f5f9;
-            color: #1e293b;
-        }
-
-        .content-wrapper {
-            padding: 25px;
-        }
-
         /* Mobile Toggle */
         .sidebar-toggle {
             display: none;
@@ -285,10 +232,17 @@ $GLOBALS['_html_doc_started'] = true;
         .top-header { background: #fff; padding: 14px 28px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .page-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 0; }
         .breadcrumb { margin: 0; font-size: 0.82rem; }
-        .header-actions { display: flex; gap: 12px; align-items: center; }
-        .btn-icon { width: 40px; height: 40px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; text-decoration: none; position: relative; font-size: 1.05rem; cursor: pointer; }
+        .breadcrumb-item a { color: #0d9488; text-decoration: none; }
+        .breadcrumb-item a:hover { color: #0f766e; text-decoration: underline; }
+        .breadcrumb-item.active { color: #64748b; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .btn-icon { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; text-decoration: none; position: relative; font-size: 1.05rem; cursor: pointer; }
         .btn-icon:hover { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
-        .content-wrapper { padding: 28px; }
+        .content-wrapper { padding: 24px 28px; }
+
+        /* Unified Portal Cards & Components */
+        .card { border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .card-header { background: #fff; border-bottom: 1px solid #f1f5f9; padding: 16px 20px; font-weight: 600; border-top-left-radius: 14px !important; border-top-right-radius: 14px !important; }
 
         /* Responsive */
         @media (max-width: 1024px) {
@@ -584,28 +538,80 @@ $GLOBALS['_html_doc_started'] = true;
         <!-- Top Header -->
         <header class="top-header">
             <div>
-                <h1 class="page-title"><?php echo $page_title ?? 'Dashboard'; ?></h1>
+                <h1 class="page-title"><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></h1>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/associate/dashboard">Home</a></li>
-                        <li class="breadcrumb-item active"><?php echo $page_title ?? 'Dashboard'; ?></li>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/associate/dashboard"><?= __('nav_home', [], 'Home') ?></a></li>
+                        <li class="breadcrumb-item active"><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></li>
                     </ol>
                 </nav>
             </div>
             <div class="header-actions">
+                <?php
+                $topWalletBal = 0.0;
+                if (!empty($_SESSION['user_id'])) {
+                    try {
+                        $topDb = \App\Core\Database\Database::getInstance()->getConnection();
+                        $topStmt = $topDb->prepare("SELECT balance FROM user_wallets WHERE user_id = ? LIMIT 1");
+                        $topStmt->execute([(int)$_SESSION['user_id']]);
+                        $topRow = $topStmt->fetch(\PDO::FETCH_ASSOC);
+                        $topWalletBal = $topRow ? (float)$topRow['balance'] : 0.0;
+                    } catch (\Throwable $e) {}
+                }
+                $currentLang = $_SESSION['lang'] ?? 'en';
+                $toggleLang = $currentLang === 'hi' ? 'en' : 'hi';
+                $toggleLabel = $currentLang === 'hi' ? 'English' : 'हिन्दी';
+                ?>
+
+                <!-- Live Wallet Quick Pill -->
+                <a href="<?= BASE_URL ?>/associate/wallet" class="btn btn-sm btn-outline-success rounded-pill d-none d-sm-inline-flex align-items-center gap-1.5 px-3 py-1 fw-bold shadow-2xs" style="font-size: 0.82rem; text-decoration: none;" title="My Wallet Balance">
+                    <i class="fas fa-wallet text-success"></i>
+                    <span>₹<?= number_format($topWalletBal, 0) ?></span>
+                </a>
+
+                <!-- One-Click Language Switcher -->
+                <a href="<?= BASE_URL ?>/language/set/<?= $toggleLang ?>" class="btn btn-sm btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-1 px-2.5 py-1" style="font-size: 0.8rem; font-weight: 600; text-decoration: none;" title="Switch Language / भाषा बदलें">
+                    <i class="fas fa-globe text-primary"></i>
+                    <span><?= $toggleLabel ?></span>
+                </a>
+
+                <!-- Quick Lead Capture Button -->
+                <a href="<?= BASE_URL ?>/associate/leads/add" class="btn btn-sm btn-primary rounded-pill d-none d-md-inline-flex align-items-center gap-1 px-3 py-1 shadow-sm text-white" style="font-size: 0.82rem; font-weight: 600; background: #0d9488; border-color: #0d9488; text-decoration: none;">
+                    <i class="fas fa-plus-circle"></i>
+                    <span><?= htmlspecialchars(__('assoc_quick_add_lead', [], '+ New Lead')) ?></span>
+                </a>
+
+                <!-- AI Coach Shortcut -->
+                <a href="<?= BASE_URL ?>/associate/ai-coach" class="btn-icon" title="AI Coach" aria-label="AI Coach" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-color:transparent;">
+                    <i class="fas fa-robot"></i>
+                </a>
+
+                <!-- Notifications -->
                 <button class="nav-icon notification-bell-btn btn-icon" id="notification-bell-placeholder" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()" title="Notifications" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
                     <span class="badge" style="display:none;">0</span>
                 </button>
-                <a href="<?= BASE_URL ?>/associate/ai-coach" class="btn-icon" title="AI Coach" aria-label="AI Coach" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-color:transparent;">
-                    <i class="fas fa-robot"></i>
-                </a>
-                <a href="<?= BASE_URL ?>/associate/my-customers" class="btn-icon" title="My Customers & Contacts" aria-label="My Customers">
-                    <i class="fas fa-address-book"></i>
-                </a>
-                <a href="<?= BASE_URL ?>/associate/profile" class="btn-icon" title="My Profile" aria-label="My Profile">
-                    <i class="fas fa-user"></i>
-                </a>
+
+                <!-- User Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="btn-icon dropdown-toggle" type="button" id="assocUserDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border:none;background:#f1f5f9;cursor:pointer;">
+                        <i class="fas fa-user-circle text-secondary fs-5"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="assocUserDropdown" style="min-width: 220px; font-size: 0.88rem;">
+                        <li class="px-3 py-2 border-bottom">
+                            <div class="fw-bold text-dark text-truncate"><?= htmlspecialchars($_SESSION['user_name'] ?? 'Associate') ?></div>
+                            <div class="small text-muted text-truncate"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $_SESSION['associate_role'] ?? $_SESSION['role'] ?? 'Associate'))) ?></div>
+                            <?php if (!empty($_SESSION['user_email'])): ?>
+                            <div class="small text-muted text-truncate" style="font-size: 0.72rem;"><?= htmlspecialchars($_SESSION['user_email']) ?></div>
+                            <?php endif; ?>
+                        </li>
+                        <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/profile"><i class="fas fa-user me-2 text-primary"></i><?= htmlspecialchars(__('assoc_top_profile', [], 'My Profile & KYC')) ?></a></li>
+                        <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/id-card"><i class="fas fa-id-card me-2 text-info"></i><?= htmlspecialchars(__('assoc_top_id_card', [], 'Digital ID Card')) ?></a></li>
+                        <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/settings"><i class="fas fa-cog me-2 text-secondary"></i><?= htmlspecialchars(__('assoc_top_settings', [], 'Account Settings')) ?></a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="<?= BASE_URL ?>/associate/logout"><i class="fas fa-sign-out-alt me-2"></i><?= htmlspecialchars(__('assoc_top_logout', [], 'Logout')) ?></a></li>
+                    </ul>
+                </div>
             </div>
         </header>
 

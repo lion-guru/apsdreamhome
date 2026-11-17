@@ -9393,4 +9393,22 @@ return array(
   'menu_posters' => 'मार्केटिंग पोस्टर्स',
   'menu_export-earnings' => 'कमाई निर्यात करें',
   'menu_export-team' => 'टीम निर्यात करें',
+
+  /* Additional Associate Portal Menu & Topbar Keys */
+  'Account' => 'खाता और सुरक्षा',
+  'menu_ai-coach' => 'एआई सेल्स कोच',
+  'menu_leads-add' => 'लीड जोड़ें',
+  'menu_leads-revive' => 'लीड्स रिवाइव करें',
+  'menu_salary' => 'कैरियर सैलरी प्लान',
+  'menu_allowances' => 'कार्यालय व यात्रा भत्ता',
+  'menu_rewards' => 'रैंक रिवॉर्ड्स',
+  'menu_team-pipeline' => 'टीम पाइपलाइन',
+  'menu_profile' => 'मेरी प्रोफाइल और केवाईसी',
+  'menu_settings' => 'अकाउंट सेटिंग्स',
+  'menu_logout' => 'लॉग आउट',
+  'assoc_top_profile' => 'मेरी प्रोफाइल और केवाईसी',
+  'assoc_top_id_card' => 'डिजिटल पहचान पत्र',
+  'assoc_top_settings' => 'अकाउंट सेटिंग्स',
+  'assoc_top_logout' => 'लॉग आउट',
+  'assoc_quick_add_lead' => '+ नई लीड',
 );
