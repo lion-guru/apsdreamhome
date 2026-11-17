@@ -243,7 +243,8 @@ class SmartAIController extends BaseController
                 $ragResult = $rag->answer($message, $userContext['id'] ?? 0, $ragVisibility);
                 $ragHasProse = false;
                 foreach (($ragResult['sources'] ?? []) as $src) {
-                    if (stripos((string)$src, 'Knowledge Base:') === 0 || stripos((string)$src, 'Colony:') === 0) {
+                    $srcStr = is_array($src) ? ($src['title'] ?? $src['source'] ?? '') : (string)$src;
+                    if (stripos($srcStr, 'Knowledge Base:') === 0 || stripos($srcStr, 'Colony:') === 0) {
                         $ragHasProse = true;
                         break;
                     }
@@ -432,6 +433,9 @@ class SmartAIController extends BaseController
                 $context['role'] = $sessionRole;
                 $context['name'] = $_SESSION['user_name'] ?? ucfirst($sessionRole);
                 $context['id'] = $_SESSION['user_id'];
+                if ($sessionRole === 'associate') {
+                    $context['data'] = $this->getAssociateData($context['id']);
+                }
             } else {
                 $context['role'] = 'customer';
                 $context['name'] = $_SESSION['user_name'] ?? 'Customer';
@@ -473,12 +477,26 @@ class SmartAIController extends BaseController
             );
             $data['pending_commission'] = $pendingStats['total'] ?? 0;
 
-            // Get leads count
+            // Get leads count (assigned or created, active)
             $leadsStats = $this->db->fetch(
-                "SELECT COUNT(*) as total FROM leads WHERE assigned_to = ?",
-                [$associateId]
+                "SELECT COUNT(*) as total FROM leads WHERE (assigned_to = ? OR created_by = ?) AND deleted_at IS NULL",
+                [$associateId, $associateId]
             );
-            $data['total_leads'] = $leadsStats['total'] ?? 0;
+            $data['total_leads'] = (int)($leadsStats['total'] ?? 0);
+
+            // Get hot leads count
+            $hotStats = $this->db->fetch(
+                "SELECT COUNT(*) as total FROM leads WHERE (assigned_to = ? OR created_by = ?) AND (lead_score >= 70 OR priority = 'hot' OR status IN ('qualified','proposal','negotiation')) AND deleted_at IS NULL",
+                [$associateId, $associateId]
+            );
+            $data['hot_leads'] = (int)($hotStats['total'] ?? 0);
+
+            // Recent active leads
+            $recentLeads = $this->db->fetchAll(
+                "SELECT name, phone, status, lead_score FROM leads WHERE (assigned_to = ? OR created_by = ?) AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT 5",
+                [$associateId, $associateId]
+            );
+            $data['recent_leads'] = $recentLeads ?: [];
 
             return $data;
         } catch (\Throwable $e) {
@@ -744,6 +762,23 @@ class SmartAIController extends BaseController
                 $size = $userContext['data']['network_size'] ?? 0;
                 return "Aapka Network:\n\nTotal users: {$size}\n\nReferral Link:\n" . BASE_URL . "/associate/register?ref=" . $userContext['id'] . "\n\nSocial media par share karein:\n* WhatsApp\n* Facebook\n* Instagram\n\nJitne zyada referrals, utna zyada commission!";
             }
+
+        if ((strpos($msg, 'lead') !== false || strpos($msg, 'leads') !== false) && $role === 'associate') {
+            $totalLeads = (int)($userContext['data']['total_leads'] ?? 0);
+            $hotLeads = (int)($userContext['data']['hot_leads'] ?? 0);
+            $recent = $userContext['data']['recent_leads'] ?? [];
+            if ($totalLeads > 0) {
+                $base = defined('BASE_URL') ? BASE_URL : '';
+                $reply = "Namaste {$name}! Aapke CRM mein kul **{$totalLeads} active leads** hain (Hot Leads: {$hotLeads})! 🚀\n\n";
+                $reply .= "**Aapke Recent Active Leads:**\n";
+                foreach (array_slice($recent, 0, 4) as $rl) {
+                    $reply .= "• **" . htmlspecialchars($rl['name'] ?? 'Lead') . "** — Status: " . ucfirst(str_replace('_', ' ', $rl['status'] ?? 'new')) . " (Score: " . ($rl['lead_score'] ?? 50) . ")\n";
+                }
+                $reply .= "\n👉 **Action Plan:** In leads ko call karke Suryoday Colony ya Raghunath Nagri ke liye Free Sunday Site Visit arrange karein!\n";
+                $reply .= "Aap poori lead list yahan dekh sakte hain:\n" . $base . "/associate/leads";
+                return $reply;
+            }
+        }
         }
 
         // Default response
@@ -1038,10 +1073,22 @@ EOT;
         }
 
         if ($userContext['role'] === 'associate') {
-            $prompt .= "Network Size: " . ($userContext['data']['network_size'] ?? 0) . "\n";
-            $prompt .= "Total Commission: �" . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
-            $prompt .= "Pending Commission: �" . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
-            $prompt .= "Total Leads: " . ($userContext['data']['total_leads'] ?? 0) . "\n";
+            $totalLeads = (int)($userContext['data']['total_leads'] ?? 0);
+            $hotLeads = (int)($userContext['data']['hot_leads'] ?? 0);
+            $prompt .= "Associate Real-Time Pipeline Stats:\n";
+            $prompt .= "- Total Active Leads: " . $totalLeads . "\n";
+            $prompt .= "- Hot/High Priority Leads: " . $hotLeads . "\n";
+            $prompt .= "- Network Size: " . ($userContext['data']['network_size'] ?? 0) . "\n";
+            $prompt .= "- Total Commission: Rs." . number_format($userContext['data']['total_commission'] ?? 0) . "\n";
+            $prompt .= "- Pending Commission: Rs." . number_format($userContext['data']['pending_commission'] ?? 0) . "\n";
+            if (!empty($userContext['data']['recent_leads'])) {
+                $prompt .= "Recent Active Leads in CRM:\n";
+                foreach ($userContext['data']['recent_leads'] as $rl) {
+                    $prompt .= "  * " . ($rl['name'] ?? 'Lead') . " (Status: " . ($rl['status'] ?? 'new') . ", Score: " . ($rl['lead_score'] ?? '50') . ")\n";
+                }
+            }
+            $prompt .= "\nCRITICAL RULE FOR ASSOCIATE LEADS INQUIRIES:\n";
+            $prompt .= "The associate currently has {$totalLeads} active leads in their CRM pipeline. If they ask about their leads, 'Show my leads', or ask for lead guidance, DO NOT say their dashboard is empty. State their real total leads ({$totalLeads}), highlight their top leads, and suggest actionable sales next steps to close deals!\n";
         } elseif ($userContext['role'] === 'customer') {
             $prompt .= "Total Properties: " . ($userContext['data']['total_properties'] ?? 0) . "\n";
             $prompt .= "Total Inquiries: " . ($userContext['data']['total_inquiries'] ?? 0) . "\n";

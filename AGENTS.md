@@ -1,3 +1,76 @@
+## Session 728: Associate Portal Unified Architecture & Intelligence Elevation — Portal Layout Enforcement (`layouts/associate`), Interactive D3 Genealogy Re-Engineered, Live CRM Pipeline & Funnel Restored, Bank Accounts Zero-404 & Strict-Schema Resolved, AI Assistant 127-Lead Context Awakening, WhatsApp Studio Expanded; Master 12/12 (2026-11-17)
+
+### Trigger
+User request:
+"[My Commission Advances & Loans](http://localhost/apsdreamhome/associate/advances), [My Network | APS Dream Home](http://localhost/apsdreamhome/associate/genealogy), [AI Dashboard](http://localhost/apsdreamhome/associate/ai-dashboard) issi ko dekho aise kai kaamahi menu hai assosiate me jo bian side bar ke alag khul rahe hai jab ki Associate Dashboard jaisa ye dikh raha waisi hi layout portal dashbord ke andar hi khuln achahiye na ..aur Tools - Associate Portal Smart Tools Quick calculators & utilities for your daily work Quick Links ye tools bhi inhi ke and open ho sakta hai na..aur ye bhi aur badhi improve bhi karo... WhatsApp Poster Studio... Bank Accounts - APS Dream Home kaam nhi kar raha hai live karo... CRM Dashboard 0 Total Leads, 0 Hot Leads... AI Assistant 'Abhi aapka Lead Dashboard empty hai (Total Leads: 0)' galat bata raha hai... sabko live karo aur improve best banaya jaye."
+
+### Root Causes & Comprehensive Fixes
+1. **Global Portal Layout Loss Elimination (`app/Http/Controllers/Traits/HasViewRendering.php`, `AssociateAdvanceController.php`, `AIDashboardController.php`, `CallRecordingController.php`)**:
+   - *Root Cause:* In `HasViewRendering::render()`, when `$layout === null`, the controller fell back to `protected string $layout = 'layouts/base'`. Controllers extending `BaseController` or `PageController` rendered associate views (`associate/advances`, `associate/ai_dashboard`, `associate/allowances`, etc.) in the public website layout with no associate sidebar or topbar!
+   - *Fix:* Added smart layout detection in `HasViewRendering::render()`: when `$layout === null` and `$this->layout === 'layouts/base'`, if `$view` starts with `associate/` or `associate.`, auto-selects `'layouts/associate'`; if `$view` starts with `admin/`, auto-selects `'layouts/admin'`; if associate is logged in and viewing wallet/shared views, auto-selects `'layouts/associate'`.
+   - Also explicitly declared `protected string $layout = 'layouts/associate';` in `AssociateAdvanceController` and `AIDashboardController`.
+2. **Interactive Genealogy Embedded in Portal Layout (`app/Http/Controllers/MLMTreeController.php`, `app/views/associate/genealogy.php`)**:
+   - *Root Cause:* `MLMTreeController::genealogy()` previously executed `include $viewPath;` directly pointing to `views/mlm/genealogy.php`, which was a standalone HTML document with purple styling, bypassing the portal layout completely.
+   - *Fix:* Re-routed associate genealogy to render a new dedicated portal view `app/views/associate/genealogy.php` with layout `'layouts/associate'`.
+   - Built a modern, interactive D3.js v7 zoomable tree with breadcrumb sponsor chain, live member search, 3/5/7/10 level hierarchy selector, zoom in/out/reset controls, leg distribution (Left vs Right), downline metrics, and an interactive member performance modal with 1-click focus and direct phone call actions.
+3. **Dedicated Tool Suite Routing & In-Card Links (`routes/web.php`, `app/views/associate/tools.php`)**:
+   - *Root Cause:* Quick links on `/associate/tools` pointed to `/associate/stamp-duty-calculator`, `/associate/plot-converter`, `/associate/commission-calculator`, but those routes were missing GET mappings in `routes/web.php`.
+   - *Fix:* Registered canonical GET and POST routes in `routes/web.php` for `emi-calculator`, `stamp-duty-calculator`, `plot-converter`, and `commission-calculator` mapped to `ToolController` and `CommissionController`.
+   - Added direct "Full Page" pill badges on each calculator card in `tools.php` so associates can either calculate right on the card or launch the full-page dedicated tool.
+4. **Bank Details Zero-404 & Strict-Schema Resolved (`app/views/wallet/bank_accounts.php`, `app/Http/Controllers/WalletController.php`)**:
+   - *Root Causes:*
+     1. In `bank_accounts.php`, AJAX fetch calls used relative URLs `fetch('/wallet/bank-accounts/add')`, `fetch('<?= $bankAddUrl ?>/../set-primary')`, `fetch('<?= $bankAddUrl ?>/../delete')` without `BASE_URL`, hitting 404 HTML pages on localhost subfolder installations and throwing JSON parse SyntaxErrors.
+     2. In `WalletController::addBankAccount()`, the query failed to insert `account_holder_name` (which is `NOT NULL` with no default in MySQL `user_bank_accounts`), triggering strict mode fatal errors.
+     3. `setPrimaryBank()` and `deleteBankAccount()` filtered by `AND tenant_id = ?`, failing on legacy records where tenant_id differed.
+   - *Fixes:* Prepend `BASE_URL` on all endpoints (`/wallet/bank-accounts/add`, `/set-primary`, `/delete`, `/update`), append CSRF token in all form submissions, supply both `account_holder` and `account_holder_name`, and query by `user_id = ?`.
+5. **CRM Dashboard Live Pipeline & Real Funnel Metrics (`app/Http/Controllers/Associate/CrmController.php`)**:
+   - *Root Cause:* `crmDashboard()` only queried `WHERE assigned_to = ?` (ignoring `created_by = ?`), returned mismatched keys (`total`, `won`, `lost`) while `crm_dashboard.php` expected (`total_leads`, `hot_leads`, `converted`, `conversion_rate`, `pending_tasks`, `overdue_tasks`, `total_visits`, `today_visits`, `upcoming_visits`, `by_status`, `by_source`), and passed `$recentLeads` instead of `$recent_activity` and no `$upcoming_visits` or `$pending_tasks`.
+   - *Fix:* Complete rewrite of `CrmController::crmDashboard()` to calculate real metrics: `total_leads` (127), `hot_leads` (67), `converted` (14, 11%), follow-ups from `followups` table, site visits from `site_visits`, and full activity stream with MySQL `CONCAT` for lead attribution.
+6. **APS AI Assistant 127-Lead Context Awakening (`app/Http/Controllers/SmartAIController.php`)**:
+   - *Root Cause:* In `SmartAIController::getUserContext()`, when a user was logged in via `user_id` with role `'associate'`, `$context['data']` was left unpopulated because `getAssociateData()` was only called for the legacy `associate_id` session key. Thus `total_leads` was 0 in the LLM system prompt, causing the AI to report "Abhi aapka Lead Dashboard empty hai (Total Leads: 0)".
+   - *Fix:*
+     1. In `getUserContext()`, populated `$context['data'] = $this->getAssociateData($context['id']);` for associate role.
+     2. In `getAssociateData()`, queried `(assigned_to = ? OR created_by = ?) AND deleted_at IS NULL` to load total leads (127), hot leads (67), and recent active leads snapshot.
+     3. In `buildContextPrompt()`, injected pipeline stats and explicit instruction forbidding false "empty dashboard" claims.
+     4. In `getSmartLocalResponse()`, added an associate leads intent handler to immediately return lead counts, top prospects, and site-visit action plans.
+     5. Fixed RAG sources array check line 246 preventing `Array to string conversion` warnings.
+7. **WhatsApp Poster Studio Elevated (`app/Http/Controllers/Associate/PosterController.php`, `app/views/associate/posters.php`)**:
+   - Added 3 new luxury themes: Gold Luxury (`gold`), Emerald Elite (`emerald`), and Royal Purple (`purple`) with rich GD dual-stop color gradients.
+   - Added Campaign Hook / Offer selector (Free Sunday Site Visit, Immediate Registry & Possession, 100% Bank Loan Approved, High ROI Plots).
+   - Fixed outlier price display in dropdown (< ₹100/sqft formatted cleanly as `(Prime Location)`).
+   - Added 1-click "Copy WhatsApp Message" and "Copy Referral Link" buttons with clipboard feedback.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Http/Controllers/Traits/HasViewRendering.php` -> PASS
+  - `app/Http/Controllers/Associate/AssociateAdvanceController.php` -> PASS
+  - `app/Http/Controllers/Associate/AIDashboardController.php` -> PASS
+  - `app/Http/Controllers/Associate/CrmController.php` -> PASS
+  - `app/Http/Controllers/Associate/PosterController.php` -> PASS
+  - `app/Http/Controllers/MLMTreeController.php` -> PASS
+  - `app/Http/Controllers/SmartAIController.php` -> PASS
+  - `app/Http/Controllers/WalletController.php` -> PASS
+  - `app/views/associate/genealogy.php` -> PASS
+  - `app/views/associate/posters.php` -> PASS
+  - `app/views/associate/tools.php` -> PASS
+  - `app/views/wallet/bank_accounts.php` -> PASS
+  - `routes/web.php` -> PASS
+- **Associate Views Render Test** -> **65/65 associate views rendered cleanly with 0 errors**.
+- **Master Test Runner** -> **12/12 PASSED** (56.57s, 100% HEALTHY).
+- **Live AI Chat Test** with prompt "Show my leads":
+  - Returned: "Namaste Test Associate! ... Aapke paas total 127 Active Leads hain is waqt. Isme se 67 Hot/High Priority leads hain... Vikram Aggarwal (Score: 75)... Next Step Action Plan... Suryoday Colony ya Raghunath Nagri ke liye Free Site Visit..." -> Verified accurate.
+- **Poster Studio Test**:
+  - Generated HD PNG (1080×1350) with theme `gold` -> 124,662 bytes verified.
+- **Database Baseline**:
+  - users: 82, plot_bookings: 23, leads: 994, transactions: 5, mlm_commission_ledger: 359, email_queue: 14 (exact zero drift).
+- `scripts/verify_agents_log.php` verified.
+
+### Key lessons
+_1630. **Fallback layout logic must be aware of the view domain** — when controllers call `$this->render('associate/...')` without a 3rd parameter, checking the view prefix to default to `'layouts/associate'` prevents deep portal views from accidentally displaying the public site navbar.
+_1631. **Session role resolution in AI controllers must populate role-specific profile data** — authentication systems that store `user_id` + `role` rather than role-specific ID keys (`associate_id`, `employee_id`) must have their context builders bind role-specific data methods to `user_id`.
+_1632. **Strict mode MySQL requires all non-null columns without defaults to be provided on insert** — when dual columns like `account_holder` (nullable) and `account_holder_name` (not null) coexist, the write path must populate both.
+_1633. **Visual poster studios require both visual marketing assets and quick-copy text** — field associates need both the generated image and pre-composed WhatsApp copy to share on Status in one tap.
+
 ## Session 727: Re-Stating Lost S726 (Customer Dashboard De-Administration) + Power-User Tile Restoration (SRO Registry Desk · NRI Global Desk · Site Timelapse · Alert Preferences back into Owning tier) — AGENTS.md Was Restored From HEAD Between My Prepend And Commit, Losing My Uncommitted Entry; Owner Asked For The Useful Tiles Back (2026-11-17)
 
 ### Why This Entry Exists (read before the detail)

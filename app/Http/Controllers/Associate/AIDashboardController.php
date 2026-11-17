@@ -15,6 +15,7 @@ use App\Core\Database\Database;
 
 class AIDashboardController extends BaseController
 {
+    protected string $layout = 'layouts/associate';
     protected $db;
     private $leadScoringService;
     private $dealProbabilityService;
@@ -64,7 +65,7 @@ class AIDashboardController extends BaseController
         $cacheKey = 'associate_ai_dashboard:' . $associateId;
         $cached = $this->cacheService->get($cacheKey);
         if (is_array($cached) && isset($cached['page_title'])) {
-            $this->render('associate/ai_dashboard', $cached);
+            $this->render('associate/ai_dashboard', $cached, 'layouts/associate');
             return;
         }
 
@@ -82,7 +83,7 @@ class AIDashboardController extends BaseController
         ];
 
         $this->cacheService->set($cacheKey, $data, 300);
-        $this->render('associate/ai_dashboard', $data);
+        $this->render('associate/ai_dashboard', $data, 'layouts/associate');
     }
 
     /**

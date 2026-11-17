@@ -56,6 +56,12 @@ $defaultTools = [
     ]
 ];
 $tools = !empty($tools) ? $tools : $defaultTools;
+$toolLinks = [
+    'emi' => $base . '/associate/emi-calculator',
+    'stamp-duty' => $base . '/associate/stamp-duty-calculator',
+    'plot-converter' => $base . '/associate/plot-converter',
+    'commission' => $base . '/associate/commission-calculator',
+];
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
@@ -78,6 +84,11 @@ $tools = !empty($tools) ? $tools : $defaultTools;
                     <div class="tool-icon-wrapper" style="background: <?= $tool['color'] ?? '#0d9488' ?>;">
                         <i class="fas <?= $tool['icon'] ?> text-white fs-4"></i>
                     </div>
+                    <?php if (isset($toolLinks[$tool['id']])): ?>
+                    <a href="<?= $toolLinks[$tool['id']] ?>" class="btn btn-sm btn-light border rounded-pill px-2 py-0 text-muted small" title="Open full dedicated page" style="font-size: 0.72rem;">
+                        Full Page <i class="fas fa-external-link-alt ms-1"></i>
+                    </a>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="card-body px-4 pb-3">

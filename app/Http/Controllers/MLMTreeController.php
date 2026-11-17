@@ -187,6 +187,21 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
         $upline = $this->getUpline($viewUserId);
 
         $base = BASE_URL;
+
+        // Render seamlessly inside Associate Portal layout for associate/agent roles
+        if (in_array($userRole, ['associate', 'agent'], true) || !isset($_SESSION['admin_id'])) {
+            $this->layout = 'layouts/associate';
+            $this->render('associate/genealogy', [
+                'page_title' => 'Interactive Genealogy - Associate Portal',
+                'currentUser' => $currentUser,
+                'stats' => $stats,
+                'upline' => $upline,
+                'current_page' => 'genealogy',
+                'viewUserId' => $viewUserId,
+            ], 'layouts/associate');
+            return;
+        }
+
         $viewPath = __DIR__ . '/../../views/mlm/genealogy.php';
         if (file_exists($viewPath)) {
             include $viewPath;

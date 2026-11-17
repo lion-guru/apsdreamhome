@@ -1,10 +1,14 @@
 
 <?php
 $page_title = $page_title ?? 'Bank Accounts - APS Dream Home';
+$baseUrl = defined('BASE_URL') ? BASE_URL : '';
 $isAssociate = (($_SESSION['role'] ?? '') === 'associate');
-$bankBase = $isAssociate ? '/associate' : '';
-$bankListUrl = $isAssociate ? '/associate/bank-details' : '/wallet/bank-accounts';
-$bankAddUrl = '/wallet/bank-accounts/add';
+$bankBase = $isAssociate ? $baseUrl . '/associate' : $baseUrl;
+$bankListUrl = $isAssociate ? $baseUrl . '/associate/bank-details' : $baseUrl . '/wallet/bank-accounts';
+$bankAddUrl = $baseUrl . '/wallet/bank-accounts/add';
+$bankSetPrimaryUrl = $baseUrl . '/wallet/bank-accounts/set-primary';
+$bankDeleteUrl = $baseUrl . '/wallet/bank-accounts/delete';
+$bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
 ?>
 
 <style>
@@ -424,10 +428,12 @@ function addBankAccount() {
     formData.append('bank_name', bankName);
     formData.append('account_number', accountNumber);
     formData.append('account_holder', accountHolder);
+    formData.append('account_holder_name', accountHolder);
     formData.append('ifsc_code', ifscCode);
     formData.append('branch_name', branchName);
     formData.append('account_type', accountType);
     formData.append('is_primary', isPrimary);
+    formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
     
     fetch('<?= $bankAddUrl ?>', {
         method: 'POST',
@@ -439,7 +445,7 @@ function addBankAccount() {
             alert('Bank account added successfully!');
             window.location.href = '<?= $bankListUrl ?>';
         } else {
-            alert('Failed to add bank account: ' + data.message);
+            alert('Failed to add bank account: ' + (data.message || 'Unknown error'));
         }
     })
     .catch(error => {
@@ -451,7 +457,8 @@ function setPrimary(bankAccountId) {
     if (!confirm('Set this as your primary bank account?')) return;
     var fd = new FormData();
     fd.append('account_id', bankAccountId);
-    fetch('<?= $bankAddUrl ?>/../set-primary', { method: 'POST', body: fd })
+    fd.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
+    fetch('<?= $bankSetPrimaryUrl ?>', { method: 'POST', body: fd })
         .then(r => r.json()).then(d => { if (d.success) { window.location.reload(); } else { alert(d.message); } });
 }
 
@@ -459,7 +466,8 @@ function deleteBank(bankAccountId) {
     if (!confirm('Delete this bank account? This cannot be undone.')) return;
     var fd = new FormData();
     fd.append('account_id', bankAccountId);
-    fetch('<?= $bankAddUrl ?>/../delete', { method: 'POST', body: fd })
+    fd.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
+    fetch('<?= $bankDeleteUrl ?>', { method: 'POST', body: fd })
         .then(r => r.json()).then(d => { if (d.success) { window.location.reload(); } else { alert(d.message); } });
 }
 
@@ -509,8 +517,9 @@ function updateBankAccount() {
     formData.append('ifsc_code', ifscCode);
     formData.append('branch_name', branchName);
     formData.append('account_type', accountType);
+    formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
     
-    fetch('<?= BASE_URL ?>/wallet/bank-accounts/update', {
+    fetch('<?= $bankUpdateUrl ?>', {
         method: 'POST',
         body: formData
     })

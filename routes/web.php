@@ -1353,7 +1353,14 @@ $router->get('/associate/tds-slips/certificate', 'App\\Http\\Controllers\\Associ
 $router->get('/associate/book-plot', 'App\\Http\\Controllers\\AssociateController@bookPlot');
 $router->post('/associate/book-plot/submit', 'App\\Http\\Controllers\\AssociateController@bookPlot');
 $router->get('/associate/tools', 'App\\Http\\Controllers\\AssociateController@tools');
-$router->get('/associate/emi-calculator', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
+$router->get('/associate/emi-calculator', 'App\\Http\\Controllers\\Associate\\ToolController@emiCalculator');
+$router->post('/associate/emi-calculator', 'App\\Http\\Controllers\\Associate\\ToolController@emiCalculator');
+$router->get('/associate/stamp-duty-calculator', 'App\\Http\\Controllers\\Associate\\ToolController@stampDutyCalculator');
+$router->post('/associate/stamp-duty-calculator', 'App\\Http\\Controllers\\Associate\\ToolController@stampDutyCalculator');
+$router->get('/associate/plot-converter', 'App\\Http\\Controllers\\Associate\\ToolController@plotConverter');
+$router->post('/associate/plot-converter', 'App\\Http\\Controllers\\Associate\\ToolController@plotConverter');
+$router->get('/associate/commission-calculator', 'App\\Http\\Controllers\\Associate\\CommissionController@commissionCalculator');
+$router->post('/associate/commission-calculator', 'App\\Http\\Controllers\\Associate\\CommissionController@commissionCalculator');
 $router->post('/associate/tools/emi', 'App\\Http\\Controllers\\AssociateController@emiCalculator');
 $router->post('/associate/tools/stamp-duty', 'App\\Http\\Controllers\\AssociateController@stampDutyCalculator');
 $router->post('/associate/tools/plot-converter', 'App\\Http\\Controllers\\AssociateController@plotConverter');

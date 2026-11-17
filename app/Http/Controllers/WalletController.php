@@ -525,10 +525,17 @@ class WalletController extends BaseController
                 ");
             }
 
+            $accountHolderName = trim($_POST['account_holder_name'] ?? $_POST['account_holder'] ?? '');
+            $branchName = trim($_POST['branch_name'] ?? '');
+            $accountType = trim($_POST['account_type'] ?? 'savings');
+            if (empty($accountHolderName)) {
+                $accountHolderName = $accountHolder;
+            }
+
             // If setting as primary, unset other primary accounts
             $tid = (int)$this->tenantId();
             if ($isPrimary) {
-                $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?", [$userId, $tid]);
+                $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?", [$userId]);
             }
 
             // Add bank account
@@ -537,10 +544,13 @@ class WalletController extends BaseController
                 'bank_name' => $bankName,
                 'account_number' => $accountNumber,
                 'ifsc_code' => $ifscCode,
-                'account_holder' => $accountHolder,
-                'is_primary' => $isPrimary,
+                'account_holder' => $accountHolderName,
+                'account_holder_name' => $accountHolderName,
+                'branch_name' => $branchName,
+                'account_type' => in_array($accountType, ['savings', 'current', 'joint']) ? $accountType : 'savings',
+                'is_primary' => $isPrimary ? 1 : 0,
                 'status' => 'active',
-                'tenant_id' => $tid,
+                'tenant_id' => $tid > 0 ? $tid : 1,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -575,9 +585,8 @@ class WalletController extends BaseController
         }
 
         try {
-            $tid = (int)$this->tenantId();
-            $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?", [$userId, $tid]);
-            $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ? AND tenant_id = ?", [$accountId, $userId, $tid]);
+            $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?", [$userId]);
+            $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ?", [$accountId, $userId]);
             echo json_encode(['success' => true, 'message' => 'Primary account updated']);
         } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
@@ -607,8 +616,7 @@ class WalletController extends BaseController
         }
 
         try {
-            $tid = (int)$this->tenantId();
-            $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ? AND tenant_id = ?", [$accountId, $userId, $tid]);
+            $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$accountId, $userId]);
             echo json_encode(['success' => true, 'message' => 'Bank account deleted']);
         } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);

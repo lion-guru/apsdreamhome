@@ -53,6 +53,7 @@ class PosterController extends BaseController
         }
         $themes = [
             'teal' => 'Teal Premium', 'navy' => 'Midnight Navy', 'maroon' => 'Royal Maroon',
+            'gold' => 'Gold Luxury', 'emerald' => 'Emerald Elite', 'purple' => 'Royal Purple',
         ];
         $this->render('associate/posters', [
             'page_title' => 'WhatsApp Poster Studio',
@@ -74,7 +75,7 @@ class PosterController extends BaseController
         $user = $this->currentAssociate();
         $colonyId = (int)($_GET['colony_id'] ?? 0);
         $theme = (string)($_GET['theme'] ?? 'teal');
-        if (!in_array($theme, ['teal', 'navy', 'maroon'], true)) $theme = 'teal';
+        if (!in_array($theme, ['teal', 'navy', 'maroon', 'gold', 'emerald', 'purple'], true)) $theme = 'teal';
         if ($colonyId <= 0) { http_response_code(400); exit('colony_id required'); }
 
         try {
@@ -141,6 +142,9 @@ class PosterController extends BaseController
             'teal' => [[13, 148, 136], [15, 23, 42]],
             'navy' => [[30, 58, 138], [2, 6, 23]],
             'maroon' => [[153, 27, 27], [28, 10, 10]],
+            'gold' => [[217, 119, 6], [69, 26, 3]],
+            'emerald' => [[5, 150, 105], [6, 78, 59]],
+            'purple' => [[126, 34, 206], [30, 10, 60]],
         ];
         [$top, $bottom] = $palettes[$theme];
         $this->gradient($im, $W, $H, $top, $bottom);

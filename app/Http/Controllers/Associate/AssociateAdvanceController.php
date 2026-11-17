@@ -10,6 +10,7 @@ use App\Services\CommissionAdvanceService;
  */
 class AssociateAdvanceController extends PageController
 {
+    protected string $layout = 'layouts/associate';
     private CommissionAdvanceService $advanceService;
 
     public function __construct()
@@ -47,7 +48,7 @@ class AssociateAdvanceController extends PageController
             'advances' => $advances,
             'active_advance' => $activeAdvance,
             'total_recovered' => $totalRecovered,
-        ]);
+        ], 'layouts/associate');
     }
 
     public function apply()

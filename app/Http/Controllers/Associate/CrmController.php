@@ -65,37 +65,64 @@ class CrmController extends BaseController
 
         try {
             $db = \App\Core\Database\Database::getInstance();
-            $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-            $params = [$userId];
-            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+            $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = " . (int)$tid : "";
+            $leadFilter = "(assigned_to = ? OR created_by = ?) AND deleted_at IS NULL{$tidSql}";
 
-            // Lead stats (trashed rows excluded throughout)
-            $stats = [
-                'total' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-                'new' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = 'new' AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-                'contacted' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = 'contacted' AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-                'qualified' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = 'qualified' AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-                'proposal' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = 'proposal' AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-                'won' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = 'won' AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-                'lost' => (int)$db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = 'lost' AND deleted_at IS NULL{$tidSql}", $params)['count'] ?? 0,
-            ];
+            // Lead stats for the associate
+            $totalLeads = (int)($db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE {$leadFilter}", [$userId, $userId])['count'] ?? 0);
+            $hotLeads = (int)($db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE {$leadFilter} AND (lead_score >= 70 OR priority = 'hot' OR status IN ('qualified', 'proposal', 'negotiation'))", [$userId, $userId])['count'] ?? 0);
+            $converted = (int)($db->fetchOne("SELECT COUNT(*) as count FROM leads WHERE {$leadFilter} AND status IN ('closed_won', 'won')", [$userId, $userId])['count'] ?? 0);
+            $conversionRate = $totalLeads > 0 ? round(($converted / $totalLeads) * 100, 1) : 0;
 
-            // Recent leads
-            $recentLeads = $db->fetchAll("SELECT l.*, u.name as assigned_name FROM leads l LEFT JOIN users u ON u.id = l.assigned_to WHERE l.assigned_to = ? AND l.deleted_at IS NULL{$tidSql} ORDER BY l.created_at DESC LIMIT 10", $params) ?: [];
+            // Follow-up / pending tasks counts
+            $pendingTasksCount = (int)($db->fetchOne(
+                "SELECT COUNT(*) as count FROM followups WHERE (assigned_to = ? OR lead_id IN (SELECT id FROM leads WHERE {$leadFilter})) AND status = 'pending'",
+                [$userId, $userId, $userId]
+            )['count'] ?? 0);
+            $overdueTasksCount = (int)($db->fetchOne(
+                "SELECT COUNT(*) as count FROM followups WHERE (assigned_to = ? OR lead_id IN (SELECT id FROM leads WHERE {$leadFilter})) AND status = 'pending' AND followup_date < CURDATE()",
+                [$userId, $userId, $userId]
+            )['count'] ?? 0);
 
-            // Followups due today/overdue
-            $followups = $db->fetchAll("SELECT * FROM followups WHERE assigned_to = ? AND followup_date <= CURDATE() AND status = 'pending'{$tidSql} ORDER BY followup_date ASC LIMIT 10", $params) ?: [];
+            // Site visit stats
+            $totalVisits = (int)($db->fetchOne(
+                "SELECT COUNT(*) as count FROM site_visits WHERE (assigned_to = ? OR user_id = ? OR agent_id = ? OR lead_id IN (SELECT id FROM leads WHERE {$leadFilter}))",
+                [$userId, $userId, $userId, $userId, $userId]
+            )['count'] ?? 0);
+            $todayVisits = (int)($db->fetchOne(
+                "SELECT COUNT(*) as count FROM site_visits WHERE (assigned_to = ? OR user_id = ? OR agent_id = ? OR lead_id IN (SELECT id FROM leads WHERE {$leadFilter})) AND visit_date = CURDATE()",
+                [$userId, $userId, $userId, $userId, $userId]
+            )['count'] ?? 0);
+            $upcomingVisitsCount = (int)($db->fetchOne(
+                "SELECT COUNT(*) as count FROM site_visits WHERE (assigned_to = ? OR user_id = ? OR agent_id = ? OR lead_id IN (SELECT id FROM leads WHERE {$leadFilter})) AND visit_date >= CURDATE() AND status != 'cancelled'",
+                [$userId, $userId, $userId, $userId, $userId]
+            )['count'] ?? 0);
 
-            // Pipeline funnel data (S348: funnel analytics gap)
+            // Pipeline breakdown by status
+            $statusRows = $db->fetchAll("SELECT status, COUNT(*) as c FROM leads WHERE {$leadFilter} GROUP BY status", [$userId, $userId]) ?: [];
+            $byStatus = [];
+            foreach ($statusRows as $r) {
+                $byStatus[$r['status']] = (int)$r['c'];
+                if ($r['status'] === 'closed_won') $byStatus['won'] = (int)$r['c'];
+                if ($r['status'] === 'closed_lost') $byStatus['lost'] = (int)$r['c'];
+            }
+
+            // Leads by source
+            $bySource = $db->fetchAll(
+                "SELECT source, COUNT(*) as cnt FROM leads WHERE {$leadFilter} GROUP BY source ORDER BY cnt DESC LIMIT 6",
+                [$userId, $userId]
+            ) ?: [];
+
+            // Pipeline funnel data
             $funnelStages = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'closed_won'];
             $funnel = [];
             foreach ($funnelStages as $stage) {
-                $fParams = [$userId, $stage];
-                if ($tid > 1) $fParams[] = $tid;
-                $funnel[$stage] = (int)$db->fetchOne(
-                    "SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = ? AND deleted_at IS NULL{$tidSql}",
-                    $fParams
-                )['count'] ?? 0;
+                $count = $byStatus[$stage] ?? 0;
+                // If stage is site_visit, count either lead status or completed visits
+                if ($stage === 'site_visit' && $count === 0 && $totalVisits > 0) {
+                    $count = $totalVisits;
+                }
+                $funnel[$stage] = $count;
             }
             // Conversion rates between consecutive stages
             $funnelRates = [];
@@ -105,12 +132,73 @@ class CrmController extends BaseController
                 $funnelRates[$funnelStages[$i]] = $prev > 0 ? round(($curr / $prev) * 100, 1) : 0;
             }
 
+            // Pending tasks list
+            $pendingTasksList = $db->fetchAll(
+                "SELECT f.id, COALESCE(f.followup_type, 'Follow-up') as title, f.followup_date as due_date, f.status,
+                        COALESCE(NULLIF(l.name, ''), CONCAT('Lead #', f.lead_id)) as lead_name,
+                        COALESCE(l.priority, 'medium') as priority
+                 FROM followups f
+                 LEFT JOIN leads l ON l.id = f.lead_id
+                 WHERE (f.assigned_to = ? OR f.lead_id IN (SELECT id FROM leads WHERE {$leadFilter}))
+                   AND f.status = 'pending'
+                 ORDER BY f.followup_date ASC LIMIT 6",
+                [$userId, $userId, $userId]
+            ) ?: [];
+
+            // Upcoming visits list
+            $upcomingVisitsList = $db->fetchAll(
+                "SELECT sv.id, sv.visitor_name, sv.visitor_phone, sv.visit_date, sv.visit_time, sv.status,
+                        COALESCE(NULLIF(l.name, ''), sv.visitor_name) as lead_name
+                 FROM site_visits sv
+                 LEFT JOIN leads l ON l.id = sv.lead_id
+                 WHERE (sv.assigned_to = ? OR sv.user_id = ? OR sv.agent_id = ? OR sv.lead_id IN (SELECT id FROM leads WHERE {$leadFilter}))
+                   AND sv.status != 'cancelled'
+                   AND sv.visit_date >= CURDATE()
+                 ORDER BY sv.visit_date ASC, sv.visit_time ASC LIMIT 6",
+                [$userId, $userId, $userId, $userId, $userId]
+            ) ?: [];
+
+            // Recent activity list
+            $recentActivity = $db->fetchAll(
+                "SELECT ci.interaction_type, ci.created_at, COALESCE(NULLIF(l.name, ''), CONCAT('Lead #', ci.lead_id)) as lead_name
+                 FROM crm_interactions ci
+                 LEFT JOIN leads l ON l.id = ci.lead_id
+                 WHERE (ci.user_id = ? OR ci.lead_id IN (SELECT id FROM leads WHERE {$leadFilter}))
+                 ORDER BY ci.created_at DESC LIMIT 6",
+                [$userId, $userId, $userId]
+            ) ?: [];
+
+            if (empty($recentActivity)) {
+                $recentActivity = $db->fetchAll(
+                    "SELECT 'note' as interaction_type, updated_at as created_at, name as lead_name
+                     FROM leads
+                     WHERE {$leadFilter}
+                     ORDER BY updated_at DESC LIMIT 6",
+                    [$userId, $userId]
+                ) ?: [];
+            }
+
+            $stats = [
+                'total_leads' => $totalLeads,
+                'hot_leads' => $hotLeads,
+                'converted' => $converted,
+                'conversion_rate' => $conversionRate,
+                'pending_tasks' => $pendingTasksCount,
+                'overdue_tasks' => $overdueTasksCount,
+                'total_visits' => $totalVisits,
+                'today_visits' => $todayVisits,
+                'upcoming_visits' => $upcomingVisitsCount,
+                'by_status' => $byStatus,
+                'by_source' => $bySource,
+            ];
+
             $this->render('associate/crm_dashboard', [
                 'page_title' => 'CRM Dashboard - Associate Portal',
                 'page_description' => 'Manage your leads and pipeline',
                 'stats' => $stats,
-                'recent_leads' => $recentLeads,
-                'followups' => $followups,
+                'recent_activity' => $recentActivity,
+                'pending_tasks' => $pendingTasksList,
+                'upcoming_visits' => $upcomingVisitsList,
                 'funnel' => $funnel,
                 'funnel_rates' => $funnelRates,
             ], 'layouts/associate');

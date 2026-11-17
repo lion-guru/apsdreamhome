@@ -32,6 +32,17 @@ trait HasViewRendering
     {
         if ($layout !== null) {
             $this->layout = $layout;
+        } elseif ($this->layout === 'layouts/base') {
+            // Auto-detect layout based on view path or session role
+            if (str_starts_with($view, 'associate/') || str_starts_with($view, 'associate.')) {
+                $this->layout = 'layouts/associate';
+            } elseif (str_starts_with($view, 'admin/') || str_starts_with($view, 'admin.')) {
+                $this->layout = 'layouts/admin';
+            } elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'associate') {
+                if (str_starts_with($view, 'wallet/') || str_starts_with($view, '_shared/')) {
+                    $this->layout = 'layouts/associate';
+                }
+            }
         }
 
         // Normalize dot-notation (admin.users.index) to slash-notation (admin/users/index)
