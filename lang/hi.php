@@ -4687,7 +4687,7 @@ return array(
   'inquiry_submit_btn' => 'पूछताछ जमा करें',
 
   // Construction Services
-  'const_iso_badge' => 'ISO प्रमाणित निर्माण कंपनी',
+  'const_iso_badge' => 'टाउनशिप डेवलपर · बिल्डर्स · गोरखपुर',
   'const_hero_title' => 'आपके सपनों का निर्माण',
   'const_hero_subtitle' => 'गुणवत्ता और विश्वास के साथ',
   'const_hero_desc' => 'APS Dream Home अंत-से-अंत निर्माण और प्रोजेक्ट ठेका सेवाएँ प्रदान करता है। आवासीय घरों से लेकर वाणिज्यिक परिसरों तक, हम गुणवत्ता, समय पर और बजट में वितरित करते हैं।',

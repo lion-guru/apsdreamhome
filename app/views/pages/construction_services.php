@@ -35,9 +35,9 @@
                     <a href="#services" class="btn btn-outline-light btn-lg px-4"><i class="fas fa-list me-2"></i><?= __('const_our_services') ?></a>
                 </div>
                 <div class="row mt-5 g-3">
-                    <div class="col-4"><h3 class="text-warning mb-0">50+</h3><small class="text-white-50"><?= __('const_projects_completed') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">15+</h3><small class="text-white-50"><?= __('const_years_exp') ?></small></div>
-                    <div class="col-4"><h3 class="text-warning mb-0">1000+</h3><small class="text-white-50"><?= __('const_happy_clients') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">5+</h3><small class="text-white-50"><?= __('const_projects_completed') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">4+</h3><small class="text-white-50"><?= __('const_years_exp') ?></small></div>
+                    <div class="col-4"><h3 class="text-warning mb-0">80+</h3><small class="text-white-50"><?= __('const_happy_clients') ?></small></div>
                 </div>
             </div>
             <div class="col-lg-5 d-none d-lg-block">

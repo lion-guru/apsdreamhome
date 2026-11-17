@@ -4692,7 +4692,7 @@ return array(
   'inquiry_submit_btn' => 'Submit Inquiry',
 
   // Construction Services
-  'const_iso_badge' => 'ISO Certified Construction Company',
+  'const_iso_badge' => 'Township Developer · Builder · Gorakhpur',
   'const_hero_title' => 'Building Your Dreams',
   'const_hero_subtitle' => 'With Quality & Trust',
   'const_hero_desc' => 'APS Dream Home provides end-to-end construction and project contracting services. From residential homes to commercial complexes, we deliver quality, on time, and on budget.',
