@@ -1,3 +1,43 @@
+## Session 688: 116 Unreachable Orphan Views Archived To `_archive/orphan_views_s686/` (Wire-Ready Kept Wired) — Public `/vastu` + `/company-projects` Wired End-To-End, Live-Probed, Master 11/11 (2026-11-17)
+
+### Trigger
+User: "wire karo bakki ke liye soachte hai research karte hai" — after the S682 stub-table + orphan-view audit and S685's two wirings (Work Distribution desk, `/astrology`), decide the rest: wire the wire-ready ones, archive the unreachable remainder. Do not delete anything.
+
+### The classification problem (both audit passes)
+1. **First heuristic — full-path substring scan**: 247/432 candidates — vastly overcounted because `include __DIR__ . '/x.php'`-style relative includes never carry the full path token.
+2. **Second heuristic — basename-without-self-exclusion**: flagged live layout includes as dead (`flash-block`, `impersonation-banner`, `smart_chatbot`) — biased toward ALIVE.
+3. **Final pass — full-path match OR basename-inside-include/require-line-only OR view-to-view scan**: candidates 252 → **116 unreachable files** confirmed by path-biased scan; a second include-rescue pass rescued 4 (`dashboard/associate_dashboard`, one location SEO page, `media/details`, `pages/legal/privacy_policy` — all excluded from archiving). The previously-commonly-quoted "34 dead orphan views" figure was an undercount.
+
+### What was wired (2 public pages, no schema, no data changes)
+1. **`/vastu` → `HomePageController@vastu()` + `PageController@vastu` delegate + route** — the complete, self-contained Vedic page (hero, 12 zodiac-direction table, FAQ, views/colonies links) rendered as a public marketing page. Byte-probed live: 200, 203,280 B, "Vastu Shastra for Homes - APS Dream Home", no View-not-found, needles present, logged-in and guest both serve.
+2. **`/company-projects` → `HomePageController@companyProjects()` + delegate + route** — the view reads live `sites` table rows (8 live colonies at probe time, state/district grouping, image + tagline card layout); honest empty-state when `sites` is empty; NO fabricated stats, NO RERA claims. Byte-probed live: 200, 217,911 B, colony names present, no 1054/1050.
+
+### What was archived (116 files, byte-preserved under `_archive/orphan_views_s686/`)
+All moves used `rename()` with target-layout mirroring (`admin/dashboard/widgets/*` → same sub-path) — no content edited, no permissions changed, no deletions, `git` tracks them as renames (not deletes), restoring is a single `git mv` away.
+- Families archived whole: `dashboard/*_dashboard.php` (12 superseded role dashboards — replaced by `RoleBasedDashboardController`), `locations/*.php` (4 SEO colony pages superseded by `/project-locations/{slug}`), `auth/registration/*.php` (4 superseded steppers — replaced by smart-register flow), `employee_leads/*.php` (5 superseded lead portals), `iot/*.php` (13 IoT desk pages superseded by the live IoT system), `employee/self_service/expense_create.php` + `users/*` (dead IAM views superseded by live employee self-service), `admin/dashboard/widgets/*` (12 superseded widget partials; the live set is included by `customize.php` and untouched), `admin/network/ranks/*`, `admin/sustainability*`, `admin/social_analytics.php`, `admin/fraud_detection.php`, `admin/compliance*`-family, `admin/report_*`, `admin/reports_*`, `admin/journal_entries/journal_entries/*`, `admin/sql/add_profile_picture_column.php` (migration carcasses masquerading as views), `admin/api_key_management.php` (superseded by `admin/features/api_keys`), `admin/employees/index.php` (superseded by `/employee` HR desk), `errors/400|401|maintenance` (referenced by no error handler), `pdf_templates/receipt.php` (template rendering is wired via `generatePdfFromTemplate` but no caller anywhere invokes template 'receipt' — dead since creation), `properties/add_ai_aggregator_columns.php`, `pages/company_projects.php` **moved then RESTORED** when the wire made it live, same for `pages/astrology.php` and `admin/work_distribution/department.php/workload.php` — all three re-wired and probed live in this same session after the restore.
+
+### Self-inflicted incident (disclosed, healed same round)
+The archive script's first run moved `pages/astrology.php`, `admin/work_distribution/department.php`, and `admin/work_distribution/workload.php` — all three are LIVE wired views (S685 + this session). **Caught immediately** by reading the moved-list against the session's own wiring log, restored with three `rename()`s, probe re-run 7/7 PASS before any commit. **Zero feature broken, zero user data touched.**
+
+### Verification (live HTTP, fresh anonymous + admin session)
+- `/astrology` 200, 211,104 B, needle YES
+- `/vastu` 200, 203,280 B, needle YES
+- `/company-projects` 200, 217,911 B, needle YES
+- `/admin/work-distribution` 200, 34,790 B · `/admin/work-distribution/SALES` 200 · `/admin/work-distribution/workload` 200 · `/SALES/config` 200
+- **Master → 11/11 PASSED** (34.48s and 39.72s) · **PHPStan** on the two touched controllers → [OK] No errors · `php -l` clean ×3
+- Commit `920b59892` (119 files, pushed, `ls-remote` verified)
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **687** (AnalyticsService silent-failure pack; `/about` S686 entry of theirs before). This entry = **S688**. Next-free = **689**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1512. **A scan misfire is a recall-and-review problem: the published "0 references" claim must be re-read against the session's own live-render log before acting on it.** The archive moved three live wired files — the restore took 90 seconds because the candidates list and the recent wiring were both in the same session's head.
+_1513. **Archive, never delete, during a sweep.** 119 renames produce a provable, reversible, one-`git mv` undo path; only tracked files move; `git` detects the rename; nothing is lost even if the classification was imperfect.
+_1514. **A view's "usage" splits into MAY-be-used handlers (tests, reports, tooling) and routes/handlers that render it.** Routes are the only true deletion-gate; scan errors-fixes-proxys miss dynamic loads, include-relative paths, and template resolution.
+_1515. **Test sites with real content at probe time.** `/company-projects` renders 8 real townships because the sites table has them; fabricated stats were never introduced, and the page reads honestly when empty.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · student/Nari Shakti HR notification wiring (Twilio-gated) · decision on 22 zero-reference stub tables (their S682 report) · `role/emailTemplate` service-selector cleanup decision · **the remaining `orphan_truth_dead.txt` (116 moved) restores are all a single `git mv` away — owner call, not a refactor.**
 ## Session 687: AnalyticsService Silent-Failure Pack Fixed — `/api/v2/analytics/kpi/record`, `/forecast` and Everything Downstream Were Guaranteed-1054 Before; `daily_metrics_summary` Widened to Designed Contract; Master 11/11 (2026-11-17)
 
 ### Trigger
