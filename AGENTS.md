@@ -1,3 +1,49 @@
+## Session 732: "Do Next All" Remainder — Suggestion 2 Found Already Implemented (Compliance Trend Chart Live On 175 Rows); Suggestion 3 Measured (EXPLAIN: Vibration Support Already In Place, Zero DDL); Suggestion 4 Carried For Owner Decision; S731 (Parallel Actor) Closed Suggestion 1 With A Hybrid Admin Session|Bearer Gate — Verified Live 401/200 Both Endpoints (2026-11-17)
+
+### Trigger
+Owner: "do next all" — execute every suggestion from S729's ranked list (S729 asked for owner's sign-off on suggestion 1; S731 landed it from the parallel actor's lane during this round).
+
+### Suggestion 1 — Guard `analyticsDashboard` + `analyticsInsights` — DONE (in parallel actor's S731, NOT this lane); live-verified again here
+- **Parallel actor's S731** (prepended while this lane was probing suggestion 2/3) implemented the guard both ways: `requireAdminUser()` — accepts **either** web admin session (`$_SESSION['admin_id']` + RBAC role in admin-class) **or** Bearer identity (`requireAuth()` → `requireAdmin()`); anonymous → 401. They caught and fixed the naive one-liner (class `requireAdmin()` is Bearer-only → would have 401'd every admin fetch) before shipping.
+- **Re-verified live from this lane's probes**: anonymous GET `/api/v2/analytics/dashboard` → **HTTP 401** · anonymous GET `/api/v2/analytics/insights` → **HTTP 401** (51 B payload, same shape as the S729-locked `generateForecast()`).
+- **No lane claims** those two `requireAdmin();` lines as its own; this lane's earlier draft verdict ("done by parallel actor, verified 401 both") numerically agrees with what S731 shipped.
+
+### Suggestion 2 — `/admin/compliance` trend view (`compliance_scorecard_trend` flagged as "read by nothing as a trend") — **ALREADY IMPLEMENTED, VERIFIED LIVE — nothing built**
+- **S729's premise was stale**; one `Select-String` on the scorecard view retired it in seconds:
+  - Route `/admin/compliance-scorecard` → `Admin\ComplianceController@index` → passes `'trend' => $this->service->getComplianceTrend()` into `admin/compliance/scorecard.php`.
+  - View **`app/views/admin/compliance/scorecard.php`** LN196-214: fw-bold heading "Compliance Trend" (`fas fa-chart-line`), `<canvas id="trendChart" height="200">` fed by `Chart.js` (`BASE_URL/assets/js/vendor/chart.umd.js`) with `overall_score` per day, `array_reverse($trend)` for oldest-first plotting.
+  - Service `ComplianceService::getComplianceTrend()` returns newest-30; **in-process probe** (temp script, deleted same turn): 30 rows returned,
+    `2026-11-16 11:13:23 score=43` → `2026-11-11 15:59:01 score=38` — the live 175-row daily-written trend is charted and working end-to-end. `getOverallScore()` = 43.
+- **Nothing to build; the flat-list claim was outdated.** The page renders the trend; the table is read; the service is live; the route is live.
+
+### Suggestion 3 — `PropertyRecommendationService` EXPLAIN (measure before any DDL) — **MEASURED, NO ACTION TAKEN**
+- **Every live path already has index coverage at current scale** (23 bookings · 733 available plots · 30 lead_activities · 0 user_activity_log rows):
+  - Collaborative self-join: subquery materialized (`range` on `idx_pb_plot_id`), `pb2` side `ref` on `idx_pb_plot_id`, materialized table `eq_ref(distinct_key)`. `rows=23` for the full plan — the `type=ALL` side touches a 23-row table; a new index cannot materially change it.
+  - `p.status = 'available'`: `ref` on `idx_plots_status` (`const`, 733 rows, index condition) — already the best plan available at this size.
+  - `user_activity_log` — **0 rows**, and the service honest-empties with a `DESCRIBE user_activity_log` column-existence guard (still present); index coverage is irrelevant on an empty stub. **No migration applied, none proposed** — speculative DDL without a writer was explicitly refused.
+- **Run against reality, not against appetite**: the measurement says "no new index today," not "no index ever" — when `user_activity_log` gets its writer (owner decision), re-measure then.
+
+### Suggestion 4 — Analytics-v2 chart policy on TEST-HIST backfill spikes — **OWNER DECISION, UNRESOLVED**
+- S726's honest backfill replayed 20 synthetic TEST-HIST users (2026-11-05 `users_created=20`) and 20 TEST-HIST bookings (2026-11-14 `plot_bookings_created=20`). The suggestion — organic-days-only charts — requires a business rule this lane does not invent (filtering test rows would fabricate a curated subset).
+- **Carried forward unactioned.**
+
+### Verification (live)
+- Master → **12/12 PASSED** on final disk state (38.94s) · DB unchanged (users 82 · plots 766 · leads 994 · daily_metrics 211 · compliance trend 175 · user_activity_log 0 · 1131 tables) · `php scripts/verify_agents_log.php` → integrity OK after this entry (479+ this = 480 headings).
+- Staged exactly this entry — parallel actor's `NewFeaturesApiController.php`/posters/probe files untouched, unstaged.
+
+### Honest status
+- **No new lane code exists this round** — the deliverable was verification that three of four suggestions were already done/unneeded, plus carry-forward of the owner's decision. This is how the ranked list deserved a closure, not silence.
+
+### Key lessons
+_1656. **Verify premises before executing — S729's suggestion 2 was stale the moment it was written; 20 seconds with the view retired it.**
+_1657. **A shared worktree can fill your suggested one-line fix before you finish probing — claim the vote, not the work; re-probe the door either way.**
+_1658. **EXPLAIN is the refund policy on any index suggestion — run it before any DDL is even drafted; at 23 rows every "missing index" is fiction.**
+_1659. **A service author's own DESCRIBE-guard (honest-empty) is the cheapest proof emptiness is deliberate** — user_activity_log needs a writer or a grave, not an index.
+_1660. **The ranked list is a claim ledger, not a task queue — run each item to its verdict, then log the verdict, never the plan alone.**
+
+### Owner actions still open
+Play Console AAB · HTTPS assetlinks SHA-256 · colony coordinates · MariaDB Windows service · Defender exclusion · RERA colony numbers · EMI backfill · live AI dialing · production deploy · `user_activity_log` — writer or formal retirement (S725 + S731 + S732) · Analytics-v2 TEST-HIST spike policy (S726 + S732) · deploy placeholder honesty (S730) · `admin/features/realtime_analytics.php` — one browser look on a real admin session before relying on it (S731 flagged).
+
 ## Session 731: Suggestion Approved By Owner & Implemented — The Two Anonymous BI Read Endpoints (`/api/v2/analytics/dashboard` · `/api/v2/analytics/insights`) Now Accept Either Web Admin Session Or Bearer Identity; Anonymous → 401, Admin Cookie-Session → 200 With Live Data (2026-11-17)
 
 ### Trigger
