@@ -364,6 +364,7 @@ class WalletController extends BaseController
     public function processWithdrawal()
     {
         @session_start();
+        header('Content-Type: application/json');
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
@@ -489,47 +490,53 @@ class WalletController extends BaseController
     public function addBankAccount()
     {
         @session_start();
+        header('Content-Type: application/json');
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
             exit;
         }
 
-        $userId = $_SESSION['user_id'];
-        $bankName = $_POST['bank_name'] ?? '';
-        $accountNumber = $_POST['account_number'] ?? '';
-        $ifscCode = $_POST['ifsc_code'] ?? '';
-        $accountHolder = $_POST['account_holder'] ?? '';
-        $isPrimary = $_POST['is_primary'] ?? '0';
+        $userId = (int)$_SESSION['user_id'];
+        $bankName = trim($_POST['bank_name'] ?? '');
+        $accountNumber = trim($_POST['account_number'] ?? '');
+        $ifscCode = strtoupper(trim($_POST['ifsc_code'] ?? ''));
+        $accountHolder = trim($_POST['account_holder'] ?? '');
+        $accountHolderName = trim($_POST['account_holder_name'] ?? $accountHolder);
+        $branchName = trim($_POST['branch_name'] ?? '');
+        $accountType = trim($_POST['account_type'] ?? 'savings');
+        $isPrimary = !empty($_POST['is_primary']) ? 1 : 0;
+
+        if (empty($bankName) || empty($accountNumber) || empty($ifscCode) || empty($accountHolderName)) {
+            echo json_encode(['success' => false, 'message' => 'All required fields must be filled']);
+            exit;
+        }
+
+        if (!preg_match('/^[0-9]{9,18}$/', $accountNumber)) {
+            echo json_encode(['success' => false, 'message' => 'Account number must be between 9 and 18 digits']);
+            exit;
+        }
+
+        if (strlen($ifscCode) < 8 || strlen($ifscCode) > 15) {
+            echo json_encode(['success' => false, 'message' => 'Please enter a valid IFSC code']);
+            exit;
+        }
 
         try {
-            // Check if bank accounts table exists
-            $tableExists = $this->db->fetchOne("SHOW TABLES LIKE 'user_bank_accounts'");
-
-            if (!$tableExists) {
-                // Create table
-                $this->db->query("
-                    CREATE TABLE user_bank_accounts (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        user_id INT NOT NULL,
-                        bank_name VARCHAR(100) NOT NULL,
-                        account_number VARCHAR(50) NOT NULL,
-                        ifsc_code VARCHAR(20) NOT NULL,
-                        account_holder VARCHAR(100) NOT NULL,
-                        is_primary TINYINT(1) DEFAULT 0,
-                        status ENUM('active', 'inactive') DEFAULT 'active',
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-                ");
+            // Check for duplicate account number for this user
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM user_bank_accounts WHERE user_id = ? AND account_number = ? LIMIT 1",
+                [$userId, $accountNumber]
+            );
+            if ($existing) {
+                echo json_encode(['success' => false, 'message' => 'This account number is already registered']);
+                exit;
             }
 
-            $accountHolderName = trim($_POST['account_holder_name'] ?? $_POST['account_holder'] ?? '');
-            $branchName = trim($_POST['branch_name'] ?? '');
-            $accountType = trim($_POST['account_type'] ?? 'savings');
-            if (empty($accountHolderName)) {
-                $accountHolderName = $accountHolder;
+            // If user has no existing bank account, make this the primary account
+            $hasAccount = $this->db->fetchOne("SELECT id FROM user_bank_accounts WHERE user_id = ? LIMIT 1", [$userId]);
+            if (!$hasAccount) {
+                $isPrimary = 1;
             }
 
             // If setting as primary, unset other primary accounts
@@ -554,6 +561,14 @@ class WalletController extends BaseController
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
+
+            // Audit log
+            try {
+                $this->db->query("
+                    INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, created_at)
+                    VALUES (?, 'bank_account_added', ?, ?, NOW())
+                ", [$userId, json_encode(['bank_name' => $bankName, 'account_last4' => substr($accountNumber, -4)]), $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Throwable $e) {}
 
             echo json_encode(['success' => true, 'message' => 'Bank account added successfully']);
             exit;

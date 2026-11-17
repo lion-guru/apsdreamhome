@@ -1,3 +1,47 @@
+## Session 737: Wallet & Bank Account System Hardening — Server-Side Validation & Duplicate Guard, Smart IFSC Auto-Lookup, Associate Role-Aware Navigation, JSON Header Normalization & ID Card DOM Fix; Master 12/12 Clean (2026-11-17)
+
+### Trigger
+User request:
+"do next aur koi suggestion hai to batao improve kiya jsye ya kuch implimenet kiya haye"
+Active document context: `app/Http/Controllers/WalletController.php` at line 490 (`addBankAccount()`).
+
+### Key Root Causes & Architectural Upgrades Landed
+1. **Wallet Controller Bank Account Hardening (`app/Http/Controllers/WalletController.php`)**:
+   - *Content-Type Normalization:* Added `header('Content-Type: application/json');` to `addBankAccount()` and `processWithdrawal()` so JSON responses are always delivered with standard MIME headers.
+   - *Strict Server-Side Validation:* Enforced non-empty requirements on `bank_name`, `account_number`, `ifsc_code`, and `account_holder_name`.
+   - *Account Number Format Validation:* Enforced digits-only regex `^[0-9]{9,18}$` to reject malformed input before hitting the database.
+   - *Duplicate Account Prevention:* Added duplicate check against `user_bank_accounts` (`SELECT id FROM user_bank_accounts WHERE user_id = ? AND account_number = ?`) to prevent associates and customers from unintentionally registering duplicate entries.
+   - *Auto-Primary Account Assignment:* If the user has no existing bank account, their first registered account is automatically marked primary (`is_primary = 1`).
+   - *Unified Audit Logging:* Added an activity log entry (`user_activity_logs_unified`) with `bank_account_added` and masked last-4 digits, matching the standard established in `updateBankAccount()`.
+
+2. **Smart IFSC Code Auto-Lookup (`app/views/wallet/bank_accounts.php`)**:
+   - Integrated dynamic frontend lookup against the live `/api/banks/ifsc/{code}` endpoint.
+   - When 11 characters are entered in either the Add or Edit Bank modal, the UI fetches verified bank and branch details, auto-populates empty Bank Name and Branch Name fields, and displays a green verified badge with branch info.
+
+3. **Role-Aware Wallet Dashboard Navigation (`app/views/wallet/dashboard.php`)**:
+   - Added `$isAssociate` role detection in the wallet nav bar. Associates clicking `Withdraw`, `Bank Accounts`, or `Referrals` now route to `/associate/wallet/withdraw`, `/associate/bank-details`, and `/associate/referral` respectively, preserving the associate portal layout and context.
+
+4. **Associate ID Card DOM Integrity (`app/views/associate/id_card.php`)**:
+   - Resolved an unclosed `<div class="id-card">` tag at line 128 that previously caused the print control buttons and the mini-website card to be nested inside the styled ID card container.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Http/Controllers/WalletController.php` -> PASS
+  - `app/views/associate/id_card.php` -> PASS
+  - `app/views/wallet/bank_accounts.php` -> PASS
+  - `app/views/wallet/dashboard.php` -> PASS
+- **Database Baseline (Zero Drift Target)**:
+  - `users`: 82 (exact match)
+  - `plot_bookings`: 23 (exact match)
+  - `leads`: 994 (exact match)
+  - `transactions`: 5 (exact match)
+  - `mlm_commission_ledger`: 359 (exact match)
+  - `email_queue`: 14 (exact match)
+- **Master Test Suite**:
+  - `php testing/master_test_runner.php` -> **12/12 PASSED** (49.43s, 100% HEALTHY).
+- **AGENTS.md Log Verification**:
+  - `php scripts/verify_agents_log.php` -> PASS.
+
 ## Session 736: Post-S735 Live 1054 Sweep — Two Permanent `Column not found` In The Same BI Endpoints S729/S731 Guard, Both 1054 Checkout-Survivors Closed; Anonymous Stays 401; Admin Session 200; Real `property_types{-}` Live (Rescue Rescue-In-TrivialForm-Gone-Live); Master 12/12 (2026-11-17)
 
 ### Trigger

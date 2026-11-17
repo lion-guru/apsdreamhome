@@ -125,6 +125,7 @@ $rankBadge = $rankBadge ?? ['label' => 'Bronze', 'class' => 'bg-secondary'];
                 <span>Associate ID: <?= htmlspecialchars($user['id'] ?? '0') ?></span>
             </div>
         </div>
+    </div>
 
     <div class="no-print text-center mt-3">
         <button class="btn-print" onclick="window.print()">

@@ -292,7 +292,8 @@ $bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">IFSC Code *</label>
-                <input aria-label="Ifsc code" type="text" class="form-control" id="ifscCode" name="ifsc_code" required placeholder="e.g., SBIN0001234" pattern="[A-Z]{4}[0-9]{7}" >
+                <input aria-label="Ifsc code" type="text" class="form-control text-uppercase" id="ifscCode" name="ifsc_code" required placeholder="e.g., SBIN0001234" maxlength="15">
+                <div id="ifscLookupStatus" class="form-text mt-1"></div>
             </div>
             
             <div class="mb-3">
@@ -364,7 +365,8 @@ $bankUpdateUrl = $baseUrl . '/wallet/bank-accounts/update';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">IFSC Code *</label>
-                <input aria-label="Edit ifsc code" type="text" class="form-control" id="editIfscCode" name="ifsc_code" required pattern="[A-Z]{4}[0-9]{7}" >
+                <input aria-label="Edit ifsc code" type="text" class="form-control text-uppercase" id="editIfscCode" name="ifsc_code" required maxlength="15">
+                <div id="editIfscLookupStatus" class="form-text mt-1"></div>
             </div>
             
             <div class="mb-3">
@@ -544,8 +546,52 @@ document.getElementById('addBankModal').addEventListener('click', function(e) {
     }
 });
 
-// Format IFSC code to uppercase
+// Format IFSC code to uppercase & smart bank lookup
+function lookupIfsc(code, nameInputId, branchInputId, statusDivId) {
+    code = (code || '').trim().toUpperCase();
+    const statusEl = document.getElementById(statusDivId);
+    if (!statusEl) return;
+    if (code.length < 8) {
+        statusEl.innerHTML = '';
+        return;
+    }
+    statusEl.innerHTML = '<small class="text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Looking up bank details...</small>';
+    fetch('<?= $baseUrl ?>/api/banks/ifsc/' + encodeURIComponent(code))
+        .then(r => r.json())
+        .then(data => {
+            if (data.found && data.bank_name) {
+                const nameEl = document.getElementById(nameInputId);
+                const branchEl = document.getElementById(branchInputId);
+                if (nameEl && (!nameEl.value || nameEl.value.trim() === '')) {
+                    nameEl.value = data.bank_name;
+                }
+                if (branchEl && (!branchEl.value || branchEl.value.trim() === '')) {
+                    branchEl.value = data.branch + (data.city ? ', ' + data.city : '');
+                }
+                statusEl.innerHTML = `<small class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>${data.bank_name} (${data.branch || data.city || 'Verified'})</small>`;
+            } else {
+                statusEl.innerHTML = '';
+            }
+        })
+        .catch(() => {
+            statusEl.innerHTML = '';
+        });
+}
+
 document.getElementById('ifscCode').addEventListener('input', function() {
     this.value = this.value.toUpperCase();
+    if (this.value.length === 11) {
+        lookupIfsc(this.value, 'bankName', 'branchName', 'ifscLookupStatus');
+    }
 });
+
+const editIfscEl = document.getElementById('editIfscCode');
+if (editIfscEl) {
+    editIfscEl.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+        if (this.value.length === 11) {
+            lookupIfsc(this.value, 'editBankName', 'editBranchName', 'editIfscLookupStatus');
+        }
+    });
+}
 </script>

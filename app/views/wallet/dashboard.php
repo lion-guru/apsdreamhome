@@ -1,4 +1,7 @@
-<?php $page_title = $page_title ?? 'Wallet Dashboard - APS Dream Home'; ?>
+<?php
+$page_title = $page_title ?? 'Wallet Dashboard - APS Dream Home';
+$isAssociate = (!empty($is_associate) || ($_SESSION['role'] ?? '') === 'associate');
+?>
 
 <style>
 :root {
@@ -276,9 +279,9 @@
             <div class="wallet-nav">
                 <a href="<?php echo BASE_URL; ?>/wallet/transactions"><i class="fas fa-history me-2"></i>Transactions</a>
                 <a href="<?php echo BASE_URL; ?>/wallet/transfer-emi"><i class="fas fa-exchange-alt me-2"></i>Transfer to EMI</a>
-                <a href="<?php echo BASE_URL; ?>/wallet/withdrawal"><i class="fas fa-wallet me-2"></i>Withdraw</a>
-                <a href="<?php echo BASE_URL; ?>/wallet/bank-accounts"><i class="fas fa-university me-2"></i>Bank Accounts</a>
-                <a href="<?php echo BASE_URL; ?>/wallet/referral-network"><i class="fas fa-users me-2"></i>Referrals</a>
+                <a href="<?php echo $isAssociate ? BASE_URL . '/associate/wallet/withdraw' : BASE_URL . '/wallet/withdrawal'; ?>"><i class="fas fa-wallet me-2"></i>Withdraw</a>
+                <a href="<?php echo $isAssociate ? BASE_URL . '/associate/bank-details' : BASE_URL . '/wallet/bank-accounts'; ?>"><i class="fas fa-university me-2"></i>Bank Accounts</a>
+                <a href="<?php echo $isAssociate ? BASE_URL . '/associate/referral' : BASE_URL . '/wallet/referral-network'; ?>"><i class="fas fa-users me-2"></i>Referrals</a>
                 <a href="<?php echo BASE_URL; ?>/wallet/analytics"><i class="fas fa-chart-line me-2"></i>Analytics</a>
             </div>
         </div>
