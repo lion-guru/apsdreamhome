@@ -277,11 +277,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               SizedBox(width: 6),
               Text(
                 'GORAKHPUR TOWNSHIPS • ASK US FOR RERA STATUS',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: AppTheme.primaryColor,
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: FontWeight.w800,
-                  letterSpacing: 0.8,
+                  letterSpacing: 0.4,
                 ),
               ),
             ],
@@ -1003,11 +1005,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             SizedBox(width: 10),
             Text(
               'Explore Townships as Guest • बिना लॉगिन देखे',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: AppTheme.primaryColor,
-                fontSize: 13,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 0.3,
+                letterSpacing: 0.2,
               ),
             ),
           ],
