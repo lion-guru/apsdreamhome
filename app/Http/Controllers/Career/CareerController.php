@@ -81,7 +81,7 @@ class CareerController extends BaseController
      */
     public function apply($request = null)
     {
-        $position = $request['get']['position'] ?? '';
+        $position = $_GET['position'] ?? '';
 
         $data = [
             'title' => 'Apply for Position - APS Dream Home',
@@ -206,12 +206,12 @@ class CareerController extends BaseController
             return;
         }
 
-        $page = max(1, intval($request['get']['page'] ?? 1));
+        $page = max(1, intval($_GET['page'] ?? 1));
         $limit = 20;
         $filters = [
-            'status' => $request['get']['status'] ?? '',
-            'position' => $request['get']['position'] ?? '',
-            'search' => $request['get']['search'] ?? ''
+            'status' => $_GET['status'] ?? '',
+            'position' => $_GET['position'] ?? '',
+            'search' => $_GET['search'] ?? ''
         ];
 
         $result = $this->careerService->getApplications($page, $limit, $filters);
@@ -238,7 +238,7 @@ class CareerController extends BaseController
     /**
      * Show application details
      */
-    public function applicationDetails($request = null)
+    public function applicationDetails($id = null)
     {
         // HR/admin desk — admin chrome, not public shop chrome
         $this->layout = 'layouts/admin';
@@ -249,11 +249,11 @@ class CareerController extends BaseController
             return;
         }
 
-        $id = $request['params']['id'] ?? null;
+        $id = (int)$id;
 
         if (!$id) {
             $_SESSION['errors'] = ['Application ID is required'];
-            $this->redirect('/admin/careers/applications');
+            $this->redirect('/admin/careers/manage/applications');
             return;
         }
 
@@ -261,7 +261,7 @@ class CareerController extends BaseController
 
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/admin/careers/applications');
+            $this->redirect('/admin/careers/manage/applications');
             return;
         }
 
@@ -269,20 +269,20 @@ class CareerController extends BaseController
             'title' => 'Application Details - APS Dream Home',
             'user' => $this->authService->getCurrentUser(),
             'application' => $result['data']['application'],
-            'history' => $result['data']['history'],
+            'history' => $result['data']['history'] ?? [],
             'success' => $_SESSION['success'] ?? '',
             'errors' => $_SESSION['errors'] ?? []
         ];
 
         unset($_SESSION['success'], $_SESSION['errors']);
 
-        $this->render('admin/careers/applications', $data);
+        $this->render('admin/careers/application_detail', $data);
     }
 
     /**
      * Update application status
      */
-    public function updateStatus($request = null)
+    public function updateStatus($id = null)
     {
         // HR/admin desk — admin chrome, not public shop chrome
         $this->layout = 'layouts/admin';
@@ -294,9 +294,9 @@ class CareerController extends BaseController
             ];
         }
 
-        $id = $request['params']['id'] ?? null;
-        $status = $request['post']['status'] ?? '';
-        $notes = $request['post']['notes'] ?? '';
+        $id = (int)$id;
+        $status = $_POST['status'] ?? '';
+        $notes = $_POST['notes'] ?? '';
 
         if (!$id) {
             return [
@@ -313,7 +313,7 @@ class CareerController extends BaseController
             $_SESSION['errors'] = [$result['message']];
         }
 
-        $this->redirect("/admin/careers/applications/$id");
+        $this->redirect("/admin/careers/manage/applications/$id");
 
         return $result;
     }
@@ -321,7 +321,7 @@ class CareerController extends BaseController
     /**
      * Delete application
      */
-    public function deleteApplication($request = null)
+    public function deleteApplication($id = null)
     {
         // HR/admin desk — admin chrome, not public shop chrome
         $this->layout = 'layouts/admin';
@@ -333,7 +333,7 @@ class CareerController extends BaseController
             ];
         }
 
-        $id = $request['params']['id'] ?? null;
+        $id = (int)$id;
 
         if (!$id) {
             return [
@@ -388,12 +388,12 @@ class CareerController extends BaseController
             ];
         }
 
-        $page = max(1, intval($request['get']['page'] ?? 1));
-        $limit = min(max(intval($request['get']['limit'] ?? 20), 1), 100);
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $limit = min(max(intval($_GET['limit'] ?? 20), 1), 100);
         $filters = [
-            'status' => $request['get']['status'] ?? '',
-            'position' => $request['get']['position'] ?? '',
-            'search' => $request['get']['search'] ?? ''
+            'status' => $_GET['status'] ?? '',
+            'position' => $_GET['position'] ?? '',
+            'search' => $_GET['search'] ?? ''
         ];
 
         return $this->careerService->getApplications($page, $limit, $filters);
@@ -420,7 +420,7 @@ class CareerController extends BaseController
     /**
      * Download resume file
      */
-    public function downloadResume($request = null)
+    public function downloadResume($id = null)
     {
         // HR/admin desk — admin chrome, not public shop chrome
         $this->layout = 'layouts/admin';
@@ -431,11 +431,11 @@ class CareerController extends BaseController
             return;
         }
 
-        $id = $request['params']['id'] ?? null;
+        $id = (int)$id;
 
         if (!$id) {
             $_SESSION['errors'] = ['Application ID is required'];
-            $this->redirect('/admin/careers/applications');
+            $this->redirect('/admin/careers/manage/applications');
             return;
         }
 
@@ -443,36 +443,49 @@ class CareerController extends BaseController
 
         if (!$result['success']) {
             $_SESSION['errors'] = [$result['message']];
-            $this->redirect('/admin/careers/applications');
+            $this->redirect('/admin/careers/manage/applications');
             return;
         }
 
         $application = $result['data']['application'];
 
-        if (empty($application['resume_file'])) {
+        $resumePath = trim((string)($application['resume_path'] ?? ''));
+        $resumePath = str_replace('\\', '/', $resumePath);
+
+        // No traversal - only inside the project root's upload tree may resolve
+        if ($resumePath === '' || str_contains($resumePath, '..')) {
             $_SESSION['errors'] = ['Resume file not found'];
-            $this->redirect("/admin/careers/applications/$id");
+            $this->redirect("/admin/careers/manage/applications/$id");
             return;
         }
 
-        $resumePath = STORAGE_PATH . '/uploads/resumes/' . $application['resume_file'];
+        // Stored path is relative ('assets/uploads/resumes/<file>'). The public form writes
+        // under app/assets/uploads/resumes (absolute from project), so resolve against both.
+        $root = dirname(__DIR__, 3);
+        $absolute = null;
+        foreach ([$root . '/' . ltrim($resumePath, '/'), $root . '/app/' . ltrim($resumePath, '/')] as $candidate) {
+            $real = realpath($candidate);
+            if ($real && is_file($real) && strpos($real, realpath($root)) === 0) {
+                $absolute = $real;
+                break;
+            }
+        }
 
-        if (!file_exists($resumePath)) {
+        if (!$absolute) {
             $_SESSION['errors'] = ['Resume file not found'];
-            $this->redirect("/admin/careers/applications/$id");
+            $this->redirect("/admin/careers/manage/applications/$id");
             return;
         }
 
-        // Set headers for file download
-        $filename = $application['full_name'] . '_resume.' . pathinfo($application['resume_file'], PATHINFO_EXTENSION);
+        $filename = preg_replace('/[^A-Za-z0-9._-]/', '_', (string)($application['full_name'] ?? 'Resume')) . '_resume.' . (pathinfo($absolute, PATHINFO_EXTENSION) ?: 'pdf');
 
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Length: ' . filesize($resumePath));
+        header('Content-Length: ' . filesize($absolute));
         header('Cache-Control: no-cache, must-revalidate');
         header('Pragma: no-cache');
 
-        readfile($resumePath);
+        readfile($absolute);
         exit;
     }
 
@@ -491,10 +504,10 @@ class CareerController extends BaseController
             ];
         }
 
-        $format = $request['post']['format'] ?? 'csv';
+        $format = $_POST['format'] ?? 'csv';
         $filters = [
-            'status' => $request['post']['status'] ?? '',
-            'position' => $request['post']['position'] ?? ''
+            'status' => $_POST['status'] ?? '',
+            'position' => $_POST['position'] ?? ''
         ];
 
         // Get all applications (no pagination for export)

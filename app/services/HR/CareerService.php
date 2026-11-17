@@ -207,23 +207,38 @@ class CareerService
     }
 
     /**
-     * Create application record in database
+     * Create application record in database (live careers schema)
      */
     private function createApplicationRecord($data, $resumeFile)
     {
-        $sql = "INSERT INTO job_applications 
-                (name, email, phone, message, file_path)
-                VALUES (?, ?, ?, ?, ?)";
+        // career_id must reference careers.id; resolve from the position title,
+        // fall back to 0 (legacy tolerant placeholder) when no match exists.
+        $careerId = 0;
+        if (!empty($data['position'])) {
+            $stmt = $this->db->prepare("SELECT id FROM careers WHERE title = ? LIMIT 1");
+            $stmt->execute([$data['position']]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
+                $careerId = (int)$row['id'];
+            }
+        }
 
+        $ql = "INSERT INTO career_applications
+                (career_id, full_name, email, phone, resume_path, cover_letter, status, tenant_id)
+                VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)";
+
+        $resumePath = $resumeFile ? ('assets/uploads/resumes/' . $resumeFile) : null;
         $params = [
+            $careerId,
             $data['full_name'],
             $data['email'],
             $data['phone'],
+            $resumePath,
             $data['cover_letter'],
-            $resumeFile
+            (int)$this->tenantId(),
         ];
 
-        $this->db->query($sql, $params);
+        $this->db->query($ql, $params);
         return $this->db->lastInsertId();
     }
 
@@ -325,15 +340,16 @@ class CareerService
     public function getApplicationsByStatus($status = null, $limit = 50, $offset = 0)
     {
         try {
-            $sql = "SELECT * FROM job_applications";
-            $params = [];
+            $sql = "SELECT ca.*, c.title AS position\n"
+                 . "FROM career_applications ca\n"
+                 . "LEFT JOIN careers c ON c.id = ca.career_id";
 
             if ($status) {
-                $sql .= " WHERE status = ?";
+                $sql .= " WHERE ca.status = ?";
                 $params[] = $status;
             }
 
-            $sql .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+            $sql .= " ORDER BY ca.created_at DESC LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
 
@@ -354,7 +370,10 @@ class CareerService
     {
         try {
             $result = $this->db->fetchOne(
-                "SELECT * FROM job_applications WHERE id = ?",
+                "SELECT ca.*, c.title AS position\n"
+                 . "FROM career_applications ca\n"
+                 . "LEFT JOIN careers c ON c.id = ca.career_id\n"
+                 . "WHERE ca.id = ?",
                 [$id]
             );
             return $result;
@@ -378,9 +397,16 @@ class CareerService
                 throw new InvalidArgumentException('Invalid application status');
             }
 
-            // job_applications table doesn't have status/updated_at/notes columns
-            // Log the attempt instead
-            $this->logger->info('Application status update requested (not persisted - schema mismatch)', [
+            $this->db->query(
+                "UPDATE career_applications SET status = ?, updated_at = NOW() WHERE id = ?",
+                [$status, $id]
+            );
+            $this->db->query(
+                "INSERT INTO career_application_history (application_id) VALUES (?)",
+                [$id]
+            );
+
+            $this->logger->info('Application status update requested', [
                 'application_id' => $id,
                 'status' => $status,
                 'notes' => $notes
@@ -406,22 +432,25 @@ class CareerService
             $stats = [];
 
             // Total applications
-            $result = $this->db->fetchOne("SELECT COUNT(*) as count FROM job_applications");
+            $result = $this->db->fetchOne("SELECT COUNT(*) as count FROM career_applications");
             $stats['total_applications'] = $result['count'] ?? 0;
 
             // Applications by status
             $stats['by_status'] = $this->db->fetchAll(
-                "SELECT status, COUNT(*) as count FROM job_applications GROUP BY status"
+                "SELECT status, COUNT(*) as count FROM career_applications GROUP BY status"
             );
 
-            // Applications by position
+            // Applications by position (live careers join)
             $stats['by_position'] = $this->db->fetchAll(
-                "SELECT position, COUNT(*) as count FROM job_applications GROUP BY position ORDER BY count DESC"
+                "SELECT c.title AS position, COUNT(*) as count\n"
+                 . "FROM career_applications ca\n"
+                 . "LEFT JOIN careers c ON c.id = ca.career_id\n"
+                 . "GROUP BY c.title ORDER BY count DESC"
             );
 
             // Recent applications (last 30 days)
             $result = $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM job_applications WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
+                "SELECT COUNT(*) as count FROM career_applications WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)"
             );
             $stats['recent_applications'] = $result['count'] ?? 0;
 
@@ -484,15 +513,19 @@ class CareerService
             }
 
             // Delete resume file if exists
-            if (!empty($application['resume_file'])) {
-                $resumePath = $this->uploadDir . $application['resume_file'];
-                if (file_exists($resumePath)) {
-                    unlink($resumePath);
+            $resumePath = trim((string)($application['resume_path'] ?? ''));
+            if ($resumePath !== '' && $resumePath !== 'undefined' && $resumePath !== 'null') {
+                $absolute = dirname(__DIR__, 4) . '/' . ltrim($resumePath, '/');
+                if (is_file($absolute)) {
+                    @unlink($absolute);
                 }
             }
 
+            // Delete child history rows first (no ON DELETE CASCADE on live table)
+            $this->db->query("DELETE FROM career_application_history WHERE application_id = ?", [$id]);
+
             // Delete application record
-            $this->db->query("DELETE FROM job_applications WHERE id = ?", [$id]);
+            $this->db->query("DELETE FROM career_applications WHERE id = ?", [$id]);
 
             $this->logger->info('Application deleted', [
                 'application_id' => $id,
@@ -521,31 +554,33 @@ class CareerService
 
             // Build WHERE clause from filters
             if (!empty($filters['status'])) {
-                $where[] = "status = ?";
+                $where[] = "ca.status = ?";
                 $params[] = $filters['status'];
             }
 
             if (!empty($filters['position'])) {
-                $where[] = "position LIKE ?";
+                $where[] = "c.title LIKE ?";
                 $params[] = '%' . $filters['position'] . '%';
             }
 
             if (!empty($filters['search'])) {
-                $where[] = "(name LIKE ? OR email LIKE ? OR position LIKE ?)";
+                $where[] = "(ca.full_name LIKE ? OR ca.email LIKE ? OR ca.phone LIKE ? OR c.title LIKE ?)";
+                $params[] = '%' . $filters['search'] . '%';
                 $params[] = '%' . $filters['search'] . '%';
                 $params[] = '%' . $filters['search'] . '%';
                 $params[] = '%' . $filters['search'] . '%';
             }
 
+            $from = "career_applications ca LEFT JOIN careers c ON c.id = ca.career_id";
             $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
             // Get total count
-            $countSql = "SELECT COUNT(*) as total FROM job_applications $whereClause";
+            $countSql = "SELECT COUNT(*) as total FROM $from $whereClause";
             $totalResult = $this->db->fetchOne($countSql, $params);
             $total = $totalResult['total'] ?? 0;
 
             // Get applications
-            $sql = "SELECT * FROM job_applications $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
+            $sql = "SELECT ca.*, c.title AS position FROM $from $whereClause ORDER BY ca.created_at DESC LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
 

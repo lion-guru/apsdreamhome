@@ -1,4 +1,66 @@
-## Session 675: Public AI-Chat Family Was Rendering ADMIN Chrome To Every Visitor — `AIController extends AdminController`; "Written But Never Used" `isAdmin()` Role-List Defect Found & Closed; Public Pages Fixed; Gates Green (2026-11-17)
+## Session 676: Careers Admin Desk Was A Complete Dead-End - Whole Data Path 1054'd (Public View Expected Live Schema, Legacy Service Wrote Dead Schema); HR Desk Now Works End-To-End: List/Filter/Paginate/Detail/Status/CSRF Resume Download - Plus 3 Live Page-1054 Families Found & Closed (Gallery, Map Images, Construction Services); Master 11/11 (2026-11-17)
+
+### Trigger
+User: "d next" - resuming the silent-failure sweep with the error log as the map. Fresh 1054s this morning (`07:24-07:25`) on public and admin pages joined the `job_applications` phantom-column family - so the log guided a page-by-page, byte-level probe of the careers admin desk, the public gallery, the property map, and the construction-services page.
+
+### What was found (live, byte-probed - not guessed)
+1. **The public gallery was empty forever**. `HomePageController::gallery()` queried `gallery_albums` - a zero-row 4-column stub (id/tenant_id/created_at/updated_at) for `status = 'active'` and `sort_order`, both 1054 - and passed the rows as `$albums` to `pages/gallery`, which consumes `$galleryImages`/`$galleryCategories`. The page rendered "Gallery coming soon" for every visitor and nobody ever saw an actual image.
+2. **The property map page was silently broken**. `MapController` selected phantom `images` from `properties` in 3 sites (the `/map` route 302'd back to /properties with "Failed to load map" on every visit; the two AJAX endpoints are unrouted dead code that would 500").
+3. **`/construction-services` query fataled**. `ContentPageController::constructionServices()` ordered by phantom `sort_order`; live `construction_services` has only id/service_name/.../is_active/tenant_id/created_at.
+4. **The whole careers admin desk was a theatre of live-looking dead ends**:
+   - `Career\CareerController@applicationDetails` / `updateStatus` / `deleteApplication` / `downloadResume` read `$request['params']['id']` while the router passes route params positionally - every visitor got `302` and was silently bounced to a dead `/admin/careers/applications` URL, which fell into the `/admin/careers/{id}` wildcard and rendered an unrelated Jobs page as if it succeeded. The detail page had never existed.
+   - `exportApplications` read route params as `$request['post']`/`$request['get']` same disease.
+   - `downloadResume` read non-existent column `resume_file` from a non-existent storage path - 302 on every click.
+   - Whole `HR\CareerService` was still written against legacy stub `job_applications` (id/tenant_id/name/phone/email/message/file_path): `ORDER BY created_at`, `status`, `position` - 1054 in 100% of code paths despite S646 fixing only `getAvailablePositions`.
+   - The admin view `applications.php` was authored against the LIVE `career_applications` schema (`full_name`, `experience_years`, ...) and thus never rendered a single real application.
+   - The status badges listed phantom enum values `interviewed`/`selected`; the live enum is `pending/reviewing/shortlisted/rejected/hired`.
+   - Resume download deep-links to the project-root path instead of the authenticated `/resume` route - 404 via web since the file tree isn't web-accessible.
+
+### Fix (all verified live with byte-inspection)
+- **Public pages**: `HomePageController::gallery()` now reads the live `gallery` table (`status='active'`, `sort_order, id` ordering) and passes `$galleryImages`/`$galleryCategories` matching the view's contract - 6 real colony photos + 22 gallery items render (needles APS Motiram Township / Braj Radha Nagri / Budh Bihar Colony / Construction Updates / Raghunath Nagri / Suryoday Colony all present).
+- `MapController`: phantom `images` dropped from all 3 selects; new private `fetchFirstImages()` does a single batched `SELECT property_id, MIN(image_path) AS image_path FROM property_images WHERE is_active = 1 AND property_id IN (...) GROUP BY property_id` - markers now carry real images; `/map` returns HTTP 200 (662,693 bytes).
+- `ContentPageController`: `construction_services` ordered by `id` (table has no sort_order).
+- **CareerService rewired end-to-end to the live schema**: `createApplicationRecord` now INSERTs into `career_applications` (resolves `career_id` from `careers.title`, position-neutral `career_id=0` fallback, `tenant_id` bound); `getApplicationsByStatus`, `getApplicationById`, `getApplications`, `getApplicationStats`, `getApplicationsByStatus` all join `careers c ON c.id = ca.career_id` and return `position` AS `position` (backed by the live enum); `updateApplicationStatus` now persists `status=?` + `updated_at` and writes a `career_application_history` marker row (live columns); `deleteApplication` removes resume file, deletes history rows first (no CASCADE on live table) then the application; `getApplicationDetails` unchanged (was already correct - it wraps `getApplicationById`).
+- **CareerController dispatch contract fixed**: all `$request['params']`/`$request['post']`/`$request['get']` reads replaced with direct `$id`/`$_POST`/`$_GET`; `applicationDetails`/`updateStatus`/`deleteApplication`/`downloadResume` receive the route param positionally; redirects repointed to `/admin/careers/manage/applications*` (no more `/admin/careers/applications` dead link); `downloadResume` resolves `resume_path` against both `<root>/assets/...` and `<root>/app/assets/...`, rejects `..`, checks `realpath` stays inside the project root.
+- **a real application detail view exists now**: `app/views/admin/careers/application_detail.php` renders the applicant card (masked resume link, full_name, phone, email, position, experience, current_company, cover_letter), status CSRF-gated form, and danger-zone delete dialog with confirm.
+
+### Verification (live HTTP, cookie-less for admin = test_login=2 admin dev session)
+- `/gallery` 200 bytes=226,279 with `gallery-item` needles + 22 filter menus listing live colony categories
+- `/map` 200 bytes=662,693 `/construction-services` 200 bytes=228,842 (0 errors in fresh log window)
+- `/admin/careers/manage` 200 bytes=390,714 and `/admin/careers/manage/applications` 200 with `lucky` + 2x `Test User` rows, `Page 1 of 1 · 3 applications` needle and the position/status/search filter form
+- `/admin/careers/manage/applications/{1,2,3}` 200 bytes~392,xxx, `Application Details` heading and live `Test User`/`lucky` name rendered
+- `/admin/careers/manage/applications/3/resume` 200, 130,656 bytes of the actual resume PDF
+- CSRF POST to `/admin/careers/manage/applications/{id}/status` → 302 back to the detail page, `career_applications.status` transitions in DB, `career_application_history` marker written; sacrificial row id=1 roundtrip `pending → reviewing → pending`, id=3 `pending → shortlisted → pending`; **0 probe leftovers** (`SELECT COUNT(*) FROM career_application_history` = 0 after cleanup)
+- `php -l` clean ×7 · **PHPStan → [OK] No errors** on my files · **Master → 11/11 PASSED** (32.71s, 100% HEALTHY, incl. smoke 24/24 and careers family re-probed)
+- **PHPStan whole-tree red ONLY on `app/services/Accounting/GstService.php:155`** - parallel actor's in-flight file, untouched, confirmed via `git status` (`M`) and `git diff --stat` (their 9-line addition)
+- AGENTS.md integrity OK at prepend time (before this entry)
+- **Lessons _1476-_1480 below**
+
+### Incidents (disclosed honestly)
+- **Self-inflicted 248 MB file corruption**: a PowerShell `-replace` command with `[regex]::Escape` on a pattern containing `$` sequences self-replicated the `app/Http/Controllers/Career/CareerController.php` file to ~4.4M lines (248,448,202 B). Detected within 30 s via `Get-Content` output lines, `git checkout HEAD --` restored byte-identical (20,299 B), the 6 affected edits re-applied cleanly with the edit tool. **Zero user work lost; the corruption window was closed before any commit.**
+- **Sacrificial probe drift, restored**: my earlier `probe_flow.php` flipped id 3 `pending → shortlisted` silently (redirect-follow hid the success). Found on a stale-state double-check, restored to `pending`, and the 3 probe `career_application_history` rows id=1,2,3 deleted (table back to **0 rows**, id is the sacrificial_target restored).
+- **`/admin/careers/applications` 302 wildcard**: the original `redirect('/admin/careers/applications')` was a dead URL that silently fell through to `Admin\CareerController@show('applications')` and rendered an **unrelated** Jobs index page as if the detail/status/resume actions had succeeded - every HR admin operation on this desk was a silently-swallowed no-op masked by a 200 on the wrong view.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **675** (public AI-chat family chrome fix, commit `e0c44aac9`) above. This entry = **S676**. Next-free = **677**. This AGENTS.md commit was gated by `php scripts/verify_agents_log.php` before `git commit` and by `git diff --cached --name-only` right before it (7 files only).
+
+### Key lessons
+_1476. **Never do in-place content transformations with PowerShell regex - `\$_` and `\$1-` become `\\` etc. and explode the file**; use the edit tool with exact strings, and always `php -l` immediately after.
+_1477. **A 200 with needles from the wrong page is a dead route, not a success** - byte-probe the *specific content* a feature needs to render (`lucky`, `Test User`, `Application Details`, `resume`), not the status code or generic needles a wildcard route feeds.
+_1478. **A view authored for the live schema gets no data from a legacy-schema service - READ THE VIEW's column list before writing the service**; the `applications.php` was engineered around `career_applications` for months and never served a row because `HR\CareerService` pointed at `job_applications`.
+_1479. **A controller that reads `$request['params']` against a positional router is 100%-dead code dressed up as working** - redirect-follow masks the breakage behind a 200 on another page; audit positional dispatch contracts first whenever a route family "redirects instead of doing anything".
+_1480. **A route that accepts any id (`/admin/careers/applications/{id}`) and renders a wrong-family page is the exact shape that made every HR action silently no-op; positional dispatch tests every method signature in the controller** - one signature bug = whole family dead, one scatter of `$request['params']` usage = whole controller dead.
+
+### Honest notes
+- `job_applications` stub is now read by **nobody** - `JobsAdminController` and `JobApplicationsController` were rewritten S451-era; `RecruitmentService` reads `job_postings` (modern dead desk, 0 rows). The stub's 3 legacy rows deliberately left untouched.
+- `/admin/careers/manage/stats` remains a 0-byte dead bare-array handler (S673 noted, no JS/view caller) - untouched, still flagged for owner decision.
+- `career_application_history` remains the honest audit sink (application_id + created_at only; no status/notes column exists).
+- `Career\CareerController@index()` and `submitApplication()` still write to `careers`/`career_applications` correctly; no changes needed.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane, not mine).
+
+## Session 675: Public AI-Chat Family Was Rendering ADMIN Chrome To Every Visitor - `AIController extends AdminController`; "Written But Never Used" `isAdmin()` Role-List Defect Found & Closed; Public Pages Fixed; Gates Green (2026-11-17)
 
 ### Trigger
 User: "do next" — continuing the S673/S674 chrome-fix lane. While verifying the S673 public-careers fix and S674 audit recap, a public-page probe class uncovered by byte inspection: every page in the AI chat family ships `aps-admin-body` to anonymous visitors.

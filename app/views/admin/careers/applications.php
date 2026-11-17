@@ -23,6 +23,25 @@ $job = $job ?? null;
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Applicants List</h6>
         </div>
+        <form method="get" action="<?= BASE_URL ?>/admin/careers/manage/applications" class="d-flex gap-2 align-items-center flex-wrap px-3 pt-2 pb-2 border-bottom">
+            <input type="text" name="search" aria-label="Search applications" class="form-control form-control-sm" style="max-width:260px" placeholder="Search name, email, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+            <select name="position" aria-label="Filter by position" class="form-select form-select-sm" style="max-width:220px">
+                <option value="">All Positions</option>
+                <?php foreach (($positions ?? []) as $pos): ?>
+                    <option value="<?= htmlspecialchars($pos) ?>" <?= (($filters['position'] ?? '') === $pos) ? 'selected' : '' ?>><?= htmlspecialchars($pos) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <select name="status" aria-label="Filter by status" class="form-select form-select-sm" style="max-width:180px">
+                <option value="">All Statuses</option>
+                <?php foreach (['pending','reviewing','shortlisted','rejected','hired'] as $st): ?>
+                    <option value="<?= $st ?>" <?= (($filters['status'] ?? '') === $st) ? 'selected' : '' ?>><?= ucfirst($st) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search me-1"></i>Filter</button>
+            <?php if (!empty(array_filter($filters ?? []))): ?>
+                <a href="<?= BASE_URL ?>/admin/careers/manage/applications" class="btn btn-outline-secondary btn-sm">Reset</a>
+            <?php endif; ?>
+        </form>
         <div class="card-body aps-cp-card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="applicationsTable" width="100%" cellspacing="0">
@@ -52,7 +71,7 @@ $job = $job ?? null;
                                 <td><?= htmlspecialchars($app['current_company'] ?? '') ?></td>
                                 <td>
                                     <?php if (!empty($app['resume_path'])): ?>
-                                        <a href="<?= BASE_URL . $app['resume_path'] ?>" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="<?= BASE_URL ?>/admin/careers/manage/applications/<?= (int)$app['id'] ?>/resume" class="btn btn-sm btn-outline-primary">Download</a>
                                     <?php else: ?>
                                         <span class="text-muted">No resume</span>
                                     <?php endif; ?>
@@ -62,10 +81,10 @@ $job = $job ?? null;
                                     $status = $app['status'] ?? 'pending';
                                     $badgeClass = match($status) {
                                         'shortlisted' => 'bg-success',
-                                        'interviewed' => 'bg-primary',
-                                        'selected' => 'bg-info text-dark',
-                                        'rejected' => 'bg-danger',
-                                        default => 'bg-warning text-dark'
+                                        'reviewing'   => 'bg-primary',
+                                        'hired'       => 'bg-info text-dark',
+                                        'rejected'    => 'bg-danger',
+                                        default       => 'bg-warning text-dark'
                                     };
                                     ?>
                                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
@@ -77,10 +96,29 @@ $job = $job ?? null;
                             </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr><td colspan="10" class="text-center text-muted py-4">No applications received yet</td></tr>
+                            <tr><td colspan="10" class="text-center text-muted py-4">No applications match your filters</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
+                <?php if (!empty($pagination)): ?>
+                <div class="d-flex justify-content-between align-items-center px-3 pb-3">
+                    <small class="text-muted">
+                        Page <?= (int)($pagination['current_page'] ?? 1) ?> of <?= (int)($pagination['total_pages'] ?? 1) ?>
+                        &nbsp;&middot;&nbsp; <?= (int)($pagination['total'] ?? 0) ?> applications
+                    </small>
+                    <?php $navQuery = array_filter($filters ?? [], fn($v) => $v !== ''); ?>
+                    <nav aria-label="Applications pagination">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item <?= (($pagination['current_page'] ?? 1) <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= BASE_URL ?>/admin/careers/manage/applications?<?= http_build_query(array_merge($navQuery, ['page' => (int)($pagination['current_page'] ?? 1) - 1])) ?>" aria-label="Previous">&laquo;</a>
+                            </li>
+                            <li class="page-item <?= (($pagination['current_page'] ?? 1) >= ($pagination['total_pages'] ?? 1)) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= BASE_URL ?>/admin/careers/manage/applications?<?= http_build_query(array_merge($navQuery, ['page' => (int)($pagination['current_page'] ?? 1) + 1])) ?>" aria-label="Next">&raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

@@ -190,7 +190,7 @@ class ContentPageController extends BaseController
             $services = $this->db->fetchAll("
                 SELECT * FROM construction_services
                 WHERE is_active = 1{$tidSql}
-                ORDER BY sort_order
+                ORDER BY id
             ", $params) ?: [];
         } catch (\Throwable $e) {
             error_log("constructionServices query error: " . $e->getMessage());

@@ -12,6 +12,27 @@ use Exception;
 class MapController extends BaseController
 {
     /**
+     * Properties table has no images column — images live in property_images
+     * (is_active, ordered primary/sort order). Batch-fetch the first active image per property.
+     */
+    private function fetchFirstImages(array $ids): array
+    {
+        if (empty($ids)) return [];
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $rows = $this->db->fetchAll(
+            "SELECT property_id, MIN(image_path) AS image_path\n"
+                . "FROM property_images\n"
+                . "WHERE is_active = 1 AND property_id IN ($placeholders)\n"
+                . "GROUP BY property_id",
+            $ids
+        ) ?: [];
+        $map = [];
+        foreach ($rows as $r) { $map[(int)$r['property_id']] = $r['image_path']; }
+        return $map;
+    }
+
+    /**
      * Show properties map page
      */
     public function index()
@@ -21,7 +42,7 @@ class MapController extends BaseController
             $properties = $this->db->table('properties')
                 ->where('status', 'active')
                 ->whereNotNull('location')
-                ->select('id', 'title', 'location', 'price', 'type', 'bedrooms', 'area', 'images')
+                ->select('id', 'title', 'location', 'price', 'type', 'bedrooms', 'area')
                 ->get();
 
             $this->render('map/index', [
@@ -44,17 +65,12 @@ class MapController extends BaseController
             $properties = $this->db->table('properties')
                 ->where('status', 'active')
                 ->whereNotNull('location')
-                ->select('id', 'title', 'location', 'price', 'type', 'bedrooms', 'area', 'images', 'description')
+                ->select('id', 'title', 'location', 'price', 'type', 'bedrooms', 'area', 'description')
                 ->get();
+            $imageMap = $this->fetchFirstImages(array_column($properties, 'id'));
 
             $markers = [];
             foreach ($properties as $property) {
-                // Parse images
-                $images = [];
-                if (!empty($property['images'])) {
-                    $images = json_decode($property['images'], true) ?? [];
-                }
-
                 $markers[] = [
                     'id' => $property['id'],
                     'title' => htmlspecialchars($property['title']),
@@ -63,7 +79,7 @@ class MapController extends BaseController
                     'type' => htmlspecialchars($property['type']),
                     'bedrooms' => (int)$property['bedrooms'],
                     'area' => (float)$property['area'],
-                    'image' => !empty($images) ? $images[0] : '/assets/images/property-placeholder.jpg',
+                    'image' => $imageMap[(int)$property['id']] ?? '/assets/images/property-placeholder.jpg',
                     'url' => '/properties/' . $property['id'],
                     'description' => substr(strip_tags($property['description'] ?? ''), 0, 100) . '...'
                 ];
@@ -103,16 +119,12 @@ class MapController extends BaseController
             // In a real implementation, you'd filter by lat/lng bounds
             $properties = $this->db->table('properties')
                 ->where('status', 'active')
-                ->select('id', 'title', 'location', 'price', 'type', 'bedrooms', 'area', 'images')
+                ->select('id', 'title', 'location', 'price', 'type', 'bedrooms', 'area')
                 ->get();
+            $imageMap = $this->fetchFirstImages(array_column($properties, 'id'));
 
             $markers = [];
             foreach ($properties as $property) {
-                $images = [];
-                if (!empty($property['images'])) {
-                    $images = json_decode($property['images'], true) ?? [];
-                }
-
                 $markers[] = [
                     'id' => $property['id'],
                     'title' => htmlspecialchars($property['title']),
@@ -121,7 +133,7 @@ class MapController extends BaseController
                     'type' => htmlspecialchars($property['type']),
                     'bedrooms' => (int)$property['bedrooms'],
                     'area' => (float)$property['area'],
-                    'image' => !empty($images) ? $images[0] : '/assets/images/property-placeholder.jpg',
+                    'image' => $imageMap[(int)$property['id']] ?? '/assets/images/property-placeholder.jpg',
                     'url' => '/properties/' . $property['id']
                 ];
             }

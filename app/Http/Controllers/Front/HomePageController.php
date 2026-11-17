@@ -290,18 +290,31 @@ class HomePageController extends BaseController
     public function gallery()
     {
         try {
-            $stmt = $this->db->prepare("SELECT * FROM gallery_albums WHERE status = 'active' ORDER BY sort_order ASC");
-            $stmt->execute();
-            $albums = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            // Live gallery table (image_path/category/caption, status + sort_order) —
+            // gallery_albums is an unmigrated 4-column stub with zero writers.
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+            $galleryImages = $this->db->fetchAll(
+                "SELECT id, image_path, title, category, caption, description\n"
+                 . "FROM gallery WHERE status = 'active'" . $tidSql . "\n"
+                 . "ORDER BY sort_order ASC, id ASC",
+                $tidParams
+            ) ?: [];
+            $galleryCategories = array_values(array_unique(array_filter(
+                array_map('strval', array_column($galleryImages, 'category'))
+            )));
         } catch (\Throwable $e) {
             error_log('Gallery error: ' . $e->getMessage());
-            $albums = [];
+            $galleryImages = [];
+            $galleryCategories = [];
         }
 
         $this->render('pages/gallery', [
             'page_title' => 'Gallery - APS Dream Home',
             'page_description' => 'Explore our project gallery.',
-            'albums' => $albums,
+            'galleryImages' => $galleryImages,
+            'galleryCategories' => $galleryCategories,
         ]);
     }
 
