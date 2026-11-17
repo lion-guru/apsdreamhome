@@ -1,3 +1,58 @@
+## Session 742: Wallet Transfer to EMI System Overhaul — Multi-Table EMI Data Model Alignment, Real-Time Outstanding Balance & Late Fee Integration, Atomic Schedule Settlement & Missing Column Fix; Master 12/12 Clean (2026-11-17)
+
+### Trigger
+User request:
+`[Transfer to EMI - APS Dream Home](http://localhost/apsdreamhome/wallet/transfer-emi)`
+Active document: `app/Http/Controllers/WalletController.php` at line 491.
+
+### Root Cause Analysis
+1. **Schema & Field Disconnect in `transferToEmi()` & `processEmiTransfer()`**:
+   - The view referenced `$emi['due_amount']` and `$emi['property_name']`, but `SELECT * FROM emi_schedule` contains `amount`, `late_fee`, and `paid_amount` with no `due_amount` or `property_name` column. This resulted in empty/zero due amounts and missing property labels.
+   - It only filtered `customer_id = ? AND status = 'pending'`, ignoring `overdue` EMIs and missing bookings where the user was linked via `plot_bookings.user_id` or `plot_bookings.customer_id`.
+2. **Missing `tenant_id` Column in `wallet_emi_transfers`**:
+   - `processEmiTransfer()` attempted to insert `'tenant_id' => $tid` into `wallet_emi_transfers`. The database table `wallet_emi_transfers` does not have a `tenant_id` column, which triggered an immediate fatal MySQL error `Unknown column 'tenant_id' in 'field list'` upon submitting a transfer.
+3. **Ghost Payment Problem (Deducted Without Updating EMI Schedule)**:
+   - Previously, `processEmiTransfer()` deducted the wallet points, created a transaction, and inserted into `wallet_emi_transfers`, but **never executed an `UPDATE` on `emi_schedule`**. As a result, the EMI stayed in `pending` or `overdue` status with unchanged `paid_amount`, misleading customers.
+4. **Subdirectory Redirection & Broken JavaScript Boundaries**:
+   - `processTransfer()` in `app/views/wallet/transfer_emi.php` redirected to hardcoded `/wallet` instead of respecting `BASE_URL` and associate context (`/associate/wallet`), causing 404s on subfolder installations.
+   - Minimum transfer check was locked at a rigid ₹500, preventing customers from clearing small residual EMI balances (e.g., ₹200).
+
+### Key Fixes Landed
+1. **Rich Join Query & Accurate Balance Math (`app/Http/Controllers/WalletController.php`)**:
+   - Updated `transferToEmi()` to join `plot_bookings`, `colonies`, and `plots`.
+   - Accurately computed `due_amount` as `(amount + late_fee - paid_amount)` and synthesized `property_name` (e.g., `APS Township - Plot #RN-A-002`).
+   - Scoped to `(es.customer_id = ? OR pb.user_id = ? OR pb.customer_id = ?)` and included both `pending` and `overdue` statuses.
+   - Auto-creates wallet record if user does not have an existing `wallet_points` row.
+2. **Atomic Settlement & Schedule Synchronization (`app/Http/Controllers/WalletController.php`)**:
+   - Validated that the target EMI is in an active pending/overdue state and that the transfer amount does not exceed the remaining balance.
+   - Removed nonexistent `tenant_id` column from `wallet_emi_transfers` insert.
+   - Directly updated `emi_schedule` inside the atomic database transaction: updates `paid_amount`, transitions `status` to `paid` when fully settled, and timestamps `paid_date`.
+   - Logged audit trail into `user_activity_logs_unified` with remaining balance context.
+3. **Frontend UI & Interactive UX Polish (`app/views/wallet/transfer_emi.php`)**:
+   - Added late fee badge, overdue/due-soon indicators, and booking reference numbers to EMI cards.
+   - Added `Use Max` quick-action button in the transfer form.
+   - Included CSRF token in payload, added button loading spinner state, and routed redirect via role-aware `$walletHomeUrl`.
+   - Registered associate alias routes in `routes/web.php` for `/associate/wallet/transfer-emi` and `/associate/wallet/transfer-emi/process`.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Http/Controllers/WalletController.php` -> PASS
+  - `app/views/wallet/transfer_emi.php` -> PASS
+  - `routes/web.php` -> PASS
+- **Live Controller & View Buffering**:
+  - `transferToEmi()` executed against live DB -> Output 214KB HTML cleanly rendering EMI #3 for user with correct `due_amount`, plot reference, and associate sidebar integration.
+- **Database Baseline (Zero Drift Target)**:
+  - `users`: 82 (exact match)
+  - `plot_bookings`: 23 (exact match)
+  - `leads`: 994 (exact match)
+  - `transactions`: 5 (exact match)
+  - `mlm_commission_ledger`: 359 (exact match)
+  - `email_queue`: 14 (exact match)
+- **Master Test Suite**:
+  - `php testing/master_test_runner.php` -> **12/12 PASSED** (40.92s, 100% HEALTHY).
+- **AGENTS.md Log Verification**:
+  - `php scripts/verify_agents_log.php` -> PASS.
+
 ## Session 741: Bank Account Edit System Fix — Unescaped JSON Attribute Breakdown Resolved, Data-Account Escaping, Server-Side Update Validation & Duplicate Guard, Clean Modal Lifecycle; Master 12/12 Clean (2026-11-17)
 
 ### Trigger

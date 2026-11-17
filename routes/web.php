@@ -1211,6 +1211,8 @@ $router->get('/associate/profile', 'App\\Http\\Controllers\\Associate\\ProfileCo
 $router->post('/associate/profile', 'App\\Http\\Controllers\\Associate\\ProfileController@profile');
 $router->get('/associate/genealogy', 'App\\Http\\Controllers\\MLMTreeController@genealogy');
 $router->get('/associate/wallet', 'App\\Http\\Controllers\\WalletController@associateWallet');
+$router->get('/associate/wallet/transfer-emi', 'App\\Http\\Controllers\\WalletController@transferToEmi');
+$router->post('/associate/wallet/transfer-emi/process', 'App\\Http\\Controllers\\WalletController@processEmiTransfer');
 
 
 // Associate Wallet Activation

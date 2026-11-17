@@ -173,25 +173,65 @@ class WalletController extends BaseController
      */
     public function transferToEmi()
     {
-        @session_start();
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
 
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/login');
             exit;
         }
 
-        $userId = $_SESSION['user_id'];
+        $userId = (int)$_SESSION['user_id'];
 
-        // Get wallet balance
+        // Get wallet balance (auto-create if missing)
         $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
+        if (!$wallet) {
+            $tid = (int)$this->tenantId();
+            $this->db->insert('wallet_points', [
+                'user_id' => $userId,
+                'points_balance' => 0.00,
+                'total_earned' => 0.00,
+                'total_used' => 0.00,
+                'total_transferred_to_emi' => 0.00,
+                'referral_earnings' => 0.00,
+                'commission_earnings' => 0.00,
+                'bonus_earnings' => 0.00,
+                'status' => 'active',
+                'tenant_id' => $tid > 0 ? $tid : 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
+        }
 
-        // Get user's EMIs (if EMI table exists)
+        // Get user's pending / overdue EMIs with rich booking & colony details
         $emis = [];
         try {
-            $emis = $this->db->fetchAll(
-                "SELECT * FROM emi_schedule WHERE customer_id = ? AND status = 'pending' ORDER BY due_date ASC",
-                [$userId]
-            );
+            $emis = $this->db->fetchAll("
+                SELECT 
+                    es.id,
+                    es.booking_id,
+                    es.emi_number,
+                    es.amount,
+                    (es.amount + COALESCE(es.late_fee, 0) - COALESCE(es.paid_amount, 0)) AS due_amount,
+                    es.due_date,
+                    es.status,
+                    COALESCE(es.late_fee, 0) AS late_fee,
+                    COALESCE(es.paid_amount, 0) AS paid_amount,
+                    pb.booking_number,
+                    pb.customer_name,
+                    c.name AS colony_name,
+                    p.plot_number,
+                    CONCAT(COALESCE(c.name, 'APS Township'), ' - Plot #', COALESCE(p.plot_number, pb.plot_id, 'N/A')) AS property_name
+                FROM emi_schedule es
+                LEFT JOIN plot_bookings pb ON es.booking_id = pb.id
+                LEFT JOIN colonies c ON pb.colony_id = c.id
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                WHERE (es.customer_id = ? OR pb.user_id = ? OR pb.customer_id = ?)
+                  AND es.status IN ('pending', 'overdue')
+                ORDER BY es.due_date ASC
+            ", [$userId, $userId, $userId]);
         } catch (\Throwable $e) {
             error_log('WalletController emi fetch: ' . $e->getMessage());
         }
@@ -203,7 +243,7 @@ class WalletController extends BaseController
         ];
 
         $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
-        $this->render('wallet/transfer_emi', $data);
+        $this->render('wallet/transfer_emi', $data, $this->layout);
     }
 
     /**
@@ -211,26 +251,66 @@ class WalletController extends BaseController
      */
     public function processEmiTransfer()
     {
-        @session_start();
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
 
         if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'Not logged in']);
             exit;
         }
 
-        $userId = $_SESSION['user_id'];
-        $emiId = $_POST['emi_id'] ?? 0;
-        $amount = floatval($_POST['amount'] ?? 0);
+        $userId = (int)$_SESSION['user_id'];
+        $emiId = (int)($_POST['emi_id'] ?? 0);
+        $amount = round(floatval($_POST['amount'] ?? 0), 2);
 
-        if ($amount <= 0) {
-            echo json_encode(['success' => false, 'message' => 'Invalid transfer amount']);
+        if ($emiId <= 0 || $amount <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid transfer details']);
             exit;
         }
 
         try {
+            // Verify EMI existence and status
+            $emi = $this->db->fetchOne("
+                SELECT es.*, pb.user_id as booking_user_id, pb.customer_id as booking_customer_id
+                FROM emi_schedule es
+                LEFT JOIN plot_bookings pb ON es.booking_id = pb.id
+                WHERE es.id = ? AND es.status IN ('pending', 'overdue')
+                LIMIT 1
+            ", [$emiId]);
+
+            if (!$emi) {
+                echo json_encode(['success' => false, 'message' => 'EMI record not found or already settled']);
+                exit;
+            }
+
+            $userRole = $_SESSION['role'] ?? '';
+            $isAuthorized = ($emi['customer_id'] == $userId || 
+                             $emi['booking_user_id'] == $userId || 
+                             $emi['booking_customer_id'] == $userId || 
+                             $userRole === 'admin' || 
+                             $userRole === 'associate');
+
+            if (!$isAuthorized) {
+                echo json_encode(['success' => false, 'message' => 'Unauthorized to pay this EMI']);
+                exit;
+            }
+
+            $dueAmount = (float)$emi['amount'] + (float)($emi['late_fee'] ?? 0) - (float)($emi['paid_amount'] ?? 0);
+            if ($amount > ($dueAmount + 0.05)) {
+                echo json_encode([
+                    'success' => false, 
+                    'message' => 'Transfer amount cannot exceed remaining due: ₹' . number_format($dueAmount, 2)
+                ]);
+                exit;
+            }
+
             $this->db->beginTransaction();
 
-            // Lock the wallet row to prevent concurrent overdraft / race conditions
+            // Lock wallet row to prevent concurrent overdraft / race conditions
             $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE", [$userId]);
 
             if (!$wallet || (float)$wallet['points_balance'] < $amount) {
@@ -246,8 +326,8 @@ class WalletController extends BaseController
 
             $tid = (int)$this->tenantId();
             $this->db->query(
-                "UPDATE wallet_points SET points_balance = ?, total_used = ?, total_transferred_to_emi = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ? AND points_balance >= ?",
-                [$newBalance, $newUsed, $newTransferred, $userId, $tid, $amount]
+                "UPDATE wallet_points SET points_balance = ?, total_used = ?, total_transferred_to_emi = ?, updated_at = NOW() WHERE user_id = ? AND points_balance >= ?",
+                [$newBalance, $newUsed, $newTransferred, $userId, $amount]
             );
 
             // Create transaction record
@@ -258,29 +338,59 @@ class WalletController extends BaseController
                 'amount' => $amount,
                 'balance_before' => $wallet['points_balance'],
                 'balance_after' => $newBalance,
-                'description' => "EMI Transfer - EMI #$emiId",
+                'description' => "EMI Payment via Wallet - EMI #$emiId",
                 'reference_id' => $emiId,
                 'reference_type' => 'emi',
                 'status' => 'completed',
-                'tenant_id' => $tid,
+                'tenant_id' => $tid > 0 ? $tid : 1,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
-            // Create EMI transfer record
+            // Create EMI transfer record (wallet_emi_transfers has no tenant_id)
             $this->db->insert('wallet_emi_transfers', [
                 'user_id' => $userId,
                 'emi_id' => $emiId,
-                'emi_amount' => $amount,
+                'emi_amount' => (float)$emi['amount'],
                 'wallet_amount_used' => $amount,
                 'transaction_id' => $transactionId,
                 'transfer_status' => 'completed',
-                'tenant_id' => $tid,
                 'transferred_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
+            // Update emi_schedule row with payment
+            $newPaidAmount = (float)($emi['paid_amount'] ?? 0) + $amount;
+            $isFullyPaid = ($newPaidAmount >= (float)$emi['amount']);
+            $newStatus = $isFullyPaid ? 'paid' : 'pending';
+            $paidDate = $isFullyPaid ? date('Y-m-d') : null;
+
+            $this->db->query("
+                UPDATE emi_schedule 
+                SET paid_amount = ?, 
+                    status = ?, 
+                    paid_date = COALESCE(paid_date, ?),
+                    updated_at = NOW() 
+                WHERE id = ?
+            ", [$newPaidAmount, $newStatus, $paidDate, $emiId]);
+
+            // Unified Audit Log
+            try {
+                $this->db->query("
+                    INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, created_at)
+                    VALUES (?, 'wallet_emi_transfer', ?, ?, NOW())
+                ", [$userId, json_encode([
+                    'emi_id' => $emiId,
+                    'amount' => $amount,
+                    'status' => $newStatus,
+                    'remaining' => max(0, $dueAmount - $amount)
+                ]), $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Throwable $e) {}
+
             $this->db->commit();
-            echo json_encode(['success' => true, 'message' => 'EMI transfer successful']);
+            echo json_encode([
+                'success' => true, 
+                'message' => '₹' . number_format($amount, 2) . ' transferred to EMI successfully' . ($isFullyPaid ? ' (EMI Fully Settled)' : '')
+            ]);
             exit;
         } catch (\Throwable $e) {
             try { $this->db->rollBack(); } catch (\Throwable $ignored) {}

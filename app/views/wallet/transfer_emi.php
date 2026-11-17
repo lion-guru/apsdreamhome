@@ -1,5 +1,10 @@
 
-<?php $page_title = $page_title ?? 'Transfer to EMI - APS Dream Home'; ?>
+<?php 
+$page_title = $page_title ?? 'Transfer to EMI - APS Dream Home';
+$walletBalance = (float)($wallet['points_balance'] ?? 0);
+$isAssociate = (($_SESSION['role'] ?? '') === 'associate');
+$walletHomeUrl = defined('BASE_URL') ? BASE_URL . ($isAssociate ? '/associate/wallet' : '/wallet') : ($isAssociate ? '/associate/wallet' : '/wallet');
+?>
 
 <style>
 .emi-card {
@@ -94,40 +99,57 @@
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-exchange-alt me-2 text-primary"></i>Transfer Wallet to EMI</h2>
-        <a href="<?php echo BASE_URL; ?>/<?= ($_SESSION['role'] ?? '') === 'associate' ? 'associate/wallet' : 'wallet' ?>" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
+        <a href="<?= $walletHomeUrl ?>" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Back to Wallet</a>
     </div>
 
     <!-- Wallet Balance -->
     <div class="wallet-balance">
-        <h5 class="mb-1">Available Balance</h5>
-        <div class="amount">₹<?php echo number_format($wallet['points_balance'], 2); ?></div>
-        <p class="mb-0 opacity-75">Use your wallet points to pay EMIs</p>
+        <h5 class="mb-1">Available Wallet Balance</h5>
+        <div class="amount">₹<?= number_format($walletBalance, 2) ?></div>
+        <p class="mb-0 opacity-75">Use your accumulated wallet points to pay upcoming or overdue plot EMIs</p>
     </div>
 
     <div class="row">
         <!-- EMI Selection -->
         <div class="col-lg-8 mb-4">
-            <h4 class="mb-4"><i class="fas fa-calendar-alt me-2"></i>Select EMI to Pay</h4>
+            <h4 class="mb-4"><i class="fas fa-calendar-alt me-2 text-primary"></i>Select EMI to Pay</h4>
             
             <?php if (!empty($emis)): ?>
-                <?php foreach ($emis as $emi): ?>
-                    <div class="emi-card <?php 
-                        if (strtotime($emi['due_date']) < strtotime(date('Y-m-d'))) echo 'overdue';
-                        elseif (strtotime($emi['due_date']) <= strtotime('+7 days')) echo 'due-soon';
-                    ?>">
-                        <div class="d-flex justify-content-between align-items-start">
+                <?php foreach ($emis as $emi): 
+                    $dueAmt = (float)($emi['due_amount'] ?? $emi['amount']);
+                    $isOverdue = (strtotime($emi['due_date']) < strtotime(date('Y-m-d')));
+                    $isDueSoon = (!$isOverdue && strtotime($emi['due_date']) <= strtotime('+7 days'));
+                    $cardClass = $isOverdue ? 'overdue' : ($isDueSoon ? 'due-soon' : '');
+                ?>
+                    <div class="emi-card <?= $cardClass ?>">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                             <div>
-                                <h5 class="mb-2">EMI #<?php echo e($emi['id']); ?></h5>
-                                <p class="mb-1"><strong>Due Amount:</strong> ₹<?php echo number_format($emi['due_amount'], 2); ?></p>
-                                <p class="mb-1"><strong>Due Date:</strong> <?php echo date('M d, Y', strtotime($emi['due_date'])); ?></p>
-                                <p class="mb-1"><strong>Property:</strong> <?php echo htmlspecialchars($emi['property_name'] ?? 'N/A'); ?></p>
-                                <span class="emi-status <?php echo e($emi['status']); ?>">
-                                    <?php echo ucfirst($emi['status']); ?>
+                                <h5 class="mb-2 fw-bold">EMI #<?= (int)($emi['emi_number'] ?: $emi['id']) ?></h5>
+                                <p class="mb-1"><strong>Due Amount:</strong> <span class="text-primary fw-bold">₹<?= number_format($dueAmt, 2) ?></span>
+                                    <?php if (!empty($emi['late_fee']) && (float)$emi['late_fee'] > 0): ?>
+                                        <small class="badge bg-danger ms-1">+ ₹<?= number_format((float)$emi['late_fee'], 2) ?> Late Fee</small>
+                                    <?php endif; ?>
+                                </p>
+                                <p class="mb-1"><strong>Due Date:</strong> <?= date('M d, Y', strtotime($emi['due_date'])) ?>
+                                    <?php if ($isOverdue): ?>
+                                        <span class="badge bg-danger ms-1">Overdue</span>
+                                    <?php elseif ($isDueSoon): ?>
+                                        <span class="badge bg-warning text-dark ms-1">Due Soon</span>
+                                    <?php endif; ?>
+                                </p>
+                                <p class="mb-1"><strong>Property / Plot:</strong> <?= htmlspecialchars($emi['property_name'] ?? 'APS Township') ?></p>
+                                <?php if (!empty($emi['booking_number'])): ?>
+                                    <p class="mb-1"><small class="text-muted">Booking Reference: <?= htmlspecialchars($emi['booking_number']) ?></small></p>
+                                <?php endif; ?>
+                                <span class="emi-status <?= htmlspecialchars($emi['status']) ?>">
+                                    <?= ucfirst(htmlspecialchars($emi['status'])) ?>
                                 </span>
                             </div>
-                            <button class="btn btn-primary" onclick="selectEMI(<?php echo (int)$emi['id']; ?>, <?php echo e($emi['due_amount']); ?>)">
-                                Pay This EMI
-                            </button>
+                            <div>
+                                <button type="button" class="btn btn-primary" onclick="selectEMI(<?= (int)$emi['id'] ?>, <?= $dueAmt ?>, 'EMI #<?= (int)($emi['emi_number'] ?: $emi['id']) ?> (<?= htmlspecialchars(addslashes($emi['property_name'] ?? 'Plot')) ?>)')">
+                                    <i class="fas fa-check-circle me-1"></i>Pay This EMI
+                                </button>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -135,8 +157,11 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body text-center py-5">
                         <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                        <h4>No Pending EMIs</h4>
-                        <p class="text-muted">You don't have any pending EMIs to pay.</p>
+                        <h4>No Pending EMIs Found</h4>
+                        <p class="text-muted">You do not have any pending or overdue plot EMIs under your account.</p>
+                        <a href="<?= $walletHomeUrl ?>" class="btn btn-outline-primary mt-2">
+                            <i class="fas fa-wallet me-1"></i>Go to Wallet
+                        </a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -144,39 +169,42 @@
 
         <!-- Transfer Form -->
         <div class="col-lg-4 mb-4">
-            <h4 class="mb-4"><i class="fas fa-paper-plane me-2"></i>Transfer Details</h4>
+            <h4 class="mb-4"><i class="fas fa-paper-plane me-2 text-primary"></i>Transfer Details</h4>
             
             <div class="card border-0 shadow-sm">
                 <div class="card-body aps-cp-card-body">
                     <form id="transferForm">
-    <?php echo CSRFProtection::csrfField(); ?>
+                        <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
-                            <label class="form-label">Selected EMI</label>
-                            <input aria-label="Selected emi" type="text" class="form-control" id="selectedEmi" readonly placeholder="Select an EMI">
+                            <label class="form-label fw-bold">Selected EMI</label>
+                            <input aria-label="Selected emi" type="text" class="form-control" id="selectedEmi" readonly placeholder="Click 'Pay This EMI' to select">
                             <input type="hidden" id="emiId" name="emi_id">
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">EMI Amount</label>
+                            <label class="form-label fw-bold">Total Remaining Due</label>
                             <input aria-label="Emi amount" type="text" class="form-control" id="emiAmount" readonly placeholder="₹0.00">
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Transfer Amount</label>
-                            <input aria-label="Transfer amount" type="number" class="form-control" id="transferAmount" name="amount" placeholder="Enter amount" min="1" step="0.01">
-                            <small class="text-muted">Max: ₹<?php echo number_format($wallet['points_balance'], 2); ?></small>
+                            <label class="form-label fw-bold">Wallet Points to Use (₹)</label>
+                            <input aria-label="Transfer amount" type="number" class="form-control" id="transferAmount" name="amount" placeholder="Enter amount to apply" min="1" step="0.01">
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Available: ₹<?= number_format($walletBalance, 2) ?></small>
+                                <a href="javascript:void(0)" onclick="useMaxPoints()" class="small text-decoration-none fw-bold text-primary">Use Max</a>
+                            </div>
                         </div>
                         
                         <div class="info-box">
                             <i class="fas fa-info-circle"></i>
                             <small>
-                                Conversion Rate: 1 Point = ₹1<br>
-                                Minimum transfer: ₹500
+                                <strong>Rate:</strong> 1 Wallet Point = ₹1<br>
+                                <strong>Deduction:</strong> Instant & direct ledger update
                             </small>
                         </div>
                         
                         <button type="button" class="btn btn-transfer" onclick="processTransfer()">
-                            <i class="fas fa-exchange-alt me-2"></i>Transfer to EMI
+                            <i class="fas fa-exchange-alt me-2"></i>Confirm Transfer to EMI
                         </button>
                     </form>
                 </div>
@@ -185,19 +213,19 @@
             <!-- Transfer Info -->
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-body aps-cp-card-body">
-                    <h5 class="card-title mb-3"><i class="fas fa-info-circle me-2 text-primary"></i>Transfer Info</h5>
+                    <h5 class="card-title mb-3"><i class="fas fa-shield-alt me-2 text-primary"></i>Transaction Safety</h5>
                     <ul class="list-unstyled mb-0">
                         <li class="mb-2">
-                            <small class="text-muted">Processing Time:</small>
-                            <div class="fw-bold">Instant</div>
+                            <small class="text-muted">Settlement Speed:</small>
+                            <div class="fw-bold">Instant (Real-time)</div>
                         </li>
                         <li class="mb-2">
                             <small class="text-muted">Transaction Fee:</small>
-                            <div class="fw-bold">₹0</div>
+                            <div class="fw-bold text-success">Zero Fee (₹0)</div>
                         </li>
                         <li>
-                            <small class="text-muted">Tax Benefit:</small>
-                            <div class="fw-bold text-success">Yes (Tax Saving)</div>
+                            <small class="text-muted">Status:</small>
+                            <div class="fw-bold text-primary">Directly updates Plot EMI Schedule</div>
                         </li>
                     </ul>
                 </div>
@@ -207,61 +235,100 @@
 </div>
 
 <script>
-function selectEMI(emiId, amount) {
+let currentSelectedDue = 0;
+const maxWalletBalance = <?= (float)$walletBalance ?>;
+const walletRedirectUrl = '<?= $walletHomeUrl ?>';
+
+function selectEMI(emiId, amount, label) {
+    currentSelectedDue = parseFloat(amount) || 0;
     document.getElementById('emiId').value = emiId;
-    document.getElementById('selectedEmi').value = 'EMI #' + emiId;
-    document.getElementById('emiAmount').value = '₹' + amount.toFixed(2);
-    document.getElementById('transferAmount').value = amount;
-    document.getElementById('transferAmount').max = amount;
+    document.getElementById('selectedEmi').value = label || ('EMI #' + emiId);
+    document.getElementById('emiAmount').value = '₹' + currentSelectedDue.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    
+    // Auto-fill transfer amount with min of due amount and available wallet balance
+    const suggested = Math.min(currentSelectedDue, maxWalletBalance);
+    document.getElementById('transferAmount').value = suggested > 0 ? suggested : currentSelectedDue;
+    document.getElementById('transferAmount').max = currentSelectedDue;
+}
+
+function useMaxPoints() {
+    if (!currentSelectedDue) {
+        alert('Please select an EMI first');
+        return;
+    }
+    const maxUsable = Math.min(currentSelectedDue, maxWalletBalance);
+    document.getElementById('transferAmount').value = maxUsable;
 }
 
 function processTransfer() {
     const emiId = document.getElementById('emiId').value;
-    const amount = document.getElementById('transferAmount').value;
-    const maxAmount = <?php echo e($wallet['points_balance']); ?>;
+    const amountVal = document.getElementById('transferAmount').value;
+    const amount = parseFloat(amountVal);
     
     if (!emiId) {
         alert('Please select an EMI first');
         return;
     }
     
-    if (!amount || amount <= 0) {
-        alert('Please enter a valid amount');
+    if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid transfer amount');
         return;
     }
     
-    if (parseFloat(amount) > maxAmount) {
-        alert('Insufficient wallet balance');
+    if (amount > maxWalletBalance) {
+        alert('Insufficient wallet balance. You have ₹' + maxWalletBalance.toFixed(2) + ' available.');
         return;
     }
     
-    if (parseFloat(amount) < 500) {
-        alert('Minimum transfer amount is ₹500');
+    if (amount > currentSelectedDue + 0.05) {
+        alert('Transfer amount cannot exceed remaining due: ₹' + currentSelectedDue.toFixed(2));
+        return;
+    }
+
+    const minAllowed = Math.min(100, currentSelectedDue);
+    if (amount < minAllowed) {
+        alert('Minimum transfer amount is ₹' + minAllowed.toFixed(2));
         return;
     }
     
-    // Confirm transfer
-    if (confirm('Are you sure you want to transfer ₹' + amount + ' to EMI #' + emiId + '?')) {
-        const formData = new FormData();
-        formData.append('emi_id', emiId);
-        formData.append('amount', amount);
-        
-        fetch('<?= BASE_URL ?>/wallet/transfer-emi/process', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Transfer successful!');
-                window.location.href = '/wallet';
-            } else {
-                alert('Transfer failed: ' + data.message);
+    if (!confirm('Transfer ₹' + amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) + ' from your wallet to this EMI? This will directly reduce your outstanding balance.')) {
+        return;
+    }
+
+    const btn = document.querySelector('.btn-transfer');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing Transfer...';
+    }
+
+    const formData = new FormData();
+    formData.append('emi_id', emiId);
+    formData.append('amount', amount);
+    formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
+    
+    fetch('<?= BASE_URL ?>/wallet/transfer-emi/process', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message || 'Transfer successful!');
+            window.location.href = walletRedirectUrl;
+        } else {
+            alert('Transfer failed: ' + (data.message || 'Unknown error'));
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-exchange-alt me-2"></i>Confirm Transfer to EMI';
             }
-        })
-        .catch(error => {
-            alert('Error: ' + error);
-        });
-    }
+        }
+    })
+    .catch(error => {
+        alert('Error processing transfer: ' + error);
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-exchange-alt me-2"></i>Confirm Transfer to EMI';
+        }
+    });
 }
 </script>
