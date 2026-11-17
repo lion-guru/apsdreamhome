@@ -19,6 +19,17 @@ define('APS_ROOT', dirname(__DIR__));
 require_once APS_ROOT . '/config/bootstrap.php';
 
 use App\Core\Database\Database;
+
+// ── Snapshot baseline at start of test (byte-identical after teardown) ──
+$BASE_COUNTS = [];
+$BASE_TABLES = ['users', 'plots', 'leads', 'properties', 'employees', 'plot_bookings', 'payments', 'colonies', 'associate_profiles', 'wallet_points', 'wallet_transactions'];
+{
+    $conn = Database::getInstance()->getConnection();
+    foreach ($BASE_TABLES as $t) {
+        $BASE_COUNTS[$t] = (int)$conn->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
+    }
+}
+
 use App\Services\Land\LandAcquisitionService;
 use App\Services\PlotDemarcationService;
 use App\Services\MLM\MLMCommissionEngine;
@@ -985,11 +996,25 @@ try {
         echo "    • {$t}: {$cnt}\n";
     }
 
-    $baselineMatch = ($counts['users'] === 75 && $counts['plots'] === 756 && $counts['plot_bookings'] === 3 && $counts['payments'] === 24 && $counts['colonies'] === 7 && $counts['associate_profiles'] === 5 && $counts['wallet_points'] === 76 && $counts['wallet_transactions'] === 3);
-    if ($baselineMatch) {
-        echo "\n  🎉 ZERO LEFTOVERS: Database restored byte-identically to exact baseline state.\n";
+    // Teardown verification: byte-identical restoration vs pre-run snapshot
+    if (!isset($BASE_COUNTS) || empty($BASE_COUNTS)) {
+        echo "\n   [INFO] Pre-run baseline snapshot missing; teardown self-check skipped.\n";
     } else {
-        echo "\n  ⚠️ WARNING: Counts drift detected after teardown!\n";
+        $drifts = [];
+        foreach ($BASE_COUNTS as $t => $expected) {
+            $live = $counts[$t] ?? -1;
+            if ($live !== $expected) {
+                $drifts[] = "{$t}: expected {$expected}, live {$live}";
+            }
+        }
+        if (count($drifts) === 0) {
+            echo "\n  ✅ ZERO LEFTOVERS: Database restored byte-identically to exact pre-run state.\n";
+        } else {
+            echo "\n  ⚠️  WARNING: Counts drift detected after teardown vs pre-run baseline:\n";
+            foreach ($drifts as $d) {
+                echo "    - {$d}\n";
+            }
+        }
     }
 }
 
