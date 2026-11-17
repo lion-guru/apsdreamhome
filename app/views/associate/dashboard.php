@@ -254,20 +254,22 @@ body {
 // Approval status badge for associate/agent
 $regStatus = $user['registration_status'] ?? 'pending';
 $statusConfig = [
-    'approved' => ['label' => 'Approved', 'class' => 'bg-success', 'icon' => 'fa-check-circle'],
-    'pending' => ['label' => 'Pending Approval', 'class' => 'bg-warning text-dark', 'icon' => 'fa-clock'],
-    'rejected' => ['label' => 'Rejected', 'class' => 'bg-danger', 'icon' => 'fa-times-circle'],
+    'approved' => ['label' => 'Approved & Active', 'type' => 'success', 'icon' => 'fa-check-circle'],
+    'pending' => ['label' => 'Pending Approval', 'type' => 'warning', 'icon' => 'fa-clock'],
+    'rejected' => ['label' => 'Rejected', 'type' => 'danger', 'icon' => 'fa-times-circle'],
 ];
 $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
 ?>
-<div class="alert alert-<?= $sc['class'] ?> d-flex align-items-center gap-3 mb-4" role="alert">
+<div class="alert alert-<?= $sc['type'] ?> d-flex align-items-center gap-3 mb-4 rounded-3 shadow-sm" role="alert">
     <i class="fas <?= $sc['icon'] ?> fa-lg"></i>
     <div>
         <strong>Account Status: <?= $sc['label'] ?></strong>
         <?php if ($regStatus === 'pending'): ?>
-            <div class="small text-muted mt-1">Your associate account is under review. You can browse and add properties, but commissions and withdrawals will be enabled after approval.</div>
+            <div class="small mt-1 opacity-75">Your associate account is under review. You can browse and add properties, but commissions and withdrawals will be enabled after approval.</div>
         <?php elseif ($regStatus === 'rejected'): ?>
-            <div class="small text-muted mt-1">Please contact support for more information.</div>
+            <div class="small mt-1 opacity-75">Please contact support for more information regarding your account status.</div>
+        <?php else: ?>
+            <div class="small mt-1 opacity-75">Your associate account is verified. All commission payouts, booking tools, and downline referral tracking are active.</div>
         <?php endif; ?>
     </div>
 </div>
@@ -515,9 +517,13 @@ if ($activeFestiveCount > 0):
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass">
             <div class="d-flex align-items-center gap-3">
-                <div><i class="fas fa-arrow-right text-info"></i></div>
+                <div><i class="fas fa-building text-info"></i></div>
                 <div>
-                    <a href="<?= BASE_URL ?>/associate/my-bookings" class="btn btn-sm btn-outline-primary fw-bold">View All</a>
+                    <div class="stat-value"><?= number_format(count($my_properties ?? [])) ?></div>
+                    <div class="stat-label">Listed Properties</div>
+                </div>
+                <div class="ms-auto">
+                    <a href="<?= BASE_URL ?>/associate/my-bookings" class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-2 py-1" style="font-size: 0.75rem;" title="View all bookings & properties">All</a>
                 </div>
             </div>
         </div>

@@ -81,10 +81,10 @@ $typeLabels = [
                 ?>
                 <div class="col-md-6 col-lg-4">
                     <a href="<?php echo BASE_URL; ?>/associate/commissions?type=<?php echo urlencode($type); ?>" class="text-decoration-none">
-                        <div class="card h-100 border-0">
+                        <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex align-items-center gap-3 mb-2">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: #f8fafc; border: 1px solid #e2e8f0; flex-shrink: 0;">
                                         <i class="fas <?php echo e($meta['icon']); ?> text-<?php echo e($meta['color']); ?>"></i>
                                     </div>
                                     <div>
@@ -106,8 +106,8 @@ $typeLabels = [
                                     </div>
                                 </div>
                                 <!-- Mini progress bar -->
-                                <div class="progress mt-2">
-                                    <div class="progress-bar bg-success"></div>
+                                <div class="progress mt-2" style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                    <div class="progress-bar bg-success" style="width: <?php echo $paidPct; ?>%;"></div>
                                 </div>
                             </div>
                         </div>

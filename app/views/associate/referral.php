@@ -20,23 +20,23 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     <div class="card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
-                <div >
+                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 48px; height: 48px; background-color: <?= $tierInfo['color'] ?>20; color: <?= $tierInfo['color'] ?>; font-size: 1.4rem;">
                     <i class="<?= $tierInfo['icon'] ?>"></i>
                 </div>
                 <div>
-                    <h5 class="mb-0"><?= $tierInfo['label'] ?> Tier</h5>
+                    <h5 class="mb-0 fw-bold"><?= $tierInfo['label'] ?> Tier</h5>
                     <small class="text-muted">₹<?= number_format($tierInfo['bonus_per_referral']) ?> per signup · ₹<?= number_format($tierInfo['bonus_on_booking']) ?> on booking</small>
                 </div>
             </div>
             <?php if ($tierInfo['next_tier']): ?>
             <div class="text-end">
                 <small class="text-muted d-block"><?= $tierInfo['referrals_needed'] ?> more to <?= $tierInfo['next_tier'] ?></small>
-                <div class="progress mt-1">
-                    <div class="progress-bar"></div>
+                <div class="progress mt-1" style="height: 6px; width: 140px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                    <div class="progress-bar" style="width: <?= min(100, max(0, (int)($tierInfo['progress'] ?? 0))) ?>%; background-color: <?= $tierInfo['color'] ?>;"></div>
                 </div>
             </div>
             <?php else: ?>
-            <div class="badge">
+            <div class="badge bg-warning text-dark px-3 py-2 fs-6 rounded-pill">
                 <i class="fas fa-crown me-1"></i>Max Tier
             </div>
             <?php endif; ?>
@@ -89,9 +89,9 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     </div>
     <div class="card-body">
         <div class="text-center mb-4">
-            <div class="d-inline-block p-4 rounded-3">
+            <div class="d-inline-block p-4 rounded-3 border bg-light shadow-2xs">
                 <div class="small text-muted mb-2"><?= __('assoc_ref_your_code', [], 'Your Unique Referral Code') ?></div>
-                <code id="referralCodeDisplay" class="fs-3 fw-bold">
+                <code id="referralCodeDisplay" class="fs-3 fw-bold text-teal" style="color: #0d9488;">
                     <?= htmlspecialchars($referral_code ?: __('assoc_ref_na', [], 'N/A')) ?>
                 </code>
             </div>

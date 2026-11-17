@@ -1,3 +1,57 @@
+## Session 723: Associate Portal End-to-End View Elevation & Defect Elimination — CRM & Lead Details Re-engineered, Stripped Tag Classes Restored, Tools Suite Activated, Layout Flash Type-Safety; Master 12/12 (2026-11-17)
+
+### Trigger
+User request: "DO NEXT AND ABHI BHI ASSOSIATE PORTAL /DASHBOARD ME BHUT SI KAMIYAHAI SARE MENU KHOL KE DEKHO CONSISTENCY NHI HAI UI DIFFER HO JA RAHHAI AUR UI ME BHI IMPROVE KAR HAI AUR BHUT SE FUNTION BHI JADNE PADENGE ETC TUM DEEPLY SAB KUCH DEKH KE APNE SUGGETIONSE ISKO BEST BANAOO KOI KAMI NA RAHE..BINA RUKE KAAM KARO" — deep audit, design consistency hardening, and functional defect resolution across all associate views, tools, and layouts.
+
+### What was found & fixed
+1. **Invalid Bootstrap Alert Class & Empty Stat Card (`app/views/associate/dashboard.php`)**:
+   - Fixed `alert alert-<?= $sc['class'] ?>` which rendered invalid `alert-bg-warning text-dark` or `alert-bg-success`. Standardized to `alert alert-<?= $sc['type'] ?>` (`alert-success`, `alert-warning`, `alert-danger`) and enhanced the status message copy.
+   - Replaced empty 4th Booking stat glass card (which only contained a bare "View All" link) with real operational metric: `Listed Properties` (`count($my_properties)`) with a clean icon, count, and direct action pill.
+2. **Stripped HTML Tags & Unstyled Elements in CRM Dashboard (`app/views/associate/crm_dashboard.php`)**:
+   - Discovered that past regex passes had stripped class and style attributes, leaving raw `<div >`, `<h6 >`, `<span >`, `<strong >` and cards with zero padding.
+   - Restored proper Bootstrap 5 cards (`card border-0 shadow-sm`), card-body padding, stat icon pills, badges, pipeline filter pills, and cleanly styled task/visit/activity list items matching the `#0d9488` teal design tokens.
+3. **Stripped Tags, Score Bars & Syntax Glitch in Lead Detail (`app/views/associate/lead_detail.php`)**:
+   - Restored missing classes on stripped `<div >`, `<span >`, and `<strong >` tags across score calculation, potential earnings, AI score breakdown, and budget breakdown.
+   - Fixed syntax glitch on line 225 where stray single quote was printed in activity transition arrow: `→'`.
+   - Restored dynamic progress fill on the lead score bar and AI score breakdown.
+4. **Colony Plot Map Invisible Legend Fixed (`app/views/associate/colony_map.php:50-54`)**:
+   - Fixed empty `<span ></span>` elements inside the Leaflet map legend that previously rendered no color dots. Added colored circular indicators (`#10b981` Available, `#3b82f6` Booked, `#ef4444` Sold, `#f59e0b` Hold) so field associates can actually interpret colony plot maps.
+5. **Network Downline Stat Cards Typography (`app/views/associate/network_tree.php:107-125`)**:
+   - Fixed empty `<div >` tags on Total Downline, Left Leg, Right Leg, and Max Depth metrics; added proper `fs-4 fw-bold` typography with brand accent colors.
+6. **Referral Tier Card & Display Polished (`app/views/associate/referral.php`)**:
+   - Restored missing tier icon wrapper, progress bar height & percentage fill, max tier pill badge, and referral code display box styling.
+7. **Smart Tools Grid & Instant Real-Time Calculators (`app/views/associate/tools.php`)**:
+   - Discovered that `/associate/tools` rendered an empty grid because `$tools` was not passed by the controller.
+   - Injected default tool definitions (`emi`, `stamp-duty`, `plot-converter`, `commission`) with icon wrappers, gradient badges, and descriptions.
+   - Replaced failing AJAX fetch calls with instant, client-side real-time calculation logic so associates get immediate mathematical results right on the tool card without network delays.
+8. **Commission Breakdown Mini Progress Bars (`app/views/associate/commissions.php:109-111`)**:
+   - Fixed progress bar having no width attribute (always 0% width); added `style="width: <?= $paidPct ?>%;"` and 6px container height.
+   - Styled transaction type icon wrappers with standard dimensions and subtle borders.
+9. **Wallet Quick Actions 404 Link Fixed (`app/views/associate/wallet_activation_my_wallet.php:94`)**:
+   - Fixed broken link `/associate/referrals` (404) to the canonical singular route `/associate/referral`.
+   - Added direct quick action link to `/associate/wallet/withdraw`.
+10. **ID Card Invalid Nested Document Structure (`app/views/associate/id_card.php`)**:
+    - Removed redundant `<!DOCTYPE html><html lang="en"><head>...` and `<body>` tags since the view is rendered within `layouts/associate.php`.
+    - Maintained full `@media print` CSS so one-click printing and PDF generation remain 100% functional without breaking page structure.
+11. **Property Listings Placeholder & Heading Cleanup (`app/views/associate/properties.php:53, 59`)**:
+    - Added standard 180px height and light slate background to property placeholder cards when no image is uploaded.
+    - Fixed duplicated heading classes `h2 class="fs-6 fw-semibold card-title fw-bold"`.
+12. **Layout Global Flash Message Type-Safety (`app/views/layouts/associate.php:627, 630`)**:
+    - Guarded `$flashOk` and `$flashErr` against array payloads before passing to `htmlspecialchars()`, preventing fatal `TypeError` on multi-field validation error redirects.
+
+### Verification (live)
+- `php -l` clean on all modified files (`dashboard.php`, `crm_dashboard.php`, `lead_detail.php`, `colony_map.php`, `network_tree.php`, `referral.php`, `tools.php`, `commissions.php`, `wallet_activation_my_wallet.php`, `id_card.php`, `properties.php`, `import_leads.php`, `layouts/associate.php`).
+- `test_associate_view_renders.php` → **69/69 associate views rendered cleanly with 0 errors**.
+- `portal_menu_links_probe.php` → **514/514 menu links checked, 0 broken**.
+- **Master Test Runner** → **12/12 PASSED** (41.94s, 100% HEALTHY).
+- Database baseline check → exact zero drift (users 82, plot_bookings 23, leads 994, transactions 5, mlm_commission_ledger 359, email_queue 14).
+- `scripts/verify_agents_log.php` verified.
+
+### Key lessons
+_1621. **Auto-stripping CSS or classes with crude regexes leaves zombie tags** — previous passes that stripped `class="style-XXXX"` left `<div >`, `<span >`, `<h6 >`, `<strong >` across multiple views, silently stripping padding, typography, and indicators.
+_1622. **Map legends require visual color swatches, not just text labels** — without colored dots corresponding to the geojson plot polygons, an associate cannot tell an available plot from a booked or sold plot.
+_1623. **Pure mathematical calculators in portals should run client-side** — executing simple EMI, stamp duty, or unit conversion formulas client-side provides instant feedback with zero network latency, zero server load, and immunity to routing discrepancies.
+
 ## Session 722: wire.ps1 Printed A Stale "11/11 PASSED" — Hardcoded Literal Replaced With Runner's Own Passed/Total Counts (Now Prints 12/12); Post-S721 Verification Sweep: HEAD Byte-Verified Equal To Origin, Master 12/12, 6/6 Public Probes Clean, CI On Main In-Flight (2026-11-17)
 
 ### Trigger

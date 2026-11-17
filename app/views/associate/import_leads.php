@@ -69,7 +69,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <h6 class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> <?= __('assoc_il_errors', ['count' => count($errors)], 'Import Errors (%count%)') ?></h6>
                         <div class="bg-light p-3 rounded">
                             <?php foreach (array_slice($errors, 0, 20) as $err): ?>
-                                <div ><?= htmlspecialchars($err ?? '') ?></div>
+                                <div class="text-danger small mt-1"><?= htmlspecialchars($err ?? '') ?></div>
                             <?php endforeach; ?>
                             <?php if (count($errors) > 20): ?>
                                 <div class="text-muted mt-1">... <?= __('assoc_il_more', ['count' => count($errors) - 20], 'and %count% more') ?></div>

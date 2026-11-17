@@ -624,10 +624,18 @@ $GLOBALS['_html_doc_started'] = true;
             unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error'], $_SESSION['error']);
             ?>
             <?php if ($flashOk): ?>
-                <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($flashOk) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <?= is_array($flashOk) ? htmlspecialchars(implode(', ', array_filter($flashOk, 'is_scalar'))) : htmlspecialchars((string)$flashOk) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             <?php endif; ?>
             <?php if ($flashErr): ?>
-                <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($flashErr) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <?= is_array($flashErr) ? htmlspecialchars(implode(', ', array_filter($flashErr, 'is_scalar'))) : htmlspecialchars((string)$flashErr) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             <?php endif; ?>
             <?php echo $content ?? ''; ?>
         </div>

@@ -104,25 +104,25 @@ foreach ($nodes as $n) {
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div ><?= e($totalDownline) ?></div>
+                <div class="fs-4 fw-bold text-teal mb-1" style="color: #0d9488;"><?= e($totalDownline) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_total_downline', [], 'Total Downline'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div ><?= e($leftCount) ?></div>
+                <div class="fs-4 fw-bold text-primary mb-1"><?= e($leftCount) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_left_leg', [], 'Left Leg'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div ><?= e($rightCount) ?></div>
+                <div class="fs-4 fw-bold text-info mb-1"><?= e($rightCount) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_right_leg', [], 'Right Leg'); ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card border-0 shadow-sm text-center py-3 h-100">
-                <div ><?= e($maxDepth) ?></div>
+                <div class="fs-4 fw-bold text-warning mb-1"><?= e($maxDepth) ?></div>
                 <div class="text-muted small fw-bold"><?php echo __('assoc_net_max_depth', [], 'Max Depth'); ?></div>
             </div>
         </div>

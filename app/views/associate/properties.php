@@ -48,15 +48,15 @@ $properties = $properties ?? [];
             <div class="col-md-6 col-lg-4">
                 <div class="card border-0 shadow-sm h-100">
                     <?php if (!empty($p['image'])): ?>
-                        <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($p['image'] ?? '') ?>" class="card-img-top" alt="" >
+                        <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($p['image'] ?? '') ?>" class="card-img-top" alt="<?= htmlspecialchars($p['title'] ?? '') ?>" style="height: 180px; object-fit: cover;">
                     <?php else: ?>
-                        <div class="card-img-top d-flex align-items-center justify-content-center">
-                            <i class="fas fa-image fa-3x text-muted"></i>
+                        <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 180px; background: #f1f5f9;">
+                            <i class="fas fa-building fa-3x text-muted opacity-50"></i>
                         </div>
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h2  class="fs-6 fw-semibold card-title fw-bold mb-0"><?= htmlspecialchars($p['title'] ?? __('assoc_prop_untitled', [], 'Untitled')) ?></h2>
+                            <h5 class="card-title fw-bold fs-6 mb-0"><?= htmlspecialchars($p['title'] ?? __('assoc_prop_untitled', [], 'Untitled')) ?></h5>
                             <span class="badge bg-<?= e($statusClass) ?>"><?= e(ucfirst($p['status'] ?? 'pending')) ?></span>
                         </div>
                         <div class="mb-2">

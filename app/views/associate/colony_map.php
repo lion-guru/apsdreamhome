@@ -47,11 +47,11 @@
     var legend = L.control({ position: 'bottomright' });
     legend.onAdd = function() {
         var div = L.DomUtil.create('div', 'legend');
-        div.innerHTML = '<div >' +
-            '<div><span ></span><?= __('assoc_cm_available', [], 'Available') ?></div>' +
-            '<div><span ></span><?= __('assoc_cm_booked', [], 'Booked') ?></div>' +
-            '<div><span ></span><?= __('assoc_cm_sold', [], 'Sold') ?></div>' +
-            '<div><span ></span><?= __('assoc_cm_hold', [], 'Hold') ?></div></div>';
+        div.innerHTML = '<div class="p-2 bg-white rounded shadow-sm border small" style="min-width: 110px;">' +
+            '<div class="d-flex align-items-center mb-1"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;margin-right:6px;"></span><?= __('assoc_cm_available', [], 'Available') ?></div>' +
+            '<div class="d-flex align-items-center mb-1"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#3b82f6;margin-right:6px;"></span><?= __('assoc_cm_booked', [], 'Booked') ?></div>' +
+            '<div class="d-flex align-items-center mb-1"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;margin-right:6px;"></span><?= __('assoc_cm_sold', [], 'Sold') ?></div>' +
+            '<div class="d-flex align-items-center"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span><?= __('assoc_cm_hold', [], 'Hold') ?></div></div>';
         return div;
     };
     legend.addTo(map);

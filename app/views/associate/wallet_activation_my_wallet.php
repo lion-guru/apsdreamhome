@@ -89,10 +89,13 @@ $page_title = $page_title ?? 'My Wallet';
         <div class="col-12 col-lg-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body d-flex flex-column">
-                    <h6 class="mb-3">Quick Actions</h6>
+                    <h6 class="mb-3 fw-bold">Quick Actions</h6>
                     <?php if ($isActivated): ?>
-                        <a href="<?= $base ?>/associate/referrals" class="btn btn-outline-primary w-100 mb-2">
+                        <a href="<?= $base ?>/associate/referral" class="btn btn-outline-primary w-100 mb-2">
                             <i class="fas fa-share-alt me-2"></i>Refer & Earn
+                        </a>
+                        <a href="<?= $base ?>/associate/wallet/withdraw" class="btn btn-outline-success w-100 mb-2">
+                            <i class="fas fa-money-bill-wave me-2"></i>Withdraw Funds
                         </a>
                         <a href="<?= $base ?>/associate/wallet/transactions" class="btn btn-outline-secondary w-100 mb-2">
                             <i class="fas fa-history me-2"></i>Transactions
@@ -101,7 +104,7 @@ $page_title = $page_title ?? 'My Wallet';
                             <i class="fas fa-credit-card me-2"></i>EMI Tracker
                         </a>
                     <?php else: ?>
-                        <a href="<?= $base ?>/associate/wallet/packages" class="btn btn-primary w-100 mb-2">
+                        <a href="<?= $base ?>/associate/wallet/packages" class="btn btn-primary w-100 mb-2" style="background:#0d9488;border-color:#0d9488;">
                             <i class="fas fa-rocket me-2"></i>Activate Wallet
                         </a>
                     <?php endif; ?>
