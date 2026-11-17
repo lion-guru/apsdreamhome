@@ -1,3 +1,51 @@
+## Session 729: Deep-Scan Round On An Owner Ask — Anonymous Authenticated-Write Hole Closed In `POST /api/v2/analytics/forecast` (was: 0 guards, `skipCsrfProtection`, silently writing `forecast_results`); Sentinel State Verified End-to-End After S727/S728 Landed; Suggestions Ranked By Blast Radius (2026-11-17)
+
+### Trigger
+Owner: "itta bada context hai tumhare pass deeply thik in kar ke suggestion do aur kya kiya jaye" — after the S725 stub-drop, the S726 nightly Analytics-v2 cron, and the parallel actor's S727 (customer-dashboard de-admin restatement) and S728 (associate portal elevation), take a deep pass over the whole tree and close what is genuinely broken, then give a ranked roadmap.
+
+### What the deep scan found (all measured on HEAD == `6a343f750` == origin/main)
+1. **HEAD/integrity state** — AGENTS.md integrity OK (478 headings) · HEAD byte-equal to origin · parallel actor's S727/S728 absorbed (6f806f059, 6a343f750) with no co-commit of my files; my S726 was intact under it.
+2. **Master 12/12 PASSED** (38.48s) on current HEAD, **and 12/12 again after this session's fix** (36.49s).
+3. **DB drift zero** — users 82 · plots 766 · leads 994 · compliance_scorecard_trend 175 · daily_metrics_summary 211 · user_activity_log 0 · information_schema table count 1131 (post-S725 drop) — all byte-identical to the post-S725 baseline. `logs/php_error.log` — only 1 signature matching 1054/42S22/HY093/uncaught in the last 4000 lines. `GET /` → 200 (325,957 B) · `GET /api/health` → 200 (`database: connected`).
+4. **One genuine security defect found and fixed this round** — see below.
+
+### FIXED (the one open hole in code I probed)
+- **`POST /api/v2/analytics/forecast`** (`routes/web.php` LN5977) — `Api\NewFeaturesApiController@generateForecast()` had:
+  - **No auth guard at all** — not `requireAdmin()` (its own sibling `recordKpi()` LN285 and `createTask()` LN304 both call it), not `requireAuth()`, not any middleware — the route is registered plain in web.php with no `->middleware(...)`.
+  - **`skipCsrfProtection(): bool { return true; }`** — inherited from the controller, so no CSRF token needed.
+  - **`AnalyticsService::generateForecast()` WRITES** — for any metric with ≥3 rows in `daily_metrics_summary` (leads_created, plot_bookings_created, bookings_created, users_created — all seeded by S726's honest backfill), each POST inserted a row into `forecast_results`.
+  - The handler reads `$_POST['metric']` (default `revenue`) / `periods` and returns the prediction + persisted row id.
+  - **Anonymous, unauthenticated, repeatable DB write** — verified live during the S726 probe round (2 rows id=3,4 written, then deleted in the probe round; table verified at 0 since).
+- **Fix**: one line — `$this->requireAdmin();` as the first statement in `generateForecast()`. Behavior after fix: unauthenticated → **HTTP 401 `{"success":false,"error":"Authentication required"}`** (same shape as every guarded sibling; exit via requireAuth — no controller rewrite).
+- **Verified**: php -l clean · unauthenticated curl POST → **HTTP 401, 51 B** · `forecast_results` still 0 rows · admin analytics page unaffected (it renders `$forecasts` server-side via `listForecasts()`, never calls this API) · **Master → 12/12 PASSED** · exactly one file staged (parallel actor's in-flight SmartAIController/mobile/posters/probe untouched and unstaged).
+
+### Reported but DELIBERATELY NOT CHANGED — the two anonymous read endpoints (owner sign-off needed)
+- **`GET /api/v2/analytics/dashboard`** (LN5978 → `NewFeaturesApiController@analyticsDashboard()`, LN468) — anonymous, unguarded, `skipCsrfProtection()`: answers `leads_30d`, `leads_delta`, full KPI counts etc. — internal business intelligence exposed to anyone who asks. Read-only, but **disclosive**.
+- **`GET /api/v2/analytics/insights`** (LN5979 → `analyticsInsights()`, LN531) — anonymous, unguarded: "Lead Surge / Lead Decline / …" computed sentences leaking conversion dynamics. Read-only, disclosive.
+- Both are one-liner `$this->requireAdmin();` adds each — but they are **read-behavior change** for ANY outside caller (mobile integrator, cron fetch, monitoring script, curl client) and no codebase-wide call site inventory for them was completed (a 60-second name search timed out on this tree; only the admin features page renders this data, and it does NOT call either endpoint — it uses the services directly). Owner decides: apply both guards, or document as intentional.
+
+### Ranked suggestions (what to do next, smallest blast radius first)
+1. **Guard `analyticsDashboard` + `analyticsInsights` with `requireAdmin()`** (2 lines) — natural continuation of this round's fix; strongest next security step; owner sign-off.
+2. **`/admin/compliance` trend view** — `compliance_scorecard_trend` (175 live rows) written daily by `ComplianceService::logScanIssue()` but read by nothing as a trend (S725 honest-log already names this); one service method + one admin column, low risk.
+3. **`PropertyRecommendationService` EXPLAIN** — the recommendation engine reads `user_activity_log` (empty; 5 live code paths per S725) and the leads/MLM join needs an index; measure first, index only if not covered (migration-touch — owner sign-off).
+4. **Analytics-v2 chart truth check** — S726 backfill honestly recorded the 20 synthetic TEST-HIST rows (2026-11-05 users=20, 2026-11-14 bookings=20 spikes); if owner wants organic-days-only charts, an explicit business rule is needed (lane proposes nothing silently).
+5. **Owner backlog unchanged** — MariaDB Windows service · Defender exclusion · RERA colony numbers · EMI backfill sign-off · production deploy · live Twilio dialing · Play AAB upload — all agent-untakeable.
+
+### Honest status
+- **No app behavior change** for any page or route except the one locked-down endpoint (401 for anonymous callers — which is what its siblings already do).
+- **No data change**; `forecast_results` stayed empty; no migrations; no test rewrites.
+- **Nothing in the parallel actor's S727/S728 lane was touched**, staged, or co-committed; this is a one-file, one-line commit plus this log entry.
+
+### Key lessons
+_1641. **A "safe read" service is not a safe endpoint when it persists — `generateForecast()` looked like a calculation but writes a row per call; with zero auth and no CSRF the anonymous write was open to the internet.** Trace the call chain all the way to the INSERT before trusting an endpoint's verb label.
+_1642. **Sibling parity is the cheapest security audit — every guard `recordKpi()` has, `generateForecast()` lacked; diffing neighbors of the same file found the hole in seconds.**
+_1643. **`skipCsrfProtection() === true` is a header you must re-read on every API route added under the same controller — the class default silently exempts new methods.**
+_1644. **A 60-second inventory that times out is a reason to report, not to guess** — the read-endpoint caller inventory was not completed; the fix was limited to the write hole and the rest was put to the owner by name.
+_1645. **Self-inflicted value probes prove the attack — this session's S726 probe wrote 2 rows anonymously and deleted them; that is the attack path in miniature, and the reason the line is now closed.**
+
+### Owner actions still open (unchanged + 2 new)
+Play Console AAB · assetlinks SHA-256 · colony coordinates · MariaDB Windows service · Defender exclusion · RERA numbers · EMI backfill · live AI dialing · production deploy · compliance trend view (suggestion 2) · **NEW — approve or decline the two one-line `requireAdmin()` guards on `analyticsDashboard`/`analyticsInsights`** · **NEW — decide Analytics-v2 chart policy for TEST-HIST backfill spikes**.
+
 ## Session 728: Associate Portal Unified Architecture & Intelligence Elevation — Portal Layout Enforcement (`layouts/associate`), Interactive D3 Genealogy Re-Engineered, Live CRM Pipeline & Funnel Restored, Bank Accounts Zero-404 & Strict-Schema Resolved, AI Assistant 127-Lead Context Awakening, WhatsApp Studio Expanded; Master 12/12 (2026-11-17)
 
 ### Trigger

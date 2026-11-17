@@ -295,6 +295,7 @@ class NewFeaturesApiController extends BaseController
 
     public function generateForecast()
     {
+        $this->requireAdmin(); // writes into forecast_results - admin only (S727 family)
         $metric = $_POST['metric'] ?? 'revenue';
         $periods = (int)($_POST['periods'] ?? 6);
         $result = $this->analytics()->generateForecast($metric, $periods);
