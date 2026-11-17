@@ -1108,4 +1108,54 @@ If you ever add another payment gateway, replicate the pattern: skip CSRF, verif
 
 ---
 
+## Appendix F: Deploy via GitHub Actions (Manual, Owner-Gated)
+
+> Added 2026-11-17 (S734). This is the **canonical production deploy path** for this repository — not the `Deploy to Production` echo job inside `ci-cd.yml`, which is a placeholder that copies nothing.
+
+### F.1 The rule, in one line
+
+**Pushing to `main` never deploys to production.** The `Deploy to Production` job in `.github/workflows/ci-cd.yml` only prints `Deploying to production...` and `Production deployment completed` without touching anything. The only way to deploy production is the **manual** `Deploy Production` workflow (`.github/workflows/deploy.yml`), which is `workflow_dispatch`-only.
+
+### F.2 What the real pipeline does (`deploy.yml`)
+
+`.github/workflows/deploy.yml` (`name: Deploy Production`) runs, in order:
+
+| Job | Does |
+|-----|------|
+| **Test** | PHP syntax check (changed + whole project), bash `-n` on the deploy scripts, `docker compose config --quiet`, then `php tests/migrate.php` + `php tests/run_all_tests.php` against a scratch MySQL (root:rootroot, `apsdreamhome_test`). `skip_tests=true` available for emergency hotfix. |
+| **Build Docker images** | Builds `Dockerfile` (app) and `docker/websocket/Dockerfile` (websocket), tags with short SHA + UTC timestamp + `latest`, pushes to Docker Hub only when `DOCKER_USERNAME` is set (`push: ${{ secrets.DOCKER_USERNAME != '' }}` — so local/CI builds still succeed without a registry). |
+| **Deploy to production** | Uses `appleboy/ssh-action@v1` to SSH into the server: runs `scripts/backup_before_deploy.sh` first, `git fetch` + `git reset --hard origin/main`, then executes `deploy-to-production.sh` with `APP_VERSION` + `HEALTHCHECK_URL=$PROD_APP_URL/health`, then `scripts/health_check.sh --json` and a 10×-retry health probe loop. |
+| **Post-deploy verification** | 10 × HTTP 200 poll against `$PROD_APP_URL/health`. |
+| **Notify Slack** | Success/failure pings only when `SLACK_WEBHOOK` is set. |
+
+### F.3 Secrets the owner must create (GitHub → repo → Settings → Secrets and variables → Actions)
+
+| Secret | Purpose | Example |
+|--------|---------|---------|
+| `DOCKER_USERNAME` / `DOCKER_TOKEN` | Docker Hub login for image push | your docker hub user / access token |
+| `PROD_HOST` | SSH host of the production server | `203.0.113.10` |
+| `PROD_USER` | SSH user with docker + git access | `deploy` |
+| `PROD_SSH_KEY` | Private SSH key (PEM) for `PROD_USER` | full private-key block |
+| `PROD_DEPLOY_PATH` | Absolute path of the checkout on the server | `/opt/apsdreamhome` |
+| `PROD_APP_URL` | Public URL for the health probes | `https://apsdreamhome.com` |
+| `SLACK_WEBHOOK` | (optional) deploy notifications | `https://hooks.slack.com/...` |
+
+Also required on the server: the repo cloned at `PROD_DEPLOY_PATH`, `deploy-to-production.sh` executable, working `docker compose`, and a valid `.env` (see section 7).
+
+### F.4 How to deploy (owner only)
+
+1. GitHub → **Actions** → left sidebar **Deploy Production** → **Run workflow** → choose branch (`main`) → **Run workflow**.
+2. Optional: check `skip_tests=true` only for an emergency hotfix.
+3. Watch **Test** → **Build Docker images** → **Deploy to production** → **Post-deploy verification**.
+4. If **Post-deploy verification** fails, the previous release is still serving (`git reset` happened but the health loop exits 1 — investigate before re-running; see Appendix A rollback).
+5. **Rollback** = re-run the workflow against the last-known-good commit SHA (checkout is `git reset --hard origin/main`, so push the tag/SHA branch you want production on, then run the workflow again) — always restore the pre-deploy DB backup first (section 11).
+
+### F.5 History (why this note exists)
+
+- **2026-09-12 → 09-14**: earlier push-triggered versions of this workflow failed in 0 s with "This run likely failed because of a workflow file issue". It was converted to `workflow_dispatch` on 2026-09-14 and is the only sanctioned production path since.
+- **2026-11-17 (S730)**: the 24-second `Deploy to Production` job in `ci-cd.yml` was proven to be an echo-only placeholder; it is now annotated in-workflow and here it is documented that it is **not** a deploy.
+- Complete CI truth matrix: **CI/CD Pipeline** (`ci-cd.yml`) = lint → tests → Flutter Web build → placeholder deploy (no-op). **CI** (`ci.yml`) = modular test suites + schema-mismatch gate + Flutter analyze + APK + WordPress-style legacy jobs. **CodeQL**, **Visual Regression**, **PHP Tests (Legacy)**, **Weekly Scan** run on their own triggers; none of them touches production.
+
+---
+
 **Happy deploying!** Questions? Open an issue on GitHub or ping the DevOps channel.
