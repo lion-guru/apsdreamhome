@@ -26,7 +26,9 @@ class CareerController extends BaseController
         parent::__construct();
         $this->careerService = new CareerService();
         $this->authService = new AuthenticationService();
-        $this->layout = 'layouts/admin';
+        // Public careers pages served by this controller must render public chrome,
+        // not the admin sidebar. Admin careers tooling lives in Admin\CareerController.
+        $this->layout = 'layouts/base';
     }
 
     /**
