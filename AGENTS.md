@@ -1,3 +1,57 @@
+## Session 686: Fabricated "Department Heads" Fallback Roster Deleted From `/about` — Invented Personas With Invented Roles & Fake Experience (12+/14+/15+ Years), Diverged From Live `team_members` On Every Axis; Dead Code, Replaced With Honest-Empty Skip; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the public fabrication sweep after S684/S685. A hardcoded `$deptDefaults` array in `app/views/pages/about.php` (the "Department Heads — The Experts Leading Our Teams" section) carried three invented personas:
+
+- **Sushant Srivastava, "Head of Sales & Marketing", 12+ years** — a man who does not exist in `team_members`, `users`, or any public render (the real Head of Sales & Marketing is **Praveen Prabhat**, 20+ yrs per team_members).
+- **Anuj Srivastava, "Head of Legal & Operations", 14+ years** — real person (Anuj Srivastava lives in `team_members`), but WRONG role — DB says **Head of Finance & Accounts, 10+ yrs**, not Legal.
+- **Pramod Sharma, "Head of Finance & Accounts", 15+ years** — real person, WRONG role — DB says **Director, Marketing & Sales, 10+ yrs** (the Finance title belongs to Anuj, 10 yrs).
+- Vacancy photos `assets/images/team/*.jpg` don't exist — so even the fallback branch would have rendered broken images next to its fabricated text.
+
+### What was found (byte-verified vs live DB)
+```
+Live team_members (role / experience):
+  Praveen Prabhat — Senior Property Advisor — 20+
+  Abhaay Singh — Founder & Director — 15+
+  Vijay Verma — CTO — 10+
+  Shushant Srivastava — Head of Legal & Compliance — 8+
+  Anuj Srivastava — Head of Finance & Accounts — 10+
+  Pramod Sharma — Director, Marketing & Sales — 10+
+  Rachna Gupta — Head of Customer Relations — 8+
+  Praveen Singh — Senior Advisor — 20+
+```
+**$deptDefaults vs reality: 3 of 3 fabricated vs live data.** The fallback was never reached because site-content keys `leader_4/5/6_*` always resolve; the live page rendered **Shushant Srivastava (Legal & Compliance) · Anuj Srivastava (Finance & Accounts) · Pramod Sharma (Marketing & Sales)** — names consistent with `team_members`. The dead fallback only existed as an invented "backup roster" the author never maintained as data changed — a classic dead-code fabrication trap.
+
+### Fix
+- `$deptDefaults` literal array **deleted entirely** (26 lines).
+- Loop variable refs rewritten: `aboutContent(...)` only, with **explicit empty-check** — `if ($dName === '') { continue; }` — a missing content key now renders NO card rather than an invented person.
+- **Photo fallback** now points at `assets/images/leaders/leader-N.jpg` (verified to exist) instead of non-existent `assets/images/team/*.jpg`; absolute URLs already supported, `/path` prefixed with `BASE_URL` as before.
+- No role, bio, photo, or exp data from the fallback survive anywhere.
+
+### Live verification (byte-probes)
+- `/about` → 200, **262,412 B** — needles: `Shushant Srivastava` YES · `Head of Legal &amp; Compliance` YES · `Head of Finance &amp; Accounts` YES · `Head of Marketing &amp; Sales` YES · `dept-heads` YES · fabricated needles `Sushant Srivastava` ABSENT · `12+ Years` ABSENT · `14+ Years` ABSENT · `15+ Years` ABSENT · `Pramod Sharma` present (only as the real Marketing & Sales person, correct role).
+- `php -l` clean · **Master → 11/11 PASSED** (56.8s, 100% HEALTHY) · page byte count matches the true render exactly (only the deleting edit counts — nothing else moved).
+- Commit `a720520dc` (1 file, pushed, `ls-remote` verified). No schema, no routes, no data, no lang files — a single view file.
+
+### Related but deliberately not touched
+- `index.php` carries its own `'happy_clients' => '1000+'` orphan (×2 occurrences) — still one of the 34 dead-orphan views pending the owner decision (no controller renders it).
+- `home.php` LN1282 imports `t.certified_copies` via JSON into a rich-text overlay — same language keys (`home_js_certified_copies`) already reviewed as honest legal-document terminology, not a fabrication.
+- `play_fair` ("Free Site Visits", marketing copy) is promotional, not claim-typed — applies to any honestly-run site-visit program and is not a fabrication.
+- `property_verification.php` LN52 `Badge Awarded` is a-badge-of-function UI for the **RERA verification** page (issued by the app itself, honest).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **685** (work-distribution desk wiring). This entry = **S686**. Next-free = **687**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1507. **A dead fallback roster is a fabrication scheduled for a Friday 5pm deploy** — the only way it ever renders is the empty-content case nobody asserts against, which is exactly when it shows the worst lies. Delete it or make it empty-skips; never keep invented people in untested branches.
+_1508. **"From DB" is the header of the section's source of truth — read the section header first, then trace the actual data path.** Every view that claims a source-of-truth deserves one byte-probe confirming the render actually comes from there.
+_1509. **Check role+name jointly against the live table, not each independently** — three real names each paired with the wrong role is a far subtler fabrication than three invented names; neither is allowed to ship.
+_1510. **"Dead code" and "fabricated copy" are not independent bug classes** — the fallback lived for years because it never executed; audit deltas when a variable is never read, and delete entire branches whose test would be "does $sc ever return empty?" — the answer is never, and nobody ran the test.
+_1511. **Lead-into-the-file self-check: does every `?:` fallback render a real human?** — if yes, commit it is still a lie waiting; the only honest default is the empty state.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification · outstanding PHPStan error in parallel actor lane · 22 dead-orphan views decision · `pages/index.php` 1000+ orphan (owner decision) · student/Nari Shakti HR notification wiring (Twilio-gated).
+
 ## Session 685: Orphan "Work Distribution" Desk Wired End-to-End (Was 100% Dead Before: Views Complete, Service Complete, 11 Department Configs Seeded, ZERO Controller View Actions / Routes / Menu Items) — Plus Public `/astrology` SEO Page Wired With Live Colonies; Both Byte-Probed Live; Master 11/11 (2026-11-17)
 
 ### Trigger
