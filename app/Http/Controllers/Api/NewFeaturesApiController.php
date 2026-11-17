@@ -22,6 +22,19 @@ class NewFeaturesApiController extends BaseController
 
     protected function skipCsrfProtection(): bool { return true; }
 
+    /** Admin gate for the /api/v2/analytics/* routes: the web admin portal
+     *  uses a same-origin session fetch (no Bearer token), while the mobile
+     *  app calls them with ApiAuthMiddleware ($GLOBALS['api_user_id']).
+     *  Accept either — anonymous callers get requireAuth's 401 JSON. */
+    private function requireAdminUser(): void
+    {
+        if (!empty($_SESSION['admin_id'])) {
+            $role = \App\Http\Middleware\RBACManager::getUserRole() ?? '';
+            if (in_array($role, ['admin', 'super_admin', 'manager', 'employee', 'telecaller'], true)) return;
+        }
+        $this->requireAdmin();
+    }
+
     private function requireAuth(): int
     {
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
@@ -468,6 +481,7 @@ class NewFeaturesApiController extends BaseController
 
     public function analyticsDashboard()
     {
+        $this->requireAdminUser();
         $data = [];
 
         try {
@@ -531,6 +545,7 @@ class NewFeaturesApiController extends BaseController
 
     public function analyticsInsights()
     {
+        $this->requireAdminUser();
         $insights = [];
 
         try {

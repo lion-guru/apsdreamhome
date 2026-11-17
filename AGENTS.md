@@ -1,3 +1,45 @@
+## Session 731: Suggestion Approved By Owner & Implemented — The Two Anonymous BI Read Endpoints (`/api/v2/analytics/dashboard` · `/api/v2/analytics/insights`) Now Accept Either Web Admin Session Or Bearer Identity; Anonymous → 401, Admin Cookie-Session → 200 With Live Data (2026-11-17)
+
+### Trigger
+S729 (parallel actor) flagged both endpoints as anonymous disclosive BI reads and listed them as needing owner sign-off before guarding. Owner (verbatim): "do next aur koi suggestion tumhara hai to batao wo bhi kiya jaye" — i.e. "do next, and if you have suggestions, tell them too and it will be done too". That is the sign-off for suggestion #1 in S729's ranked list ("Guard `analyticsDashboard` + `analyticsInsights` with `requireAdmin()` — 2 lines"), applied now.
+
+### What was built (one file)
+`app/Http/Controllers/Api/NewFeaturesApiController.php`:
+- New `private function requireAdminUser(): void` — accepts **either** a web admin session (`$_SESSION['admin_id']` + `RBACManager::getUserRole()` in `['admin','super_admin','manager','employee','telecaller']`, exactly the web portal's `isAdmin()` semantics) **or** the controller's own Bearer identity (`requireAuth()` → `requireAdmin()`). Anonymous callers exit 401 with the controller-standard `{"success":false,"error":"Authentication required"}`.
+- `public function analyticsDashboard()` — now calls `requireAdminUser()` first.
+- `public function analyticsInsights()` — same.
+
+### Why the naive one-line `requireAdmin()` was wrong (caught by live probe, not by code review)
+The class's own `requireAdmin()` is **Bearer-gated**: `$GLOBALS['api_user_id']` — populated only when the route carries `App\Http\Middleware\ApiAuthMiddleware` (this route does NOT). A same-origin admin `fetch()` sends only the session cookie, so the unimproved guard returned **401 for every admin**, breaking the `admin/features/realtime_analytics.php` page that is this API's sole consumer. The hybrid gate restores the admin path AND rejects callers with no admin identity.
+
+### Verification (live, fresh probes, cookie jar)
+- `php -l` clean.
+- **Anonymous GET `/api/v2/analytics/dashboard` → 401** · **Anonymous GET `/api/v2/analytics/insights` → 401** (51 B JSON `{"success":false,"error":"Authentication required"}`).
+- **Admin session (`?test_login=2`, the dev-bypass admin, 302 → `/admin/erp`)**:
+  - `GET /api/v2/analytics/dashboard` → **HTTP 200, 384 B** — payload verified byte-level: `data.leads_30d: 9`, `data.leads_delta: -64`, `data.bookings_30d: 20`, `data.total_customers: 44`, `leads_by_source: {website: 8, whatsapp: 1}`, live pipeline `{new: 175, contacted: 131, closed_won: 87, nurture: 125, site_visit: 53}`.
+  - `GET /api/v2/analytics/insights` → **HTTP 200, 278 B** — JSON `{"insights":[...]}`.
+  - The consumer page `admin/features/realtime_analytics.php:98` fetches same-origin; the admin's session cookie satisfies the web-session branch. Verified 200-with-payload, not just a 200 empty.
+- Temp jar + probe files deleted same turn; zero DB writes; zero schema changes; zero migrations.
+- Master suite → **12/12 PASSED** (38.6s, 100% HEALTHY) after the change.
+
+### Incidents & disclosures
+- **My first guard broke the admin page.** Applied the naive `requireAdmin()`; probed; got 401 for the admin session — exactly the silent regression class I probe against. Root-caused to the class's Bearer-only `requireAdmin()` vs same-origin web-session fetch. Fixed with the hybrid gate and re-verified end-to-end; no revert — the final file carries both branches intentionally.
+- **"Nothing breaks but nothing protected" would also have been a bug.** The prior state was full anonymous disclosure of internal BI; the fix preserves the admin consumer and denies anonymous callers.
+- **This round's staging is exactly ONE file**: `app/Http/Controllers/Api/NewFeaturesApiController.php`. Parallel actor's in-flight `.github/workflows/ci-cd.yml`, `AGENTS.md` (working copy), `storage/app/posters/*`, `testing/probe_geocheckin_s690.php`, and the mobile untracked files are NOT ours to commit — untouched and unstaged.
+- CI runs on `main`: prior green runs (`ad5fa5ab1`) are now partially superseded by commits this round does not own; the targeted production contract for these two endpoints is what the owner signs off on with the CI rerun, not by this round alone.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor's headings through **730** (CI red diagnosed & fixed, deploy-placeholder honesty, HEAD == origin/main == `ad5fa5ab1`). This entry = **S731**. Next-free = **732**.
+
+### Key lessons
+_1651. **A guard is only correct if its identity model matches the caller.** The API route serves BOTH a web-session cookie path and a Bearer path; a single-identity guard silently disowns one side — and in this case it disowned the production admin page.
+_1652. **"The admin fetch should work" is a hypothesis to verify against the actual dispatch path, never an argument.** The test caught the regression because I probed with a real cookie instead of assuming `credentials: 'same-origin'` = admin-authenticated.
+_1653. **Probe the callers, not just the routes.** Both endpoints' only consumer is `realtime_analytics.php`; if it hadn't been inventory-checked, a Bearer-only guard would have shipped silently broken.
+_1654. **Hybrid auth at the controller level preserves two legitimate callers without widening the door** — web-session branch + Bearer branch, reject everything else. No third path, no fallback to `guess()`.
+
+### Owner actions still open (unchanged + 1 resolved)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates · MariaDB Windows service · Defender exclusion · RERA colony numbers · EMI backfill · live AI dialing · production deploy · **RESOLVED — the two BI read guards S729 flagged for sign-off (this S731)** · visual-regression baseline refresh · 22 stub tables (S725 dropped 19, owner confirms none missed) · Analytics-v2 TEST-HIST spike policy · **RESOLVED (intention) — re-confirm that `admin/features/realtime_analytics.php` renders charts with data on YOUR admin session** (verified only under the dev bypass; real admin needs a browser look before relying on it) · `complete-ci-cd.yml` legacy workflow retirement decision.
+
 ## Session 730: CI Red On Main Diagnosed (Parallel Actor's S728 Push) & Fixed — PHPStan `identical.alwaysFalse` + `booleanAnd.alwaysFalse` On `SmartAIController.php` Leads-Intent Guard; Guard Dropped, Pushed As `ad5fa5ab1`; CI/CD Pipeline + All Workflows Now GREEN; "Deploy To Production" Check Proven To Be An Echo-Only Placeholder (Real Deploy Is Manual &amp; Owner-Gated In `deploy.yml`); Placeholder Echo Text Made Honest In This Round's Push (2026-11-17)
 ### Trigger
 User: "do next" — after my S727 round verified pushed & green; the background `gh run watch` from the previous round completed with the full job matrix.
