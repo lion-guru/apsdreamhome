@@ -1,3 +1,47 @@
+## Session 679: Public `/team` and `/interior-design` Fabricated Marketing Stats Eliminated — Team Numbers Now Computed Live In Controller (8 Members / 101 Combined Years Live), Interior Design Rewritten To Honest Township Metrics, en+hi Lang Keys Added; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "au rkoi suggestion" — continuing the public fabrication sweep. A site-wide scan for fabricated marketing needles on public pages found exactly two still-live offenders:
+
+1. **`/team` (LN384/390/402 of `app/views/pages/team.php`)**: stat cards rendered `50+ Team Members`, `75+ Years Combined Exp`, `98% Client Satisfaction` — the view expected `members_count` / `total_exp` from the controller but `PageController::team()` (→ `HomePageController::team()`) NEVER passed them, so every visitor always saw the hardcoded fallbacks. `33+ Properties Sold` was and remains REAL.
+2. **`/interior-design` (`app/views/pages/interior_design.php`)**: for a 4-year-old company est. 2022 it claimed `200+` Projects Done, `10+` Designers, `98%` Satisfaction, and an `Award-Winning Designs` badge on the hero image — none of it recorded anywhere.
+
+### What was built
+1. **`HomePageController::team()`** — now computes honest stats before render:
+   `$membersCount = count($teamMembers);` and `$totalExp` via digit-strip sum on the free-text `team_members.experience` varchar (`'20+ years'` → 20). Both passed into the render payload as `members_count` and `total_exp`.
+2. **`app/views/pages/team.php`**:
+   - `50+` fallback removed → `<?= (int)($members_count ?? 0) . '+' ?>` (live: **8+ Team Members**).
+   - `75+` fallback removed → `<?= (int)($total_exp ?? 0) . '+' ?>` (live: **101+ Years Combined Exp**).
+   - `98% Client Satisfaction` → **`80+ Verified Buyers`** (live `users` = 82 — the honest set used consistently across this week's fabrication fixes).
+   - `33+ Properties Sold` kept (real, from plots sold/booked/registered).
+3. **`app/views/pages/interior_design.php`**: stats now **5+ Colonies Developed** (`colonies.is_active=1` = 5) · **4+ Years in Business** (est. 2022) · **80+ Verified Buyers** (users = 82); `Award-Winning Designs` badge replaced with **Township Builder · Gorakhpur** (star icon → building icon).
+4. **`lang/en.php` + `lang/hi.php`**: new keys `id_colonies_built` / `id_years_business` / `id_verified_buyers` / `id_township_builder` (Hindi equivalents in the Devanagari stacks). Raw `id_*` keys verified ABSENT from rendered HTML — all resolve.
+
+### Live verification (byte-level needles)
+- `/team` HTTP 200, 251,911 B — `8+` YES · `101+` YES · `80+ Verified Buyers` YES · `50+` ABSENT · `75+` ABSENT · `98%` ABSENT · `Client Satisfaction` ABSENT · stat labels render YES.
+- `/interior-design` HTTP 200, 231,870 B — `Colonies Developed` YES · `Township Builder` YES · `Verified Buyers` YES · **5+ / 4+ / 80+** YES · `200+` ABSENT · `98%` ABSENT · `Award-Winning` ABSENT · raw `id_*` keys ABSENT.
+
+### Verification
+- `php -l` clean ×5 · **PHPStan**: my files clean — the one remaining whole-tree error stays `app/services/Accounting/GstService.php:155` (parallel actor's in-flight file, confirmed via `git status` M; never staged).
+- **Master → 11/11 PASSED** (44.51s, 100% HEALTHY) · **AGENTS.md integrity OK** at prepend time.
+- Commit `3687d4b3b` (5 files, pushed, `ls-remote` verified).
+- No schema changes, no data changes, no routes. Read-only DB access (COUNT/DESCRIBE).
+
+### Residual known-fabrication (reported, not touched)
+- `app/views/pages/index.php` — `'happy_clients' => '1000+'` at LN32/396; the file renders nowhere (no controller renders `pages/index`) — it is one of the previously-flagged dead orphan views. Left intact per the pending owner decision on dead orphans; it is NOT on any public route and burns nothing.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **678** (`/customer-reviews` real-stats rewire + construction-services honesty). This entry = **S679**. Next-free = **680**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1485. **A view that falls back silently is a lie scheduled for later.** `<?= $x > 0 ? $x : '50+' ?>` never errored and never rendered the truth — the controller just had to start passing `members_count`/`total_exp` to make it honest.
+_1486. **Type-unsafe free-text columns deserve digit-strip, not blind CAST.** `experience` is `varchar(100)` ('20+ years') — `(int)preg_replace('/\D/', '', ...)` is the honest, silent-failure-free read.
+_1487. **A 4-year-old company cannot truthfully carry "200+ Projects" or "Award-Winning" badges.** Vendor-strength badges for unobserved claims are the most visible fabrication an auditor sees; township counts, years-since-2022, and verified-buyer counts are always defensible.
+_1488. **Byte-probe the exact fabricated needles before AND after the fix.** `50+`, `75+`, `98%`, `Award-Winning`, `200+` must be ABSENT in final HTML — absence is a gate as real as presence.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (all NULL — never fabricate) · EMI backfill for 20 historical bookings · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views decision (includes `pages/index.php` 1000+ claim) · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane).
+
 ## Session 678: Public `/customer-reviews` Page Was Fabricated Social Proof - Hardcoded "4.8 Avg / 100+ Happy / 98%" With Empty Review Loop, Wired to Live `property_reviews` (Approved Only) With Real Stats; Honest Empty State; Master 11/11 (2026-11-17)
 
 ### Trigger
