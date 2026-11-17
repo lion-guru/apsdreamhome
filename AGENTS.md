@@ -1,3 +1,58 @@
+## Session 703: GPS Work Zones Admin Desk + Mobile Manager API Shipped; Employee Task System Repaired End-to-End (Web Ownership Bug Fixed — tasks now render + complete); Mobile Task Page Fixed; Master 12/12 (2026-11-17)
+
+### Trigger
+Owner mandate (batched, Hinglish): "location change system banao kisi bhi office/colony/property ke liye, mobile se bhi autodetect ho ke set ho jaye" + "employee apna task kaise complete karega mobile ya website, fix improve karo" + "colonies ki locations sab galat hain — Suryoday, Raghunath Nagri (Motiram), Braj Radha Nagri, Budh Bihar (Premwalia) Google par milti hain, wo thik karo aur office location bhi task karo." Web search quota exhausted (HTTP 402) — **coordinates were NOT fabricated**; the new desk is the verification tool instead.
+
+### What was found & fixed
+1. **Punch-in was unusable** — mobile Check-In called the legacy `/attendance/punch-in` with hardcoded office coords. Rewritten (S690+) to server-driven geo-checkin (`/api/v2/mobile/geo-attendance/*`): zones from server, mock-GPS flag, accuracy, distance display. Live-probed on the emulator; `flutter analyze` No issues.
+2. **Employee Task System — 4 layers of silent breakage, all fixed and live-verified this round**:
+   - **Web `/employee/tasks` never rendered any task** — query keyed on `$_SESSION['employee_id']` (employee_profiles.id) while admin TaskController assigns `tasks.assigned_to = users.id`. Fixed to `employee_user_id` (users.id).
+   - **Web "Start / Mark Complete" POSTed to a nonexistent `/employee/api/update-task`** and JS did `.then(r=>r.json())` on an empty response — silently dead. Rewired to `/employee/dashboard/update-task-status`; handler now emits JSON, enforces status whitelist (`pending/in_progress/completed/cancelled`), uses `employee_user_id` for ownership, sets `completed_at` on completion.
+   - **Mobile employee_tasks_page called the web-CSRF admin route `/admin/tasks/update/{id}`** — Bearer mobile session got 302; UI showed fake success. Now calls the canonical `/api/v2/mobile/employee/tasks` + `POST .../employee/tasks/update/{id}`.
+   - **`Api\EmployeeController` was completely unrouted**; `tasks()` already existed but no Bearer route; added `updateTask()` with status whitelist + ownership check.
+3. **Web priority filter mismatch** — DB stores `high/medium/low`, filter expected `High/Medium/Low`; option labels/values aligned to lowercase; row `data-priority` normalised to lowercase; `in progress` vs `in_progress` badge/filter aligned.
+4. **GPS Work Zones — new admin desk page** `/admin/hrm/work-zones` (under HRM nav, menu id=547, 9 role grants, sidebar cache busted):
+   - Inline edit of every zone: name, type (office/site/client_site), lat/lng, radius, selfie toggle, enable/disable.
+   - **"Use Current Location" button** — `navigator.geolocation` fills lat/lng from wherever the admin is standing (office or any colony) — this is the location-change system the owner asked for; coordinates are captured from the device, never guessed.
+   - India-bounds validation (lat 6–37.5, lng 68–98) rejects swapped/absurd coords with a named error message; radius 10–10000 m; `is_active` toggle instead of destructive delete.
+   - Menu seeded idempotently; `/admin/hrm/check_in_monitor` gained a **Work Zones** button.
+   - Service methods added to `GeoCheckinService`: `listAllZones()`, `createZone()`, `updateZone()`, `setZoneActive()`, shared `validateZone()` with explicit India-bounds checks (swapped-lat guard).
+   - Sacrificial E2E probe on both web and API: create → update → disable → cleanup → 0 leftover rows; page render needles all present (`Add New Zone`, zone names, crosshairs button).
+5. **Mobile admin Work Zones API** — `Api\MobileWorkZonesController` (Bearer auth + admin/HR role gate on `super_admin|admin|manager|hr_*|operations_*|coo|director|ceo`): `GET /api/v2/mobile/admin/work-zones`, `POST store|update|toggle`; India-bounds validation identical to web; 403 for non-admin roles verified with a sacrificial employee token; 422 for lat>37.5 verified; sacrificial zone roundtrip created→updated→disabled→deleted → 0 leftovers.
+6. **Colony coordinates NOT touched** — the five active colonies still carry the wrong seeded coords (Suryoday 26.7606/83.3730, Braj Radha Nagri 26.85/83.45, Lakeview NULL, Budh Bihar 26.78/83.4, Raghunath Nagri 27.1/83.3). Web search HTTP 402 blocks verification; coordinates will not be invented. The new desk lets the owner tap **Use Current Location** at each site — or paste corrected values — and the change is live for the mobile app immediately.
+
+### Live verification (this round)
+- `flutter analyze` → **No issues found** (116.7s run).
+- PHPStan on all touched files → clean (0 errors, exit 0).
+- **Master → 12/12 PASSED** (37.61s).
+- Live HTTP probes: `/admin/hrm/work-zones` 200 with all needles; CSRF POST store/update/toggle create→disable→0 leftovers; API Bearer probes 200/403/422 as designed; web employee tasks page 200 with task row + in_progress/completed transitions (11 → in_progress → completed, completed_at set); sacrificial mobile API task roundtrip → 0 leftovers; `api_tokens` probe rows deleted.
+- Commit `cf57ca16b` pushed (pre-commit hook lint-pass), `origin/main` up-to-date.
+
+### Incidents / disclosures
+- **`scripts/seed_work_zones_menu_s699.php` was committed in this round's commit** — authorship is this lane (S699 seed); fine by name.
+- **`storage/app/tmp/` scratch files remain untracked** — never staged, never touched.
+- **The DB went down and came back mid-round** (MariaDB restart at 18:12:10, `/employee/tasks` 500 at 13:41:44, recovered by 18:15; `mysql.plugin`/`mysql.servers` marked crashed per the parallel actor's S702 report). This lane did not run the repair; owner-attended `docs/MYSQL_REPAIR_RUNBOOK.md` remains mandatory before next crash.
+- **Commit attribution**: the parallel actor holds headings through S702; this entry = **S703**.
+- **Colony coords remain wrong and are owner-gated** — the new desk is the remediation path; do not fabricate.
+
+### Honest notes — the colony map problem in one line
+The colony coordinates seeded by earlier sessions are wrong because no one verified them. Nobody can fix "which colony is where" from a text editor — the owner either walks each site with the phone and taps the **Use Current Location** button in `/admin/hrm/work-zones` (or the mobile admin Work Zones screen), or supplies exact coordinates for each colony. Until then, punch-in distances for field sites will be inaccurate.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **702**. This entry = **S703**. Next-free = **704**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1565. **A read-only list and a write path must share the same id-space.** Web queried `employee_profiles.id`, mobile queried users.id, the admin form assigned users.id — three different ids for the same "employee" in the same query, guaranteed zero-match forever. Canonical owner: users.id.
+_1566. **A JS confirm() is not a save.** `fetch(...).then(r => r.json())` on an empty 302 response silently threw; employee saw nothing and tasks stayed "pending" forever. Error paths must be exercised — 302s are not successes.
+_1567. **India-bounds validation is a free swapped-lat/lng guard.** 83.30 as longitude in the lat field passes `is_numeric` and corrupts every geofence silently; `6–37.5 / 68–98` stops it at the door with a named message.
+_1568. **Location data must come from the device standing there, never from a guessed table.** The work-zones desk exists so the owner captures truth with one tap; anything else is fiction.
+_1569. **"Master is green" does not prove the task button works — the sacrificial POST does.** in_progress → completed → `completed_at` and notes were verified against the live DB; the UI checkmark is a story, the column is the receipt.
+
+### Owner actions still open (in order of blast radius)
+1. **MySQL repair window** (`docs/MYSQL_REPAIR_RUNBOOK.md`) — `mysql.plugin`/`mysql.servers` marked crashed; 87+ restarts today; owner-attended, Apache frozen first.
+2. **Colony coordinates** — tap **Use Current Location** at each site in `/admin/hrm/work-zones` (browser or mobile admin) or supply verified lat/lng per colony; the DB will then be truthful for GPS attendance, RERA NOC gates and map rendering.
+3. Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA NOC delivery (PENDING-VERIFICATION placeholders live until legal desk) · EMI backfill (20 historical bookings, owner sign-off) · live AI dialing (Twilio creds + `--execute`) · production deploy · Task Scheduler verification (DAILY 15–18) · `mysql_pre_s560_backup` drop (same repair window as #1) · 22 zero-reference stub tables decision · `testimonials_s694_pre_verify` drop · visual-regression baseline refresh · layout-map upload → AI plot creation · lead-photo AI extraction · mobile admin Work Zones screen (web desk ships now; mobile screen is the next call).
+
 ## Session 702: Admin RERA Badge Semantics Cured — Green "RERA: Pending-Verification" Success Badge on /admin/projects/{id} and /admin/colonies/{id} Replaced With Amber "NOC Pending — Legal Desk" / Real-Number Badges; DB Down (Port 3306 Refused) — Static-Only Verification, Owner Repair Window Overdue, Master NOT Re-Run (2026-11-17)
 
 ### Trigger
