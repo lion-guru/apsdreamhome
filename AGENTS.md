@@ -1,3 +1,54 @@
+## Session 738: Post-S737 Controller Auth Audit — All 40 Public Endpoints In NewFeaturesApiController Audited; One Genuine Hole Found &amp; Closed (`executeTask` — S729-class Neighbor: Sibling `processPendingTasks` Guarded, `executeTask` Was Not); Remaining 11 Unguarded Endpoints Documented As Intentional-Public (Registration Flow, Reset-Token, Stateless Calculators, Public Resell Lists, MLM Tier Rates); Master 12/12 (2026-11-17)
+
+### Trigger
+Owner: "do next aur koi suggestion tumhara" — S729-S736 were spent on the BI endpoints; this round extends the same audit discipline to the WHOLE of `app/Http/Controllers/Api/NewFeaturesApiController.php` (the file that carries `/api/v2/*` — the controller every recently-hardened endpoint lives in).
+
+### Audit method (file read end-to-end, route registration cross-check, consumer search)
+- All **40 public methods** listed in file order; each method's first 6–8 lines scanned for `requireAdminUser` / `requireAdmin` / `requireAuth` — zero guesswork.
+- Cross-checked against every route registration in `routes/web.php` + `routes/api.php` that points at this controller.
+- For every unguarded endpoint, searched its URL across `app/`, `public/`, `mobile/`, `scripts/` (PHP/JS/Dart) for consumers before judging it safe-public.
+
+### THE ONE HOLE FOUND AND CLOSED
+- **`POST /api/v2/agent/task/execute/{id}`** → `executeTask($id)` — **no guard of any kind**, `skipCsrfProtection()=true`, executes `AgentOrchestrator::executeTask()` — i.e., ANY caller could trigger execution of an arbitrary AI agent task by id, with CRM side effects (lead scoring, CRM updates). **Zero consumers found anywhere in the codebase** (`app/`, `public/`, mobile shell search — zero hits) — the S729 class exactly, and the class `processPendingTasks()` one method below it already guards with `requireAdmin()`.
+  - **Fix**: `$this->requireAdminUser();` as the first line — the same hybrid guard S731 shipped (web-session admin OR Bearer admin).
+  - **Verified live, fresh probes**:
+    - anonymous `POST /api/v2/agent/task/execute/1` → **HTTP 401** `{"success":false,"error":"Authentication required"}` (51 B).
+    - admin session (`?test_login=2` jar) → **HTTP 200** `{"error":"Task not found"}` — gate passed, and the service executed against a **0-row `agent_tasks` table** and reported honestly (no fabricated task, no side effects).
+  - `php -l` clean · **Master → 12/12 PASSED** (46.48s, 100% HEALTHY).
+
+### The 11 intentionally-unguarded endpoints — deliberate, not missing (documented, not "fixed")
+- **`regStart` / `regProgress` / `regComplete`** — the public registration/funnel flow; token (`{token}` route param) IS the credential; nobody posts these without going through the flow.
+- **`resellList`** (`GET /api/v2/resell`) — same query as `resellListPublic` (filter-whitelist, `min(100)` cap); output identical to the already-public `/api/v2/resell/public`; nothing a guest can't already see. Kept for compat, documented.
+- **`mlmRanks`** (`GET /api/v2/commission/mlm-ranks`) — MLM tier rate card; identical data is rendered openly on the public `/associate/mlm-plan` and associate dashboards; not personal data, not a secret worth a wall.
+- **`passwordResetConfirm`** — reset-token flow; token is the credential, stricter than required elsewhere; gating it by session would break the feature.
+- **`calculateGst` / `calculateTax` / `calculateEmi`** — stateless public calculators; no DB reads, no user data, no side effects; they exist so the calculator pages make HTTP calls.
+- **`__construct`** — not an endpoint.
+- **`resellListPublic`** — public by design.
+
+### Verification (live)
+- Master → **12/12 PASSED** on this exact tree (46.48s).
+- No data/schema/migrations/routes touched — `git diff --cached --name-only` before commit = exactly **2 files** (controller + this log).
+- `php scripts/verify_agents_log.php` → integrity OK.
+
+### Honest disclosure
+- **This is the second such hole found in the same file family this week** — S729 (`generateForecast`), S736-live-1054s (data black holes), S738 (`executeTask`). The pattern holds: **`skipCsrfProtection()=true` on the class silently exempts every new method; sibling parity is the audit that catches it.** Every future addition to this controller must be verified for a guard in the same commit.
+- **`resellList`'s `limit=100`/`sort`/`order` whitelist is wider than the public twin's (`50`).** Not a defect today (data public anyway); if `/api/v2/resell` is ever meant to become an operator-only list, that's an owner call, not an agent call.
+- **No behavioral change for any page or consumer** — the only behavioral delta from this round is anonymous execute-task now 401s, which is the correct delta.
+- Parallel actor's S737 (wallet/bank-accounts hardening, committed at HEAD `84a77e095`) untouched; their lane stays theirs.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **737** (wallet/bank-accounts hardening + Smart IFSC auto-lookup + role-aware wallet nav + ID-card DOM fix). This entry = **S738**. Next-free = **739**.
+
+### Key lessons
+_1674. **A controller with a class-level `skipCsrfProtection()` is a minefield for any sibling-added method — `unknown` is the default, not `"someone probably added requireAdmin"`. Audit sibling parity in the same file every time the controller grows.**
+_1675. **The `processPendingTasks() + executeTask()` pair was a five-fix saturation bug — the bulk path was guarded, the single-record twin wasn't; the authorization check must be per-method and grep-able, not implied.**
+_1676. **"No callers found" is not a reason to delete an endpoint — it means no consumer exists yet; a zero-consumer WRITER endpoint is the one that needs a gate, because nobody will notice it executed.**
+_1677. **Verifying anonymous→401 and admin→200-with-honest-empty is the only complete proof of a gate — a gate that 401s everyone (as the naive `requireAdmin()` would) is a denial-of-service dressed as security.**
+_1678. **Intentionally-public endpoints are not a bug class — but they must be documented as decisions, or the next sweep will "fix" them into 500s.**
+
+### Owner actions still open (unchanged + 2 proven)
+Play Console AAB · HTTPS assetlinks SHA-256 · colony coordinates · MariaDB Windows service · Defender exclusion · RERA colony numbers · production deploy path (`docs/DEPLOYMENT.md` Appendix F) · EMI backfill · live AI dialing · `user_activity_log` writer or retirement · Analytics-v2 TEST-HIST spike policy · `admin/features/realtime_analytics.php` — one browser look on a real admin session before relying on it · **hiring: if/when `processPendingTasks` is ever used by a cron, review the `agent_tasks` backlog model first (this S738 proved a 0-row state is handled honestly but not gracefully processed)** · **`resellList` at limit=100 — owner call to cap to 50 for parity with `/public`, or document as intentional** · deploy placeholder retro-check on `complete-ci-cd.yml` (legacy, still honest, not retired).
+
 ## Session 737: Wallet & Bank Account System Hardening — Server-Side Validation & Duplicate Guard, Smart IFSC Auto-Lookup, Associate Role-Aware Navigation, JSON Header Normalization & ID Card DOM Fix; Master 12/12 Clean (2026-11-17)
 
 ### Trigger

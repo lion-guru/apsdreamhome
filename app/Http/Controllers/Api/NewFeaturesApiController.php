@@ -330,6 +330,7 @@ class NewFeaturesApiController extends BaseController
 
     public function executeTask($id)
     {
+        $this->requireAdminUser(); // executes AI agent tasks - admin only (S737, S729-class neighbor)
         $result = $this->agent()->executeTask((int)$id);
         return $this->jsonResponse($result);
     }
