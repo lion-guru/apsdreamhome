@@ -542,6 +542,11 @@ class _AdminShellState extends State<AdminShell> {
       'label': 'Employees',
       'route': '/admin/employees',
     };
+    final workZones = {
+      'icon': Icons.my_location_outlined,
+      'label': 'GPS Zones',
+      'route': '/admin/work-zones',
+    };
     final commissions = {
       'icon': Icons.account_balance_wallet_outlined,
       'label': 'Commissions',
@@ -575,6 +580,7 @@ class _AdminShellState extends State<AdminShell> {
         colonies,
         plots,
         employees,
+        workZones,
         commissions,
         payouts,
         accounts,
@@ -585,13 +591,13 @@ class _AdminShellState extends State<AdminShell> {
       return [dashboard, bookings, commissions, payouts, accounts, reports, settings];
     }
     if (match(const ['hr', 'people', 'recruit'])) {
-      return [dashboard, employees, reports, settings];
+      return [dashboard, employees, workZones, reports, settings];
     }
     if (match(const ['sales', 'crm', 'marketing', 'lead'])) {
       return [dashboard, crm, bookings, customers, reports, settings];
     }
     if (match(const ['manager', 'ops', 'coo'])) {
-      return [dashboard, crm, bookings, customers, employees, reports, settings];
+      return [dashboard, crm, bookings, customers, employees, workZones, reports, settings];
     }
     // Unknown admin sub-role: safe read-mostly baseline rather than leaking
     // payouts/commissions/accounts to a role that must not see them.

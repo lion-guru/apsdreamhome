@@ -199,6 +199,7 @@ import '../../presentation/pages/admin/plot_management_page.dart';
 import '../../presentation/pages/admin/employee_management_page.dart';
 import '../../presentation/pages/admin/commission_approvals_page.dart';
 import '../../presentation/pages/admin/accounts_page.dart';
+import '../../presentation/pages/admin/work_zones_page.dart';
 import '../../presentation/pages/admin/analytics_dashboard_page.dart';
 import '../../presentation/pages/admin/campaign_management_page.dart';
 import '../../presentation/pages/admin/bulk_marketing_page.dart';
@@ -2009,6 +2010,11 @@ isDisclaimer ||
             path: '/admin/accounts',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: AccountsPage()),
+          ),
+          GoRoute(
+            path: '/admin/work-zones',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: AdminWorkZonesPage()),
           ),
           GoRoute(
             path: '/admin/analytics',
