@@ -1,3 +1,57 @@
+## Session 681: Student Internship Program + Nari Shakti Registration System Built End-to-End — Real Public Intake Endpoint, Dedicated `program_applications` Table, Admin HR Desk, Sacrificial E2E Verified; Both Programs Were Dead-Ends Before (Student Form Posted To Jobs Endpoint; Nari Shakti CTA Linked To Generic `/contact`); Master 11/11 (2026-11-17)
+
+### Trigger
+User: "aur student kaise rahister karenge suggestion denge kaam karenge etc bhut is chize ho skti hai ek page bhi banaye hai hum log student aur nari sakti ka to usko aur badhiy auar kaam ki system banaya jaye na" — "and how will students register, give suggestions, work — make our student and Nari Shakti page a real, working system with a proper page."
+
+### What was broken (byte-verified, not guessed)
+1. **The Student Internship modal on `/careers` was a dead end wearing a working-looking UI**: the form submitted to `POST /careers/submit-application` → `Career\CareerController@submitApplication()` — the JOBS application handler (expects resume-file upload contract; returns its own JSON shape). It "worked" only by accident whenever its parsing happened to match, and had no fields for `city`/`program_type`, no `suggestion` field, and no duplicate guard — every submit drifted toward being treated as a job application or silently failing.
+2. **There was NO such thing as a Nari Shakti intake**: the only CTA on the whole site was `<a href="/contact">Join Nari Shakti</a>` — a generic contact page; "Nari Shakti" existed only as a category label in `team_members` (LN435/492 of team.php) and in team-group names.
+3. **No table existed** for program applications (no `student*`, `campus*`, `nari*`, `women*` tables anywhere) — zero-dup audit confirmed before building anything.
+
+### What was built
+1. **New table `program_applications`** (idempotent migration `database/migrations/create_program_applications_s681.php`; created + SKIP re-run verified): `id, tenant_id(=1), program_type ENUM('student','nari_shakti'), full_name, email, phone, college, course, current_year, city, motivation, suggestion, status ENUM('pending','reviewing','approved','rejected'), admin_notes, created_at, updated_at` + tenant/status/created indexes.
+2. **Public controller `Front\ProgramApplicationController@store()`** (`POST /program-application`): whitelists `program_type` to the two programs; validates name/email/phone(10–15 digits); **duplicate guard** — same phone+program pending within 7 days returns the friendly "Application already received" instead of a new row; tenant-scoped insert; sanitised with `strip_tags` + length caps; returns JSON `{success, message, duplicate?}`.
+3. **Admin desk `Admin\ProgramApplicationController`** at **`/admin/programs/applications`**: requires admin; status counters; filter by program/status; table of applications with tel:/mailto: deep links, motivation/suggestion display, per-row `status` select + `admin_notes` + Save; CSRF hidden input; `POST /admin/programs/applications/{id}/status` validates status whitelist, updates with tenant scope, redirects with `?saved=1`.
+4. **`/careers` Student Internship form wired for real**: fetch now posts to `/program-application`; hidden `program_type=student` was already present; **new `suggestion` textarea** added ("Your suggestion (optional)") alongside `motivation`. The main jobs form was verified untouched (different modal, keeps `/careers/submit-application`).
+5. **`/team` Nari Shakti CTA is now a real intake**: button replaced the dead `/contact` link with `data-bs-target="#nariShaktiModal"`; new modal `#nariShaktiModal` with full_name/phone/email/city/motivation/suggestion (hidden `program_type=nari_shakti`), success state swap, same-protection styles; JS handler posts to `/program-application` with CSRF from the page meta. Page keeps the women-wing section (category=`women_wing` filter unchanged).
+
+### Sacrificial E2E (live HTTP, manual cookie chains)
+- GET `/team` (fresh) → 200, 257,387 B — needles `nariShaktiModal` YES · `nariShaktiSubmitBtn` YES · `Join Nari Shakti` YES.
+- GET `/careers` (fresh) → 200 — needles `/program-application` YES · `studentApplyModal` YES · `suggestion` YES.
+- POST `/program-application` (CSRF from rendered /team) → **HTTP 200** `{"success":true,"message":"Application received! Our team will contact you within 24 working hours."}` → row id=1 stored `nari_shakti / Test Nari Shakti Probe / pending`.
+- GET `/admin/programs/applications` (test_login=1 jar) → 200, 391,782 B — needles `Test Nari Shakti Probe` YES · `Program Applications` YES · `9000012300` YES · `Nari Shakti` YES · pending badge renders.
+- POST status toggle → **302 → `/admin/programs/applications?saved=1`**; DB read-back: `status=approved`, `admin_notes='Probe roundtrip approve'`, `updated_at=2026-11-17 15:23:18`.
+- **Duplicate guard**: re-POST same phone+program → `{"success":true,"duplicate":true,"message":"Application already received — our HR team will reach out soon."}` — no second row.
+- **Negatives (all 422 JSON)**: `program_type=bogus` → "Invalid program type." · `phone=12` → "valid phone number" · `email=notanemail` → "valid email address".
+- **Cleanup**: `DELETE FROM program_applications WHERE phone LIKE '9000012300'` → **`leftover_rows: 0`**. Zero leftovers.
+
+### Verification
+- `php -l` clean ×7. **PHPStan on my new/changed files → [OK] No errors** (level 5; whole-tree run exceeded the 240s foreground window this session — memory/time, not a defect; my files verified directly).
+- **Master → 11/11 PASSED** (45.38s, 100% HEALTHY) · **AGENTS.md integrity OK** at prepend time.
+- Read-only DB access beyond the migration (intentional WRITE: the new table + nothing else).
+- Commit `f3d4318ec` (7 files, pushed, `ls-remote` verified).
+
+### Honest notes
+- **No SMS/email/WhatsApp is sent** on application receipt — the success message tells the truth; wiring notifications (Twilio) is owner-gated.
+- **Admin desk is RBAC admin-only** — any future widening to `hr_manager`/`admin`-only needs an explicit role check change.
+- **Rate limiting** for `/program-application` comes from the global router gate; it has no dedicated route-level limiter yet.
+- The Student Apply flow still carries the pre-existing `?`/mojibake comments from legacy generation in the surrounding markup — visual only, not touched per scope discipline.
+- **The old `Career\CareerController@submitApplication()` path for jobs is unchanged**; only the student program moved to the dedicated endpoint.
+- Parallel actor landed `4e69ab75b` ("fix(mobile): side-by-side debug builds + admin stat-card 4.5px overflow (S680)") — their commit reuses the S680 label; they did NOT write an S680 entry into AGENTS.md. This entry is S681.
+
+### AGENTS.md numbering (Rule 4)
+Headings above this entry = 680 (this lane's /team + /interior-design entry; parallel actor's commit `4e69ab75b` reused the S680 tag in its message but wrote no log entry). This entry = **S681**. Next-free = **682**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1494. **A form that "still works" is not a contract** — the student form had been POSTing to a jobs endpoint whose avatar handler had no `program_type`/`city`/`suggestion` and whose `$request` shape differed entirely. Test the real endpoint a form reaches, not the one it was designed for.
+_1495. **Zero-dup audit before building = one query** (`SHOW TABLES LIKE '%student%'` went to zero). Building a parallel module is the failure; forking one intake endpoint after verification is the fix.
+_1496. **One endpoint + a `program_type` enum beats two pages with duplicated forms** — same validation, same storage, same admin desk, same probes. Twice the surfaces, half the bugs.
+_1497. **Duplicate guard is the cheapest anti-spam in the world** — a phone-number repeat within 7 days returns "already received" with zero new rows and zero risk to HR.
+_1498. **An admin desk with zero visibility is a theatre** — the public intake is useless if HR can't see pending applications. `/admin/programs/applications` ships in the same commit as the public endpoint.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (all NULL — never fabricate) · EMI backfill for 20 historical bookings · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views decision (includes `index.php` 1000+) · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane) · student/Nari Shakti HR notification wiring (Twilio creds → then the success message can genuinely SMS/WhatsApp the applicant — currently none is sent).
+
 ## Session 680: Public Fabrication Sweep Continued — Fake Student Testimonials Deleted From `/careers` (Invented Priya Sharma / Rahul Kumar / Anjali Singh With Named Colleges & Quotes), "Registered & Certified" → "Registered & Compliant" On `/about`, "Certified Agent" / "Premium Partner" → "Verified Partner" / "Official Partner" On `/become-associate`; Master 11/11 (2026-11-17)
 
 ### Trigger
