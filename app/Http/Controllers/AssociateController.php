@@ -732,20 +732,35 @@ class AssociateController extends BaseController
 
     public function compareProperties()
     {
-        // Legacy - redirects to tools
-        $this->redirect('/associate/tools');
+        $this->requireAuth();
+        $db = \App\Core\Database\Database::getInstance();
+        $properties = [];
+        try {
+            $properties = $db->fetchAll(
+                "SELECT id, title, city, price, area_sqft, type as property_type, status, bedrooms, bathrooms 
+                 FROM properties 
+                 WHERE status = 'active' AND deleted_at IS NULL 
+                 ORDER BY title LIMIT 50"
+            );
+        } catch (\Throwable $e) {
+            error_log('AssociateController::compareProperties: ' . $e->getMessage());
+        }
+        $selected = !empty($_GET['ids']) && is_array($_GET['ids']) ? array_map('intval', $_GET['ids']) : [];
+        $this->render('associate/compare', [
+            'page_title' => 'Compare Properties - Associate Portal',
+            'properties' => $properties,
+            'selected' => $selected
+        ], 'layouts/associate');
     }
 
     public function importLeads()
     {
-        // Legacy - redirects to CRM
-        $this->redirect('/associate/leads');
+        return $this->crmController->importLeads();
     }
 
     public function bulkWhatsApp()
     {
-        // Legacy - redirects to CRM leads
-        $this->redirect('/associate/leads');
+        return $this->crmController->bulkWhatsApp();
     }
 
 }

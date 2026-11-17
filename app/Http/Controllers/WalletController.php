@@ -664,9 +664,9 @@ class WalletController extends BaseController
             
             $this->db->query("
                 UPDATE user_bank_accounts 
-                SET bank_name = ?, account_number = ?, ifsc_code = ?, account_holder_name = ?, branch_name = ?, account_type = ?, updated_at = NOW()
+                SET bank_name = ?, account_number = ?, ifsc_code = ?, account_holder = ?, account_holder_name = ?, branch_name = ?, account_type = ?, updated_at = NOW()
                 WHERE id = ? AND user_id = ?
-            ", [$bankName, $accountNumber, $ifscCode, $accountHolder, $branchName, $accountType, $bankId, $userId]);
+            ", [$bankName, $accountNumber, $ifscCode, $accountHolder, $accountHolder, $branchName, $accountType, $bankId, $userId]);
 
             // Log activity
             try {

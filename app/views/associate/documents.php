@@ -25,9 +25,13 @@ $statusBadges = [
     .doc-stat-card { border-radius: 12px; padding: 20px; text-align: center; transition: all .2s; }
     .doc-stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
     .doc-stat-icon { width: 48px; height: 48px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 10px; }
+    .doc-stat-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .doc-stat-icon.orange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .doc-stat-icon.green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .doc-stat-icon.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
     .doc-row { transition: all .2s; }
     .doc-row:hover { background: #f8fafc; }
-    .doc-icon-box { width: 44px; height: 44px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .doc-icon-box { width: 44px; height: 44px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; background: rgba(13, 148, 136, 0.1); color: #0d9488; }
     .upload-zone { border: 2px dashed #d1d5db; border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all .2s; }
     .upload-zone:hover { border-color: #2563eb; background: #eff6ff; }
 </style>
@@ -48,28 +52,28 @@ $statusBadges = [
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon"><i class="fas fa-folder"></i></div>
+                <div class="doc-stat-icon blue"><i class="fas fa-folder"></i></div>
                 <h4 class="mb-0"><?= $stats['total'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_total', [], 'Total Documents') ?></small>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="doc-stat-icon orange"><i class="fas fa-clock"></i></div>
                 <h4 class="mb-0"><?= $stats['pending'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_pending', [], 'Pending Review') ?></small>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="doc-stat-icon green"><i class="fas fa-check-circle"></i></div>
                 <h4 class="mb-0"><?= $stats['approved'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_approved', [], 'Approved') ?></small>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="doc-stat-card bg-white border">
-                <div class="doc-stat-icon"><i class="fas fa-times-circle"></i></div>
+                <div class="doc-stat-icon red"><i class="fas fa-times-circle"></i></div>
                 <h4 class="mb-0"><?= $stats['rejected'] ?></h4>
                 <small class="text-muted"><?= __('assoc_doc_rejected', [], 'Rejected') ?></small>
             </div>

@@ -201,6 +201,7 @@ class PortalMenuService
             $this->item('offers', 'Earnings', 'Offers', '/associate/offers', 'fas fa-tags'),
             $this->item('wallet', 'Earnings', 'Wallet', '/associate/wallet', 'fas fa-wallet'),
             $this->item('withdraw', 'Earnings', 'Withdraw', '/associate/wallet/withdraw', 'fas fa-money-bill-wave'),
+            $this->item('bank-accounts', 'Earnings', 'Bank Accounts', '/associate/bank-details', 'fas fa-university'),
             $this->item('tds-slips', 'Earnings', 'TDS Slips', '/associate/tds-slips', 'fas fa-file-invoice'),
 
             // Network & Team

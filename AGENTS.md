@@ -1,3 +1,49 @@
+## Session 733: Associate Portal Complete UX Elevation & Tool Discovery — Bank Accounts First-Class Integration (Sidebar + Header + Alias Routes + Bi-Column Schema Parity), Live Interactive Property Comparison Matrix (`/associate/compare`), CRM Delegation Integrity, Vibrant Document Locker Polish; Master 12/12 Clean (2026-11-17)
+
+### Trigger
+User request:
+"DO NEXT AND ABHI BHI ASSOSIATE PORTAL /DASHBOARD ME BHUT SI KAMIYAHAI SARE MENU KHOL KE DEKHO CONSISTENCY NHI HAI UI DIFFER HO JA RAHHAI AUR UI ME BHI IMPROVE KAR HAI AUR BHUT SE FUNTION BHI JADNE PADENGE ETC TUM DEEPLY SAB KUCH DEKH KE APNE SUGGETIONSE ISKO BEST BANAOO KOI KAMI NA RAHE..BINA RUKE KAAM KARO... [Bank Accounts - APS Dream Home](http://localhost/apsdreamhome/associate/bank-details) kaam nhi kar raha hai live karo... [Compare Properties]... tools... sabko live karo aur improve best banaya jaye."
+
+### Key Root Causes & Architectural Upgrades Landed
+1. **Bank Accounts Elevated to First-Class Citizen in Associate Portal (`PortalMenuService.php`, `layouts/associate.php`, `routes/web.php`, `WalletController.php`)**:
+   - *Discovery Gap:* Associates previously had no direct menu link in the sidebar or top header dropdown to access their bank account management (`/associate/bank-details`), which is essential for wallet withdrawals and direct commission payout verification.
+   - *Action Taken:* Added `Bank Accounts` under `Earnings` in `PortalMenuService::associateItems()` with icon `fas fa-university`, and added direct one-click link with green bank icon in the user profile dropdown of `layouts/associate.php`.
+   - *Routing Robustness:* Added POST alias endpoints in `routes/web.php` for `/associate/bank-details/add`, `/set-primary`, `/delete`, and `/update` directly routing to `WalletController` to prevent 404s when relative or absolute URLs are dispatched from associate views.
+   - *Database Schema Parity:* In `WalletController::updateBankAccount()`, synchronized both `account_holder` (nullable) and `account_holder_name` (NOT NULL) so both stay fully aligned across updates and strict mode queries.
+
+2. **Interactive Property Comparison Matrix Activated (`AssociateController.php`, `app/views/associate/compare.php`)**:
+   - *Previous Gap:* The dedicated `/associate/compare` route and menu item was dead-ended into a redirect to `/associate/tools`, despite a rich comparison matrix view existing in `app/views/associate/compare.php`.
+   - *Action Taken:* Rewrote `AssociateController::compareProperties()` to query all active, non-deleted properties with full attribute set (`title`, `city`, `price`, `area_sqft`, `type`, `status`, `bedrooms`, `bathrooms`), support multi-select query params (`ids[]`), and render `'associate/compare'` inside `'layouts/associate'`.
+   - *Live Capability:* Associates can now compare 2 to 4 properties side-by-side on price, area, price-per-sqft, configuration, type, and status with direct 1-click links to view public property sheets.
+
+3. **Associate Controller CRM Delegation Integrity (`AssociateController.php`)**:
+   - *Previous Gap:* Legacy stubs `importLeads()` and `bulkWhatsApp()` in `AssociateController.php` redirected to `/associate/leads` instead of delegating to `crmController`.
+   - *Action Taken:* Updated `AssociateController::importLeads()` and `bulkWhatsApp()` to directly return `$this->crmController->importLeads()` and `$this->crmController->bulkWhatsApp()`.
+
+4. **Document Locker UI Polish & Visual Hierarchy (`app/views/associate/documents.php`)**:
+   - Upgraded document stat cards with distinct color tokens: Blue for Total (`#3b82f6`), Orange for Pending Review (`#f59e0b`), Green for Approved (`#10b981`), Red for Rejected (`#ef4444`).
+   - Added teal accent background to `.doc-icon-box` (`rgba(13, 148, 136, 0.1); color: #0d9488;`) to unify document rows with the APS associate design tokens.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Http/Controllers/AssociateController.php` -> PASS
+  - `app/Http/Controllers/WalletController.php` -> PASS
+  - `app/Services/PortalMenuService.php` -> PASS
+  - `app/views/associate/documents.php` -> PASS
+  - `app/views/layouts/associate.php` -> PASS
+  - `routes/web.php` -> PASS
+- **Database Baseline (Zero Drift Target)**:
+  - `users`: 82 (exact match)
+  - `plot_bookings`: 23 (exact match)
+  - `leads`: 994 (exact match)
+  - `transactions`: 5 (exact match)
+  - `mlm_commission_ledger`: 359 (exact match)
+  - `email_queue`: 14 (exact match)
+- **Master Test Suite**:
+  - `php testing/master_test_runner.php` -> **12/12 PASSED** (44.37s, 100% HEALTHY).
+- **AGENTS.md Log Verification**:
+  - `php scripts/verify_agents_log.php` -> PASS.
+
 ## Session 732: "Do Next All" Remainder — Suggestion 2 Found Already Implemented (Compliance Trend Chart Live On 175 Rows); Suggestion 3 Measured (EXPLAIN: Vibration Support Already In Place, Zero DDL); Suggestion 4 Carried For Owner Decision; S731 (Parallel Actor) Closed Suggestion 1 With A Hybrid Admin Session|Bearer Gate — Verified Live 401/200 Both Endpoints (2026-11-17)
 
 ### Trigger

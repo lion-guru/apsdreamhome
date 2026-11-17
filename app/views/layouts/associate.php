@@ -607,6 +607,7 @@ $GLOBALS['_html_doc_started'] = true;
                         </li>
                         <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/profile"><i class="fas fa-user me-2 text-primary"></i><?= htmlspecialchars(__('assoc_top_profile', [], 'My Profile & KYC')) ?></a></li>
                         <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/id-card"><i class="fas fa-id-card me-2 text-info"></i><?= htmlspecialchars(__('assoc_top_id_card', [], 'Digital ID Card')) ?></a></li>
+                        <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/bank-details"><i class="fas fa-university me-2 text-success"></i><?= htmlspecialchars(__('assoc_top_bank', [], 'Bank Accounts')) ?></a></li>
                         <li><a class="dropdown-item py-2" href="<?= BASE_URL ?>/associate/settings"><i class="fas fa-cog me-2 text-secondary"></i><?= htmlspecialchars(__('assoc_top_settings', [], 'Account Settings')) ?></a></li>
                         <li><hr class="dropdown-divider my-1"></li>
                         <li><a class="dropdown-item py-2 text-danger" href="<?= BASE_URL ?>/associate/logout"><i class="fas fa-sign-out-alt me-2"></i><?= htmlspecialchars(__('assoc_top_logout', [], 'Logout')) ?></a></li>

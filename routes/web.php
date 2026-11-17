@@ -1232,6 +1232,10 @@ $router->get('/associate/wallet/transactions/export', 'App\\Http\\Controllers\\A
 $router->get('/associate/wallet/withdrawal', 'App\\Http\\Controllers\\Associate\\WalletActivationController@withdrawal');
 $router->post('/associate/wallet/process-withdrawal', 'App\\Http\\Controllers\\Associate\\WalletActivationController@processWithdrawal');
 $router->get('/associate/bank-details', 'App\\Http\\Controllers\\WalletController@bankAccounts');
+$router->post('/associate/bank-details/add', 'App\\Http\\Controllers\\WalletController@addBankAccount');
+$router->post('/associate/bank-details/set-primary', 'App\\Http\\Controllers\\WalletController@setPrimaryBank');
+$router->post('/associate/bank-details/delete', 'App\\Http\\Controllers\\WalletController@deleteBankAccount');
+$router->post('/associate/bank-details/update', 'App\\Http\\Controllers\\WalletController@updateBankAccount');
 $router->get('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->post('/associate/settings', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->post('/associate/settings/update', 'App\\Http\\Controllers\\AssociateController@settings');
