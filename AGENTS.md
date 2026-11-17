@@ -1,3 +1,49 @@
+## Session 675: Public AI-Chat Family Was Rendering ADMIN Chrome To Every Visitor — `AIController extends AdminController`; "Written But Never Used" `isAdmin()` Role-List Defect Found & Closed; Public Pages Fixed; Gates Green (2026-11-17)
+
+### Trigger
+User: "do next" — continuing the S673/S674 chrome-fix lane. While verifying the S673 public-careers fix and S674 audit recap, a public-page probe class uncovered by byte inspection: every page in the AI chat family ships `aps-admin-body` to anonymous visitors.
+
+### What was found (sub-audit, not guessed)
+1. **AIController.php extends AdminController**. Parent's constructor forces `$this->layout = 'layouts/admin'`. Every public action of the class (`chat`, `chatEnhanced`, `chatPopup`, `propertyChat`, `propertyChatProperty`) rendered the admin sidebar chrome to all visitors. Proven live: 4/4 routes returned 200 with `aps-admin-body` present.
+2. **`AIController::isAdmin()` role list was incorrect AND unused for the destined audience** — `$admin_roles = ['superadmin','director','ithead']` while the session carries the canonical `super_admin` / `admin` everywhere else in the app. Result: `/admin/ai-config` redirected ALL visitors (including super_admin dev sessions) to `/login` from the method's existence through every page generation — a silent dead route. Live-probed 302 → `/login` → 200.
+3. `configuration()` action does the `isAdmin()` check BEFORE rendering, so the layout flip alone would NOT have restored the page — also done here: same method now returns admin chrome.
+
+### Fix (single-file commit `e0c44aac9`, pushed)
+- `AIController::__construct()` now sets `$this->layout = 'layouts/base';` — the public default.
+- `AIController::configuration()` (only admin-only action) now overrides to `$this->layout = 'layouts/admin';` after its existing `isAdmin()` guard — admin desk back on admin chrome.
+- `isAdmin()` role list widened minimally to include the app's canonical `super_admin` and `admin` — `/admin/ai-config` now 200 with `aps-admin-body` (388,601 B).
+- NO route registrations, no schema, no other actions changed.
+
+### Verification (live HTTP, byte inspection)
+| Route | HTTP | bytes | chrome |
+|---|---|---|---|
+| `/ai-chat` (was admin-chrome) | 200 | 199,557 | public ✓ |
+| `/ai-chat-enhanced` (was admin-chrome) | 200 | 207,029 | public ✓ |
+| `/ai-chat/popup` (was admin-chrome) | 200 | 202,465 | public ✓ |
+| `/property-ai-chat` (was admin-chrome) | 200 | 202,656 | public ✓ |
+| `/admin/ai-config` (was dead-for-every-admin) | 200 | 388,601 | admin-chrome ✓ |
+| `/ai-valuation` | 301 → `/property-valuation` | — | n/a |
+
+- `php -l` clean ×1 · **PHPStan**: my file clean · **master 11/11 PASSED** (parallel actor landed S674 between my probe and gate run)
+- **PHPStan: one remaining error in `app/services/Accounting/GstService.php:155`** — parallel actor's in-flight file, not mine; confirmed via `git status` (`M` with trailing churn) + `git diff --name-only` (only my AIController).
+- Commit `e0c44aac9` on `origin/main` — exactly one file (`app/Http/Controllers/AIController.php`). `git diff --cached --name-only` = 1 entry confirmed before commit.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds **673 / 674** at the top. This entry = **S675**. Next-free = **676**.
+
+### Honest notes
+- `/ai-valuation` correctly 301s to `/property-valuation`; not treated as a defect.
+- The S674 meta-audit pattern (cross-portal chrome) applied to this class confirmed S673/S674 already resolved the public families and found this one AI family was still wrong — class-set.
+- `/admin/ai-config` is per-method-layout-gated even now; any future action added to the class must pick a chrome deliberately.
+
+### Key lessons
+_1473. **A public-facing controller that inherits an AdminController is a chrome trap** — the constructor writes admin into every action; the only fix is to override the default there or per-method, not inside individual actions.
+_1474. **A permission list that omits the canonical roles is a silent dead door** — `/admin/ai-config` 302→/login for every admin regardless of real role, frozen for months; byte-probe every admin route at least once per audit.
+_1475. **A dead door and a wrong-chrome page share one symptom class** — both are "200 with needles that feel wrong" from the public side; inspect the bytes, not just the status code.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views (wire vs archive) · outstanding PHPStan error in parallel actor `GstService.php:155` (their lane, not mine).
+
 ## Session 674: Cross-Portal Layout-Chrome Audit — Only My S673 Regression Found (Admin Careers Desk Was Rendering In Public Chrome); 9 Admin Methods Locked To Admin Chrome Now; Master 11/11 (2026-11-17)
 
 ### Trigger
