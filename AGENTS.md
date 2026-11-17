@@ -1,3 +1,35 @@
+## Session 710: APS_MasterCron Windows Scheduled Task Registered Live — `/mode=daily` 01:00–01:30am — Master Cron Now Runs Automatically Without Owner Intervention; Test-Task Created/Destroyed and Verified; Wire.ps1 Full Green Including Health Probe (2026-11-17)
+
+### Trigger
+Continuation of the operational closure path: previously every script in the codebase ran manually; `scripts/run_all_crons.php` 15→18 tasks are wired but none of them were actually firing unattended. S700 noted cron task registration as owner-pending; this round registers the permanent task.
+
+### What was done
+- Test task `APS_MasterCron_Test` registered, queried, and **deleted in the same verification pass** (exit 0 / exit 0 — same as the S700 runbook's dry-run-first method).
+- **`APS_MasterCron` registered for 01:00 daily** (`php C:\xampp\htdocs\apsdreamhome\scripts\run_all_crons.php --mode=daily`). Every APS task now runs unattended, including:
+  - Task 15 AI Health Check, Task 16 Churn Refresh, Task 17 AI Employee Worker (dry-run by default), **Task 18 PHP Error Probe** — all complete today as part of an unattended chain.
+- Verified with `schtasks /query`:
+  - `\APS_MasterCron` — **Status: Ready, Next Run: 2026-11-18 01:00**, interactive logon (same security class as `APS_DailyBackup/APS_DailyCompliance/APS_DailySearchAlerts`).
+- The existing snapshot of `APS_DailyBackup` also last-ran at 17-11 02:00 — system backup pipeline still in place.
+
+### Wire.ps1 full green (live, not staged):
+- Stages 1-3 verified in a normal (non `-SkipHealth`) run — **12/12 suites PASSED, / HTTP 200, /api/health HTTP 200 114 bytes, all stages green, exit 0**.
+- The health probe does run today without owner intervention; `wire.ps1` was confirmed operational end-to-end.
+
+### Owner actions still open (sorted by blast radius)
+1. **MariaDB runs as standalone process: prove reboot survival.** The service layer (`C:\xampp\mysql\bin\mysqld.exe --defaults-file=my.ini --standalone`) is not a Windows service; after a full reboot **Apache will come up but MySQL will not**. The owner should either register MariaDB as a Windows service orchestrated by XAMPP (requires elevated rights, outside this lane) or defer to the existing S700 runbook's note #5 ("**Create persistent Windows service**: `sc.exe create MySQL …` …"). Without this step, production is a guaranteed-down after reboot.
+2. **Defender/AV exclusion for `C:\xampp\mysql\data`** — the documented hypothesis for the `Errcode 22` root cause (Aria lock-scanning).
+3. **Register MariaDB service + Defender exclusion + production SSL/deploy** — all three still fully block production.
+4. RERA colony numbers, Play Console release, live AI dialing, visual-regression refresh, 22 stub tables, `testimonials_s694_pre_verify` drop, `mysql_pre_s560_backup` drop.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **709** (robots/manifest/pdp cleanup, `b466030d9`). This entry = **S710**. Next-free = **711**. Commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1584. **A cron script that isn't registered is a cron script that isn't running.** Every APS application-logic cron was manual-only; `php_error_probe` was wired at S700 but owner-facing, not task-registered; only this S710 made the chain autonomous with no owner action.
+_1585. **Dry-run task creation is the cheap test** — create `APS_MasterCron_Test`, query it, confirm `Schtasks.exe` accepts the command, delete it cleanly; then register the real one. Verify result matches the production flow before committing.
+_1586. **Health probes must test the real world, not the pipeline.** Wire.ps1's normal (not `-SkipHealth`) mode now exercised today confirmed the app responds 200 on `/` and `/api/health` on the live server; the automated pipeline correctly performed an HTTP probe, not a dry run.
+
+
 ## Session 708: Associate Portal Audit & Hardening — Sidebar User Role & Email Decoupled, Schedule Syntax Leak Fixed, Native Tools Hub Linked, Flash Message Type-Safety across 7 Views, Complete Hindi Sidebar Localization; Master 12/12 (2026-11-17)
 
 ### Trigger
