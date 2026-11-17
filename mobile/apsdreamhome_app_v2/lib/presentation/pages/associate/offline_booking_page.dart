@@ -217,7 +217,11 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Offline Booking'),
+          title: const Text(
+            'Offline Booking',
+            style: TextStyle(color: Color(0xFF1A237E)),
+          ),
+          iconTheme: const IconThemeData(color: Color(0xFF1A237E)),
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
@@ -275,7 +279,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                               Text(
                                 '${_pendingBookings.where((b) => b['is_synced'] == 0).length} booking(s) pending sync',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF1A237E),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -290,7 +294,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                         if (_isOnline)
                           TextButton(
                             onPressed: _syncPendingBookings,
-                            child: const Text('Sync Now', style: TextStyle(color: Colors.cyan)),
+                            child: const Text('Sync Now', style: TextStyle(color: Color(0xFF00796B))),
                           ),
                       ],
                     ),
@@ -306,7 +310,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                       const Text(
                         'Select Colony & Plot',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A237E),
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -316,16 +320,16 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                         initialValue: _selectedColonyId,
                         decoration: const InputDecoration(
                           labelText: 'Colony',
-                          labelStyle: TextStyle(color: Colors.white70),
+                          labelStyle: TextStyle(color: Color(0xFF616161)),
                           filled: true,
-                          fillColor: Colors.white10,
+                          fillColor: Color(0xFFF5F5F5),
                           border: OutlineInputBorder(),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white30),
+                            borderSide: BorderSide(color: Color(0xFFE0E0E0)),
                           ),
                         ),
                         dropdownColor: const Color(0xFF1A237E),
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Color(0xFF1A237E)),
                         items: _colonies.map((colony) {
                           return DropdownMenuItem(
                             value: colony.id.toString(),
@@ -343,16 +347,16 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                         initialValue: _selectedPlotId,
                         decoration: const InputDecoration(
                           labelText: 'Plot',
-                          labelStyle: TextStyle(color: Colors.white70),
+                          labelStyle: TextStyle(color: Color(0xFF616161)),
                           filled: true,
-                          fillColor: Colors.white10,
+                          fillColor: Color(0xFFF5F5F5),
                           border: OutlineInputBorder(),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white30),
+                            borderSide: BorderSide(color: Color(0xFFE0E0E0)),
                           ),
                         ),
                         dropdownColor: const Color(0xFF1A237E),
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Color(0xFF1A237E)),
                         items: _plots.map((plot) {
                           return DropdownMenuItem(
                             value: plot.id.toString(),
@@ -370,9 +374,11 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.cyan.withValues(alpha: 0.1),
+                            color: const Color(0xFF00796B).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.cyan.withValues(alpha: 0.3)),
+                            border: Border.all(
+                              color: const Color(0xFF00796B).withValues(alpha: 0.3),
+                            ),
                           ),
                           child: Row(
                             children: [
@@ -391,11 +397,11 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                                   children: [
                                     Text(
                                       'Plot ${selectedPlot.plotNumber}',
-                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                                      style: const TextStyle(color: Color(0xFF1A237E), fontWeight: FontWeight.w600),
                                     ),
                                     Text(
                                       '${selectedPlot.areaSqft.toStringAsFixed(0)} sqft - ${selectedPlot.status}',
-                                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                      style: const TextStyle(color: Color(0xFF616161), fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -403,7 +409,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                               Text(
                                 '₹${NumberFormat('#,##,###').format(selectedPlot.totalPrice)}',
                                 style: const TextStyle(
-                                  color: Colors.cyan,
+                                  color: Color(0xFF00796B),
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
@@ -426,7 +432,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                       const Text(
                         'Client Details',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF1A237E),
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -496,7 +502,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
                   Text(
                     'Recent Bookings (${_pendingBookings.length})',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF1A237E),
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -524,16 +530,16 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color(0xFF1A237E)),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white54),
+        labelStyle: const TextStyle(color: Color(0xFF616161)),
+        prefixIcon: Icon(icon, color: const Color(0xFF757575)),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: const Color(0xFFF5F5F5),
         border: const OutlineInputBorder(),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white30),
+          borderSide: BorderSide(color: Color(0xFFE0E0E0)),
         ),
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Color(0xFFFFD700), width: 2),
@@ -573,11 +579,11 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
               children: [
                 Text(
                   (booking['client_name'] as String?) ?? 'Unknown',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                  style: const TextStyle(color: Color(0xFF1A237E), fontWeight: FontWeight.w600),
                 ),
                 Text(
                   'Plot: ${booking['plot_id'] ?? "N/A"} - ₹${booking['token_amount'] ?? 0}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Color(0xFF616161), fontSize: 12),
                 ),
               ],
             ),
@@ -603,7 +609,7 @@ class _OfflineBookingPageState extends ConsumerState<OfflineBookingPage> {
               if (date.isNotEmpty)
                 Text(
                   _formatDate(date),
-                  style: const TextStyle(color: Colors.white54, fontSize: 10),
+                  style: const TextStyle(color: Color(0xFF757575), fontSize: 10),
                 ),
             ],
           ),
