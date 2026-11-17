@@ -692,44 +692,18 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         
         <div class="row g-4 justify-content-center">
-            <?php 
-            $deptDefaults = [
-                4 => [
-                    'name' => 'Sushant Srivastava',
-                    'role' => 'Head of Sales & Marketing',
-                    'dept' => 'Sales & Marketing',
-                    'exp'  => '12+ Years Experience',
-                    'bio'  => 'Leading strategic sales operations, customer relationships, and agent network growth across Uttar Pradesh.',
-                    'photo'=> 'assets/images/team/shushant-srivastava.jpg'
-                ],
-                5 => [
-                    'name' => 'Anuj Srivastava',
-                    'role' => 'Head of Legal & Operations',
-                    'dept' => 'Legal & Compliance',
-                    'exp'  => '14+ Years Experience',
-                    'bio'  => 'Overseeing land due diligence, registry verification, title clear checks, and regulatory compliance.',
-                    'photo'=> 'assets/images/team/anuj-srivastava.jpg'
-                ],
-                6 => [
-                    'name' => 'Pramod Sharma',
-                    'role' => 'Head of Finance & Accounts',
-                    'dept' => 'Finance & Banking',
-                    'exp'  => '15+ Years Experience',
-                    'bio'  => 'Managing project financing, financial planning, customer payment reconciliations, and banking partnerships.',
-                    'photo'=> 'assets/images/team/pramod-sharma.jpg'
-                ]
-            ];
-            ?>
             <?php for ($i = 4; $i <= 6; $i++): ?>
             <?php
-            $dDef = $deptDefaults[$i] ?? [];
-            $dName = aboutContent($sc, "leader_{$i}_name") ?: ($dDef['name'] ?? '');
-            $dRole = aboutContent($sc, "leader_{$i}_role") ?: ($dDef['role'] ?? '');
-            $dExp = aboutContent($sc, "leader_{$i}_exp") ?: ($dDef['exp'] ?? '');
-            $dBio = aboutContent($sc, "leader_{$i}_bio") ?: ($dDef['bio'] ?? '');
-            $dPhoto = aboutContent($sc, "leader_{$i}_photo") ?: ($dDef['photo'] ?? 'assets/images/team/team-1.jpg');
-            $dDept = aboutContent($sc, "leader_{$i}_dept") ?: ($dDef['dept'] ?? '');
-            $dImgSrc = (str_starts_with($dPhoto, 'http://') || str_starts_with($dPhoto, 'https://')) ? $dPhoto : BASE_URL . '/' . ltrim($dPhoto, '/');
+            $dName = aboutContent($sc, "leader_{$i}_name");
+            $dRole = aboutContent($sc, "leader_{$i}_role");
+            $dExp = aboutContent($sc, "leader_{$i}_exp");
+            $dBio = aboutContent($sc, "leader_{$i}_bio");
+            $dPhoto = aboutContent($sc, "leader_{$i}_photo");
+            $dDept = aboutContent($sc, "leader_{$i}_dept");
+            if ($dName === '') { continue; }
+            $dImgSrc = (str_starts_with($dPhoto, 'http://') || str_starts_with($dPhoto, 'https://'))
+                ? $dPhoto
+                : ($dPhoto !== '' ? BASE_URL . '/' . ltrim($dPhoto, '/') : BASE_URL . '/assets/images/leaders/leader-' . $i . '.jpg');
             ?>
             <div class="col-lg-4 col-md-6">
                 <div class="dept-card scroll-reveal">
