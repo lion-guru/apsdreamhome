@@ -1,3 +1,49 @@
+## Session 695: Analytics v2 "Feature That 404'd On Every Click" Closed End-To-End — Stub `analytics_dashboards` Widened, Live Readers Rewritten Off Phantom Columns, "New Dashboard" Button + Modal Shipped & Verified Zero-Leftover; PENDING RERA Placeholders Guarded Everywhere; Master 11/11 (2026-11-17)
+
+### Trigger
+Owner: "listDashboards() 4-column stub analytics_dashboards par chalta hai, createDashboard() INSERTS phantom columns karta hai ... Re-enable the Create Dashboard button" + the earlier shared mandate to work through the suggestion list. The codebase had a designed-but-never-built "Custom Dashboards" feature for months: view shipped, route shipped, handler shipped, table was a 4-column stub, and every read returned [] silently.
+
+### What was found & fixed (verified live, byte-probed)
+1. **`analytics_dashboards` stub contract** — `id, tenant_id, created_at, updated_at` only. `CREATE TABLE LIKE`-family loss. `createDashboard()` INSERTed columns that never existed (`user_id`, `name`, `widgets`, `is_public`) → guaranteed 1054. Widened via **idempotent migration `widen_analytics_dashboards_s692.php`**: adds `user_id BIGINT NULL`, `name VARCHAR(255) NOT NULL DEFAULT ''`, `widgets LONGTEXT NULL`, `is_public TINYINT(1) NOT NULL DEFAULT 0`. Verified live via SHOW COLUMNS after run.
+2. **`AnalyticsService::listDashboards()` was broken THREE ways**: queried phantom `owner_user_id`; mixed literal `tenantSql()` with a named `:u` parameter (HY2423); bound `:stid` only when tenant>1 (silent skip in default tenant). Rewritten: tenant-scoped literal ` AND tenant_id = ?` with positional `?`, `user_id = ? OR is_public = 1` for scoped reads, `error_log` on failure (was silent []).
+3. **`getDashboard()`**: same family — `:id`+`tenantSql()` mix with an append-only positional `$sparams[]` (HY093 for tenant>1). Now positional `?` with matching bind order; tenant-scoped; same log-on-failure.
+4. **Admin "New Dashboard" button shipped**: `app/views/admin/features/analytics.php` Dashboards tab gains header row + primary button "New Dashboard" → modal with `name` (required, maxlength 200), `widgets` (comma tokens), `is_public` (public-to-tenant switch); CSRF via `SecurityHelper::csrfField()`.
+5. **New controller action** `NewFeaturesController@analyticsDashboardCreate` — `requireAdmin()` + `validateCsrfOrFail()`; defensive trim/length cap; **widget tokens whitelist-filtered** against `[kpis, forecasts, availability, revenue, pipeline]` (garbage tokens + `<script>` are dropped silently, not validated back with an error — no injection into the JSON column and no 500); empty widget list defaults to `[kpis]`; success/error flash; redirect back to the analytics page. Route: `POST /admin/features/analytics/dashboard/create`.
+6. **PENDING RERA placeholders seeded** (companion work, same commit): `seed_pending_rera_s692.php` sets `colonies.rera_number = 'PENDING-VERIFICATION'` on all 8 colony rows (ids 1,2,3,4,5,6,7,455 — `colonies_pre_rera_seed_s692.sql` backup kept in `backups/db/`, 11,203 B). Public render sites now **hide** any value starting with `PENDING` (`app/views/projects/detail.php`, `app/views/pages/projects.php`, `app/views/pages/project_detail.php` ×2 sites, `app/views/properties/detail.php`): no buyer can ever see `PENDING-VERIFICATION`; admins see it as a "NOC pending" marker and can overwrite it from the colony edit form once the legal desk delivers the real registration. This is the honest middle ground until RERA numbers exist — not a fabrication.
+7. **Sacrificial E2E, everything green** (dev `test_login=2` super_admin session, cookie jar in `storage/app/tmp`):
+   - GET `/admin/features/analytics` → 200, 400,052 B; needles: `New Dashboard`, `newDashboardModal`, `dashboard/create`, `custom dashboards created yet`, `KPIs` ALL PRESENT.
+   - POST with `kpis, bogus_token, pipeline, <script>alert(1)</script>` → 302 back to analytics page; DB row written `widgets='[\"kpis\",\"pipeline\"]'` (script + bogus token dropped, proving the whitelist), `is_public=1, user_id=1`.
+   - Re-GET → dashboard card renders with `Public` badge; cleanup DELETE → **0 leftover rows**.
+   - CSRF negative probes: POST without token AND POST with 64×'0' token → both 302 rejected, row count unchanged (stays 0). **CSRF gate holds.**
+   - PHPStan on touched files [OK]; `php -l` clean; **master suite 11/11 PASSED**.
+
+### Honest scope
+- The dashboards render as cards only; there is intentionally **no per-widget render engine yet** — `freshDashboard()` calls `renderDashboardWidgets()`, which yields an empty grid. Storing selected widgets + an honest card is the shippable unit today; the grid renderer is the owner's next call.
+- `AnalyticsService::createDashboard()` itself has no try/catch — the controller wraps it; a 1054 would bubble to the controller catch, flash an honest error and log. Leaving the service bare keeps inner logic visible to static analysis.
+- `pages/index.php` fabrication (`home_testimonial_*` dangling keys now unreferenced) is still present in lang stacks — cosmetic, tracked separately; the parallel actor's S694 removed the render path on the homepage.
+
+### What was deliberately NOT touched
+- Parallel actor's in-flight files (`app/views/admin/layouts/rbac_sidebar.php` S692, `mobile/.../app_constants.dart`, `routes/api.php`, geo-checkin controllers/views `S690`) — left untouched and UNSTAGED; `routes/web.php` contains their S690 GPS-checkin block — my commit stages **only** my one-line POST insert via a HEAD-blob rebuild + `git update-index --cacheinfo`, never their hunk.
+- `_archive/orphan_views_s686/` — the parallel actor's S693 deleted it; nothing to add or restore this round.
+- Blog fabrication sweep / visual-regression refresh / backup prune — NOT done this round by design (the create-dashboard lane consumed it); both are tracked for the next session.
+
+### Verification
+- php -l clean ×10 (9 staged files + migration re-checked) · **PHPStan [OK]** on touched files · **master 11/11 PASSED** (58.1s) · **CSRF negative probe green** · **sacrificial row deleted, 0 leftovers** (`analytics_dashboards` back to 0 rows) · commit `0bb777987` (exactly 10 files) pushed, `ls-remote origin HEAD` == HEAD · AGENTS.md integrity gate re-run at prepend time.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **694** (homepage fabricated buyer personas eliminated, `9800cd688`). This entry = **S695**. Next-free = **696**. Commit gated by `php scripts/verify_agents_log.php` before commit.
+
+### Key lessons
+_1532. **Every 1054 in an admin log is a museum exhibit of a dead caller** — `listDashboards()` was called by every page generation for months; nobody noticed because `catch → []` is invisible. Owner must skim `php_error.log` after every release; a `crawl` that prints zero SQL errors is usually a `catch` doing its job.
+_1533. **A button without a POST route is a lie in shipping chrome** — the view rendered `Create Dashboard` nowhere at all until this round; grep the rendered HTML for `newDashboardModal` before shipping "the button is there".
+_1534. **Whitelist at the drop edge, never at the render edge** — `widgets` is JSON-decoded and displayed; filtering tokens at write time (`in_array`) means no `.json_decode(true)` can ever produce a dangerous array downstream.
+_1535. **Prove the CSRF gate with a negative, not with a pass** — a form that succeeds is not proof of a gate; only a request with no/bad token producing zero rows is.
+_1536. **A placeholder you can grep is a placeholder you can delete with one sed** — `PENDING-VERIFICATION` appears nowhere buyer-facing; the whole family dies in one migration when the NOC arrives.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers (placeholder now live; legal desk delivers real ones) · EMI backfill (owner per-row sign-off) · live AI dialing (Twilio + `--execute`) · production deploy · Task Scheduler verification · 22 zero-reference stub tables decision · `Analytics v2` next step = render actual widget grid from `widgets` JSON (owner spec) · content-claims audit (`scripts/audit_content_claims.php`, not run) · visual-regression baseline refresh · `scripts/backup_prune.ps1` · `backups/orphan_views_s686_pre_delete_*.tar` drop decision · backup folder prune (multi-GB, `backups/db/`).
+
+
 ## Session 694: Homepage Fabricated Buyer Personas Eliminated — Ticker Now States Verifiable Facts, Hardcoded Fake Testimonial Cards Replaced By Honest Verified-Reviews Strip Linking To Live /customer-reviews; Master 11/11 (2026-11-17)
 
 ### Trigger
