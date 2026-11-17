@@ -1140,28 +1140,10 @@ class _HomePageState extends ConsumerState<HomePage>
         AppTheme.tealDeep,
       ),
       const _ToolItem(
-        Icons.account_balance_wallet_outlined,
-        'Payouts',
-        '/admin/payout-batches',
-        AppTheme.aiGradientStart,
-      ),
-      const _ToolItem(
         Icons.receipt_long_rounded,
         'Demand',
         '/demand-letters',
         AppTheme.rose,
-      ),
-      const _ToolItem(
-        Icons.construction_rounded,
-        'Site Work',
-        '/admin/colony-progress',
-        AppTheme.orangeDarker,
-      ),
-      const _ToolItem(
-        Icons.inventory_2_rounded,
-        'Stock',
-        '/admin/material-inventory',
-        AppTheme.tealDeep,
       ),
     ];
 

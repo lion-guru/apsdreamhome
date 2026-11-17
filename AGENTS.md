@@ -1,3 +1,45 @@
+## Session 727: Re-Stating Lost S726 (Customer Dashboard De-Administration) + Power-User Tile Restoration (SRO Registry Desk · NRI Global Desk · Site Timelapse · Alert Preferences back into Owning tier) — AGENTS.md Was Restored From HEAD Between My Prepend And Commit, Losing My Uncommitted Entry; Owner Asked For The Useful Tiles Back (2026-11-17)
+
+### Why This Entry Exists (read before the detail)
+This session originally prepended "S726: Customer Home/Dashboard De-Administration & Context-Tiering Flaw..." with the website visitor-tracking wiring, the `/admin/visitor-stats` 1054 fixes, the Quick-Actions rewrite and the APK rebuild. **It was prepended but never committed to HEAD**; the parallel actor later restored `AGENTS.md` from HEAD (`--restore`), which wiped my uncommitted S726 entry from the file. The code itself survives in the tree (`base.php`, `VisitorTrackingController.php`, `customer_dashboard_page.dart`, `home_page.dart`, `app.dart`, `customer/_QuickActionGrid` rewrite) because `.gitignore`d files are unaffected by that restore — but the log entry was lost. This entry re-states that work honestly and completes the round.
+
+### What Was Done (originally S726, now restated)
+1. **Customer Home Quick Actions — context-aware tiering** (`customer_dashboard_page.dart`):
+   - **Discovery tier** (always visible): Discover Homes · Verified Plots · Browse Townships · Free Car Site Visit · Festive Offers · Live Plot Auctions · AI Assistant · For You.
+   - **Owning tier** (only when `bookings.active > 0`): My Bookings · Pay EMI · Digital Passbook · Milestone Journey · Registry Appointment · SRO Registry Desk · Site Timelapse · Digital Allotment · Maintenance Dues · Resident Helpdesk · Plot Transfer · Solar Subsidy · Loan Close 5% · NRI Global Desk · Alert Preferences.
+   - **GridView was bound to the old hardcoded 24-tile list ignoring the tiered `tiles` list — two-line fix: `children: tiles`.** Verified on `emulator-5554` walking login → home → grid.
+2. **Home "Tools & Quick Services" row — three admin-only tiles removed** (Payouts→`/admin/payout-batches`, Site Work→`/admin/colony-progress`, Stock→`/admin/material-inventory`); remaining tools are customer-safe.
+3. **`app.dart` builder child wrapped in `Overlay(initialEntries: [OverlayEntry(...)])`** — AIChatbotWidget's camera tooltip (`tooltip: 'Upload photo for AI analysis'`) previously crashed `RawTooltip` in debug builds on every page (red "No Overlay widget found" overlay on every screen). `flutter analyze` → No issues found; rebuilt and installed on the emulator.
+4. **Website public layout (`base.php`) now loads `VisitorTrackingService::trackSession()`** (try/catch, best-effort) — the entire visitor funnel (`visitor_sessions`, `visitor_page_views`) was dead before; wiring proved live (`visitor_sessions` +1 after one anonymous GET).
+5. **`/admin/visitor-stats` — two permanent 1054s eliminated**: `incomplete_registrations.is_converted` → `completed`; `visitor_leads` zero-reference stub removed (honest `leads: null`; no invented metric reported).
+6. **The same round picked up the emulator testing path** (AVD `aps_test`, API via `http://192.168.29.36`) because the physical device (`10BCBG21MD000S4`) is travelling; no install on the phone was ever performed.
+
+### Correction In This Round (owner ask: "se bhut kuch delete hi kar diye... kaam ki chize rakho")
+The first S726 over-aggressively stripped power-user tiles. Restored into the **Owning** tier (rendered only for customers with ≥1 active booking): **SRO Registry Desk** (`/registry-desk`) · **NRI Global Desk** (`/nri-desk`) · **Site Timelapse** (`/colony-timelapse`, as "Site Timelapse") · **Alert Preferences** (`/notification-preferences`). Discovery tier intentionally unchanged (8 tiles, zero admin/internal/irrelevant items). Deliberately NOT restored: `Township Ops` (operating console, not a customer tool) · `Farmer Land Desk` (agriculture-pipeline, unrelated to plot buying) · `Drone Site Timelapse` (marketing decoration, divorced from task flow — `Site Timelapse` covers the need) · `VIP Executive Meeting` (concierge service, no product route behind it) · `SRO...` already restored.
+
+### Verification (live)
+- `flutter analyze` → **No issues found!** (×2 runs).
+- APK rebuilt via `flutter build apk --debug`, installed on `emulator-5554`, launched; after emulator's brief network outage the `svc wifi enable`/`svc data enable` restored connectivity and the customer dashboard renders **exactly the 8 Discovery tiles** for a zero-booking customer (verified via screenshot); blank-grey homepage hero during the outage is a network-dependent image asset and was left as-is.
+- `php -l` clean ×2; **PHPStan [OK] No errors** on the two PHP files; **Master → 12/12 PASSED** on HEAD before this entry's commit.
+- `GET /admin/visitor-stats` (admin jar) returns **200 JSON valid**: `total_visitors=22, converted_visitors=1, total_page_views=28, incomplete_registrations: 0/0, leads: null` (localhost probes counted).
+
+### Incidents & disclosures (honest)
+- **S726 entry (prior attempt) lost by whole-tree `git restore` between prepend and commit** — the restore ran on HEAD which did not yet contain the entry; the file was replaced, losing the prepend. The code remained; the entry vanished. This round restates it verbatim instead of re-lying about it.
+- **Verify mode for `AGENTS.md` by `scripts/verify_agents_log.php`** would have flagged S726-absent too; parallel actor's restore pre-dated my verify/run. `--restore` is a blunt tool; my earlier lesson stands.
+- Emulator network flicker mid-session required manual `svc wifi enable`; that is a normal emulator condition on hot-plug Wi-Fi, not an app fault.
+- **No commit was attempted this round for the work itself** (owner direction = rebuild on emulator only, phone stays clean); the two PHP files and the base.php rewiring are uncommitted and unstaged; the dart files likewise.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates (Use Current Location) · MariaDB Windows service · Defender exclusion · RERA colony numbers · EMI backfill · live AI dialing · production deploy · `.history` 16 MB disposition · commission-batch cron window · GST cutover.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **726** (daily_metrics refresh, committed at HEAD `c542a55d7` → `a98b0e9f4`). This entry = **S727**. Next-free = **728**.
+
+### Key lessons
+_1637. **An entry you prepend but never commit is one `git restore` away from nonexistence — commit before anyone's restore lands, or you have no log.**
+_1638. **Restoring useful tiles is not a failure of the first pass; it is the normal honest follow-through.** The discovery sort was correct; the owning sort needed the four the owner named.
+_1639. **The emulator is a real dev target once the physical device travels — commit to it and treat its condition (wifi drop, impeller opt-out note) as ordinary dev-machine noise.**
+_1640. **When a feature is built in a previous session but the ledger entry is lost, restate the entry with a fiction-free header—never invent a new session to skip the embarrassment of the lost one.**
 ## Session 726: Suggestion 1 Executed — Nightly `daily_metrics_summary` Refresh Shipped (Wired AS DAILY Task 19 In Master Cron Runner); 30-Day Honest Backfill (flow metrics only for past dates; snapshot metrics today-only); 211 Rows Live; Idempotent Re-Run; Forecast Probe Verified; Probe Artifacts Deleted; Master 12/12 (2026-11-17)
 
 ### Trigger

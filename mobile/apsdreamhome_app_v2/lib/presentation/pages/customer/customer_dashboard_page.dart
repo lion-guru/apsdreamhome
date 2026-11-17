@@ -321,6 +321,43 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
   }
 
   Widget _buildQuickActions() {
+    final data = _dashboardData ?? {};
+    final bookings = (data['bookings'] as Map<String, dynamic>?) ?? {};
+    final hasBookings = ((bookings['active'] as num?) ?? 0) > 0;
+
+    // Discovery tier — always visible, useful when the customer has no booking yet.
+    final tiles = <Widget>[
+      _buildActionTile(Icons.style_rounded, 'Discover\nHomes', AppTheme.pink, () => context.push('/swipe')),
+      _buildActionTile(Icons.grid_view_rounded, 'Verified\nPlots', AppTheme.successColor, () => context.push('/plots')),
+      _buildActionTile(Icons.apartment, 'Browse\nTownships', AppTheme.infoColor, () => context.push('/colonies')),
+      _buildActionTile(Icons.directions_car_rounded, 'Free Car\nSite Visit', AppTheme.accentColor, () => context.push('/book-site-visit')),
+      _buildActionTile(Icons.local_offer_rounded, 'Festive\nOffers', AppTheme.warningColor, () => context.push('/offers')),
+      _buildActionTile(Icons.gavel_rounded, 'Live Plot\nAuctions', Colors.orange, () => context.push('/property-auctions')),
+      _buildActionTile(Icons.psychology_outlined, 'AI\nAssistant', AppTheme.accentColor, () => context.push('/ai-chatbot')),
+      _buildActionTile(Icons.recommend_outlined, 'For You', AppTheme.goldColor, () => context.push('/user/ai-suggestions')),
+    ];
+
+    // Owning tier — only meaningful once the customer has an active booking.
+    if (hasBookings) {
+      tiles.addAll([
+        _buildActionTile(Icons.book_outlined, 'My\nBookings', AppTheme.primaryColor, () => context.push('/customer-bookings')),
+        _buildActionTile(Icons.payment, 'Pay\nEMI', AppTheme.warningColor, () => context.push('/emi-schedule')),
+        _buildActionTile(Icons.menu_book_rounded, 'Digital\nPassbook', AppTheme.goldColor, () => context.push('/customer-passbook')),
+        _buildActionTile(Icons.timeline_rounded, 'Milestone\nJourney', AppTheme.accentColor, () => context.push('/customer-journey/1')),
+        _buildActionTile(Icons.event_available_rounded, 'Registry\nAppointment', AppTheme.secondaryColor, () => context.push('/registry-appointments')),
+        _buildActionTile(Icons.how_to_reg, 'SRO Registry\nDesk', Colors.teal, () => context.push('/registry-desk')),
+        _buildActionTile(Icons.videocam_outlined, 'Site\nTimelapse', Colors.deepPurple, () => context.push('/colony-timelapse')),
+        _buildActionTile(Icons.verified_outlined, 'Digital\nAllotment', AppTheme.successColor, () => context.push('/allotment-acceptance')),
+        _buildActionTile(Icons.receipt_long_rounded, 'Maintenance\nDues', AppTheme.secondaryColor, () => context.push('/maintenance-dues')),
+        _buildActionTile(Icons.support_agent_rounded, 'Resident\nHelpdesk', Colors.red, () => context.push('/township-grievances')),
+        _buildActionTile(Icons.swap_horiz_rounded, 'Plot\nTransfer', Colors.teal, () => context.push('/plot-transfers')),
+        _buildActionTile(Icons.wb_sunny_outlined, 'Solar\nSubsidy', Colors.orange, () => context.push('/solar-subsidy')),
+        _buildActionTile(Icons.savings_rounded, 'Loan\nClose 5%', AppTheme.primaryColor, () => context.push('/loan-foreclosure')),
+        _buildActionTile(Icons.public_rounded, 'NRI Global\nDesk', Colors.indigo, () => context.push('/nri-desk')),
+        _buildActionTile(Icons.tune_outlined, 'Alert\nPreferences', Colors.pink, () => context.push('/notification-preferences')),
+      ]);
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -338,33 +375,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
             childAspectRatio: 0.85,
-            children: [
-              _buildActionTile(Icons.book_outlined, 'My\nBookings', AppTheme.primaryColor, () => context.push('/customer-bookings')),
-              _buildActionTile(Icons.style_rounded, 'Discover\nHomes', AppTheme.pink, () => context.push('/swipe')),
-              _buildActionTile(Icons.payment, 'Pay\nEMI', AppTheme.warningColor, () => context.push('/emi-schedule')),
-              _buildActionTile(Icons.receipt_long_rounded, 'Maintenance\nDues', AppTheme.secondaryColor, () => context.push('/maintenance-dues')),
-              _buildActionTile(Icons.support_agent_rounded, 'Resident\nHelpdesk', Colors.red, () => context.push('/township-grievances')),
-              _buildActionTile(Icons.directions_car_rounded, 'Free Car\nSite Visit', AppTheme.accentColor, () => context.push('/book-site-visit')),
-              _buildActionTile(Icons.apartment, 'Browse\nTownships', AppTheme.infoColor, () => context.push('/colonies')),
-              _buildActionTile(Icons.grid_view_rounded, 'Verified\nPlots', AppTheme.successColor, () => context.push('/plots')),
-              _buildActionTile(Icons.domain_outlined, 'Township\nOps', Colors.purple, () => context.push('/township-operations')),
-              _buildActionTile(Icons.wb_sunny_outlined, 'Solar\nSubsidy', Colors.orange, () => context.push('/solar-subsidy')),
-              _buildActionTile(Icons.menu_book_rounded, 'Digital\nPassbook', AppTheme.goldColor, () => context.push('/customer-passbook')),
-              _buildActionTile(Icons.swap_horiz_rounded, 'Plot\nTransfer', Colors.teal, () => context.push('/plot-transfers')),
-              _buildActionTile(Icons.savings_rounded, 'Loan\nClose 5%', AppTheme.primaryColor, () => context.push('/loan-foreclosure')),
-              _buildActionTile(Icons.public_rounded, 'NRI Global\nDesk', Colors.indigo, () => context.push('/nri-desk')),
-              _buildActionTile(Icons.timeline_rounded, 'Milestone\nJourney', AppTheme.accentColor, () => context.push('/customer-journey/1')),
-              _buildActionTile(Icons.event_available_rounded, 'Registry\nAppointment', AppTheme.secondaryColor, () => context.push('/registry-appointments')),
-              _buildActionTile(Icons.how_to_reg, 'SRO Registry\nDesk', Colors.teal, () => context.push('/registry-desk')),
-              _buildActionTile(Icons.videocam_rounded, 'Drone Site\nTimelapse', Colors.deepPurple, () => context.push('/colony-timelapse')),
-              _buildActionTile(Icons.verified_outlined, 'Digital\nAllotment', AppTheme.successColor, () => context.push('/allotment-acceptance')),
-              _buildActionTile(Icons.tune_rounded, 'Alert\nPreferences', Colors.pink, () => context.push('/notification-preferences')),
-              _buildActionTile(Icons.gavel_rounded, 'Live Plot\nAuctions', Colors.orange, () => context.push('/property-auctions')),
-              _buildActionTile(Icons.agriculture_rounded, 'Farmer\nLand Desk', AppTheme.goldColor, () => context.push('/farmer-desk')),
-              _buildActionTile(Icons.handshake_rounded, 'VIP Executive\nMeeting', AppTheme.primaryColor, () => context.push('/meeting-scheduler')),
-              _buildActionTile(Icons.psychology_outlined, 'AI Assistant', AppTheme.accentColor, () => context.push('/ai-chatbot')),
-              _buildActionTile(Icons.recommend_outlined, 'For You', AppTheme.goldColor, () => context.push('/user/ai-suggestions')),
-            ],
+            children: tiles,
           ),
         ],
       ),

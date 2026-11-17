@@ -74,14 +74,21 @@ class _APSDreamHomeAppState extends ConsumerState<APSDreamHomeApp> {
               context.pop();
             }
           },
-          child: Stack(
-            children: [
-              child ?? const SizedBox.shrink(),
-              // Floating AI Chatbot Widget
-              const Positioned(
-                right: 16,
-                bottom: 148,
-                child: AIChatbotWidget(isMini: true),
+          child: Overlay(
+            initialEntries: [
+              OverlayEntry(
+                builder: (overlayContext) => Stack(
+                  children: [
+                    child ?? const SizedBox.shrink(),
+                    // Floating AI Chatbot Widget (needs an Overlay ancestor
+                    // so its tooltips don't crash with RawTooltip errors)
+                    const Positioned(
+                      right: 16,
+                      bottom: 148,
+                      child: AIChatbotWidget(isMini: true),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

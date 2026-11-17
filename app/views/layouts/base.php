@@ -2,6 +2,11 @@
 // CSP headers now set centrally in BaseController::setSecurityHeaders()
 // SecurityHelper is still used for CSRF token generation via SecurityHelper::generateCsrfToken()
 // Load site settings from DB (same cache as header/footer)
+// Visitor funnel: track every public/customer page render into visitor_sessions + visitor_page_views (best-effort, never breaks render)
+if (!isset($GLOBALS['_visitor_tracked'])) {
+    $GLOBALS['_visitor_tracked'] = true;
+    try { (new \App\Services\VisitorTrackingService())->trackSession(); } catch (\Throwable $e) { error_log('Visitor tracking: ' . $e->getMessage()); }
+}
 if (!isset($GLOBALS['_site_settings_cache'])) {
     $GLOBALS['_site_settings_cache'] = [];
     try {

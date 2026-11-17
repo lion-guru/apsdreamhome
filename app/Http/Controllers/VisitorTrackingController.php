@@ -128,24 +128,14 @@ class VisitorTrackingController extends AdminController
             $incompleteRegs = $db->fetchOne("
                 SELECT 
                     COUNT(*) as total,
-                    COUNT(CASE WHEN is_converted = 1 THEN 1 END) as converted
+                    COUNT(CASE WHEN completed = 1 THEN 1 END) as converted
                 FROM incomplete_registrations
                 WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             ");
 
-            try {
-                $leads = $db->fetchOne("
-                    SELECT 
-                        COUNT(*) as total,
-                        COUNT(CASE WHEN lead_status = 'new' THEN 1 END) as new_leads,
-                        COUNT(CASE WHEN lead_status = 'converted' THEN 1 END) as converted_leads
-                    FROM visitor_leads
-                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                ");
-            } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
-            }
+            // visitor_leads is a zero-reference stub (id/tenant_id/timestamps only) —
+            // no lead columns exist. Report null honestly instead of a permanent 1054.
+            $leads = null;
 
             echo json_encode([
                 'success' => true,
