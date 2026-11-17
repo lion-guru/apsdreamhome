@@ -460,6 +460,12 @@ class AppConstants {
   static const String attendanceEndpoint = '/api/v2/mobile/self-service/attendance';
   static const String attendanceStatsEndpoint = '/api/v2/mobile/self-service/attendance/stats';
 
+  // Geo Check-In (S690) - office/field geofenced attendance, anti-fraud heuristics
+  static const String geoAttendanceZonesEndpoint = '/api/v2/mobile/geo-attendance/zones';
+  static const String geoAttendanceCheckInEndpoint = '/api/v2/mobile/geo-attendance/check-in';
+  static const String geoAttendanceCheckOutEndpoint = '/api/v2/mobile/geo-attendance/check-out';
+  static const String geoAttendancePingEndpoint = '/api/v2/mobile/geo-attendance/ping';
+
   // Gratuity
   static const String gratuityCalculatorEndpoint = '/api/v2/mobile/gratuity/calculator';
   static const String gratuityReportEndpoint = '/api/v2/mobile/gratuity/report';

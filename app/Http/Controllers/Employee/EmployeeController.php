@@ -748,14 +748,15 @@ class EmployeeController extends BaseController
     public function tasks()
     {
         $employeeId = $_SESSION['employee_id'] ?? 0;
+        // Tasks are assigned by users.id (admin TaskController assigns users.id), not by employee_profiles.id.
+        $taskOwnerId = (int)($_SESSION['employee_user_id'] ?? $employeeId);
         $tasks = [];
         $stats = ['total' => 0, 'pending' => 0, 'in_progress' => 0, 'completed' => 0, 'overdue' => 0];
-        if ($employeeId > 0) {
+        if ($taskOwnerId > 0) {
             try {
-                $emp = $this->db->fetch("SELECT name, department FROM employees WHERE id = ?", [$employeeId]);
                 $tasks = $this->db->fetchAll(
-                    "SELECT t.*, u.name AS assigned_by_name FROM tasks t LEFT JOIN users u ON t.created_by = u.id WHERE t.assigned_to = ? ORDER BY FIELD(t.priority, 'High', 'Medium', 'Low'), t.due_date ASC",
-                    [$employeeId]
+                    "SELECT t.*, u.name AS assigned_by_name FROM tasks t LEFT JOIN users u ON t.created_by = u.id WHERE t.assigned_to = ? ORDER BY FIELD(t.priority, 'high', 'medium', 'low'), t.due_date ASC",
+                    [$taskOwnerId]
                 );
                 $stats['total'] = count($tasks);
                 $now = date('Y-m-d');

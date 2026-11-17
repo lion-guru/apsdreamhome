@@ -4339,6 +4339,16 @@ $router->get('/admin/hrm', 'App\\Http\\Controllers\\Admin\\HRMController@index')
 $router->get('/admin/hrm/users/create', 'App\\Http\\Controllers\\Admin\\HRMController@createEmployee');
 $router->get('/admin/hrm/attendance', 'App\\Http\\Controllers\\Admin\\HRMController@attendance');
 $router->get('/admin/hrm/leave', 'App\\Http\\Controllers\\Admin\\HRMController@leave');
+// GPS Check-In Monitor (S690) - office/field geofenced attendance, anti-fraud flags, HR review
+$router->get('/admin/hrm/check_in_monitor', 'App\\Http\\Controllers\\Admin\\EmployeeCheckinController@index');
+$router->get('/admin/hrm/check_in_monitor/{date}', 'App\\Http\\Controllers\\Admin\\EmployeeCheckinController@index');
+$router->post('/admin/hrm/check_in_monitor/review', 'App\\Http\\Controllers\\Admin\\EmployeeCheckinController@review');
+$router->get('/admin/hrm/check_in_monitor/report/{employeeId}', 'App\\Http\\Controllers\\Admin\\EmployeeCheckinController@dayReport');
+$router->get('/admin/hrm/check_in_monitor/ai-summary', 'App\\Http\\Controllers\\Admin\\EmployeeCheckinController@aiSummary');
+$router->get('/admin/hrm/work-zones', 'App\\Http\\Controllers\\Admin\\EmployeeWorkZonesController@index');
+$router->post('/admin/hrm/work-zones/store', 'App\\Http\\Controllers\\Admin\\EmployeeWorkZonesController@store');
+$router->post('/admin/hrm/work-zones/update', 'App\\Http\\Controllers\\Admin\\EmployeeWorkZonesController@update');
+$router->post('/admin/hrm/work-zones/toggle', 'App\\Http\\Controllers\\Admin\\EmployeeWorkZonesController@toggle');
 
 // Backup
 $router->get('/admin/backup', 'App\\Http\\Controllers\\Admin\\BackupController@index');

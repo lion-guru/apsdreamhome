@@ -643,30 +643,37 @@ class EmployeeDashboardController extends BaseController
      */
     public function updateTaskStatus()
     {
+        header('Content-Type: application/json');
         try {
             $taskId = (int)($_POST['task_id'] ?? 0);
-            $status = $_POST['status'] ?? '';
+            $status = strtolower(trim((string)($_POST['status'] ?? '')));
+            // Tasks are assigned by users.id - use the canonical user id rather than the employee_profiles id
+            $ownerId = (int)($_SESSION['employee_user_id'] ?? $this->employeeId);
 
-            if ($taskId <= 0 || $status === '') {
-                return ['success' => false, 'message' => 'Task ID and status are required'];
+            $allowed = ['pending', 'in_progress', 'completed', 'cancelled'];
+            if ($taskId <= 0 || !in_array($status, $allowed, true)) {
+                echo json_encode(['success' => false, 'message' => 'Valid task_id and status (pending|in_progress|completed|cancelled) are required']);
+                exit;
             }
 
-            $query = "UPDATE tasks 
-                      SET status = ?, updated_at = NOW() 
+            $query = "UPDATE tasks
+                      SET status = ?, completed_at = CASE WHEN ? = 'completed' THEN NOW() ELSE completed_at END, updated_at = NOW()
                       WHERE id = ? AND assigned_to = ?";
-            
-            $result = $this->db->execute($query, [$status, $taskId, $this->employeeId]);
-            
+
+            $result = $this->db->execute($query, [$status, $status, $taskId, $ownerId]);
+
             if ($result) {
-                // Log the update
                 $this->logTaskUpdate($taskId, $status);
-                return ['success' => true, 'message' => 'Task updated successfully'];
+                echo json_encode(['success' => true, 'message' => 'Task updated successfully']);
+                exit;
             }
-            
-            return ['success' => false, 'message' => 'Failed to update task'];
-            
+
+            echo json_encode(['success' => false, 'message' => 'Task not found or not assigned to you']);
+            exit;
         } catch (\Throwable $e) {
-            return ['success' => false, 'message' => $e->getMessage()];
+            error_log('EmployeeDashboardController::updateTaskStatus error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Server error']);
+            exit;
         }
     }
 

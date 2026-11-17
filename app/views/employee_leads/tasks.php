@@ -8,7 +8,7 @@ function taskPriorityBadge($priority) {
     return '<span class="badge bg-' . $cls . '">' . htmlspecialchars($priority ?? 'Medium') . '</span>';
 }
 function taskStatusBadge($status) {
-    $map = ['completed' => 'success', 'in progress' => 'primary', 'pending' => 'warning'];
+    $map = ['completed' => 'success', 'in_progress' => 'primary', 'in progress' => 'primary', 'pending' => 'warning'];
     $cls = $map[strtolower($status ?? '')] ?? 'secondary';
     return '<span class="badge bg-' . $cls . '">' . ucfirst(htmlspecialchars($status ?? 'Pending')) . '</span>';
 }
@@ -73,16 +73,16 @@ function taskStatusBadge($status) {
             <select aria-label="Status filter" id="statusFilter" class="form-select form-select-sm" onchange="filterTasks()">
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
-                <option value="in progress">In Progress</option>
+                <option value="in_progress">In Progress</option>
                 <option value="completed">Completed</option>
             </select>
         </div>
         <div class="col-md-4">
             <select aria-label="Priority filter" id="priorityFilter" class="form-select form-select-sm" onchange="filterTasks()">
                 <option value="">All Priorities</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
             </select>
         </div>
         <div class="col-md-4 text-md-end">
@@ -122,7 +122,7 @@ function taskStatusBadge($status) {
                                 $dueDate = !empty($t['due_date']) ? date('M d, Y', strtotime($t['due_date'])) : '—';
                                 $dueClass = $isOverdue ? 'text-danger fw-bold' : '';
                             ?>
-                            <tr class="emp-task-card <?= $rowClass ?>" data-status="<?= $status ?>" data-priority="<?= htmlspecialchars($t['priority'] ?? 'Medium') ?>" data-search="<?= strtolower(htmlspecialchars($t['title'] ?? '')) ?>">
+                            <tr class="emp-task-card <?= $rowClass ?>" data-status="<?= $status ?>" data-priority="<?= htmlspecialchars(strtolower($t['priority'] ?? 'medium')) ?>" data-search="<?= strtolower(htmlspecialchars($t['title'] ?? '')) ?>">
                                 <td>
                                     <div class="fw-semibold"><?= htmlspecialchars($t['title'] ?? 'Untitled Task') ?></div>
                                     <?php if (!empty($t['description'])): ?>
@@ -136,7 +136,7 @@ function taskStatusBadge($status) {
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <?php if ($status !== 'completed'): ?>
-                                            <button class="btn btn-outline-success" onclick="updateTaskStatus(<?= $t['id'] ?>, 'in progress')" title="Start Task">
+                                            <button class="btn btn-outline-success" onclick="updateTaskStatus(<?= $t['id'] ?>, 'in_progress')" title="Start Task">
                                                 <i class="fas fa-play"></i>
                                             </button>
                                             <button class="btn btn-outline-primary" onclick="updateTaskStatus(<?= $t['id'] ?>, 'completed')" title="Mark Complete">
@@ -180,7 +180,7 @@ function filterTasks() {
 function updateTaskStatus(taskId, newStatus) {
     if (!confirm('Update task status to ' + newStatus + '?')) return;
     
-    fetch('<?= BASE_URL ?>/employee/api/update-task', {
+    fetch('<?= BASE_URL ?>/employee/dashboard/update-task-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'task_id=' + taskId + '&status=' + encodeURIComponent(newStatus) + '&csrf_token=' + encodeURIComponent('<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>')

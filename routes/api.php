@@ -1159,6 +1159,26 @@ $router->get('/api/v2/mobile/attendance/status', 'Api\MobileMLMApiController@att
 $router->post('/api/v2/mobile/attendance/punch-in', 'Api\MobileMLMApiController@punchIn')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/attendance/punch-out', 'Api\MobileMLMApiController@punchOut')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// Geo Check-In (S690) — geofenced office/field check-in, anti-fraud heuristics,
+// field ping breadcrumbs, AI daily summary. Additive to the legacy punch-* family.
+$router->get('/api/v2/mobile/geo-attendance/zones', 'Api\GeoCheckinController@zones')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/geo-attendance/check-in', 'Api\GeoCheckinController@checkIn')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/geo-attendance/check-out', 'Api\GeoCheckinController@checkOut')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/geo-attendance/ping', 'Api\GeoCheckinController@ping')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/geo-attendance/me/today', 'Api\GeoCheckinController@meToday')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/geo-attendance/team/today', 'Api\GeoCheckinController@teamToday')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Employee self-service tasks (mobile app, Bearer auth).
+// Tasks are owned by users.id (admin TaskController assigns users.id).
+$router->get('/api/v2/mobile/employee/tasks', 'Api\EmployeeController@tasks')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/employee/tasks/update/{id}', 'Api\EmployeeController@updateTask')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Admin GPS work-zones manager endpoints (mobile admin app, Bearer auth + admin-role gate)
+$router->get('/api/v2/mobile/admin/work-zones', 'Api\MobileWorkZonesController@index')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/admin/work-zones/store', 'Api\MobileWorkZonesController@store')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/admin/work-zones/{id}/update', 'Api\MobileWorkZonesController@update')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/admin/work-zones/{id}/toggle', 'Api\MobileWorkZonesController@toggle')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // Notification registration (existing at /api/mobile/notifications/*)
 $router->post('/api/v2/mobile/notifications/register', 'Api\MobileUserApiController@registerPushTokenV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 

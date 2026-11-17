@@ -28,29 +28,19 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
     setState(() { _loading = true; _error = null; });
     try {
       final api = ref.read(apiServiceProvider);
-      final res = await api.get('/admin/tasks');
+      final res = await api.get('/employee/tasks');
       if (res['success'] == true && mounted) {
-        final raw = res['tasks'] ?? res['data'] ?? [];
+        final raw = res['data'] ?? res['tasks'] ?? [];
         setState(() {
           _tasks = List<Map<String, dynamic>>.from(
             (raw as List).map((e) => Map<String, dynamic>.from(e as Map)),
           );
         });
-      } else if (mounted) {
-        // Fallback: try employee-specific endpoint
-        try {
-          final res2 = await api.get('/employee/api/tasks');
-          if (res2['success'] == true && mounted) {
-            final raw = res2['tasks'] ?? res2['data'] ?? [];
-            setState(() {
-              _tasks = List<Map<String, dynamic>>.from(
-                (raw as List).map((e) => Map<String, dynamic>.from(e as Map)),
-              );
-            });
-          }
-        } catch (_) {
-          // Keep empty tasks
-        }
+      } else {
+        setState(() {
+          _tasks = [];
+          _error = res['error'] as String? ?? 'Failed to load tasks';
+        });
       }
     } catch (e) {
       if (mounted) setState(() => _error = 'Failed to load tasks: $e');
@@ -104,8 +94,28 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
   Future<void> _updateTaskStatus(int taskId, String newStatus) async {
     try {
       final api = ref.read(apiServiceProvider);
-      await api.post('/admin/tasks/update/$taskId', data: {'status': newStatus});
-      await _load();
+      final res = await api.post('/employee/tasks/update/$taskId',
+          data: {'status': newStatus});
+      if (res['success'] == true) {
+        await _load();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Task marked ${newStatus.replaceAll('_', ' ')}'),
+              backgroundColor: AppTheme.successColor,
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${res['error'] ?? 'Update failed'}'),
+              backgroundColor: AppTheme.errorColor,
+            ),
+          );
+        }
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

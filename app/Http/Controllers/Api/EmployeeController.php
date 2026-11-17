@@ -126,6 +126,65 @@ class EmployeeController extends BaseController
         }
     }
 
+    public function updateTask($id = 0)
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                $this->jsonError('User ID is required', 401);
+                return;
+            }
+            $taskId = (int) $id;
+            if ($taskId <= 0) {
+                $this->jsonError('Invalid task id', 400);
+                return;
+            }
+
+            // Accept JSON body without assuming content-type header is present
+            $raw = file_get_contents('php://input');
+            $body = json_decode((string) $raw, true);
+            if (!is_array($body)) {
+                $body = $_POST;
+            }
+            $status = (string) ($body['status'] ?? '');
+            // Advisory whitelist - HR decides, the record notes the request
+            $allowed = ['pending', 'in_progress', 'completed', 'cancelled'];
+            if (!in_array($status, $allowed, true)) {
+                $this->jsonError('Status must be one of: ' . implode(', ', $allowed), 400);
+                return;
+            }
+            $notes = isset($body['notes']) ? trim((string) $body['notes']) : null;
+
+            $tid = (int)$this->tenantId();
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+
+            // Verify ownership FIRST so the client never sees a silent 0-row "success:false" for no reason
+            $chkParams = [$taskId, $userId];
+            if ($tid > 1) $chkParams[] = $tid;
+            $chk = $this->db->prepare("SELECT id FROM tasks WHERE id = ? AND assigned_to = ?{$tidSql}");
+            $chk->execute($chkParams);
+            if (!$chk->fetch()) {
+                $this->jsonResponse(['success' => false, 'error' => 'Task not found or not assigned to you']);
+                return;
+            }
+
+            $params = [$status, $status, $taskId, $userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt = $this->db->prepare("UPDATE tasks SET status = ?, completed_at = CASE WHEN ? = 'completed' THEN NOW() ELSE completed_at END, updated_at = NOW() WHERE id = ? AND assigned_to = ?{$tidSql}");
+            $stmt->execute($params);
+
+            if ($notes !== null) {
+                $this->db->prepare("UPDATE tasks SET notes = CONCAT(COALESCE(notes,''), IF(COALESCE(notes,'') = '', '', '\n'), '[', NOW(), '] ', ?) WHERE id = ? AND assigned_to = ?")
+                    ->execute([$notes, $taskId, $userId]);
+            }
+
+            $this->jsonResponse(['success' => true, 'message' => 'Task updated', 'status' => $status]);
+        } catch (\Throwable $e) {
+            $this->jsonError('Failed to update task: ' . $e->getMessage(), 500);
+        }
+    }
+
     public function attendance()
     {
         $this->setCorsHeaders();
