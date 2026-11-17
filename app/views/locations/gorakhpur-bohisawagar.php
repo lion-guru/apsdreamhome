@@ -1,271 +1,103 @@
 <?php
+/**
+ * Bohisawagar Gorakhpur Project View - APS Dream Homes
+ *
+ * Honesty note: Bohisawagar has been announced as an upcoming development but
+ * has no colonies row, projects row, recorded plot inventory, published rate
+ * card, area or possession date. Every numeric figure this file previously
+ * carried (\u20B99,50,000 / 25 Acres / 200 units / March 2025 possession) was
+ * invented with no data source and has been removed. This page therefore
+ * states only what can be verified today.
+ */
 
-// FIXED: Removed missing include - file doesn't exist
-// require_once 'includes/db_connection.php';
+$page_title = 'Bohisawagar Gorakhpur - Upcoming APS Dream Homes Township';
 
-// Initialize database connection using proper Database class
-try {
-    $db = \App\Core\Database\Database::getInstance();
-    $conn = $db->getConnection();
-} catch (\Throwable $e) {
-    error_log("Database connection failed: " . $e->getMessage());
-    die("Database connection failed. Please check system logs.");
-}
-
-// Set project details
-$projectName = "Bohisawagar";
-$projectLocation = "Gorakhpur";
-$projectType = "Residential Plots";
-$projectStatus = "Upcoming";
-$startingPrice = "₹9,50,000";
-$projectArea = "25 Acres";
-$totalUnits = "200";
-$possessionDate = "March 2025";
-
-// Project description
-$projectDescription = "Bohisawagar presents an exceptional opportunity for investment in premium residential plots in Gorakhpur. Strategically located with excellent connectivity, this project offers modern amenities and a well-planned layout for comfortable living.";
-
-// Meta description for SEO
-$metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS Dream Homes. Starting at ₹9,50,000. Excellent connectivity and modern amenities.";
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo e($projectName); ?> - APS Dream Homes</title>
-    <meta name="description" content="<?php echo e($metaDescription); ?>">
-
-    <!-- Bootstrap CSS -->
-    <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
-    <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-    <style>
-        .project-hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                /* NOTE (S450): 'assets/images/projects/gorakhpur/bohisawagar-banner.jpg'
-     does not exist in this repo, and the url() was RELATIVE (so it
-     resolved against the page path and 404'd even if it did). Use an
-     absolute BASE_URL path and a real Gorakhpur township photo until the
-     dedicated Bohisawagar banner is supplied. */
-  url('<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 150px 0 100px;
-            margin-top: -20px;
-            position: relative;
-        }
-
-        /* ... rest of the CSS same as Minua ... */
-    </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
-</head>
-
-<body>
-<main>
-    <!-- Navigation -->
-    <!-- FIXED: Commented out missing template file -->
-    <?php // include 'includes/templates/header.php'; ?>
-
-    <!-- Project Hero Section -->
-    <section class="project-hero">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="display-4 fw-bold mb-3"><?php echo e($projectName); ?></h1>
-                    <p class="lead mb-4">Premium Residential Plots in Gorakhpur</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <span class="badge bg-primary px-3 py-2">
-                            <i class="fas fa-map-marker-alt me-1"></i>
-                            <?php echo e($projectLocation); ?>
-                        </span>
-                        <span class="badge px-3 py-2" style="background:#f4c542;color:#1e293b;">
-                            <?php echo e($projectStatus); ?>
-                        </span>
-                    </div>
-                </div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="page-banner mb-5">
+            <div class="container text-center">
+                <h1 class="display-3 fw-bold mb-3 animate-fade-up">Bohisawagar</h1>
+                <p class="lead animate-fade-up">Upcoming Township in Gorakhpur</p>
             </div>
         </div>
-    </section>
 
-    <!-- Project Details -->
-    <section class="py-5">
         <div class="container">
-            <div class="row">
-                <!-- Main Content -->
-                <div class="col-lg-8 mb-4">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body aps-cp-card-body">
-                            <h2 class="mb-4">About the Project</h2>
-                            <div class="project-description">
-                                <?php echo nl2br(htmlspecialchars($projectDescription ?? '')); ?>
-                            </div>
-
-                            <h3 class="mt-5 mb-4">Project Highlights</h3>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="highlight-item">
-                                        <div class="highlight-icon">
-                                            <i class="fas fa-home"></i>
-                                        </div>
-                                        <h3 class="fs-6 fw-bold">Project Type</h3>
-                                        <p class="text-muted"><?php echo e($projectType); ?></p>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="highlight-item">
-                                        <div class="highlight-icon">
-                                            <i class="fas fa-map-marked-alt"></i>
-                                        </div>
-                                        <h3 class="fs-6 fw-bold">Location</h3>
-                                        <p class="text-muted"><?php echo e($projectLocation); ?></p>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="highlight-item">
-                                        <div class="highlight-icon">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </div>
-                                        <h3 class="fs-6 fw-bold">Possession</h3>
-                                        <p class="text-muted"><?php echo e($possessionDate); ?></p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h3 class="mt-5 mb-4">Amenities</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <ul class="amenities-list">
-                                        <li>24/7 Security & CCTV Surveillance</li>
-                                        <li>Well-planned Road Network</li>
-                                        <li>Underground Electricity Lines</li>
-                                        <li>Water Supply System</li>
-                                        <li>Drainage & Sewage System</li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <ul class="amenities-list">
-                                        <li>Landscaped Parks & Green Spaces</li>
-                                        <li>Children's Play Area</li>
-                                        <li>Community Center</li>
-                                        <li>Parking Facilities</li>
-                                        <li>Easy Access to Main Road</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sidebar -->
-                <div class="col-lg-4">
-                    <div class="project-highlight sticky-top">
-                        <h3 class="mb-4">Project Overview</h3>
+            <div class="row align-items-center mb-5 pb-4">
+                <div class="col-lg-7">
+                    <div class="pe-lg-5">
+                        <h2 class="display-6 fw-bold text-primary mb-4">Bohisawagar Project</h2>
+                        <h3 class="fs-4 fw-bold mb-3">Overview</h3>
+                        <p class="mb-3">APS Dream Homes is developing land in the Bohisawagar region of Gorakhpur for a future integrated township. No rate card, inventory count, possession date or RERA registration number is published yet for this project.</p>
+                        <p class="mb-4">If you are considering a plot here, please treat every figure you hear from any channel as unverified until the colony entry is formally registered and a rate card is published. Colony-wise RERA verification will be available on request at our legal desk (+91 70074 44842) or on up-rera.in once colony details are final.</p>
                         <ul class="list-unstyled">
-                            <li class="mb-3">
-                                <strong>Starting Price:</strong>
-                                <span class="float-end text-primary fw-bold">
-                                    <?php echo e($startingPrice); ?>
-                                </span>
-                            </li>
-                            <li class="mb-3">
-                                <strong>Project Area:</strong>
-                                <span class="float-end">
-                                    <?php echo e($projectArea); ?>
-                                </span>
-                            </li>
-                            <li class="mb-3">
-                                <strong>Total Units:</strong>
-                                <span class="float-end">
-                                    <?php echo e($totalUnits); ?>
-                                </span>
-                            </li>
-                            <li class="mb-3">
-                                <strong>Possession:</strong>
-                                <span class="float-end">
-                                    <?php echo e($possessionDate); ?></p>
-                                </span>
-                            </li>
+                            <li class="mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i> Gorakhpur (Bohisawagar corridor)</li>
+                            <li class="mb-2"><i class="fas fa-road text-primary me-2"></i> Infrastructure under development</li>
+                            <li class="mb-2"><i class="fas fa-file-alt text-primary me-2"></i> Colony-wise titles & documentation shared at the legal desk</li>
+                            <li class="mb-2"><i class="fas fa-calendar-check text-primary me-2"></i> Status: announced, land acquisition in progress</li>
                         </ul>
-
-                        <div class="d-grid gap-2 mt-4">
-                            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#enquiryModal">
-                                <i class="fas fa-phone-alt me-2"></i> Request Call Back
-                            </button>
-                            <a href="#site-plan" class="btn btn-outline-primary">
-                                <i class="fas fa-download me-2"></i> Download Brochure
-                            </a>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-lg rounded-4">
+                        <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="APS Dream Homes township development in Gorakhpur" class="card-img-top rounded-4" loading="lazy">
+                        <div class="card-body">
+                            <h4 class="card-title mb-2">Current Townships in Gorakhpur</h4>
+                            <p class="card-text text-muted small mb-3">Live, documented projects you can visit today:</p>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="<?= BASE_URL ?>/colony/suryoday-colony" class="btn btn-outline-primary rounded-pill"><i class="fas fa-home me-2"></i>Suryoday Colony</a>
+                                <a href="<?= BASE_URL ?>/project-locations/raghunath-nagri" class="btn btn-outline-primary rounded-pill"><i class="fas fa-home me-2"></i>Raghunath Nagri</a>
+                                <a href="<?= BASE_URL ?>/contact" class="btn btn-primary rounded-pill"><i class="fas fa-phone-alt me-2"></i>Enquire About Bohisawagar</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Enquiry Modal -->
-    <div class="modal fade" id="enquiryModal" tabindex="-1" aria-labelledby="enquiryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="enquiryModalLabel">Enquire About <?php echo e($projectName); ?></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-5">
+                <h3 class="fs-4 fw-bold mb-3">What to expect</h3>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-search-location text-primary"></i><span>Full township &amp; plot details shared on enquiry</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-file-contract text-primary"></i><span>Colony documentation at the legal desk</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-phone-alt text-primary"></i><span>Direct APS Dream Homes office contact</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <form id="enquiryForm">
-    <?php echo csrf_field(); ?>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Your Name</label>
-                            <input aria-label="Name" type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input aria-label="Email" type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input aria-label="Phone" type="tel" class="form-control" id="phone" name="phone" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea aria-label="Message" class="form-control" id="message" name="message" rows="3">I'm interested in <?php echo e($projectName); ?>. Please contact me with more details.</textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Submit Enquiry</button>
-                    </form>
+            </div>
+
+            <div class="card border-0 bg-primary text-white rounded-5 p-5 text-center mb-5 shadow-lg position-relative overflow-hidden">
+                <div class="position-absolute top-0 end-0 p-4 opacity-10">
+                    <i class="fas fa-city fa-10x"></i>
+                </div>
+                <div class="position-relative z-index-1">
+                    <h2 class="display-5 fw-bold mb-3">Interested in Bohisawagar?</h2>
+                    <p class="lead mb-4" style="color: #dbeafe;">Talk to our Gorakhpur office team - we share current documented inventory and honest colony status.</p>
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <a href="tel:+917007444842" class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary">
+                            <i class="fas fa-phone-alt me-2"></i>Call for Details
+                        </a>
+                        <a href="<?= BASE_URL ?>/contact" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3 fw-bold">
+                            Get Details
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-</main>
-
-    <!-- Footer -->
-    <!-- FIXED: Commented out missing template file -->
-    <?php // include 'includes/templates/footer.php'; ?>
-
-    <!-- Scripts -->
-    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-
-        // Handle enquiry form submission
-        document.getElementById('enquiryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your enquiry. We will contact you shortly.');
-            var modal = bootstrap.Modal.getInstance(document.getElementById('enquiryModal'));
-            modal.hide();
-        });
-    </script>
-</body>
-
-</html>
+<?php
+$content = ob_get_clean();
+echo $content;
