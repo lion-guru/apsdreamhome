@@ -1,12 +1,12 @@
 <?php
 $page_title = $page_title ?? 'APS CRM — All-in-One Business Platform';
-$page_description = $page_description ?? 'India\'s #1 Real Estate CRM Platform — CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.';
+$page_description = $page_description ?? 'APS CRM &amp; ERP - the engine running APS Dream Home townships in Uttar Pradesh. CRM, ERP, Accounting, Legal, AI in one - build yours on ours.';
 $current_page = 'saas_home';
 ?>
 <!-- Hero -->
 <section class="hero">
     <div class="hero-content">
-        <div class="hero-badge"><i class="fas fa-rocket"></i> India's #1 Real Estate CRM Platform</div>
+        <div class="hero-badge"><i class="fas fa-rocket"></i> CRM &amp; ERP Built for Indian Townships</div>
         <h1>Run Your Entire Business on <span>One Platform</span></h1>
         <p>CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.</        <div class="hero-buttons">
             <a href="<?= BASE_URL ?>/tenant-signup" class="btn btn-primary"><i class="fas fa-play"></i> Start Free Trial</a>
@@ -15,12 +15,12 @@ $current_page = 'saas_home';
     </div>
 </section>
 
-<!-- Stats -->
+<!-- Stats (live, verifiable public numbers) -->
 <div class="stats-bar">
     <div class="stat-card"><div class="number">33+</div><div class="label">Properties Sold</div></div>
-    <div class="stat-card"><div class="number">50+</div><div class="label">Teams Onboarded</div></div>
-    <div class="stat-card"><div class="number">₹10Cr+</div><div class="label">Revenue Managed</div></div>
-    <div class="stat-card"><div class="number">99.9%</div><div class="label">Uptime SLA</div></div>
+    <div class="stat-card"><div class="number">5+</div><div class="label">Colonies Developed</div></div>
+    <div class="stat-card"><div class="number">₹5.99 Cr</div><div class="label">Committed Bookings</div></div>
+    <div class="stat-card"><div class="number">Est. 2022</div><div class="label">Gorakhpur · Uttar Pradesh</div></div>
 </div>
 
 <!-- Modules -->
@@ -138,29 +138,25 @@ $current_page = 'saas_home';
     </div>
 </section>
 
-<!-- Testimonials -->
+<!-- Honest positioning section - APS CRM is the OS of our own townships -->
 <section class="testimonial-section section">
-    <h2>Trusted by Real Estate Professionals</h2>
-    <p>See what our customers have to say about APS CRM.</p>
-    <div class="testimonial-grid">
-        <?php
-        $fallback_testimonials = [
-            ['author_name' => 'Rajesh Kumar', 'author_title' => 'Director, Skyline Builders', 'content' => 'APS CRM transformed our business. We went from managing leads in Excel to a full CRM with automated follow-ups in just one week.', 'rating' => 5],
-            ['author_name' => 'Priya Sharma', 'author_title' => 'Finance Head, Green Valley Estates', 'content' => 'The accounting module alone saved us ₹2 lakhs/year in CA fees. Everything from TDS to GST is automated now.', 'rating' => 5],
-            ['author_name' => 'Amit Patel', 'author_title' => 'CEO, PropertyPro Solutions', 'content' => 'The white-label feature let us launch our own branded CRM for clients in 3 days. Best investment we made.', 'rating' => 5],
-        ];
-        $display_testimonials = !empty($testimonials) ? $testimonials : $fallback_testimonials;
-        foreach ($display_testimonials as $t):
-            $stars = max(1, min(5, (int)($t['rating'] ?? 5)));
-        ?>
-        <div class="testimonial-card">
-            <div class="stars"><?php for ($i = 0; $i < $stars; $i++): ?><i class="fas fa-star"></i><?php endfor; ?></div>
-            <div class="text">"<?= htmlspecialchars($t['content'] ?? '') ?>"</div>
-            <div class="author"><?= htmlspecialchars($t['author_name'] ?? '') ?></div>
-            <div class="role"><?= htmlspecialchars($t['author_title'] ?? '') ?></div>
+    <h2>Built On Our Own Townships</h2>
+    <p>APS CRM runs APS Dream Home itself &mdash; 5+ colonies across Uttar Pradesh, &#8377;5.99 Cr in committed bookings, EMI ledgers, RERA-verification gating and a WhatsApp desk. Built in production first, productised second; we are opening 5 launch-partner seats for early real-estate teams.</p>
+    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:28px">
+        <div style="background:rgba(255,255,255,0.08);border-radius:14px;padding:18px 26px;max-width:280px">
+            <div style="font-size:2rem;font-weight:800;color:#f4c542">1</div>
+            <div style="font-size:0.82rem;opacity:0.9;margin-top:6px">RERA verification gating &mdash; every sale checks the colony certificate first, automatically</div>
         </div>
-        <?php endforeach; ?>
+        <div style="background:rgba(255,255,255,0.08);border-radius:14px;padding:18px 26px;max-width:280px">
+            <div style="font-size:2rem;font-weight:800;color:#f4c542">2</div>
+            <div style="font-size:0.82rem;opacity:0.9;margin-top:6px">Live EMI &amp; commission ledger &mdash; the same ledger powering &#8377;5.99 Cr of bookings today</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:14px;padding:18px 26px;max-width:280px">
+            <div style="font-size:2rem;font-weight:800;color:#f4c542">3</div>
+            <div style="font-size:0.82rem;opacity:0.9;margin-top:6px">White-label for launch partners &mdash; your logo, your domain, our engine underneath</div>
+        </div>
     </div>
+    <p style="margin-top:24px;font-size:0.9rem;opacity:0.85"><a href="<?= BASE_URL ?>/contact" style="color:#f4c542;text-decoration:underline;font-weight:700">Request a launch-partner call instead of a demo &rarr;</a></p>
 </section>
 
 <!-- CTA -->

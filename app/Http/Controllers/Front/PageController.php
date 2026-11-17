@@ -845,7 +845,7 @@ private function getPlans()
         
         $this->render('pages/saas_home', [
             'page_title' => 'APS CRM — All-in-One Business Platform',
-            'page_description' => 'India\'s #1 Real Estate CRM Platform — CRM, ERP, Accounting, Legal, AI — everything you need to manage properties, teams, and customers in one powerful SaaS platform.',
+            'page_description' => 'APS CRM & ERP - the engine behind APS Dream Home townships in Uttar Pradesh. CRM, ERP, Accounting, Legal, AI in one platform.',
             'plans' => $plans
         ]);
     }
