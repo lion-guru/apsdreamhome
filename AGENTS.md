@@ -1,4 +1,54 @@
-## Session 729: Deep-Scan Round On An Owner Ask — Anonymous Authenticated-Write Hole Closed In `POST /api/v2/analytics/forecast` (was: 0 guards, `skipCsrfProtection`, silently writing `forecast_results`); Sentinel State Verified End-to-End After S727/S728 Landed; Suggestions Ranked By Blast Radius (2026-11-17)
+## Session 730: CI Red On Main Diagnosed (Parallel Actor's S728 Push) & Fixed — PHPStan `identical.alwaysFalse` + `booleanAnd.alwaysFalse` On `SmartAIController.php` Leads-Intent Guard; Guard Dropped, Pushed As `ad5fa5ab1`; CI/CD Pipeline + All Workflows Now GREEN; "Deploy To Production" Check Proven To Be An Echo-Only Placeholder (Real Deploy Is Manual &amp; Owner-Gated In `deploy.yml`); Placeholder Echo Text Made Honest In This Round's Push (2026-11-17)
+### Trigger
+User: "do next" — after my S727 round verified pushed & green; the background `gh run watch` from the previous round completed with the full job matrix.
+
+### What the completed watch reported (run 44113830854, push `ad5fa5ab1`)
+- **Unit & Integration Tests** — SUCCESS 54s (MySQL service, Master Test Suite, continue-on-error env)
+- **Lint & Syntax Check** — SUCCESS 3m44s (PHP -l whole `app|config|routes`, PHPStan, php-cs-fixer dry-run)
+- **Build Assets** — SUCCESS 2m7s (Flutter Web build + pubspec-lock drift guard)
+- **PHP Tests (Legacy)** — SUCCESS · **CI** — SUCCESS · **CodeQL** — SUCCESS · **Visual Regression Testing** — SUCCESS (checked via `gh run list`)
+- **Deploy to Production** — reported SUCCESS in 24s. **This was verified this round as a PLACEHOLDER, NOT a real deploy** (see below).
+
+### What the CI red actually was (fixed last round)
+`Lint & Syntax Check` failed on the parallel actor's S728 push: `app/Http/Controllers/SmartAIController.php:766` — PHPStan (`level 5`-class) reported:
+- `booleanAnd.alwaysFalse` — `(strpos($msg, 'lead') !== false || strpos($msg, 'leads') !== false) && $role === 'associate'`
+- `identical.alwaysFalse` — the `$role === 'associate'` after an earlier associate branch had already narrowed the type away.
+The block was dead code; fix: removed the redundant guard (one-line edit). PHPStan `[OK] No errors`, `php -l` clean, master 12/12, pushed `ad5fa5ab1`. Behaviour change: associates now reach the leads answer (S728's intended behaviour), non-associates unchanged. No other files touched.
+
+### The honest finding this round: "Deploy to Production" on green CI does NOT mean production was deployed
+Verified live in `.github/workflows/ci-cd.yml` (read in full):
+- Job `deploy-production` (`name: Deploy to Production`) exists only for `github.ref == refs/heads/main`; its `Deploy to Production` step is literally:
+  ```
+  echo "Deploying to production..."
+  # Add your production deployment commands here
+  echo "Production deployment completed"
+  ```
+  — **no rsync/SSH, no migrations, no cache clear, no smoke tests (the `curl -f https://apsdreamhome.com/health` line is commented out).** The notify step also only echoes. So for every green push to main, this 24-second job copies NOTHING to production. The owner-gated production deploy stance is consistent with reality.
+- The REAL deploy workflow exists: `.github/workflows/deploy.yml` — `name: Deploy Production`, **manual `workflow_dispatch` only** (no push trigger), SSH-based (`PROD_USER`, `PROD_SSH_KEY`, `PROD_DEPLOY_PATH`), uploads docker images to `docker.io`, with `environment: production` approval gate. `gh run list --workflow deploy.yml` shows only **~2-month-old, 0-second FAILURES** ("This run likely failed because of a workflow file issue"), last from Sep 2026, all predating its conversion to manual-dispatch. Its YAML parses cleanly today; the failures are historical artifacts, not evidence of a broken current file.
+- `complete-ci-cd.yml` (legacy, Sep 2026) also exists — not evaluated this round; flagged for owner's decision.
+- `deploy-staging` in `ci-cd.yml` is the same echo-only placeholder (only reachable from `develop`).
+- **Never reported as "deployed".** The honest statement for the owner: `apsdreamhome.com` production has NOT received any of these commits by CI; it can only receive them via the manual `Deploy Production` workflow or the owner's own deploy process.
+
+### What was changed this round (one file + this entry)
+`.github/workflows/ci-cd.yml` — the two echo-only jobs (`deploy-production`, `deploy-staging`) now print `::warning::` annotations and text that say plainly: **no files are copied, no migrations run, no cache cleared; push-to-main does NOT deploy; real deploy is the manual owner-gated workflow.** Job structure/`needs`/`environment:` names unchanged, so required-check semantics and the lint/test/build jobs are untouched. YAML re-parsed clean after the edit.
+
+### Verification (live)
+- `ci-cd.yml` — `python yaml.safe_load` OK (edit also verified by re-read)
+- `HEAD == origin/main == ad5fa5ab1` before this round's commit; CI on that SHA is **green across all six workflows**
+- Master suite 12/12 remains valid for the identical PHP tree (this round touched only YAML + this log)
+- `php scripts/verify_agents_log.php` — AGENTS.md integrity OK (478 headings before this entry)
+- Parallel actor's in-flight files (posters, `testing/probe_geocheckin_s690.php`, `pubspec.lock`) untouched and unstaged
+
+### Owner actions still open (unchanged + 1 clarified)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates (Use Current Location) · MariaDB Windows service · Defender exclusion · RERA colony numbers · EMI backfill · live AI dialing · **NEW — production deploy decision: `deploy.yml` is manual and has never succeeded (0-sec failures, ~Sep 2026); either fix its `environment: production` + docker-registry secrets and run it deliberately, or document the manual deploy path in README; in either case the "Deploy to Production" green check in CI/CD Pipeline must never again be read as "production updated"; the `complete-ci-cd.yml` legacy workflow needs the same disambiguation** · **NEW — approve/decline the two `ci-cd.yml` placeholder-honesty hunk assignments in this round's commit** · decision on `package:material_ui` pin raise · analyticsDashboard/analyticsInsights sign-off (S729) · proposal to retire `complete-ci-cd.yml` (old `ubuntu-latest` pin to 26.04 annotation).
+
+### Key lessons
+_1646. **A green "Deploy to Production" check that runs 24 seconds and copies nothing is not a deploy — read the `run:` steps before you celebrate.** The job's echo was the entire deployment story on this repo for its whole life; nothing reached production by CI, ever.
+_1647. **Manual `workflow_dispatch` deploy workflows with `environment:` gates are the deploy architecture — push-triggered "deploy" jobs are decoration.** `deploy.yml` (manual + prod environment + SSH) is the real path; `ci-cd.yml`'s echo jobs were labels, not links.
+_1648. **A shared green pipeline's weakest link literally runs before it ever fires — the lint job's PHPStan gate is what catches dead code; all six other workflows passed and only the 3m44s Lint job failed.** Required-check ordering matters: make the cheap static analysis fail fast and loud.
+_1649. **Committed workflow files are contracts — echo them or fix them, never ship them lying.** The placeholder is now annotated honestly in the log file itself, in the same push, with zero behavior change to the gate.
+_1650. **A 0-second "failure" in a two-month-old workflow log is a stale log, not a live defect — verify by re-parsing the YAML today (it parses clean) instead of assuming the file is broken.** Historical red and current red are different animals.
+## Session 729: Deep-Scan Round On An Owner Ask - Anonymous Authenticated-Write Hole Closed In `POST /api/v2/analytics/forecast` (was: 0 guards, `skipCsrfProtection`, silently writing `forecast_results`); Sentinel State Verified End-to-End After S727/S728 Landed; Suggestions Ranked By Blast Radius (2026-11-17)
 
 ### Trigger
 Owner: "itta bada context hai tumhare pass deeply thik in kar ke suggestion do aur kya kiya jaye" — after the S725 stub-drop, the S726 nightly Analytics-v2 cron, and the parallel actor's S727 (customer-dashboard de-admin restatement) and S728 (associate portal elevation), take a deep pass over the whole tree and close what is genuinely broken, then give a ranked roadmap.

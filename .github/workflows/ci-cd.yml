@@ -192,11 +192,9 @@ jobs:
       
       - name: Deploy to Staging
         run: |
-          echo "Deploying to staging..."
-          # Add your staging deployment commands here
-          # Example: rsync to staging server, run migrations, clear cache
-          echo "Staging deployment completed"
-      
+          echo "::warning::Deploy to Staging is a PLACEHOLDER job - no deployment occurs."
+          echo "Add real staging deploy commands here (rsync, migrations, cache clear) before relying on it."
+          echo "Staging deployment placeholder completed (nothing was deployed)."
       - name: Run Smoke Tests
         run: |
           echo "Running smoke tests against staging..."
@@ -213,20 +211,19 @@ jobs:
       
       - name: Deploy to Production
         run: |
-          echo "Deploying to production..."
-          # Add your production deployment commands here
-          # Example: rsync to production servers, run migrations, clear cache, warmup
-          echo "Production deployment completed"
-      
+          echo "::warning::Deploy to Production is a PLACEHOLDER job - no files are copied, no migrations run, no cache is cleared."
+          echo "APS Dream Home production deploys are owner-gated via the manual 'Deploy Production' workflow (deploy.yml, workflow_dispatch)."
+          echo "Pushing to main does NOT deploy to production."
+
       - name: Run Smoke Tests
         run: |
-          echo "Running smoke tests against production..."
-          # curl -f https://apsdreamhome.com/health || exit 1
+          echo "Placeholder only - no smoke tests run against production from this job."
+          # curl -f https://apsdreamhome.com/health || exit 1 (would be a real check)
 
       - name: Notify Team
         if: always()
         run: |
-          echo "Deployment ${{ job.status }} - Notifying team..."
+          echo "Placeholder notification - no deployment occurred in this job."
           # Add Slack/Discord/Email notification here
 
   cleanup:
