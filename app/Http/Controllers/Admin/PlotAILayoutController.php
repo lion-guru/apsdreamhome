@@ -70,18 +70,18 @@ class PlotAILayoutController extends AdminController
         $mime = $ext === 'png' ? 'image/png' : ($ext === 'webp' ? 'image/webp' : 'image/jpeg');
         $imageBase64 = base64_encode(file_get_contents($file['tmp_name']));
 
-        $prompt = "You are analysing a real estate colony layout map image. Extract every residential plot visible in the image. "
-            . "Return STRICT JSON in this exact shape: "
-            . '{"plots":[{"plot_number":"A-001","width_ft":40,"length_ft":60,"sqft":2400,"facing":"East","block":"A"}],"notes":"short observation about the image"}'
-            . " Rules: plot_number must come from the image; if you cannot read a plot number, OMIT it entirely; "
-            . "facings use only North/South/East/West/North-East/etc.; omit a field you cannot see instead of guessing; "
-            . "SQFT may be estimated from dimensions only when both length and width are readable. Output ONLY the JSON object.";
+        $prompt = "You are analysing a real estate colony layout map image. Extract every residential plot visible. "
+            . "Return STRICT COMPACT JSON in this exact shape: "
+            . '{"plots":[["A1","A",1000],["A2","A",1000]],"notes":"one short line"}'
+            . " Legend: [plot_number, block, sqft]. Order plots by block. "
+            . "If you cannot read a plot number, OMIT it. SQFT may be estimated from dimensions only when both are readable. "
+            . "Notes: one line only. Output ONLY the JSON object, no commentary.";
 
         try {
             $engine = \App\Services\AI\FreeAIEngines::getInstance();
             $result = $engine->generateWithImage($prompt, $imageBase64, $mime, [
                 'system' => 'You are a precise vision assistant for Indian real estate colony layout maps. Output only valid JSON, never commentary.',
-                'max_tokens' => 4000,
+                'max_tokens' => 8000,
                 'temperature' => 0.1,
             ]);
         } catch (\Throwable $e) {
@@ -98,24 +98,51 @@ class PlotAILayoutController extends AdminController
 
         $parsed = $this->parseStrictJson((string) ($result['text'] ?? ''));
         if (!$parsed || !isset($parsed['plots']) || !is_array($parsed['plots']) || count($parsed['plots']) === 0) {
-            $raw = substr((string) ($result['text'] ?? ''), 0, 120);
-            error_log('PlotAILayoutController::extract parse miss. Engine=' . $engineName . ' raw=' . $raw);
-            $this->setFlash('warning', 'AI could not find readable plots in the image. Try a sharper, higher-resolution layout map.');
+            $text = (string) ($result['text'] ?? '');
+            $rawHead = substr($text, 0, 160);
+            $trimmedRaw = rtrim($text);
+            $looksTruncated = ($trimmedRaw !== '' && !str_ends_with($trimmedRaw, '}') && !str_ends_with($trimmedRaw, ']') && !str_ends_with($trimmedRaw, '```'));
+            error_log('PlotAILayoutController::extract parse miss. Engine=' . $engineName . ' len=' . strlen($text) . ' rawHead=' . str_replace(["\r", "\n"], [' ', ' '], $rawHead));
+            $this->setFlash('warning', $looksTruncated
+                ? 'AI output was cut off mid-JSON (image too dense). Try a sharper, higher-resolution crop of fewer blocks, or re-run.'
+                : 'AI could not find readable plots in the image. Try a sharper, higher-resolution layout map.');
             return $this->redirect('/admin/plots/import/ai-layout');
         }
 
         $plots = [];
         foreach ($parsed['plots'] as $p) {
-            if (!is_array($p) || empty($p['plot_number'])) {
-                continue; // skip unreadable plots — never invent numbers
+            $number = null;
+            $block = null;
+            $sqft = null;
+            $widthFt = null;
+            $lengthFt = null;
+            $facing = null;
+
+            // Compact format: [plot_number, block, sqft]
+            if (is_array($p) && isset($p[0]) && is_string($p[0]) && !isset($p['plot_number'])) {
+                $number = trim((string) $p[0]);
+                $block = isset($p[1]) ? trim((string) $p[1]) : null;
+                $sqft = isset($p[2]) && is_numeric($p[2]) ? (float) $p[2] : null;
+            }
+            // Verbose / legacy format: object with keys
+            if (!$number && is_array($p) && !empty($p['plot_number'])) {
+                $number = trim((string) $p['plot_number']);
+                $block = isset($p['block']) ? trim((string) $p['block']) : null;
+                $sqft = $this->floatOrNull($p['sqft'] ?? $p['area_sqft'] ?? null);
+                $widthFt = $this->floatOrNull($p['width_ft'] ?? null);
+                $lengthFt = $this->floatOrNull($p['length_ft'] ?? null);
+                $facing = isset($p['facing']) ? trim((string) $p['facing']) : null;
+            }
+            if (!$number) {
+                continue; // skip empty/unreadable plots - never invent numbers
             }
             $plots[] = [
-                'plot_number' => trim((string) $p['plot_number']),
-                'block' => isset($p['block']) ? trim((string) $p['block']) : null,
-                'width_ft' => $this->floatOrNull($p['width_ft'] ?? null),
-                'length_ft' => $this->floatOrNull($p['length_ft'] ?? null),
-                'sqft' => $this->floatOrNull($p['sqft'] ?? $p['area_sqft'] ?? null),
-                'facing' => isset($p['facing']) ? trim((string) $p['facing']) : null,
+                'plot_number' => $number,
+                'block' => $block,
+                'width_ft' => $widthFt,
+                'length_ft' => $lengthFt,
+                'sqft' => $sqft,
+                'facing' => $facing,
             ];
         }
 

@@ -1,3 +1,28 @@
+## Session 714: Public Project-List Fabrication Patch Verified End-To-End; AI-Layout Probe Colony (id=759) Transient Public Exposure Confirmed Clean — Colonies Reconciled To 5 Active, Master 12/12 (2026-11-17)
+
+### Trigger
+Final pass of the S713 public honesty sweep — re-probing everything after commit `327d36ca6` pushed.
+
+### What was found &amp; verified
+1. **`/projects` page renders needles byte-honest**:
+   - HTTP 200 · 207,325 B · needles ABSENT: `Braj Properties`, `UP-RERA-2024*`, `UP-RERA-2026-001/002/003`, `DTCP Approved`, `Braj Radha Enclave`, `Spiritual residential` · needles PRESENT: `APS Dream Home`, `PENDING`, `Legal Desk`, `up-rera.in`.
+   - `/projects/braj-radha-nagri` → 200 (252 KB) — detail page re-probed — needle `Budhya Mata` present but that is the colonies.description owner copy, not this lane's fabrication rule (owner call); zero RERA needles anywhere (`UP-RERA*`).
+   - `/projects/suryoday-colony` → 200 — same needles verified.
+2. **Transient probe colony** — `colonies.id=759 "PROBE_S714_AI_LAYOUT_E2E"` is now **404 across `/colony/…`, `/colony/…/plots`, `/colony/…/map`**; `SELECT * FROM colonies WHERE slug='probe-s714-ai-layout-e2e'` returns no rows; **5 active colonies remain** (Suryoday, Braj Radha Nagri, Lakeview, Budh Bihar, Raghunath Nagri) — the parallel actor's E2E cleanup ran independently between my first and second probe (the 200 → 404 transition is documented here verbatim); no action was required by this lane; nothing deleted by me.
+3. `/company-projects` (200, 220,054 B), `/plots` (200, 211,601 B), `/colonies` (200, 223,140 B, lists 5 active) — all still renders (visual regressions none observed; pagination meta intact).
+- Database baseline re-verified post-fix: users 82 · plots 766 · leads 994 · transactions 5 · wallet_points 39 · colonies active=5 — zero drift from S713's two UPDATEs.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **712**. This entry = **S714**. Next-free = **715**.
+
+### Key lessons
+_1593. **A public page can be fleetingly honest at 2 minutes past the patch and lie an hour later.** Re-probe the same URL hours apart and confirm the cleanup is real (or a row); here, first probe shows a dead probe colony that shortly after vanished because the parallel actor's E2E cleaned up — the gate held both ways.
+_1594. **When a test artifact (`PROBE_S714...`) appears in the active list, treat it as a bug, not as "they'll get to it".** Verifying its absence on re-probe is the honest minimal commitment to do rather than assume.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · `colonies.description` Budhya Mata / Deoria-location reconciliation · `projects.district_id=2` on project id=2 (Lucknow) reconciliation · MySQL Defender exclusion · MariaDB Windows service · RERA real numbers · EMI backfill · live AI dialing · production deploy · 22 zero-reference stub tables decision · `testimonials_s694_pre_verify` drop · backups prune.
+
+
 ## Session 713: Public `/projects` Seed Fabrication Cured — Fake `UP-RERA-2024-001235` Deleted, Fake Developer Names Replaced With APS Dream Home; Both PROJECT Cards Now Render Honest Legal/Desk Pointers; Master 12/12 (2026-11-17)
 
 ### Trigger

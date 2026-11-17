@@ -501,7 +501,7 @@ class FreeAIEngines
             ],
         ];
 
-        $response = $this->httpPost($this->geminiUrlBase . $this->geminiModel . ':generateContent?key=' . $this->geminiKey, $payload, 30);
+        $response = $this->httpPost($this->geminiUrlBase . $this->geminiModel . ':generateContent?key=' . $this->geminiKey, $payload, 90);
         if ($response && isset($response['candidates'][0]['content']['parts'][0]['text'])) {
             return $response['candidates'][0]['content']['parts'][0]['text'];
         }
