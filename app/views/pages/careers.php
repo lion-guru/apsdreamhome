@@ -406,49 +406,14 @@
             </div>
             <div class="col-lg-6">
                 <div class="pillar-card h-100">
-                    <h5 class="fw-bold mb-3"><?= __('student_testimonials', null, 'What Students Say') ?></h5>
-                    <div class="testimonial-carousel" id="studentTestimonials">
-                        <div class="testimonial-item active">
-                            <p class="text-muted fst-italic">"<?= __('student_testimonial_1', null, 'Earned my first rental commission in week one. The AI tools make it super easy.') ?>"</p>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
-                                    <i class="fas fa-user-graduate fa-lg"></i>
-                                </div>
-                                <div>
-                                    <strong class="small"><?= __('student_testimonial_name_1', null, 'Priya Sharma') ?></strong>
-                                    <br><small class="text-muted"><?= __('student_testimonial_college_1', null, 'BBA Student, Gorakhpur') ?></small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="testimonial-item">
-                            <p class="text-muted fst-italic">"<?= __('student_testimonial_2', null, 'Flexible hours let me study and earn. Best decision for my college life!') ?>"</p>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
-                                    <i class="fas fa-user-graduate fa-lg"></i>
-                                </div>
-                                <div>
-                                    <strong class="small"><?= __('student_testimonial_name_2', null, 'Rahul Kumar') ?></strong>
-                                    <br><small class="text-muted"><?= __('student_testimonial_college_2', null, 'MBA Student, Lucknow') ?></small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="testimonial-item">
-                            <p class="text-muted fst-italic">"<?= __('student_testimonial_3', null, 'The internship certificate helped me get a great job after graduation.') ?>"</p>
-                            <div class="d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
-                                    <i class="fas fa-user-graduate fa-lg"></i>
-                                </div>
-                                <div>
-                                    <strong class="small"><?= __('student_testimonial_name_3', null, 'Anjali Singh') ?></strong>
-                                    <br><small class="text-muted"><?= __('student_testimonial_college_3', null, 'B.Com Student, Deoria') ?></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-center gap-2 mt-3">
-                        <button class="btn btn-sm btn-outline-primary" onclick="prevStudentTestimonial()" aria-label="Toggle"><i class="fas fa-chevron-left"></i></button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="nextStudentTestimonial()" aria-label="Toggle"><i class="fas fa-chevron-right"></i></button>
-                    </div>
+                    <h5 class="fw-bold mb-3"><?= __('student_program_title', null, 'Student Internship Program') ?></h5>
+                    <p class="text-muted"><?= __('student_program_desc', null, 'Open to BBA, MBA and B.Com students in Gorakhpur, Lucknow and Deoria. No fees. Flexible hours around your college schedule, performance-based earnings, and a certificate on completion.') ?></p>
+                    <ul class="mb-0">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_program_point_1', null, 'Real site visits and live deal support') ?></li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_program_point_2', null, 'Weekly mentorship from senior property advisors') ?></li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_program_point_3', null, 'Performance bonus on closing with your team') ?></li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i><?= __('student_program_point_4', null, 'Completion certificate on our partner network') ?></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -583,29 +548,6 @@ document.getElementById('careerSubmitBtn').addEventListener('click', function() 
     .catch(function() { showToast('Network error. Please try again.', 'danger'); })
     .finally(function() { btn.disabled = false; btn.innerHTML = orig; });
 });
-
-// Student testimonial carousel
-var currentStudentTestimonial = 0;
-var studentTestimonials = document.querySelectorAll('.testimonial-item');
-
-function showStudentTestimonial(index) {
-    studentTestimonials.forEach(function(item, i) {
-        item.classList.toggle('active', i === index);
-    });
-}
-
-function nextStudentTestimonial() {
-    currentStudentTestimonial = (currentStudentTestimonial + 1) % studentTestimonials.length;
-    showStudentTestimonial(currentStudentTestimonial);
-}
-
-function prevStudentTestimonial() {
-    currentStudentTestimonial = (currentStudentTestimonial - 1 + studentTestimonials.length) % studentTestimonials.length;
-    showStudentTestimonial(currentStudentTestimonial);
-}
-
-// Auto-rotate testimonials
-setInterval(nextStudentTestimonial, 5000);
 
 // Student application form submission
 document.getElementById('studentSubmitBtn')?.addEventListener('click', function() {

@@ -11,7 +11,7 @@ $current_page = 'become_associate';
             <!-- Left: Content -->
             <div class="hero-text-content">
                 <h1><i class="fas fa-rocket me-3"></i>Transform Your Career</h1>
-                <p class="mb-4">Begin your journey from a regular enthusiast to a Premium Certified APS Dream Home Agent. Experience the transformation and unlock unlimited earning potential today.</p>
+                <p class="mb-4">Begin your journey from a regular enthusiast to a Verified APS Dream Home Partner. Experience the transformation and unlock unlimited earning potential today.</p>
                 
                 <button class="btn btn-journey mb-3" id="btn-start-journey" onclick="startAgentJourney()">
                     <i class="fas fa-magic me-2"></i>Start Your Journey
@@ -53,8 +53,8 @@ $current_page = 'become_associate';
                                     <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80" alt="Professional Agent">
                                 </div>
                                 <div class="cb-details">
-                                    <div class="cb-name">Certified Agent</div>
-                                    <div class="cb-role"><i class="fas fa-check-circle me-1"></i>Premium Partner</div>
+                                    <div class="cb-name">Verified Partner</div>
+                                    <div class="cb-role"><i class="fas fa-check-circle me-1"></i>Official Partner</div>
                                     <div class="cb-meta">
                                         <div>
                                             <span>Agent ID</span>

@@ -1018,7 +1018,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div >
                 <i class="fas fa-certificate"></i> Legal & Compliance
             </div>
-            <h2 >Registered & <span >Certified</span></h2>
+            <h2 >Registered & <span >Compliant</span></h2>
         </div>
         
         <div class="row g-4 justify-content-center">
