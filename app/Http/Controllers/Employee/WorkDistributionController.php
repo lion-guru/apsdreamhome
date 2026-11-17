@@ -459,6 +459,303 @@ class WorkDistributionController extends BaseController
     /**
      * Create notification
      */
+    /**
+     * Config-code -> display name (for UI) and employee_profiles.department (for SQL joins).
+     * Codes that have no matching employee_profiles.department render 0 employees (honest empty state).
+     */
+    private const DEPT_DISPLAY = [
+        'SALES' => 'Sales', 'FIN' => 'Finance', 'CS' => 'Customer Service',
+        'OPS' => 'Operations', 'LEGAL' => 'Legal', 'HR' => 'HR',
+        'MKTG' => 'Marketing', 'IT' => 'IT', 'EXEC' => 'Executive',
+        'CONST' => 'Construction', 'LAND' => 'Land Acquisition',
+    ];
+    private const DEPT_PROFILE = [
+        'SALES' => 'Sales', 'FIN' => 'Finance', 'OPS' => 'Operations',
+        'IT' => 'Technology', 'EXEC' => 'Executive',
+    ];
+
+    private function deptName(string $code): string
+    {
+        return self::DEPT_DISPLAY[$code] ?? $code;
+    }
+
+    private function deptProfileMap(string $code): ?string
+    {
+        return self::DEPT_PROFILE[$code] ?? null;
+    }
+
+    private function activeEmployeesInDept(string $profileDept): array
+    {
+        return $this->db->fetchAll(
+            "SELECT u.id, u.name, u.role, ep.department AS department, ep.designation
+             FROM users u
+             JOIN employee_profiles ep ON (ep.user_id = u.id OR ep.legacy_id = u.id OR ep.id = u.id)
+             WHERE u.status = 'active' AND ep.status = 'active' AND ep.department = ?
+             ORDER BY u.name ASC",
+            [$profileDept]
+        ) ?: [];
+    }
+
+    private function activeTaskCountsByEmployee(): array
+    {
+        $rows = $this->db->fetchAll(
+            "SELECT assigned_to, COUNT(*) AS c FROM tasks
+             WHERE status NOT IN ('completed') AND assigned_to IS NOT NULL
+             GROUP BY assigned_to"
+        ) ?: [];
+        $map = [];
+        foreach ($rows as $r) { $map[(int)$r['assigned_to']] = (int)$r['c']; }
+        return $map;
+    }
+
+    private function workloadRows(string $code, array $cfgRow, array $taskCounts): array
+    {
+        $profileDept = $this->deptProfileMap($code);
+        $employees = $profileDept ? $this->activeEmployeesInDept($profileDept) : [];
+        $maxTasks = max(1, (int)($cfgRow['max_tasks_per_employee'] ?? 10));
+        $rows = [];
+        foreach ($employees as $e) {
+            $eid = (int)$e['id'];
+            $active = $taskCounts[$eid] ?? 0;
+            $pct = (int)round(($active / $maxTasks) * 100);
+            $rows[] = [
+                'employee_id' => $eid,
+                'name' => $e['name'],
+                'role' => $e['role'] ?? '',
+                'department' => $profileDept,
+                'designation' => $e['designation'] ?? '',
+                'active_tasks' => $active,
+                'max_tasks' => $maxTasks,
+                'workload_percentage' => $pct,
+                'is_overloaded' => $active >= $maxTasks,
+                'is_underloaded' => $active === 0,
+            ];
+        }
+        return $rows;
+    }
+
+
+    public function index()
+    {
+        $this->requireAdmin();
+        $cfgRows = $this->db->fetchAll("SELECT * FROM work_distribution_config ORDER BY id") ?: [];
+        $taskCounts = $this->activeTaskCountsByEmployee();
+        $departments = [];
+        $stats = [];
+        foreach ($cfgRows as $cfg) {
+            $code = $cfg['department'];
+            $departments[] = ['code' => $code, 'name' => $this->deptName($code)];
+            $rows = $this->workloadRows($code, $cfg, $taskCounts);
+            $empCount = count($rows);
+            $overloaded = count(array_filter($rows, fn($w) => $w['is_overloaded']));
+            $underloaded = count(array_filter($rows, fn($w) => $w['is_underloaded']));
+            $totalTasks = (int)($this->db->fetchOne(
+                "SELECT COUNT(*) AS c FROM tasks WHERE department = ? AND status NOT IN ('completed')",
+                [$code]
+            )['c'] ?? 0);
+            $stats[$code] = ['total_employees' => $empCount, 'overloaded' => $overloaded, 'underloaded' => $underloaded, 'total_tasks' => $totalTasks];
+        }
+        $this->render('admin/work_distribution/index', [
+            'departments' => $departments,
+            'stats' => $stats,
+        ], 'Work Distribution - APS Dream Home');
+    }
+
+    public function department($department)
+    {
+        $this->requireAdmin();
+        $code = strtoupper(trim((string)$department));
+        if ($code === '' || !isset(self::DEPT_DISPLAY[$code])) {
+            $this->redirect('/admin/work-distribution');
+            return;
+        }
+        $cfg = $this->db->fetchOne("SELECT * FROM work_distribution_config WHERE department = ?", [$code]) ?: [
+            'department' => $code,
+            'auto_assign_enabled' => 1,
+            'assignment_algorithm' => 'hybrid',
+            'max_tasks_per_employee' => 10,
+            'rebalance_threshold' => 80.00,
+        ];
+        $taskCounts = $this->activeTaskCountsByEmployee();
+        $workload = $this->workloadRows($code, $cfg, $taskCounts);
+        $pendingTasks = $this->db->fetchAll(
+            "SELECT t.*, u.name AS assigned_to_name
+             FROM tasks t
+             LEFT JOIN users u ON u.id = t.assigned_to
+             WHERE t.department = ? AND t.status NOT IN ('completed')
+             ORDER BY (t.due_date IS NULL), t.due_date ASC, t.id DESC",
+            [$code]
+        ) ?: [];
+        $this->render('admin/work_distribution/department', [
+            'department' => $code,
+            'config' => $cfg,
+            'workload' => $workload,
+            'pending_tasks' => $pendingTasks,
+            'skills' => [],
+        ], 'Work Distribution - ' . $code . ' - APS Dream Home');
+    }
+
+    public function workload()
+    {
+        $this->requireAdmin();
+        $cfgRows = $this->db->fetchAll("SELECT * FROM work_distribution_config ORDER BY id") ?: [];
+        $taskCounts = $this->activeTaskCountsByEmployee();
+        $allWorkload = [];
+        $departments = [];
+        foreach ($cfgRows as $cfg) {
+            $code = $cfg['department'];
+            $departments[] = ['code' => $code, 'name' => $this->deptName($code)];
+            $allWorkload[$code] = $this->workloadRows($code, $cfg, $taskCounts);
+        }
+        $this->render('admin/work_distribution/workload', [
+            'departments' => $departments,
+            'all_workload' => $allWorkload,
+        ], 'Workload Overview - APS Dream Home');
+    }
+
+    public function departmentConfig($department)
+    {
+        $this->requireAdmin();
+        $code = strtoupper(trim((string)$department));
+        if ($code === '' || !isset(self::DEPT_DISPLAY[$code])) {
+            $this->redirect('/admin/work-distribution');
+            return;
+        }
+        $service = new \App\Services\WorkDistributionService();
+        $config = $service->getConfig($code);
+        $this->render('admin/work_distribution/config', [
+            'department' => $code,
+            'config' => $config,
+            'algorithms' => ['hybrid', 'least_loaded', 'skill_based', 'performance_based', 'round_robin'],
+        ], 'Work Distribution Config - ' . $code . ' - APS Dream Home');
+    }
+
+    public function updateDepartmentConfig($department)
+    {
+        $this->requireAdmin();
+        $code = strtoupper(trim((string)$department));
+        if ($code === '' || !isset(self::DEPT_DISPLAY[$code])) {
+            $this->redirect('/admin/work-distribution');
+            return;
+        }
+        $token = $_POST['csrf_token'] ?? '';
+        if (!isset($_SESSION['csrf_token']) || !hash_equals((string)$_SESSION['csrf_token'], (string)$token)) {
+            $this->redirect('/login');
+            return;
+        }
+        $skill = (float)($_POST['skill_weight'] ?? 0.40);
+        $workload = (float)($_POST['workload_weight'] ?? 0.40);
+        $performance = (float)($_POST['performance_weight'] ?? 0.20);
+        if (abs(($skill + $workload + $performance) - 1.0) > 0.01) {
+            $_SESSION['error'] = 'Scoring weights must sum to 1.0.';
+            $this->redirect('/admin/work-distribution/' . urlencode($code) . '/config');
+            return;
+        }
+        $algo = (string)($_POST['assignment_algorithm'] ?? 'hybrid');
+        if (!in_array($algo, ['hybrid', 'least_loaded', 'skill_based', 'performance_based', 'round_robin'], true)) {
+            $algo = 'hybrid';
+        }
+        $data = [
+            'auto_assign_enabled' => !empty($_POST['auto_assign_enabled']) ? 1 : 0,
+            'assignment_algorithm' => $algo,
+            'skill_weight' => $skill,
+            'workload_weight' => $workload,
+            'performance_weight' => $performance,
+            'max_tasks_per_employee' => max(1, min(50, (int)($_POST['max_tasks_per_employee'] ?? 10))),
+            'rebalance_threshold' => max(50, min(100, (float)($_POST['rebalance_threshold'] ?? 80))),
+            'rebalance_interval_hours' => max(1, min(168, (int)($_POST['rebalance_interval_hours'] ?? 4))),
+            'notify_on_assignment' => !empty($_POST['notify_on_assignment']) ? 1 : 0,
+            'notify_on_rebalance' => !empty($_POST['notify_on_rebalance']) ? 1 : 0,
+            'ai_assignment_enabled' => !empty($_POST['ai_assignment_enabled']) ? 1 : 0,
+            'ai_model' => (string)($_POST['ai_model'] ?? 'hybrid_algorithm'),
+        ];
+        $service = new \App\Services\WorkDistributionService();
+        $result = $service->updateConfig($code, $data);
+        $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'] ?? ($result['success'] ? 'Configuration saved.' : 'Save failed.');
+        $this->redirect('/admin/work-distribution/' . urlencode($code) . '/config');
+    }
+
+    private function postedTaskData(string $department): array
+    {
+        $code = strtoupper(trim($department));
+        return [
+            'title' => trim(strip_tags((string)($_POST['title'] ?? ''))),
+            'description' => trim(strip_tags((string)($_POST['description'] ?? ''))),
+            'department' => $code,
+            'required_role' => ($_POST['required_role'] ?? '') !== '' ? (string)$_POST['required_role'] : null,
+            'priority' => in_array((string)($_POST['priority'] ?? 'medium'), ['low', 'medium', 'high', 'urgent'], true) ? (string)$_POST['priority'] : 'medium',
+            'algorithm' => (string)($_POST['algorithm'] ?? 'hybrid'),
+            'assigned_by' => (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1),
+            'force_assign' => !empty($_POST['force_assign']) ? 1 : 0,
+            'deadline' => (string)($_POST['deadline'] ?? date('Y-m-d', strtotime('+7 days'))),
+        ];
+    }
+
+    public function assignTaskAction($department)
+    {
+        $this->requireAdmin();
+        $code = strtoupper(trim((string)$department));
+        if ($code === '' || !isset(self::DEPT_DISPLAY[$code])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unknown department.']);
+            return;
+        }
+        $data = $this->postedTaskData($code);
+        if ($data['title'] === '') {
+            $this->jsonResponse(['success' => false, 'message' => 'Task title is required.']);
+            return;
+        }
+        $service = new \App\Services\WorkDistributionService();
+        $employeeId = (int)($_POST['employee_id'] ?? 0);
+        if ($employeeId > 0) {
+            $result = $service->assignTaskToSpecific($data, $employeeId);
+        } else {
+            $result = $service->assignTask($data);
+        }
+        $this->jsonResponse($result);
+    }
+
+    public function assignManual($department)
+    {
+        $this->requireAdmin();
+        $code = strtoupper(trim((string)$department));
+        if ($code === '' || !isset(self::DEPT_DISPLAY[$code])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unknown department.']);
+            return;
+        }
+        $taskId = (int)($_POST['task_id'] ?? 0);
+        $employeeId = (int)($_POST['employee_id'] ?? 0);
+        if ($taskId <= 0 || $employeeId <= 0) {
+            $this->jsonResponse(['success' => false, 'message' => 'Task and employee are required.']);
+            return;
+        }
+        $assignedBy = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1);
+        $this->db->execute(
+            "UPDATE tasks SET assigned_to = ?, assigned_by = ? WHERE id = ? AND department = ?",
+            [$employeeId, $assignedBy, $taskId, $code]
+        );
+        $this->db->execute(
+            "INSERT INTO work_distribution_logs
+                (tenant_id, task_id, assigned_by, assigned_to, department, assignment_type, notes)
+             VALUES (1, ?, ?, ?, ?, 'manual', 'Reassigned via work distribution desk')",
+            [$taskId, $assignedBy, $employeeId, $code]
+        );
+        $this->createNotification($employeeId, 'task_assigned', "You have been assigned task #{$taskId}", $taskId);
+        $this->jsonResponse(['success' => true, 'task_id' => $taskId, 'assigned_to' => $employeeId, 'message' => 'Task reassigned.']);
+    }
+
+    public function suggestAssignmentAction($department)
+    {
+        $this->requireAdmin();
+        $code = strtoupper(trim((string)$department));
+        if ($code === '' || !isset(self::DEPT_DISPLAY[$code])) {
+            $this->jsonResponse(['success' => false, 'message' => 'Unknown department.']);
+            return;
+        }
+        $data = $this->postedTaskData($code);
+        $service = new \App\Services\WorkDistributionService();
+        $this->jsonResponse($service->suggestAssignment($data));
+    }
+
     private function createNotification($employeeId, $type, $message, $relatedId)
     {
         $query = "INSERT INTO notifications (

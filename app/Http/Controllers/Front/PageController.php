@@ -1002,4 +1002,28 @@ private function getPlans()
             'extraHead'    => '',
         ]);
     }
+
+    /**
+     * Public SEO page: Vedic astrology & property guidance.
+     * Renders the staged astrology view with live active colonies.
+     */
+    public function astrology()
+    {
+        $db = \App\Core\Database\Database::getInstance();
+        $colonies = [];
+        try {
+            $colonies = $db->fetchAll(
+                "SELECT name, slug, location, image_path, starting_price FROM colonies
+                 WHERE is_active = 1 AND tenant_id = 1
+                 ORDER BY name"
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[PageController::astrology] ' . $e->getMessage());
+        }
+        $this->render('pages/astrology', [
+            'page_title'       => 'Astrology & Property - APS Dream Home',
+            'page_description' => 'Explore how Vedic astrology influences property selection and investment timing in Gorakhpur townships.',
+            'colonies'         => $colonies,
+        ]);
+    }
 }

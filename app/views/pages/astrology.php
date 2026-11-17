@@ -47,7 +47,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
                 <p>Choosing an auspicious time (muhurat) for property transactions can enhance positive outcomes and minimize obstacles.</p>
             </div>
             <div class="col-lg-6" data-aos="fade-left" data-aos-delay="100">
-                <img src="<?= get_asset_url('assets/images/astrology.jpg')?>" alt="Astrology & Property" class="img-fluid rounded-4 shadow">
+                <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg" alt="APS Dream Home township (Raghunath Nagri)" class="img-fluid rounded-4 shadow">
             </div>
         </div>
     </div>
@@ -192,7 +192,7 @@ $page_description = 'Explore how Vedic astrology influences property selection a
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <h2 class="fw-bold mb-3">Get Your Personal Astrology & Property Consultation</h2>
-                <p class="lead mb-4">Our expert astrologers provide personalized guidance for property selection and investment timing.</p>
+                <p class="lead mb-4">Talk to our property consultants for guidance on selection and investment timing.</p>
                 <a href="<?= BASE_URL ?>/contact" class="btn btn-light btn-lg px-5 py-3">
                     <i class="fas fa-calendar-check me-2"></i>Book Consultation
                 </a>

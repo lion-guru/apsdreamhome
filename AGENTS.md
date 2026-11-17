@@ -1,3 +1,66 @@
+## Session 685: Orphan "Work Distribution" Desk Wired End-to-End (Was 100% Dead Before: Views Complete, Service Complete, 11 Department Configs Seeded, ZERO Controller View Actions / Routes / Menu Items) — Plus Public `/astrology` SEO Page Wired With Live Colonies; Both Byte-Probed Live; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "wire karo" — after the S682 dead-view audit found complete-but-unrouted modules. The `admin/work_distribution/*` views (index/department/workload/config) have been sitting unrouted since creation, and `pages/astrology.php` never rendered. This round wires both, verified live.
+
+### What was found (before wiring)
+1. **Work Distribution backend was fully built and seeded, but unreachable:**
+   - `App\Services\WorkDistributionService` complete: `assignTask` / `assignTaskToSpecific` / `suggestAssignment` / `rebalanceWorkloads` / `getConfig` / `updateConfig` (auto-creates missing config rows).
+   - `Employee\WorkDistributionController` existed but had ZERO view-rendering actions — only the assignment engine. No HTTP page ever rendered.
+   - `work_distribution_config` **already holds 11 departments** (SALES, FIN, CS, OPS, LEGAL, HR, MKTG, IT, EXEC, CONST, LAND), seeded 2026-10-18 with hybrid algorithm, all-auto-assign on, max 10 tasks/employee.
+   - `tasks` holds 5 seed placeholders (empty titles, null departments, status pending) — legacy probe junk, not real workload; left untouched.
+   - The 4 views expected `stats`/`departments`/`workload`/`config`/`pending_tasks` — nothing passed them; the page would have blanked on every visit had it ever been routed.
+2. **`pages/astrology.php`** — complete, self-contained public SEO page (Vedic astrology for property, zodiac-direction table, dynamic colony cards). Zero route, zero controller call — dead since creation. One broken image reference (`assets/images/astrology.jpg` does not exist) and one unobserved service claim ("Our expert astrologers provide…").
+
+### What was built
+1. **Controller view-actions** added to `WorkDistributionController` (extends existing class, no logic duplication — `WorkDistributionService` is the single source of assignment scoring):
+   - `index()` — department grid + overloaded/underloaded/total-tasks stat cards computed live; honest zeros where a config department has no mapped employees (CS/HR/LEGAL/MKTG/CONST/LAND show 0, not invented staff).
+   - `department($department)` — per-department desk: config summary (algorithm / auto-assign / max tasks / rebalance threshold), employee workload cards (`workload_percentage`, honest 0% for no-task employees), pending-tasks table (live `tasks` join `users`), create/assign modal (posts to the new endpoints below).
+   - `workload()` — cross-department monitoring view: global summary (total employees / healthy / overloaded / underloaded) + per-department cards keyed by every seeded config code.
+   - `departmentConfig($department)` + `updateDepartmentConfig($department)` — GET/POST config desk with weight-sum == 1.0 validation, algorithm whitelist, `abs(sum-1)>0.01` → honest error flash; CSRF verified manually (`hash_equals`); `updateConfig` reused as-is.
+   - `assignTaskAction($department)` / `assignManual($department)` / `suggestAssignmentAction($department)` — POST endpoints used by the view's JS (`/assign`, `/assign-manual`, `/suggest`), all `requireAdmin()`, JSON responses, `work_distribution_logs` row written on manual assign, notification enqueued via the existing private helper, `tasks` INSERT created through the service (`status='pending'`, tenant-scoped).
+   - New private helpers: `DEPT_DISPLAY` + `DEPT_PROFILE` code→profile-department maps (honest — only SALES/FIN/OPS/IT/EXEC map onto live `employee_profiles.department` values: `Sales, Finance, Operations, Technology, Executive`; others render empty, per the views' own empty states), `workloadRows()`, plus `activeTaskCountsByEmployee()`.
+2. **Routes registered** (`routes/web.php`, literals BEFORE `{department}` param): `/admin/work-distribution`, `/workload`, `/analytics`, `/{department}`, `/{department}/config` (GET+POST), `/{department}/assign`, `/{department}/assign-manual`, `/{department}/suggest`. The pre-existing `/api/work-distribution/analytics` alias retained.
+3. **Menu seed** (`database/migrations/seed_work_distribution_menu_s682.php`, idempotent — run 1 SEEDED id=545 + 7 role grants, run 2 all SKIP): HRM section, order 916, icon `fas fa-tasks`, permission_key `work_distribution`, grants for `super_admin`/`admin` (create+edit+delete) and `manager`/`hr_manager`/`hr_director`/`operations_manager`/`department_manager` (view-only). Sidebar caches busted (`admin_sidebar_all` + `admin_sidebar_role_*`).
+4. **Public `/astrology`**: route → `Front\PageController@astrology` (live query `colonies is_active=1 AND tenant_id=1` — 6 real township cards render); broken `astrology.jpg` replaced with real `raghunath-nagri-motiram.jpg`; "our expert astrologers" → "our property consultants"; view linted, needle `Vedic Astrology` + colony names render.
+5. **The rupee-glyph "mojibake" scare was a false alarm** — raw bytes `E2 82 B9` = U+20B9 ₹; the file was already correct, the console font was just not rendering it. Terminal displays are not byte evidence.
+
+### Verification (live HTTP + sacrificial E2E, 0 leftovers)
+- `GET /admin/work-distribution` → 200, 34,790 B, needles: `Work Distribution Dashboard`, `SALES`, `Finance`, `Operations`, `Executive`, `IT` YES; real employee counts render.
+- `GET /admin/work-distribution/SALES` → 200, 21,047 B — needles `Test Agent`, `Employee`, `Sales Executive`, `hybrid`, `Unassigned` YES (the two live Sales-dept employees: user 6 `Test Agent`, user 68 `Employee`).
+- `GET /admin/work-distribution/workload` → 200, 24,880 B, `Workload Overview` YES.
+- `GET /admin/work-distribution/SALES/config` → 200, 9,138 B, needles `Work Distribution Configuration`-family YES.
+- `POST .../SALES/config` (valid CSRF, weights 0.4/0.4/0.2) → **302 → config page** (flash saved); invalid sum rejected pre-write (sum check) — no DB row drift.
+- `POST .../SALES/assign` (sacrificial title "E2E PROBE - delete me", employee_id=6) → **`{"success":true,"task_id":"9","assigned_to":6,"message":"Task manually assigned"}`** → `tasks` id=9 verified in DB (dept SALES, pending, assigned_to=6) + `work_distribution_logs` id=1 verified → **both deleted same round; baseline restored byte-exactly: `tasks`=5, `work_distribution_logs`=0.**
+- `GET /astrology` → **200, 211,104 B** — needles `Astrology & Property`, `Vedic Astrology`, `Raghunath Nagri`, `Bhava Pratirupa` YES; `View not found` ABSENT.
+- `php -l` clean ×4 · **PHPStan [OK] No errors** on both controllers (an unused private `configMap()` the linter correctly flagged was deleted, re-lint + re-analyse clean) · **Master → 11/11 PASSED** (32s, incl. post-wire run) · AGENTS.md integrity OK at prepend time.
+- Menu appears live in the admin sidebar (cookie-less probes of `/admin/erp` show "Work Distribution" needle YES after cache-bust).
+
+### Honest notes
+- **CS/HR/LEGAL/MKTG/CONST/LAND departments show zero employees** — honest (no `employee_profiles.department` values match those config codes), not a bug; adding profiles for those departments is owner data entry.
+- **The 5 placeholder rows in `tasks`** (empty title, `department=NULL`) sit outside every department view by design (`department = code` predicate) — inert probe junk, untouched.
+- `required_skills` / `required_role` on the create form are accepted and passed to the service as scoring inputs (the service uses them when present; they are not persisted as columns — they flow into the assignment score, which is the designed behaviour).
+- `/astrology` is **marketing-honest but still promotional** — the page explains Vedic astrology tradition; it does not claim any colony is "auspicious", names no astrologer, cites no case studies. Consistent with the public-honesty bar.
+- `/admin/work-distribution/analytics` GET route now shadows nothing (it never existed); the existing `/api/work-distribution/analytics` alias is unchanged.
+
+### Incidents (disclosed honestly)
+- My first PHPStan run reported an **unused `private function configMap()`** I had written pre-emptively and never called — deleted in the same session, re-lint + re-analyse clean. No other files touched.
+- One PowerShell regex-removal attempt broke quoting and printed a parser error before any write happened; the actual removal was done by line-splice + `php -l` + PHPStan re-check, file verified intact by reading the splice boundary (`return $rows;` → `public function index()`).
+- The `astrology.jpg` 404 and the `'?' . number_format` "mojibake" in the legacy view were both expected-broken on byte inspection; both verified against raw bytes — the ₹ was already correct (U+20B9), only the image path was truly broken (file never existed) and was swapped.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **684** (15-years-of-excellence sweep, `8496d9d3f`). This entry = **S685**. Next-free = **686**. Whole-tree gate (master 11/11 + `php -l`) run before this prepend; commit gated by `php scripts/verify_agents_log.php`.
+
+### Key lessons
+_1507. **"Wire an orphan view" means routes + controller actions + verified render — not a file someone wrote once and hoped would be found.** The views here sat complete for months while the backend was complete and the data was seeded; all that was missing was the HTTP layer.
+_1508. **Seed config and profile data will never agree — map explicitly in code, never silently.** Config says `SALES/IT/EXEC`; profiles say `Sales/Technology/Executive`. An explicit `DEPT_PROFILE` map is the only honest join; `CS/HR/LEGAL/...` render as honest zeroes instead of invented staff.
+_1509. **A local variable nobody reads is a linter error, not a "helper for later"** — `configMap()` was written, never called, flagged, deleted. Write the helper when the second use exists, or not at all.
+_1510. **Console font mojibake ≠ byte corruption — hexdump before "fixing".` The ₹ was correct UTF-8 the whole time; only `assets/images/astrology.jpg` was actually missing (nothing referenced it before this wire).
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification · 22 zero-reference stub tables drop decision · `Analytics v2` fact-tables delete-or-wire decision · GstService PHPStan (parallel actor) · **22 DEAD-VIEW archive pass decision (this session wires 2 candidates — astrology + work-distribution — the rest remain archive-or-wire candidates for the owner)**
+
+
 ## Session 684: Hinglish-English Stack Final Fabrication Sweep — "Over 15 Years of Excellence" Claims On Footer / About / Company-Info / API Live Since Company Was Est. 2022; All Seven Sites Rewritten To "4+ Years of Integrated Township Development (Est. 2022)" — Buying/Est. Evidence Of Company; Honest Needles Kept (Founder 15+ Years; Investment-Horizon Dropdown); Master 11/11 (2026-11-17)
 
 ### Trigger

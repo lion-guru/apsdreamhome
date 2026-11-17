@@ -80,6 +80,7 @@ $router->get('/become_associate', function () {
 });
 $router->get('/offers', 'Front\\PageController@offers');
 $router->get('/festival-offers', 'Front\\PageController@offers');
+$router->get('/astrology', 'Front\\PageController@astrology');
 $router->get('/smart-township', 'Front\\SmartTownshipController@installationGuide');
 $router->get('/smart-township/packages', 'Front\\SmartTownshipController@packages');
 
@@ -5519,6 +5520,17 @@ $router->get('/admin/async', 'App\\Http\\Controllers\\Async\\AsyncController@das
 $router->get('/admin/async/tasks', 'App\\Http\\Controllers\\Async\\AsyncController@tasks');
 $router->get('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@createTask');
 $router->post('/admin/async/create', 'App\\Http\\Controllers\\Async\\AsyncController@handleCreateTask');
+// Work Distribution (HR task-assignment console) — complete views + actions wired, S682
+$router->get('/admin/work-distribution', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@index');
+$router->get('/admin/work-distribution/workload', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@workload');
+$router->get('/admin/work-distribution/analytics', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@getDistributionAnalytics');
+$router->get('/admin/work-distribution/{department}', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@department');
+$router->get('/admin/work-distribution/{department}/config', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@departmentConfig');
+$router->post('/admin/work-distribution/{department}/config', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@updateDepartmentConfig');
+$router->post('/admin/work-distribution/{department}/assign', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@assignTaskAction');
+$router->post('/admin/work-distribution/{department}/assign-manual', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@assignManual');
+$router->post('/admin/work-distribution/{department}/suggest', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@suggestAssignmentAction');
+
 $router->get('/api/work-distribution/analytics', 'App\\Http\\Controllers\\Employee\\WorkDistributionController@getDistributionAnalytics');
 
 // ============================================================
