@@ -1,3 +1,80 @@
+## Session 717: Silent-1054 Customer Wallet-Packages Shop Page Repaired — Live Bug Behind Green Master, Phantom Schema Found & Redirected To Working Agent/Associate Flow; Probe Now Prints SQL-Class Window Range; Master 12/12, HEAD Repair Landing (2026-11-17)
+
+### Trigger
+Overnight hygiene round prompted by `scripts/php_error_probe.php` reporting "ACTION REQUIRED — signatures found". The 21 SQL-class lines in the 24h window were all dated 16–17 Nov and all traced to already-fixed code families (S646/S676/S687/S695) — historically noisy, not live poison — EXCEPT one: a permanent, swallowed 1054 in the customer portal that nobody had ever seen, because `catch (\Throwable)` converts an unmissable crash into a silent empty page.
+
+### What was found & fixed
+1. **`/user/wallet/packages` was ALWAYS broken in production**:
+   - `Front\CustomerPassbookController::walletPackages()` queried `wallet_activation_packages ... ORDER BY sort_order ASC, amount ASC` — the column is `price` (with `referral_pct_l1`/`referral_pct_l2`/`features`); **`amount ASC` was live 1054 every single page hit**, swallowed by `catch (\Throwable) { $packages = []; }` → empty shop rendered with HTTP 200. Master suite cannot see a missing column behind a success status.
+   - The page's purchase form posted to `<BASE_URL>/user/wallet/packages/purchase` — **no route has ever been registered** for that path; the form was structurally fiction.
+   - The parallel-inventory shop that actually works — `/auth/wallet/packages` (GET) + `/auth/wallet/purchase` (POST) → `Auth\WalletActivationController@showPackages/@purchase` → `WalletActivationService` (package list, referral math, Razorpay order) — is the exact flow used by `/agent/wallet/packages` and `/associate/wallet/packages`; it is verified against production package rows (Basic ₹499 / Pro ₹1,499 / Premium ₹2,999, L1 20% = ₹99.80 / ₹299.80 / ₹599.80, L2 5%).
+2. **Fix (render-path made honest)**: the controller now redirects (302, `exit`) anonymous → handled by the same requireCustomer gate to `/login`; logged-in customers → `/auth/wallet/packages` (the live Razorpay flow). No duplicate logic maintained, no client-side copy of pricing math, no re-implementation. The phantom view file itself was included by the parallel actor's whole-tree commit `bc285ef28` **inside HEAD** as a 100% rename move (`app/views/customer/wallet_packages.php` → `_archive/dead_views/customer_wallet_packages_s714.php`) — meaning HEAD itself carries a controller-looking-for-an-archived-view state at that commit; this commit is the repair.
+3. **`scripts/php_error_probe.php` hardened**: the SQL-class bucket now tracks min/max timestamps and prints **"SQL-class window range: 16-Nov 16:41 → 17-Nov 07:25 Europe/Berlin"** — the owner can never again mistake a window of historical fixed signatures for today's emergency; JSON mode carries `sql_class_first` / `sql_class_last` too.
+
+### Verification (live, byte-level)
+- `php -l` clean ×2 · **PHPStan (file-scope) → [OK] No errors** · **Master → 12/12 PASSED** (37.6–52.6s across runs, 100% HEALTHY) · **AGENTS.md integrity OK** at commit time.
+- Live probes through a real cookie jar:
+  - anonymous `GET /user/wallet/packages` → 302 → `/apsdreamhome/login` (gate holds).
+  - authenticated customer (`test_login=7`) `GET /user/wallet/packages` → 302 → 200 at `/apsdreamhome/auth/wallet/packages`, 20,436 B — needles PRESENT: `Basic Wallet` / `Pro Wallet` / `Premium Wallet` / `Activate Your Wallet` / `?499.00` / `?1,499.00` / `?2,999.00` / `?99.80 (20%)` / `?299.80` / `Activate for ?499` — needles ABSENT: every customer_packages phantom (`'{pkg[.amount', 'wallet_packages'`) needles zero, `user/wallet/packages/purchase` appears nowhere.
+- No schema changes, no data changes, no price changes, zero DB writes this round (only reads for verification).
+
+### Incidents & disclosures (honest, same as every round)
+- **HEAD `bc285ef28` is broken at that exact commit**: post-archive, its controller still attempted `render('customer/wallet_packages', ...)` against a view that no longer exists under that path — every window between their archive rename and this commit produced a render failure on this URL. This commit is the repair.
+- **Whole-tree commit consequence**: the parallel actor's `bc285ef28` carried the `app/views/customer/wallet_packages.php → _archive/...` rename as its only content representing this lane; my working-tree probe + controller edits remained unstaged through that push. Nothing was lost; attribution is muddy on both sides of the rename — this entry says so rather than pretends the rename was coordinated.
+- **This commit carries the parallel actor's S716 restore entry** (`AGENTS.md` 30-line delta: the byte-exact restore of the ledger their own tool detected truncated). S716 is theirs; contents are unchanged; this commit only adds S717 above it and does not edit S716.
+- **21 stale SQL-class signatures** in the probe window were verified line-by-line against the codebase (six families, all dead code by the current file state — 1054 `rank_order`, `amount` (this bug's sibling), `total_price`, `sort_order`, `images`, `status`, `job_applications`, `myisamchk` (absent from scripts), `budget_vs_actual`, `demand_budget`); none were live on HEAD at probe time except the wallet-packages one above.
+
+### What was deliberately NOT done
+- Did NOT re-implement the wallet-packages page — the whole purpose of this session was to delete duplicated logic, not duplicate more.
+- Did NOT touch the close-knit `agent/associate` mirrors — they share the healthy flow and needed nothing.
+- Did NOT drop the `customer_wallet_packages_s714.php` archive file — archival retention per repo convention.
+- Did NOT change any price, discount, referral or earning value — the 20%/5% L1/L2 ladder is untouched in both code and DB.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor landed **S716** (ledger restore entry, uncommitted in HEAD's tree state). This entry = **S717**. Next-free = **718**. Note: `bc285ef28`’s commit message describes only its own files; the two actors' parallel attributions here state so explicitly.
+
+### Key lessons
+_1604. **A `catch (\Throwable)` that turns a 1054 into an empty list is a lie that passed the test suite.** Green master only proves HTTP 200; a shop page can serve "free, honest, correct empty shop" forever. Probe the log (`grep [SQLSTATE`) and the table `DESCRIBE` — never the page status alone — before believing a rendered page shows real data.
+_1605. **A form whose POST target has no route is not a form, it is a fixture.** The wallet purchase page shipped a `<form action=".../purchase">` with no route registered anywhere in `routes/` — part of the `/user/wallet` feature family had never functioned end-to-end.
+_1606. **HTTP 200 with an empty `<ul>` is invisible to uptime monitors but loud to `php_error.log`.** The signature (`ORDER BY ... amount ASC` on a table with `price`) fired every single page hit for however long this file existed; nobody looked at the log because the page "worked".
+_1607. **Redirect + gate + cookie-jar probes are the only verification for a redirect path** — `test_login=7` through a real login endpoint proved the gate, the 302, the target, the 200, and the needles, without writing a single row.
+_1608. **Whole-tree commits that fold in another actor's ledger entries are unavoidable; truthfulness is not.** Every commit message in this lane names whose entry carried whom, so the record survives the diff hunks.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · tenant deploy to `apsdreamhome.com` (production) · Defender exclusion for `C:\xampp\mysql\data` (admin) · MariaDB Windows service (admin) · EMI backfill · video-kyc/ownership verification user flow · `colonies.description` reconciliation · `projects.district_id` for row id=2 · visual-regression baseline refresh · `.gitignore` backup tarball drops (`aria_log*`).
+
+
+
+## Session 716: AGENTS.md Worktree Truncation Repaired Byte-Exact From HEAD - Integrity Gate Working As Designed; Master 12/12 Re-Verified (2026-11-17)
+
+### Trigger
+Post-S715 verification of the environment (server uptime, DB health, pipeline green, git state, AGENTS.md length). The session-log integrity probe (`scripts/verify_agents_log.php`, exit 1) reported the worktree copy of `AGENTS.md` at **7,013 bytes / 1 heading** against HEAD's **1,899,755 bytes / 465 headings** — the file had been truncated/overwritten at some point after S715 landed.
+
+### What was done
+- Diagnosis first, no edit before evidence: ran `php scripts/verify_agents_log.php` and read the exact report — "the worktree is SHORTER than HEAD", 1892742 bytes of log lost, 464 session headings lost; the tool itself instructs `--restore` for this exact signature.
+- Checked the rollback safety condition before acting: `git status --short` showed `AGENTS.md` as `M`, and `git diff --stat -- AGENTS.md` + `git diff --text` produced **zero content delta** — the only diff is the repo's LF→CRLF normalization flag. HEAD == origin/main == `bc285ef28` (which contains S715). The worktree held nothing newer than HEAD, so the restore path was safe by the procedure's own contract.
+- Ran `php scripts/verify_agents_log.php --restore` → **AGENTS.md integrity OK: 1899755 bytes, 465 session headings (HEAD: 1899755 bytes, 465 headings)**. Byte-identical restore confirmed by the verifier itself, not by assumption.
+- Re-verified the full environment on the restored tree: port 3306 up; DB baseline byte-identical to standing baseline (users 82 · plots 766 · leads 994 · properties 627 · plot_bookings 23 · transactions 5 · wallet_points 39 · colonies 8, **5 active**); **Master suite → 12/12 PASSED** (100% HEALTHY).
+
+### Honest notes
+- `git status --short` still shows `M AGENTS.md` after a byte-exact restore — purely the LF→CRLF warning label, not a content difference (verified with `git diff`). No `git checkout`/`git add`/`git commit` was performed; HEAD never moved.
+- The truncation cause is **not proven** — the file shrank in place at some point in a two-actor, whole-tree-committing session window. The S463 lesson stands unchanged: any session where the log shrinks, restore from HEAD first and ask questions later.
+- **No commits were made this round** — this is a restore + verification round; no code, no schema, no data. The parallel actor's in-flight work (`CustomerPassbookController.php`, `scripts/php_error_probe.php`, `testing/probe_geocheckin_s690.php`, `storage/app/posters/*`) was untouched and was not staged or absorbed by this lane.
+- Parallel actor's S715 in HEAD was never at risk — the restore sourced it from the object store, not from memory.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = **715** (parallel actor landed S715 mid-round). This entry = **S716**. Next-free = **717**.
+
+### Key lessons
+_1600. **A session that verifies its own foundations is never "idle".** The log restore restored 1.9 MB of two actors' history that would otherwise have been silently lost at the next whole-tree commit.
+_1601. **The integrity gate is the only thing that catches a 99.6%-shrink in a 1.9 MB file that still parses.** Everything else (headings count 1, git "M" flag, CRLF warnings) is noise that says nothing.
+_1602. **Restore is safe exactly when HEAD contains everything newer than the worktree** — check `git status` + `git diff --text` + `git rev-parse HEAD` + `ls-remote origin HEAD` before invoking `--restore`, and the tool's own verifier confirms after.
+_1603. **Two whole-tree-committing actors in one worktree will occasionally clobber a shared file; the recovery must be mechanical (byte-exact from HEAD), never retyped.**
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · colony coordinates (Use Current Location in `/admin/hrm/work-zones`) · MariaDB Windows service · MySQL Defender exclusion · RERA real numbers · EMI backfill · live AI dialing · production deploy · `colonies.description` Deoria reconciliation · `projects.district_id` reconciliation for id=2 · Bohisawagar decision · 22 stub tables · `testimonials_s694_pre_verify` drop · backup tarball drops · `wp.exe` full-disk scan to locate the truncation's origin if the owner wants it.
+
+
 ## Session 715: AI Layout-to-Plot Importer Sacrificial E2E Passed End-To-End — Sacrificial Colony id=759 Full Extract→Commit→Insert→Cleanup Cycle Verified Byte-Exact (766/8 Baseline Restored); Gemini Vision Intermittency Root-Caused To 30s httpTimeout Clipping Every Call; Committed bc285ef28 (2026-11-17)
 
 ### Trigger

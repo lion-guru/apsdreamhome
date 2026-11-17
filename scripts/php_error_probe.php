@@ -78,6 +78,9 @@ $buckets = [
 $counts = array_fill_keys(array_keys($buckets), 0);
 $samples = array_fill_keys(array_keys($buckets), []);
 
+$tsBucketsSql = [];   // track timestamps of every SQL-class line so the report shows the real range, not just the count
+$sqlRx = '/1054|Unknown column|1146|Base table.*not found|1265|1364|1052|HY2423|HY093|42S22|42S02|1216|1217|1227|1451|1452/i';
+
 foreach ($selected as $line) {
     $hit = false;
     foreach ($buckets as $key => $b) {
@@ -88,6 +91,10 @@ foreach ($selected as $line) {
             $hit = true;
             break; // one signature per line
         }
+    }
+    if ($hit && preg_match($sqlRx, $line) && preg_match('/^\[([0-9]{2}-[A-Za-z]{3}-\d{4} \d{2}:\d{2}:\d{2})/', $line, $m3)) {
+        $ts = strtotime($m3[1]);
+        if ($ts !== false) $tsBucketsSql[] = $ts;
     }
     if (!$hit) $counts['other']++;
 }
@@ -110,6 +117,8 @@ $report = [
         'view_class_total'  => $viewClasses,
         'admin_gate_noise'  => $counts['admin_gate_block'],
         'other'             => $counts['other'],
+        'sql_class_first'   => $tsBucketsSql ? date('Y-m-d H:i:s', min($tsBucketsSql)) : null,
+        'sql_class_last'    => $tsBucketsSql ? date('Y-m-d H:i:s', max($tsBucketsSql)) : null,
     ],
     'samples'       => [],
 ];
@@ -131,6 +140,10 @@ if ($asJson) {
         if ($n > 0) printf("  %-44s %6d\n", $b['label'], $n);
     }
     echo "\n  SQL-class total        : {$sqlClasses}\n";
+    if ($tsBucketsSql) {
+        echo "  SQL-class window range : " . date('d-M H:i', min($tsBucketsSql)) . " Europe/Berlin" . " -> " . date('d-M H:i', max($tsBucketsSql)) . " Europe/Berlin\n";
+        echo "  (findings all predate today's session log if the latest is older than 01:00 cron - check before paging anyone)\n";
+    }
     echo "  Email-class (SMTP)     : {$emailClasses}\n";
     echo "  Fatal/TypeError total  : {$fatalClasses}\n";
     echo "  View-not-found total   : {$viewClasses}\n";

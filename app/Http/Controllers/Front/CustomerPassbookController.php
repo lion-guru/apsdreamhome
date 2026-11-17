@@ -1421,32 +1421,21 @@ class CustomerPassbookController extends BaseController
     /**
      * Wallet Activation Packages — purchase wallet activation.
      * GET /user/wallet/packages
+     *
+     * S714: this page was built against a phantom schema (ORDER BY amount — a column
+     * that never existed on wallet_activation_packages; live columns are price /
+     * referral_pct_l1 / referral_pct_l2 / features) and pointed its purchase form at
+     * /user/wallet/packages/purchase, which has no route. Every render was 1054'd
+     * silently and showed an empty shop. The live flow used by agent/associate is
+     * /auth/wallet/packages -> /auth/wallet/purchase (Auth\WalletActivationController
+     * + WalletActivationService, verified against production). Redirect there.
      */
     public function walletPackages(): void
     {
         $this->requireCustomer();
-        $userId = (int)$_SESSION['user_id'];
-        $tid = (int)$this->tenantId();
-
-        $packages = [];
-        try {
-            $packages = $this->db->fetchAll("
-                SELECT * FROM wallet_activation_packages
-                WHERE is_active = 1 AND tenant_id = ?
-                ORDER BY sort_order ASC, amount ASC
-            ", [$tid]);
-        } catch (\Throwable $e) {
-            error_log('CustomerPassbookController::walletPackages error: ' . $e->getMessage());
-            $packages = [];
-        }
-
-        $this->layout = 'layouts/customer';
-        $this->render('customer/wallet_packages', [
-            'page_title' => 'Activate Wallet - APS Dream Home',
-            'page_description' => 'Choose a wallet activation package',
-            'current_page' => 'wallet-packages',
-            'packages' => $packages,
-        ]);
+        $base = defined('BASE_URL') ? BASE_URL : '';
+        header('Location: ' . rtrim($base, '/') . '/auth/wallet/packages');
+        exit;
     }
 
     /**
