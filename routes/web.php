@@ -2093,6 +2093,9 @@ $router->get('/admin/plots/aging-report', 'App\\Http\\Controllers\\Admin\\PlotMa
 $router->get('/admin/plots/export', 'App\\Http\\Controllers\\Admin\\PlotImportController@export');
 $router->get('/admin/plots/template', 'App\\Http\\Controllers\\Admin\\PlotImportController@template');
 $router->get('/admin/plots/import-history', 'App\\Http\\Controllers\\Admin\\PlotImportController@importHistory');
+$router->get('/admin/plots/import/ai-layout', 'App\\Http\\Controllers\\Admin\\PlotAILayoutController@index');
+$router->post('/admin/plots/import/ai-layout/extract', 'App\\Http\\Controllers\\Admin\\PlotAILayoutController@extract');
+$router->post('/admin/plots/import/ai-layout/commit', 'App\\Http\\Controllers\\Admin\\PlotAILayoutController@commit');
 $router->get('/admin/plots/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@show');
 $router->get('/admin/plots/{id}/edit', 'App\\Http\\Controllers\\Admin\\PlotManagementController@edit');
 $router->post('/admin/plots/{id}/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@update');
