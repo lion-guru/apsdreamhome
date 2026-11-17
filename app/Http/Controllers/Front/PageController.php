@@ -657,14 +657,62 @@ public function becomeAssociate()
     public function customerReviews()
     {
         $viewPath = APP_PATH . '/views/pages/customer_reviews.php';
-        if (file_exists($viewPath)) {
-            $this->render('pages/customer_reviews', [
-                'page_title' => 'Customer Reviews - APS Dream Home',
-                'page_description' => 'Read what our customers say about APS Dream Home.',
-            ]);
-        } else {
+        if (!file_exists($viewPath)) {
             $this->redirect(BASE_URL);
+            return;
         }
+
+        // Real reviews from the live property_reviews table (approved only).
+        // Never fabricate counts - an empty desk renders an honest empty state.
+        $reviews = [];
+        $stats = ['total' => 0, 'avg' => 0, 'happy' => 0];
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $tid = \App\Core\Middleware\TenantContext::getId();
+            $tidSql = $tid > 1 ? " AND pr.tenant_id = ?" : "";
+            $tidParams = $tid > 1 ? [$tid] : [];
+            $rows = $db->fetchAll(
+                "SELECT pr.id, pr.rating, pr.review_text AS text, pr.helpful_count, pr.created_at,\n"
+                . "       COALESCE(u.name, 'Anonymous') AS name,\n"
+                . "       COALESCE(p.title, 'APS Dream Home') AS property,\n"
+                . "       pr.anonymous\n"
+                . "FROM property_reviews pr\n"
+                . "LEFT JOIN users u ON u.id = pr.customer_id\n"
+                . "LEFT JOIN properties p ON p.id = pr.property_id\n"
+                . "WHERE pr.status = 'approved'" . $tidSql . "\n"
+                . "ORDER BY pr.created_at DESC",
+                $tidParams
+            ) ?: [];
+            foreach ($rows as $r) {
+                $r['name'] = !empty($r['anonymous']) ? 'Verified Buyer' : ($r['name'] ?? 'Anonymous');
+                $reviews[] = $r;
+            }
+            $s = $db->fetchOne(
+                "SELECT COUNT(*) AS total, COALESCE(AVG(rating), 0) AS avg_rating,\n"
+                . "       SUM(CASE WHEN rating >= 4 THEN 1 ELSE 0 END) AS happy\n"
+                . "FROM property_reviews\n"
+                . "WHERE status = 'approved'" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+                $tid > 1 ? [$tid] : []
+            );
+            $stats = [
+                'total' => (int)($s['total'] ?? 0),
+                'avg' => round((float)($s['avg_rating'] ?? 0), 1),
+                'happy' => (int)($s['happy'] ?? 0),
+            ];
+        } catch (\Throwable $e) {
+            error_log('customerReviews error: ' . $e->getMessage());
+        }
+
+        $satisfaction = $stats['total'] > 0 ? (int)round(($stats['happy'] / $stats['total']) * 100) : 0;
+        $this->render('pages/customer_reviews', [
+            'page_title' => 'Customer Reviews - APS Dream Home',
+            'page_description' => 'Read what our customers say about APS Dream Home.',
+            'reviews' => $reviews,
+            'avg_rating' => $stats['avg'],
+            'total_reviews' => $stats['total'],
+            'happy_users' => $stats['total'],
+            'satisfaction' => $satisfaction,
+        ]);
     }
 
     public function analytics()

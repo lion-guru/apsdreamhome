@@ -1,4 +1,36 @@
-## Session 677: Verification Round After Parallel Actor's S676 Careers Wave — Gates Held, Public AI Surfaces All Render Public Chrome With Live Needles, No Defects Found; No Code Changes (2026-11-17)
+## Session 678: Public `/customer-reviews` Page Was Fabricated Social Proof - Hardcoded "4.8 Avg / 100+ Happy / 98%" With Empty Review Loop, Wired to Live `property_reviews` (Approved Only) With Real Stats; Honest Empty State; Master 11/11 (2026-11-17)
+
+### Trigger
+User: "do next" - continuing the stub-table/phantom-column silent-failure sweep. Tracing references to 0-row stub tables found `ContentPageController::reviews()` hitting `reviews` (a 4-column stub queried for `WHERE status = 'approved'`) - a 1054 that had always been swallowed into a dead `/reviews` route. The live public page is `/customer-reviews`, and it was worse: it never queried anything.
+
+### What was found (byte-verified live)
+- `/customer-reviews` rendered completely fabricated stats: **"4.8 Average Rating"**, **"100+ Happy Users"**, **"98% Satisfaction"** - hardcoded defaults in the view fallback (`$avg_rating ?? 4.8`, `$happy_users ?? 100`, `$satisfaction ?? 98`) with zero query against any table, and an **empty** review list (`$reviews = []` unconditionally; `$reviews` never passed).
+- The live `property_reviews` table holds 3 real rows (two approved: 4★ and 3★, plus one pending 5★ from 2026-07). The page showed none of them, and showed numbers that were not the average of any real dataset.
+- A 5-star pending review from 2026-07 exists; only this session's fix filters it out of public display (status='approved' query).
+
+### Fix (3 files touched, 2 views + 2 lang stacks)
+- **`app/Http/Controllers/Front/PageController.php` `customerReviews()`**: now queries the live `property_reviews` (tenant-scoped, `status='approved'` only, ordered latest first), resolves reviewer name (`COALESCE(u.name, 'Anonymous')` → renders as "Verified Buyer" when `anonymous=1`), joins `properties` for the colony name, and passes real computed stats: `avg_rating` (AVG with 0.0 fallback), `total_reviews` (COUNT), `happy_users` (total), `satisfaction` (% rated ≥4; 0% when no reviews).
+- **`app/views/pages/customer_reviews.php`**: defaults no longer fabricate (avg 0.0 / total 0 / satisfaction 0); stat block shows "Average Rating / Verified Reviews / Satisfaction"; new honest empty-state section renders when `$reviews` is empty (i18n keys `reviews_empty_title` / `reviews_empty_desc`; EN+HI both defined — no raw key leak).
+- **`lang/en.php`**: added `reviews_total_reviews` ('Verified Reviews') + `reviews_empty_title` / `reviews_empty_desc`. **`lang/hi.php`**: hi equivalents in the file's Devanagari.
+
+### Verification (live HTTP, anonymous visitor)
+- `/customer-reviews` → HTTP 200, 203,447 B; needles: "Average Rating" YES · "Verified Reviews" YES · "3.5" YES · two approved review texts served "Great investment opportunity…" / "Decent property…" YES · "Verified Buyer" (anonymous-to-safe name) YES · pending review ABSENT · raw `reviews_total_reviews`/`reviews_empty_*` keys ABSENT · stats = AVG(4,3)=3.5, COUNT=2, %≥4=50% — the real numbers from the live table.
+- `php -l` clean ×4 · **PHPStan [OK]** on PageController.php · **Master 11/11 PASSED** (32.9s, 100% HEALTHY).
+- No schema changes. DB reads only (no writes this round). `property_reviews` untouched.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor appended **677** mid-round (verification round, no code, HEAD=HEAD). This entry = **S678**. Next-free = **679**. AGENTS.md integrity re-checked before this prepend; gate re-run before commit.
+
+### Key lessons
+_1481. **A "social proof" strip with hardcoded stats is asymmetric fabrication — it is the one number set every buyer sees first, and it is the easiest to verify as false.** Wire AVG/COUNT/% to the live table or show zeros; never default to `4.8`.
+_1482. **A view authored for a `$reviews` array the controller never passes renders silently empty while lying about stats** — diff the view's consumed keys against the controller's render payload before assuming the page is "just sparse".
+_1483. **Anonymous is a promise, not a cosmetic choice** — when `anonymous=1`, render "Verified Buyer" (or equivalent); never leak `u.name` for an anonymous reviewer even if the join exposes it.
+_1484. **Filter pending reviews publicly, not only in admin** — an honest approved-only query is the cheapest moderation you will ever write; "approved" is the correct public gate.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · EMI backfill · live AI dialing · production deploy · Task Scheduler verification (DAILY tasks 15/16/17) · 34 dead orphan views.
+
+## Session 677: Verification Round After Parallel Actor's S676 Careers Wave - Gates Held, Public AI Surfaces All Render Public Chrome With Live Needles, No Defects Found; No Code Changes (2026-11-17)
 
 ### Trigger
 User: "do next" — immediately after the parallel actor's S676 commit wave (`24acaf6b`, 3 page-1054 families closed + careers admin desk wired end-to-end end-to-end), asked to continue. This round exists to make sure my AI lanes + public-facing chrome did not regress under that commit wave, and only then to decide whether any new work was needed.

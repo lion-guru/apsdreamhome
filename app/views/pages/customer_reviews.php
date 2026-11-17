@@ -2,10 +2,10 @@
 // Customer Reviews Page - APS Dream Homes
 $page_title = $page_title ?? 'Customer Reviews - APS Dream Homes';
 $reviews = $reviews ?? [];
-$avg_rating = $avg_rating ?? 4.8;
-$total_reviews = $total_reviews ?? 0;
-$happy_users = $happy_users ?? 100;
-$satisfaction = $satisfaction ?? 98;
+$avg_rating = isset($avg_rating) ? (float)$avg_rating : 0.0;
+$total_reviews = (int)($total_reviews ?? 0);
+$happy_users = (int)($happy_users ?? $total_reviews);
+$satisfaction = (int)($satisfaction ?? 0);
 ?>
 
 <section class="py-5 bg-primary text-white">
@@ -18,8 +18,8 @@ $satisfaction = $satisfaction ?? 98;
                 <small><?= __('reviews_avg_rating') ?></small>
             </div>
             <div class="text-center">
-                <div class="h2 fw-bold"><?= number_format($happy_users) ?>+</div>
-                <small><?= __('reviews_happy_users') ?></small>
+                <div class="h2 fw-bold"><?= number_format($total_reviews) ?></div>
+                <small><?= __('reviews_total_reviews') ?></small>
             </div>
             <div class="text-center">
                 <div class="h2 fw-bold"><?= $satisfaction ?>%</div>
@@ -32,6 +32,13 @@ $satisfaction = $satisfaction ?? 98;
 <section class="py-5">
     <div class="container">
         <div class="row">
+            <?php if (empty($reviews)): ?>
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted"><?= __('reviews_empty_title') ?></h4>
+                <p class="text-muted"><?= __('reviews_empty_desc') ?></p>
+            </div>
+            <?php endif; ?>
             <?php foreach ($reviews as $review): ?>
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-sm border-0">
