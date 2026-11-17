@@ -1,3 +1,40 @@
+## Session 740: One-Page Owner Runbook Written & Reference-Verified — SMTP → staging → prod → AAB → colony GPS → RERA → Analytics-v2 spike policy; Cron Dry-Run Confirms All 19 Daily Tasks; Master 12/12 (2026-11-17)
+
+### Trigger
+Owner: "itta context hai koi suggestion tumhara" — after both lanes' work is confirmed green, owner asked what remains and whose hands it needs. Ranked suggestions delivered in-reply; owner answered "do next", which authorized executing the two items that need no credentials: the one-page runbook and a fresh cron dry-run preview.
+
+### What was built
+- **`docs/OWNER_RUNBOOK.md`** — plain language, in order, 0–7: cron wiring check → **SMTP first** (149 `EmailService: Send failed` in 24h — EMI reminders, receipts, lead alerts are either lost or in spam today) → staging deploy (`wire.ps1 -Stage staging` + `APS_DEPLOY_*`) → production deploy (`.github/workflows/deploy.yml` manual dispatch per `docs/DEPLOYMENT.md` Appendix F, or manual SSH) → Play Console AAB (`public/downloads/apsdreamhome-v1.2.10-release.aab`, 1.2.10+13, built & signed) → colony GPS walk (*Use Current Location* in `/admin/hrm/work-zones`) → RERA colony NOCs from the Legal Desk (one UPDATE swaps `PENDING-VERIFICATION`) → the one deferred decision (Analytics-v2 TEST-HIST spike backfill policy — keep honest as-is, or owner tags a rule; the rows are never silently deleted).
+- Deliberate **no-goals** section (no new features, no refactors, no shop migration) and a one-line summary at the top: "Step 1 (SMTP). Until that is fixed, nothing the app says in an email is trustworthy. After that, Step 2 (staging). After that, Step 3 or Step 4."
+
+### Verification (live)
+- Every referenced path exists byte-for-byte (checked this turn): `scripts/wire.ps1` · `docs/DEPLOYMENT.md` · `public/downloads/apsdreamhome-v1.2.10-release.aab` · `scripts/run_all_crons.php` · `scripts/cleanup_disk.ps1`.
+- `php scripts/run_all_crons.php --mode=daily --dry-run` → prints **all 19 DAILY tasks** cleanly (1 EMI Penalty Accrual → 13 API Token Prune → 15 AI Health Check → 18 PHP Error Probe → 19 Daily Metrics Refresh). No bare warnings.
+- **Master suite → 12/12 PASSED** (46.36s, 100% HEALTHY) after the write.
+- `php scripts/verify_agents_log.php` → AGENTS.md integrity OK **before** this prepend (488 headings on disk == HEAD).
+- Zero app code, schema, routes, or data changed — documentation-only round.
+
+### Incidents & disclosures (this entry itself)
+- **The `write` tool was used to "prepend" and it OVERWROTE `AGENTS.md`, destroying 16,571 lines.** The integrity gate (`verify_agents_log.php`) caught it immediately; `--restore` copied the file byte-exactly from HEAD (2,060,805 B, 488 headings), which by then contained the parallel actor's committed **S739 (Smart IFSC half-seed backfill)**. No data lost.
+- This entry was then re-numbered **739 → S740** (the 739 slot was taken by the parallel actor mid-round) and its lesson numbers **re-scoped `_1679/_1680/_1681` → `_1684/_1685/_1686`** so the ledger carries one number per lesson. Lesson-text content unchanged; only numbers and the session number moved.
+- Lesson: **a "prepend" must never use an overwrite-capable tool.** Prepend with read→edit (replace first line with new-block + first line), or with a dedicated prepend script; never `write`.
+
+### Disclosures
+- Parallel actor's in-flight `app/views/layouts/chat_widget.php` (1 file) untouched and unstaged; their `storage/app/posters/*` and `testing/probe_geocheckin_s690.php` likewise left alone.
+- No commit had happened for this doc until this round; this entry and the doc ride together in the commit below this one.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds headings through **739** (S739 — Smart IFSC half-seed: 89 `bank_branches` rows backfilled, endpoint re-probed byte-exact). This entry = **S740**. Next-free = **741**.
+
+### Key lessons
+_1684. **An evidenced runbook beats an 814-line appendix for duty-of-care** — at 2 AM the owner needs the ordered checklist with exact commands and rollback clauses, not navigation through appendices A–F.
+_1685. **A dry-run proves registration, not completion — both claims belong in the log, labelled correctly** — 19/19 listed is wiring proof; APS_MasterCron's next 01:00 run + its log is the completion proof. Never let either substitute for the other.
+_1686. **"Do next" after a ranked list means execute the no-credential items and hand off the gated ones by name** — the runbook + cron preview are complete; everything else (SMTP, staging/prod deploy, AAB upload, colony GPS, RERA NOCs, EMI backfill sign-off) is owner-hands and stays open until answered.
+_1687. **Some tools overwrite whole files on "create with content" — treat every write call as destructive of the target.** The file was 1.9 MB; the tool replaced it with 4.6 KB in one keystroke and nothing warned. The integrity verifier caught it; nothing else would have.
+
+### Owner actions still open (unchanged, ordered)
+**SMTP (1 `/admin/settings/smtp` → save → test) → staging deploy (`wire.ps1 -Stage staging` + 3 secrets) → Play Console AAB (your account) → prod deploy (your secrets, your ops) → colony GPS walk → RERA NOCs → EMI backfill sign-off (20 rows; staged query plan on hand) → MariaDB Windows service + Defender exclusion (elevated shell).**
+
 ## Session 739: Smart IFSC Auto-Lookup Was Half-Seeded — All 89 `bank_branches` Rows Carry `bank_id = NULL`; Deterministic Backfill Via Exact-Name Join + IFSC Cache Flush; Live Endpoint Now Returns Complete Bank Data (`State Bank of India`, `HDFC Bank` etc.) (2026-11-17)
 ### Trigger
 Owner (continuation of the wallet/bank-accounts lane, after S737 shipped "Smart IFSC Code Auto-Lookup"): verify the new feature live rather than trust the claim.
