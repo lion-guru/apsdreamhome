@@ -270,3 +270,6 @@ storage/keys/
 
 # Machine-specific Flutter/Android build config (never commit)
 **/android/local.properties
+# Scratch probe files (throwaway probes from per-session scripts)
+storage/app/tmp/
+!storage/app/tmp/.gitkeep
