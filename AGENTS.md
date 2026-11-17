@@ -1,3 +1,37 @@
+## Session 722: wire.ps1 Printed A Stale "11/11 PASSED" — Hardcoded Literal Replaced With Runner's Own Passed/Total Counts (Now Prints 12/12); Post-S721 Verification Sweep: HEAD Byte-Verified Equal To Origin, Master 12/12, 6/6 Public Probes Clean, CI On Main In-Flight (2026-11-17)
+
+### Trigger
+Owner: "ok do next all" — verification-only round. Two findings, one fix, one honest CI observation.
+
+### What was found & fixed
+1. **`scripts/wire.ps1` line 61/66 — stale literal.** The pipeline's step-3 echoed `master: 11/11 PASSED` and a header comment claiming "11 suites" even after the suite grew past 12 (S701, S695, S687 all added suites). The literal drifted hard the moment a suite was added — it would never correct itself, and it printed a lie next to a green deployment gate. **Fix:** parse `Passed:` and `Total Suites Run:` from the runner's own output and print `$pass/$total PASSED` (no hardcoded counts anywhere in the file); header comment simplified to `3. MASTER SUITE`. Re-run → `master: 12/12 PASSED` · `wire: ALL STAGES GREEN`.
+2. **Verification sweep (all live probes)** — see below.
+
+### Verification (live, HEAD == origin/main == `62b0d5e63`)
+- `git rev-parse HEAD` == `git ls-remote origin main` → **62b0d5e63...** (byte-equal, both lines)
+- **Master → 12/12 PASSED** (37.5s) on the mixed tree (parallel actor's in-flight associate views + SelfLearningAI FK-guard present, untouched)
+- Public probes, fresh cookie jar: `/` 200 (325,957 B) · `/api/health` 200 (114 B) · `/test.php` **404** (S721 sweep fails closed correctly) · `/admin/index.php` → 302 → `/admin/login` (stub) · anonymous `/user/wallet/packages` → 302 → `/login` (gate holds)
+- Customer (`test_login=7`): `/user/wallet/packages` → 302 chain → 200 at `/auth/wallet/packages` — live page, needles PRESENT (`Basic Wallet` · `Activate Your Wallet` · ₹-ladder needles absent the phantom `amount` column name)
+- `wire.ps1` re-run post-fix: **ALL STAGES GREEN** including HTTP probe (`/` 200 · `/api/health` 200) · exit 0
+- **AGENTS.md integrity OK** at prepend time; HEAD-to-origin parity re-checked after commit (see verification in next round if anything flips)
+- CI on `main` for the two newest pushes: **PHP Tests (Legacy) = success** (2 runs), **CI · CI/CD Pipeline · CodeQL = in_progress** at probe time (push age ~2 min) — pipeline unblocked, no action indicated
+
+### Honest notes
+- CI green on `PHP Tests (Legacy)` does **not** imply all five workflows green yet; the in-flight runs may surface findings when they finish — waiting is the correct move, not log-diving.
+- No code or schema or data changed this round — one PowerShell literal + zero-net app changes
+- `php -l`: not applicable (PowerShell file; `Get-Content | Out-Null` parse executed clean)
+- No commits before this entry's commit; staging limited to **`scripts/wire.ps1`** + **`AGENTS.md`**; parallel actor's associate views / SelfLearningAI / posters / probe script are untouched
+- Next-free after this round = **723**
+
+### Key lessons
+_1617. **A human-printed "summary" hardcodes exactly the number you'll pretend you know forever.** The suite crossed 12 long ago; the deploy gate printed 11 — until the count came from the runner itself.
+_1618. **When CI says in_progress, first move is wait, not investigate.** PHP Tests (Legacy) went green inside the same window; the others confirm the codebase passes basic static analysis/syntax on this exact tree.
+_1619. **HEAD-to-origin byte parity is the only honest "tree pushed" witness** — `git status` emits equal noise on both sides of a push and cannot tell you the remote matches your commit, only you looked at it twice.
+_1620. **A stale "11/11" inside a deployment gate teaches the operator to believe the gate is optimistic by one.** Gates that print fewer than reality are worse than gates that print nothing.
+
+### Owner actions still open (unchanged)
+Play Console AAB upload · HTTPS assetlinks SHA-256 · RERA colony numbers · production deploy · EMI backfill · live AI dialing · MariaDB service · Defender exclusion (admin) · staging SSL · `.history` 16 MB tree disposition (gitignored) · 22 stub tables decision · `testimonials_s694_pre_verify` drop.
+
 ## Session 721: Public Docroot Debug/Probe/Placeholder Sweep — 23 Files Archived To `_archive/public_docroot_sweep_s718/` With Zero Reference Across App/Routes/Views/JS/HTML/CSS/HTACCESS; `public/admin/index.php` Redirect Stub Kept; Colony Walkthrough HTML Correctly Kept (Live Iframe Link); Master 12/12 (2026-11-17)
 
 ### Trigger

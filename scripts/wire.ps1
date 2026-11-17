@@ -58,12 +58,14 @@ Write-Output " linted $($files.Count) file(s); failures: $lintFail"
 if ($lintFail -gt 0) { $fail = $true; if (-not $KeepGoing) { Write-Output " STOP: fix syntax errors first"; exit 1 } }
 
 # 3. master suite
-Step "3. MASTER SUITE (11 suites: unit/integration/E2E/HTTP-smoke/withdrawal-money/menulink)"
+Step "3. MASTER SUITE"
 $out = & php testing/master_test_runner.php 2>&1 | Out-String
 $out.TrimEnd() -split "`n" | Select-Object -Last 6 | ForEach-Object { Write-Output $_ }
 $m = [regex]::Match($out, 'Failed\s*:\s*(\d+)')
 $failed = if ($m.Success) { [int]$m.Groups[1].Value } else { -1 }
-if ($failed -ne 0) { $fail = $true; if (-not $KeepGoing) { Write-Output " STOP: master suite red (failed=$failed)"; exit 1 } } else { Write-Output " master: 11/11 PASSED" }
+$p = [regex]::Match($out, 'Passed\s*:\s*(\d+)')
+$t = [regex]::Match($out, 'Total Suites Run\s*:\s*(\d+)')
+if ($failed -ne 0) { $fail = $true; if (-not $KeepGoing) { Write-Output " STOP: master suite red (failed=$failed)"; exit 1 } } else { $pass = if ($p.Success) { $p.Groups[1].Value } else { '?' }; $total = if ($t.Success) { $t.Groups[1].Value } else { '?' }; Write-Output " master: $pass/$total PASSED" }
 
 # 4. HTTP health probe
 if (-not $SkipHealth) {
