@@ -1,3 +1,74 @@
+## Session 745: Bank Account Deletion & Primary Auto-Promotion Hardened, Withdrawal Pending Guard Active, AJAX/API JSON Error Delivery Enforced, Associate Layout Harmonized; Master 12/12 Clean, Zero DB Drift (2026-11-19)
+
+### Trigger
+Continuation of associate portal consistency and wallet/bank account refinements:
+- "bank account wala edit kaam nhi kar raha"
+- "do next"
+- Active work items:
+  1. Harden bank account management lifecycle (`deleteBankAccount`, `setPrimaryBank`, `bankAccounts`).
+  2. Prevent accidental deletion of primary bank accounts from leaving users with zero primary accounts.
+  3. Guard bank accounts against deletion while in-flight pending withdrawal requests exist.
+  4. Ensure error handlers deliver clean JSON payloads for AJAX/API requests rather than HTML pages that crash client-side JSON parsers.
+  5. Unify bank account view layout to fluid container with breadcrumbs within the associate portal.
+
+### Root Cause Analysis
+1. **Unprotected Primary Deletion & Broken Payout Reference**:
+   - `WalletController::deleteBankAccount()` executed a raw delete query without checking whether the account was marked `is_primary = 1`. If deleted, any secondary accounts remained secondary (`is_primary = 0`), leaving the user with no default payout target.
+   - Deletion did not check for active `withdrawal_requests` with `status = 'pending'`. Deleting an account tied to an unapproved withdrawal caused orphaned foreign references during admin batch approval.
+2. **Missing Frontend Form Submission State**:
+   - In `app/views/wallet/bank_accounts.php`, `addBankAccount()` lacked button-disable and loading spinner feedback, leaving the form susceptible to duplicate submissions on rapid clicks.
+3. **HTML Error Leakage on AJAX/API Failures**:
+   - `ErrorHandler::render()` unconditionally rendered HTML error views (`app/views/errors/{code}.php` or `renderGeneric()`). When an AJAX fetch request encountered 401, 403, 404, or 500 errors, the browser received an HTML document and threw a JSON parse exception (`Unexpected token '<'`), obscuring the underlying error.
+4. **Layout Misalignment in Associate Portal**:
+   - `bank_accounts.php` rendered inside a narrow fixed `.container py-5`, causing visual asymmetry when loaded inside `layouts/associate` with the fluid sidebar navigation.
+
+### Key Fixes Landed
+1. **Bank Account Hardening & Auto-Promotion (`WalletController.php`)**:
+   - Updated `deleteBankAccount()` to:
+     - Verify ownership of the target account.
+     - Block deletion if the account is associated with any pending withdrawal (`SELECT id FROM withdrawal_requests WHERE bank_account_id = ? AND status = 'pending'`).
+     - Detect if the account was `is_primary = 1`, and if so, automatically promote the user's latest active remaining bank account to primary.
+     - Record structured audit entries in `user_activity_logs_unified`.
+   - Updated `setPrimaryBank()` with ownership verification and activity audit logging.
+   - Updated `bankAccounts()` to recognize associate access across roles (`associate`, `agent`) and routes (`/associate/*`), redirecting unauthenticated requests to `/associate/login`.
+2. **Form Interaction & Loading Feedback (`bank_accounts.php`)**:
+   - Added instant button disable and spinner (`<i class="fas fa-spinner fa-spin me-2"></i>Adding...`) in `addBankAccount()`, restoring the button on failure.
+   - Harmonized layout wrapper to `.container-fluid px-4 py-3` with full associate breadcrumb hierarchy (`Dashboard > My Wallet > Bank Accounts`) when viewed within the associate portal.
+3. **AJAX/API JSON Error Delivery (`ErrorHandler.php`)**:
+   - Updated `ErrorHandler::render()` to detect JSON/AJAX requests via `HTTP_ACCEPT`, `HTTP_X_REQUESTED_WITH`, `CONTENT_TYPE`, or API/AJAX route paths.
+   - Dispatches structured JSON (`{"success": false, "status": $code, "message": $message}`) with appropriate HTTP headers, eliminating client-side JSON parse crashes.
+
+### Verification (live)
+- `php -l` on all modified files:
+  - `app/Core/ErrorHandler.php` -> PASS
+  - `app/Http/Controllers/WalletController.php` -> PASS
+  - `app/views/wallet/bank_accounts.php` -> PASS
+- **Functional & Unit Test Verification (`test_bank_and_error_hardening.php`)**:
+  - ErrorHandler JSON mode verification (403 forbidden) -> PASS
+  - Primary account deletion with auto-promotion of next active bank -> PASS
+  - Deletion rejection on pending withdrawal constraint -> PASS
+  - Successful deletion post-withdrawal resolution -> PASS
+- **Database Baseline (Zero Drift Target)**:
+  - `users`: 82 (exact match)
+  - `plot_bookings`: 23 (exact match)
+  - `leads`: 994 (exact match)
+  - `transactions`: 5 (exact match)
+  - `mlm_commission_ledger`: 359 (exact match)
+  - `email_queue`: 14 (exact match)
+- **Master Test Suite**:
+  - `php testing/master_test_runner.php` -> **12/12 PASSED** (35.87s, 100% HEALTHY).
+- **AGENTS.md Log Verification**:
+  - `php scripts/verify_agents_log.php` -> PASS.
+
+### AGENTS.md numbering (Rule 4)
+This entry = **S745**. Next-free = **746**.
+
+### Key lessons
+_1697. **Deleting primary records must atomically elect a successor.** When a user deletes their primary bank account and active secondary accounts remain, the system must auto-promote the latest active secondary account to primary rather than leaving the user with zero primary accounts for automated payouts.
+_1698. **Destructive entity deletion must guard against in-flight financial workflows.** Bank account deletion must reject requests when linked to an active pending withdrawal (`status = 'pending'`), preventing orphaned financial transactions during admin payout execution.
+_1699. **Error handlers must detect client protocol expectations and deliver matching payloads.** When AJAX or API clients encounter 400/401/403/404/500 errors, rendering an HTML view causes JSON parse crashes in frontend fetch chains; `ErrorHandler` must emit structured JSON `{ "success": false, "status": $code, "message": $msg }` whenever `HTTP_ACCEPT`, `X-Requested-With`, or API routes indicate non-browser clients.
+_1700. **Portal sub-modules must maintain layout fluidness across roles.** Standardizing container wrappers to `.container-fluid px-4 py-3` with breadcrumbs when rendered inside role portals prevents jarring fixed-width horizontal alignment breaks.
+
 ## Session 744: Associate Portal Consistency Overhaul — Smart Calculators Suite Live-Harmonized (EMI, Stamp Duty, Plot Area Matrix), Advances & Festival Loans Layout Unified, Chatbot Associate Context & Real-Time Lead Telemetry Integrated; Zero DB Drift, Master 12/12 Clean (2026-11-17)
 
 ### Trigger

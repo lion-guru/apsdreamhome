@@ -568,7 +568,8 @@ class WalletController extends BaseController
         @session_start();
 
         if (!isset($_SESSION['user_id'])) {
-            header('Location: ' . BASE_URL . '/login');
+            $isAssociateRoute = (strpos($_SERVER['REQUEST_URI'] ?? '', '/associate/') !== false);
+            header('Location: ' . BASE_URL . ($isAssociateRoute ? '/associate/login' : '/login'));
             exit;
         }
 
@@ -590,7 +591,8 @@ class WalletController extends BaseController
             'user_name' => $_SESSION['user_name'] ?? 'User'
         ];
 
-        $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
+        $isAssociate = in_array($_SESSION['role'] ?? '', ['associate', 'agent'], true) || (strpos($_SERVER['REQUEST_URI'] ?? '', '/associate/') !== false);
+        $this->layout = $isAssociate ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/bank_accounts', $data);
     }
 
@@ -718,9 +720,24 @@ class WalletController extends BaseController
         }
 
         try {
+            $account = $this->db->fetchOne("SELECT id FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$accountId, $userId]);
+            if (!$account) {
+                echo json_encode(['success' => false, 'message' => 'Bank account not found or access denied']);
+                exit;
+            }
+
             $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ?", [$userId]);
             $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ?", [$accountId, $userId]);
-            echo json_encode(['success' => true, 'message' => 'Primary account updated']);
+
+            // Audit log
+            try {
+                $this->db->query("
+                    INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, created_at)
+                    VALUES (?, 'bank_account_primary_set', ?, ?, NOW())
+                ", [$userId, json_encode(['account_id' => $accountId]), $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Throwable $e) {}
+
+            echo json_encode(['success' => true, 'message' => 'Primary account updated successfully']);
         } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
         }
@@ -744,7 +761,7 @@ class WalletController extends BaseController
             exit;
         }
 
-        $userId = $_SESSION['user_id'];
+        $userId = (int)$_SESSION['user_id'];
         $accountId = (int)($_POST['account_id'] ?? 0);
 
         if ($accountId <= 0) {
@@ -753,10 +770,49 @@ class WalletController extends BaseController
         }
 
         try {
+            // Guard: check if bank account belongs to user
+            $target = $this->db->fetchOne("SELECT id, is_primary FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$accountId, $userId]);
+            if (!$target) {
+                echo json_encode(['success' => false, 'message' => 'Bank account not found or access denied']);
+                exit;
+            }
+
+            // Guard: prevent deleting bank account tied to pending withdrawals
+            $pendingWithdrawal = $this->db->fetchOne(
+                "SELECT id FROM withdrawal_requests WHERE bank_account_id = ? AND status = 'pending' LIMIT 1",
+                [$accountId]
+            );
+            if ($pendingWithdrawal) {
+                echo json_encode(['success' => false, 'message' => 'Cannot delete a bank account with an active pending withdrawal request']);
+                exit;
+            }
+
+            $wasPrimary = ((int)($target['is_primary'] ?? 0) === 1);
+
             $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ?", [$accountId, $userId]);
-            echo json_encode(['success' => true, 'message' => 'Bank account deleted']);
+
+            // If deleted account was primary, auto-promote next available active account
+            if ($wasPrimary) {
+                $nextPrimary = $this->db->fetchOne(
+                    "SELECT id FROM user_bank_accounts WHERE user_id = ? AND status = 'active' ORDER BY is_primary DESC, id DESC LIMIT 1",
+                    [$userId]
+                );
+                if ($nextPrimary) {
+                    $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ?", [$nextPrimary['id']]);
+                }
+            }
+
+            // Audit log
+            try {
+                $this->db->query("
+                    INSERT INTO user_activity_logs_unified (user_id, action, context, ip_address, created_at)
+                    VALUES (?, 'bank_account_deleted', ?, ?, NOW())
+                ", [$userId, json_encode(['account_id' => $accountId, 'was_primary' => $wasPrimary]), $_SERVER['REMOTE_ADDR'] ?? '']);
+            } catch (\Throwable $e) {}
+
+            echo json_encode(['success' => true, 'message' => 'Bank account deleted successfully']);
         } catch (\Throwable $e) {
-            echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Failed to delete: ' . $e->getMessage()]);
         }
         exit;
     }

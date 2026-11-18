@@ -2,7 +2,7 @@
 <?php
 $page_title = $page_title ?? 'Bank Accounts - APS Dream Home';
 $baseUrl = defined('BASE_URL') ? BASE_URL : '';
-$isAssociate = (($_SESSION['role'] ?? '') === 'associate');
+$isAssociate = in_array($_SESSION['role'] ?? '', ['associate', 'agent'], true) || (strpos($_SERVER['REQUEST_URI'] ?? '', '/associate/') !== false);
 $bankBase = $isAssociate ? $baseUrl . '/associate' : $baseUrl;
 $bankListUrl = $isAssociate ? $baseUrl . '/associate/bank-details' : $baseUrl . '/wallet/bank-accounts';
 $bankAddUrl = $isAssociate ? $baseUrl . '/associate/bank-details/add' : $baseUrl . '/wallet/bank-accounts/add';
@@ -172,7 +172,16 @@ $bankUpdateUrl = $isAssociate ? $baseUrl . '/associate/bank-details/update' : $b
 }
 </style>
 
-<div class="container py-5">
+<div class="<?= $isAssociate ? 'container-fluid px-4 py-3' : 'container py-5' ?>">
+    <?php if ($isAssociate): ?>
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate/dashboard" class="text-decoration-none"><i class="fas fa-home me-1"></i>Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/associate/wallet" class="text-decoration-none">My Wallet</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Bank Accounts</li>
+            </ol>
+        </nav>
+    <?php endif; ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-university me-2 text-primary"></i>Bank Accounts</h2>
         <div>
@@ -401,12 +410,12 @@ function hideAddBankModal() {
 }
 
 function addBankAccount() {
-    const bankName = document.getElementById('bankName').value;
-    const accountNumber = document.getElementById('accountNumber').value;
-    const confirmAccountNumber = document.getElementById('confirmAccountNumber').value;
-    const accountHolder = document.getElementById('accountHolder').value;
-    const ifscCode = document.getElementById('ifscCode').value;
-    const branchName = document.getElementById('branchName').value;
+    const bankName = document.getElementById('bankName').value.trim();
+    const accountNumber = document.getElementById('accountNumber').value.trim();
+    const confirmAccountNumber = document.getElementById('confirmAccountNumber').value.trim();
+    const accountHolder = document.getElementById('accountHolder').value.trim();
+    const ifscCode = document.getElementById('ifscCode').value.trim().toUpperCase();
+    const branchName = document.getElementById('branchName').value.trim();
     const accountType = document.getElementById('accountType').value;
     const isPrimary = document.getElementById('isPrimary').checked ? '1' : '0';
     
@@ -421,9 +430,20 @@ function addBankAccount() {
         return;
     }
     
-    if (accountNumber.length < 9 || accountNumber.length > 18) {
-        alert('Account number must be 9-18 digits');
+    if (!/^\d{9,18}$/.test(accountNumber)) {
+        alert('Account number must be between 9 and 18 digits');
         return;
+    }
+
+    if (ifscCode.length < 8 || ifscCode.length > 15) {
+        alert('Please enter a valid IFSC code');
+        return;
+    }
+
+    const addBtn = document.querySelector('#addBankModal button[onclick="addBankAccount()"]');
+    if (addBtn) {
+        addBtn.disabled = true;
+        addBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
     }
     
     const formData = new FormData();
@@ -448,10 +468,18 @@ function addBankAccount() {
             window.location.href = '<?= $bankListUrl ?>';
         } else {
             alert('Failed to add bank account: ' + (data.message || 'Unknown error'));
+            if (addBtn) {
+                addBtn.disabled = false;
+                addBtn.innerHTML = '<i class="fas fa-plus me-2"></i>Add Bank Account';
+            }
         }
     })
     .catch(error => {
         alert('Error: ' + error);
+        if (addBtn) {
+            addBtn.disabled = false;
+            addBtn.innerHTML = '<i class="fas fa-plus me-2"></i>Add Bank Account';
+        }
     });
 }
 

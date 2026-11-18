@@ -25,6 +25,33 @@ class ErrorHandler
         $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'CLI';
         error_log("HTTP {$code} Error: " . $requestUri . " - IP: " . $remoteAddr . ($message ? " - Message: {$message}" : ""));
         
+        // Return JSON for AJAX and API requests to prevent client-side parse crashes
+        $isAjaxOrApi = (
+            (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) ||
+            (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+            (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) ||
+            (isset($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '/api/') !== false || strpos($_SERVER['REQUEST_URI'], '/ajax/') !== false))
+        );
+
+        if ($isAjaxOrApi) {
+            if (!headers_sent()) {
+                header('Content-Type: application/json; charset=utf-8');
+            }
+            $defaultMessages = [
+                400 => 'Bad Request',
+                401 => 'Unauthorized',
+                403 => 'Forbidden',
+                404 => 'Not Found',
+                500 => 'Internal Server Error',
+            ];
+            echo json_encode([
+                'success' => false,
+                'status' => $code,
+                'message' => $message ?: ($defaultMessages[$code] ?? 'An error occurred')
+            ]);
+            exit;
+        }
+
         // Determine the error page path
         $errorView = __DIR__ . '/../../app/views/errors/' . $code . '.php';
         
