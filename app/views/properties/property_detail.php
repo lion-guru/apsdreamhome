@@ -1,7 +1,8 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '+91-9277121112'); $emailDisplay = $sc('contact_email', 'info@apsdreamhome.com'); ?>
 <?php
+// Rendered inside layouts/base.php by Front\PropertyPageController@propertyDetails (render()) —
+// do NOT include the layout here: it would print header+footer BEFORE the property content.
 $page_title = $property['title'] . ' - APS Dream Home';
-include __DIR__ . '/../layouts/base.php';
 ?>
 
 <div class="property-detail">

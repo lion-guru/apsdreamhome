@@ -1,6 +1,7 @@
 <?php
+// Rendered inside layouts/base.php by Property\PropertyController@index (render()) —
+// do NOT include the layout here: it would print header+footer BEFORE this content.
 $page_title = 'Premium Properties - APS Dream Home';
-include __DIR__ . '/../layouts/base.php';
 ?>
 
 <div class="container-fluid py-5">
