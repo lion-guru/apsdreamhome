@@ -4,6 +4,7 @@ $page_title = $property['title'] . ' - APS Dream Home';
 include __DIR__ . '/../layouts/base.php';
 ?>
 
+<div class="property-detail">
 <div class="container-fluid py-4 overflow-hidden">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
@@ -53,13 +54,13 @@ include __DIR__ . '/../layouts/base.php';
             <div class="glass-card p-4 mb-4 d-flex flex-wrap justify-content-around text-center gap-3">
                 <div>
                     <i class="bi bi-door-open fs-3 text-primary d-block mb-1"></i>
-                    <span class="text-white fw-bold d-block"><?php echo e($property['bedrooms']); ?> BHK</span>
+                    <span class="text-white fw-bold d-block"><?php echo ((int)($property['bedrooms'] ?? 0) > 0) ? ((int)$property['bedrooms'] . ' BHK') : 'Plot'; ?></span>
                     <small class="text-white-50 lowercase">Bedrooms</small>
                 </div>
                 <div class="vr bg-white opacity-25 d-none d-md-block"></div>
                 <div>
                     <i class="bi bi-water fs-3 text-info d-block mb-1"></i>
-                    <span class="text-white fw-bold d-block"><?php echo $property['bathrooms'] ?? '2'; ?></span>
+                    <span class="text-white fw-bold d-block"><?php echo ((int)($property['bathrooms'] ?? 0) > 0) ? (int)$property['bathrooms'] : '—'; ?></span>
                     <small class="text-white-50 lowercase">Bathrooms</small>
                 </div>
                 <div class="vr bg-white opacity-25 d-none d-md-block"></div>
@@ -152,7 +153,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="glass-card p-4">
                     <h5 class="text-white h6 mb-3">Contact Property <?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Owner' : 'Specialist'; ?></h5>
                     <div class="d-flex align-items-center gap-3 mb-4">
-                        <img src="<?= BASE_URL ?>/assets/images/placeholder/hero.svg" class="rounded-circle shadow" alt="Contact person" >
+                        <img src="<?= BASE_URL ?>/assets/images/placeholder/hero.svg" class="rounded-circle shadow" alt="Contact person" style="width:72px;height:72px;object-fit:cover;flex:0 0 72px;">
                         <div class="w-100">
                             <h2  class="fs-6 fw-semibold text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h2>
 
@@ -199,55 +200,59 @@ include __DIR__ . '/../layouts/base.php';
         </div>
     </div>
 </div>
+</div>
 
 <style>
-    .glass-breadcrumb {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .property-detail { color: #0f172a; }
+
+    .property-detail .glass-breadcrumb {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 12px;
     }
+    .property-detail .breadcrumb-item a { color: #475569; text-decoration: none; }
+    .property-detail .breadcrumb-item.active { color: #0f172a; }
+    .property-detail .breadcrumb-item + .breadcrumb-item::before { color: #94a3b8; }
 
-    .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .property-detail .glass-card,
+    #sharePropertyModal .glass-card,
+    #inquiryModal .glass-card,
+    #inquiryModal .modal-content {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(2, 6, 23, 0.06);
+        color: #0f172a;
     }
 
-    .glass-blur {
-        backdrop-filter: blur(8px);
-        background: rgba(41, 98, 255, 0.5) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+    .property-detail .text-white { color: #0f172a !important; }
+    .property-detail .text-white-50 { color: #64748b !important; }
+    .property-detail .vr { background: #cbd5e1 !important; opacity: 1 !important; }
+    .property-detail .border-white { border-color: #e2e8f0 !important; }
+
+    .property-detail .form-control { background: #ffffff; color: #0f172a; border-color: #cbd5e1; }
+    .property-detail .form-control::placeholder { color: #94a3b8; }
+
+    .property-detail .btn-outline-light { color: #0f172a; border-color: #cbd5e1; background: transparent; }
+    .property-detail .btn-outline-light:hover, .property-detail .btn-outline-light:focus {
+        color: #0f172a; background: #f1f5f9; border-color: #94a3b8;
     }
 
-    .nav-tabs .nav-link:hover {
-        background: rgba(255, 255, 255, 0.05);
+    .property-detail .nav-tabs .nav-link {
+        color: #475569 !important;
+        border: 0 !important;
     }
-
-    .nav-tabs .nav-link.active {
-        background: rgba(41, 98, 255, 0.1) !important;
+    .property-detail .nav-tabs .nav-link:hover { background: #f1f5f9; }
+    .property-detail .nav-tabs .nav-link.active {
+        background: rgba(41, 98, 255, 0.08) !important;
         border-bottom: 2px solid var(--primary) !important;
         color: var(--primary) !important;
     }
 
-    .thumbnail-hover {
-        transition: all 0.2s;
-        border: 2px solid transparent;
-    }
+    .property-detail .thumbnail-hover { transition: all 0.2s; border: 2px solid transparent; }
+    .property-detail .thumbnail-hover:hover { transform: scale(1.05); border-color: var(--primary); }
 
-    .thumbnail-hover:hover {
-        transform: scale(1.05);
-        border-color: var(--primary);
-    }
-
-    .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.3);
-    }
-
-    .scrollbar-hidden::-webkit-scrollbar {
-        display: none;
-    }
+    .property-detail .scrollbar-hidden::-webkit-scrollbar { display: none; }
 </style>
 
 <script>
