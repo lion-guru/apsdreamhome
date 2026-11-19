@@ -156,7 +156,7 @@ foreach ($claims as $cl) {
                             $rewardVal = (float)($off['reward_value'] ?? 0);
                         ?>
                         <div class="col-md-6 col-lg-6">
-                            <div class="card h-100 border shadow-sm rounded-3 <?= $isEligible ? 'border-success' : 'border-light' ?>" style="overflow: hidden;">
+                            <div class="card h-100 border shadow-sm rounded-3 offer-gradient <?= $isEligible ? 'border-success' : 'border-light' ?>" style="overflow: hidden;">
                                 <div class="card-header border-0 py-3 text-white" style="background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="badge bg-warning text-dark fw-bold">

@@ -118,7 +118,7 @@ foreach ($advances as $a) {
         $remAmt = max(0, $appAmt - $recAmt);
         $prog = $appAmt > 0 ? min(100, round(($recAmt * 100) / $appAmt)) : 0;
         ?>
-        <div class="card border-0 shadow-sm mb-4 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+        <div class="card bg-dark border-0 shadow-sm mb-4 text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
             <div class="card-body p-4">
                 <div class="row align-items-center g-3">
                     <div class="col-md-7">

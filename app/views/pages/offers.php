@@ -208,7 +208,7 @@ $offers = $offers ?? [];
         </div>
 
         <!-- ASSOCIATE PARTNER REWARDS BANNER -->
-        <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-5 text-white" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%);">
+        <div class="card bg-dark border-0 shadow-lg rounded-4 overflow-hidden mb-5 text-white" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%);">
             <div class="card-body p-4 p-md-5">
                 <div class="row align-items-center g-4">
                     <div class="col-lg-8">
