@@ -183,17 +183,9 @@ include __DIR__ . '/../layouts/base.php';
 
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <hr class="border-secondary opacity-25">
-                        <form id="lead-form">
-    <?php echo CSRFProtection::csrfField(); ?>
-                            <h6 class="text-white-50 small mb-2">Or request a callback:</h6>
-                            <div class="mb-2">
-                                <input aria-label="Your name" type="text" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Your Name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
-                            </div>
-                            <div class="mb-2">
-                                <input aria-label="Email address" type="email" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Email Address" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>">
-                            </div>
-                            <button type="button" class="btn btn-outline-primary w-100" onclick="alert('Call back request sent! Our team will contact you shortly.')">Request Callback</button>
-                        </form>
+                        <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#inquiryModal">
+                            <i class="bi bi-telephone-inbound me-1"></i>Request Callback
+                        </button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -490,7 +482,7 @@ function shareProperty() {
                         <hr class="border-secondary">
                         <h6 class="fw-bold mb-3"><i class="fas fa-share-alt me-2"></i>Share Options</h6>
                         <div class="d-grid gap-2">
-                            <a href="#" class="btn btn-success btn-lg d-flex align-items-center justify-content-center gap-2" onclick="navigator.clipboard.writeText('${shareMessage.replace(/'/g, "\\'")}').then(() => { alert('Copied to clipboard!'); }); event.preventDefault();">
+                            <a href="${waUrl}" class="btn btn-success btn-lg d-flex align-items-center justify-content-center gap-2" target="_blank" rel="noopener">
                                 <i class="fab fa-whatsapp text-white me-2"></i> WhatsApp
                             </a>
                             <a href="sms:?body=${encodeURIComponent(shareMessage)}" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2">
