@@ -1373,6 +1373,8 @@ document.addEventListener('DOMContentLoaded', function(){
                 mSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><?= __("services_sending", null, "Sending...") ?>';
                 
                 const formData = new FormData(modalForm);
+                var csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+                formData.append('csrf_token', csrfToken);
                 fetch('<?php echo BASE_URL; ?>/service-interest', {
                     method: 'POST',
                     body: formData

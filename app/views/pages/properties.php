@@ -500,10 +500,11 @@ function toggleFavorite(btn) {
     const icon = btn.querySelector('i');
     const isFav = icon.classList.contains('fas');
     const url = isFav ? BASE_URL + '/dashboard/favorites/remove' : BASE_URL + '/dashboard/favorites/add';
+    const favCsrf = (document.querySelector('meta[name="csrf-token"]') || {}).content || (document.querySelector('meta[name="csrf"]') || {}).content || '';
     fetch(url, {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'property_id=' + id
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
+        body: 'property_id=' + id + (favCsrf ? '&csrf_token=' + encodeURIComponent(favCsrf) : '')
     }).then(r => r.json()).then(d => {
         if (d.success) {
             if (isFav) { icon.className = 'far fa-heart'; btn.title = I18N.add_to_favorites; }
@@ -519,6 +520,8 @@ function addToCompare(btn) {
     if (!id) return;
     const fd = new FormData();
     fd.append('property_id', id);
+    const cmpCsrf = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+    if (cmpCsrf) fd.append('csrf_token', cmpCsrf);
     fetch(BASE_URL + '/property-comparison/add', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
     .then(r => r.json())
     .then(d => {

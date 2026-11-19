@@ -69,7 +69,7 @@
 }
 </style>
 
-<!-- •�•�•�•�•�•�•�•�•�•�•�•� HERO •�•�•�•�•�•�•�•�•�•�•�•� -->
+<!-- •-•-•-•-•-•-•-•-•-•-•-•- HERO •-•-•-•-•-•-•-•-•-•-•-•- -->
 <section class="careers-hero text-white py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -86,7 +86,7 @@
     </div>
 </section>
 
-<!-- •�•�•�•�•�•�•�•�•�•�•�•� BREADCRUMB •�•�•�•�•�•�•�•�•�•�•�•� -->
+<!-- •-•-•-•-•-•-•-•-•-•-•-•- BREADCRUMB •-•-•-•-•-•-•-•-•-•-•-•- -->
 <div class="bg-light py-2">
     <div class="container">
         <nav aria-label="breadcrumb">
@@ -98,7 +98,7 @@
     </div>
 </div>
 
-<!-- •�•�•�•�•�•�•�•�•�•�•�•� WHY JOIN US •�•�•�•�•�•�•�•�•�•�•�•� -->
+<!-- •-•-•-•-•-•-•-•-•-•-•-•- WHY JOIN US •-•-•-•-•-•-•-•-•-•-•-•- -->
 <section class="careers-section bg-light">
     <div class="container">
         <div class="text-center mb-5">
@@ -219,7 +219,7 @@
     </div>
 </section>
 
-<!-- •�•�•�•�•�•�•�•�•�•�•�•� CURRENT OPENINGS •�•�•�•�•�•�•�•�•�•�•�•� -->
+<!-- •-•-•-•-•-•-•-•-•-•-•-•- CURRENT OPENINGS •-•-•-•-•-•-•-•-•-•-•-•- -->
 <section class="careers-section" id="jobs">
     <div class="container">
         <div class="text-center mb-5">
@@ -284,7 +284,7 @@
     </div>
 </section>
 
-<!-- •�•�•�•�•�•�•�•�•�•�•�•� APPLICATION MODAL •�•�•�•�•�•�•�•�•�•�•�•� -->
+<!-- •-•-•-•-•-•-•-•-•-•-•-•- APPLICATION MODAL •-•-•-•-•-•-•-•-•-•-•-•- -->
 <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
@@ -503,7 +503,7 @@
     </div>
 </div>
 
-<!-- •�•�•�•�•�•�•�•�•�•�•�•� CTA •�•�•�•�•�•�•�•�•�•�•�•� -->
+<!-- •-•-•-•-•-•-•-•-•-•-•-•- CTA •-•-•-•-•-•-•-•-•-•-•-•- -->
 <section class="careers-section">
     <div class="container">
         <div class="careers-cta text-center">

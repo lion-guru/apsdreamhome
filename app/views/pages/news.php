@@ -139,7 +139,7 @@ document.getElementById('newsletterForm').addEventListener('submit', function(e)
         msg.style.display = 'block';
         if (d.success) {
             msg.className = 'mt-2 small text-success';
-            msg.textContent = 'âœ" Subscribed successfully!';
+            msg.textContent = 'Subscribed successfully!';
             btn.textContent = 'Subscribed!';
             btn.classList.replace('btn-primary', 'btn-success');
             this.reset();
