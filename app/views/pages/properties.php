@@ -97,7 +97,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 .props-grid-card .prop-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
 .props-grid-card .prop-price{font-size:1.3rem;font-weight:800;color:#0d9488;line-height:1}
 .props-grid-card .prop-price small{font-size:0.7rem;font-weight:500;color:#94a3b8}
-.props-grid-card .prop-actions{display:flex;gap:6px}
+.props-grid-card .prop-actions{display:flex;gap:6px;position:relative;z-index:2}
 .props-grid-card .prop-actions .btn{border-radius:10px;font-size:0.78rem;padding:6px 14px;font-weight:600;transition:all 0.2s}
 .props-grid-card .btn-interest{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;border:none}
 .props-grid-card .btn-interest:hover{background:linear-gradient(135deg,#0f766e,#115e59);transform:translateY(-1px)}
@@ -353,7 +353,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         </div>
 
                         <div class="card-body">
-                            <h2 class="prop-name"><?= htmlspecialchars($propTitle ?? '') ?></h2>
+                            <h2 class="prop-name"><a class="stretched-link text-decoration-none text-reset" href="<?= BASE_URL ?>/properties/<?= (int)($property['id'] ?? 0) ?>" aria-label="<?= htmlspecialchars(($propTitle ?? '') . ' — view details') ?>"><?= htmlspecialchars($propTitle ?? '') ?></a></h2>
                             <div class="prop-location">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <?= htmlspecialchars($propLocation ?? '') ?>

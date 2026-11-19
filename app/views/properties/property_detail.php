@@ -280,20 +280,6 @@ include __DIR__ . '/../layouts/base.php';
         }).catch(e => console.log('Lead tracked silently.'));
     }
 </script>
-}
-
-.toast-body {
-padding: 1rem;
-}
-
-@media (max-width: 768px) {
-.toast {
-right: 10px;
-left: 10px;
-min-width: auto;
-}
-}
-</style>
 
 <!-- Smart Registration Behavior Tracking -->
 <script>
@@ -416,19 +402,17 @@ min-width: auto;
 })();
 </script>
 
-//
+<script>
 // ─────────────────────────────────────────────────────────────────────────────
 // SHARE PROPERTY FUNCTIONALITY
 // ─────────────────────────────────────────────────────────────────────────────
-
 function shareProperty() {
     const propertyId = <?= (int)($property['id'] ?? 0) ?>;
     const propertyTitle = <?= json_encode($property['title'] ?? '') ?>;
     const propertyPrice = <?= (int)($property['price'] ?? 0) ?>;
     const propertyLocation = <?= json_encode($property['location'] ?? $property['address'] ?? '') ?>;
-    const propertyImage = <?= json_encode($heroImgSrc) ?>;
+    const propertyImage = <?= json_encode($heroImgSrc ?? null) ?>;
     const propertyType = <?= json_encode($property['property_type'] ?? '') ?>;
-    const propertyId = <?= (int)($property['id'] ?? 0) ?>;
     
     // Get user's referral code if logged in
     let referralCode = '';
@@ -559,4 +543,4 @@ function shareProperty() {
     
     modal.show();
 }
-//
+</script>
