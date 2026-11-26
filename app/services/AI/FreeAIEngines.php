@@ -91,7 +91,17 @@ class FreeAIEngines
             if (!is_array($cfg)) { $cfg = []; }
             $this->groqKey = $settings['groq_api_key'] ?? getenv('GROQ_API_KEY') ?: '';
             $this->openRouterKey = $settings['openrouter_api_key'] ?? getenv('OPENROUTER_API_KEY') ?: '';
-            $this->geminiKey = $settings['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
+            
+            // Resolve Gemini Key: priority settings table -> ai_settings -> env
+            try {
+                $geminiRow = $db->fetch("SELECT value FROM settings WHERE `key` = 'api_gemini_key' LIMIT 1");
+                if (!empty($geminiRow['value'])) {
+                    $this->geminiKey = trim($geminiRow['value']);
+                }
+            } catch (\Throwable $t) {}
+            if (empty($this->geminiKey)) {
+                $this->geminiKey = $settings['api_key'] ?? getenv('GEMINI_API_KEY') ?: '';
+            }
             // New free cloud AI providers
             $this->xaiKey = $settings['xai_api_key'] ?? getenv('XAI_API_KEY') ?: '';
             // hf_api_key lives in the settings JSON blob (S337 fix)
@@ -100,7 +110,14 @@ class FreeAIEngines
             $this->deepseekKey = $settings['deepseek_api_key'] ?? getenv('DEEPSEEK_API_KEY') ?: '';
             $this->togetherAiKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
             $this->cohereKey = $settings['cohere_api_key'] ?? getenv('COHERE_API_KEY') ?: '';
-            $this->opencodeZenKey = $settings['opencode_zen_key'] ?? (getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: ''));
+            // S760: resolve the OpenCode Zen key from the canonical `settings` table first.
+            // The newest valid Console key is persisted as `settings.api_opencode_key`
+            // (and mirrored in `api_keys`); the legacy `ai_settings` JSON blob key and the
+            // OPENCODE_ZEN_KEY_APS env var hold older, now-expired credentials. Reading only
+            // the nonexistent `opencode_zen_key` column left the app's fallback chain bound
+            // to a dead key even though a working one was in the DB. Priority: settings table
+            // -> JSON blob -> env. Never printed/logged.
+            $this->opencodeZenKey = $this->resolveOpencodeZenKey($db, $cfg);
             // Model saved by the AI Provider Settings dashboard (settings JSON column)
             if (!empty($cfg['model']) && is_string($cfg['model'])) {
                 $this->geminiModel = $cfg['model'];
@@ -117,6 +134,37 @@ class FreeAIEngines
             $this->cohereKey = getenv('COHERE_API_KEY') ?: '';
             $this->opencodeZenKey = getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: '');
         }
+    }
+
+    /**
+     * Resolve the OpenCode Zen (Console) API key from the canonical source.
+     *
+     * S760: the active key is persisted in the `settings` table as
+     * `api_opencode_key` (mirrored in `api_keys`). The old code read a column
+     * `opencode_zen_key` that does not exist and silently fell back to stale
+     * env vars / a JSON-blob key, both of which now return HTTP 401. Resolve
+     * in priority order and never emit the value.
+     */
+    private function resolveOpencodeZenKey($db, array $cfg): string
+    {
+        // 1) Canonical settings table (newest Console key, S756/S757).
+        try {
+            $row = $db->fetch("SELECT `value` FROM settings WHERE `key` = 'api_opencode_key' LIMIT 1");
+            if (!empty($row['value']) && is_string($row['value'])) {
+                return trim($row['value']);
+            }
+        } catch (\Throwable $e) {
+            // settings table may be absent on fresh DBs — fall through.
+        }
+        // 2) Legacy ai_settings direct column (older installs).
+        if (!empty($cfg['opencode_zen_api_key']) && is_string($cfg['opencode_zen_api_key'])) {
+            return trim($cfg['opencode_zen_api_key']);
+        }
+        if (!empty($cfg['opencode_zen_key']) && is_string($cfg['opencode_zen_key'])) {
+            return trim($cfg['opencode_zen_key']);
+        }
+        // 3) Environment variables (last resort).
+        return (string)(getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: ''));
     }
 
     // ─────────── Main: Generate with best available free engine ───────

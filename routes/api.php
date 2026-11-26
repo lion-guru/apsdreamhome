@@ -1234,6 +1234,19 @@ $router->put('/api/v2/mobile/user/profile', 'Api\MobileUserApiController@updateP
 $router->post('/api/v2/mobile/user/profile/avatar', 'Api\MobileUserApiController@uploadAvatar')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/dashboard', 'Api\MobileUserApiController@dashboardV3')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// S765 — canonical mobile paths the Flutter app actually calls but which were
+// never registered (mobile↔backend contract audit). Prior fixes (S566/S567)
+// only caught endpoints written with the full /api/ prefix, so bare endpoints
+// such as '/site-settings' and '/gallery' were invisible to that scan.
+$router->get('/api/v2/mobile/site-settings', 'Api\MobileUserApiController@getSiteSettings');
+$router->get('/api/v2/mobile/gallery', 'Api\MobileUserApiController@getGallery');
+$router->get('/api/v2/mobile/user/agreements', 'Api\MobileUserApiController@getUserAgreements')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/careers/jobs/{id}', 'Api\MobileUserApiController@getJobDetail');
+$router->post('/api/v2/mobile/contact', 'Api\ApiEnquiryController@store');
+$router->post('/api/v2/mobile/ai/lead-from-photo', 'Api\AIChatbotController@leadFromPhoto')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/ai/visit-confirm', 'Api\AIChatbotController@visitConfirm')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/ai/email/classify', 'Api\EmailClassificationController@classify')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
 // Agent Portal API (Mobile App)
 $router->get('/api/v2/mobile/agent/analytics', 'Api\MobileAgentApiController@analytics')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/bookings', 'Api\MobileAgentApiController@bookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');

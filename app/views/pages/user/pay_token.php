@@ -109,6 +109,32 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
             </div>
         </div>
 
+        <!-- Customer Wallet Payment Option -->
+        <div class="aps-cp-card mb-4 border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="aps-cp-card-header bg-success text-white d-flex justify-content-between align-items-center py-3 px-4">
+                <h5 class="mb-0 text-white"><i class="fas fa-wallet text-warning me-2"></i>Pay via Customer Wallet</h5>
+                <span class="badge bg-white text-success px-3 py-1 fw-bold rounded-pill">Available: ₹<?= number_format($wallet_balance ?? 0, 2) ?></span>
+            </div>
+            <div class="aps-cp-card-body p-4 text-center">
+                <?php if (($wallet_balance ?? 0) >= $token_amount): ?>
+                    <div class="alert alert-success border-0 rounded-3 mb-3 text-start p-3" style="background:#dcfce7; color:#166534;">
+                        <i class="fas fa-check-circle me-1"></i> आपके वॉलेट में टोकन राशि के पूर्ण भुगतान के लिए पर्याप्त बैलेंस (₹<?= number_format($wallet_balance ?? 0, 2) ?>) उपलब्ध है। 1-क्लिक में तुरंत भुगतान करें।
+                    </div>
+                    <form id="tokenWalletPaymentForm" method="POST" action="<?= BASE_URL ?>/user/bookings/<?= (int)($booking['id'] ?? 0) ?>/pay-token">
+                        <input type="hidden" name="csrf_token" value="<?= \App\Helpers\CsrfHelper::generate() ?>">
+                        <input type="hidden" name="payment_method" value="wallet">
+                        <button type="submit" id="btnPayTokenWallet" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                            <i class="fas fa-wallet me-2"></i>Pay ₹<?= number_format($token_amount) ?> from Wallet Now
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <div class="alert alert-warning border-0 rounded-3 mb-0 text-start p-3" style="background:#fef3c7; color:#92400e;">
+                        <i class="fas fa-info-circle me-1"></i> आपके वॉलेट में <strong>₹<?= number_format($wallet_balance ?? 0, 2) ?></strong> उपलब्ध हैं (टोकन हेतु आवश्यक: ₹<?= number_format($token_amount, 2) ?>)। आप नीचे दिए गए ऑनलाइन पेमेंट गेटवे द्वारा सुरक्षित भुगतान कर सकते हैं।
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
         <?php if (empty($order_id)): ?>
             <div class="aps-cp-card mb-4">
                 <div class="aps-cp-card-body text-center">
@@ -166,6 +192,42 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
 
     </div>
 </div>
+
+<script>
+var tokenWltForm = document.getElementById('tokenWalletPaymentForm');
+if (tokenWltForm) {
+    tokenWltForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!confirm('क्या आप अपने वॉलेट बैलेंस से ₹<?= number_format($token_amount) ?> का टोकन भुगतान करना चाहते हैं?')) {
+            return;
+        }
+        var btn = document.getElementById('btnPayTokenWallet');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing Wallet Payment...';
+
+        var formData = new FormData(tokenWltForm);
+        fetch(<?= json_encode(BASE_URL . '/user/bookings/' . (int)($booking['id'] ?? 0) . '/pay-token') ?>, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success && data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                alert(data.error || 'Token wallet payment failed. Please check your balance.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-wallet me-2"></i>Pay ₹<?= number_format($token_amount) ?> from Wallet Now';
+            }
+        })
+        .catch(function(err) {
+            alert('Network error during wallet token payment.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-wallet me-2"></i>Pay ₹<?= number_format($token_amount) ?> from Wallet Now';
+        });
+    });
+}
+</script>
 
 <?php if (!empty($order_id)): ?>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

@@ -158,7 +158,7 @@ class LoginNotificationService
         if (!$this->emailService) return ['sent' => false, 'error' => 'Email service unavailable'];
 
         try {
-            $subject = "Welcome to APS Dream Home, {$name}! à°Å¸ï¿½Â ";
+            $subject = "Welcome to APS Dream Home, {$name}! 🎉";
 
             $dashboardUrl = match($role) {
                 'associate' => BASE_URL . '/associate/dashboard',
@@ -330,14 +330,14 @@ class LoginNotificationService
         if (!$this->whatsappService || empty($phone)) return ['sent' => false, 'error' => 'WhatsApp service unavailable'];
 
         try {
-            $message = "à°Å¸—�ï¿½ APS Dream Home - New Login Alert\n\n";
+            $message = "🛡️ APS Dream Home - New Login Alert\n\n";
             $message .= "Hi {$name}, a new login was detected:\n\n";
-            $message .= "à¢ï¿½° Time: {$time}\n";
-            $message .= "à°Å¸®± Device: {$device}\n";
-            $message .= "à°Å¸Å'ï¿½ IP: {$ip}\n";
-            if ($location) $message .= "à°Å¸®ï¿½ Location: {$location}\n";
-            $message .= "\nà¢Å¡Â à¯Â¸ï¿½ If this wasn't you, please change your password immediately.";
-            $message .= "\n\nà°Å¸®Å¾ Support: " . BASE_URL . "/support";
+            $message .= "🕒 Time: {$time}\n";
+            $message .= "📱 Device: {$device}\n";
+            $message .= "🌐 IP: {$ip}\n";
+            if ($location) $message .= "📍 Location: {$location}\n";
+            $message .= "\n⚠️ If this wasn't you, please change your password immediately.";
+            $message .= "\n\nSupport: " . BASE_URL . "/support";
 
             // AI-personalize the copy (warmer, name-first) when the local LLM is available
             $message = $this->aiPersonalize($message, $name, 'login_alert');
@@ -402,22 +402,22 @@ body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;background:#f4f6
 <p>Your {$role} account is now active</p>
 </div>
 <div class="body">
-<h2>Hello {$name}! à°Å¸Å½—°</h2>
+<h2>Hello {$name}! 🎉</h2>
 <p>Congratulations! Your account has been created successfully. You're now part of the APS Dream Home family à¢€—� trusted by thousands to find their perfect property.</p>
-<a href="{$dashboardUrl}" class="btn">Go to Dashboard à¢— —™</a>
+<a href="{$dashboardUrl}" class="btn">Go to Dashboard →</a>
 <h3>What You Can Do:</h3>
 <ul class="features">
-<li>à°Å¸ï¿½Â  Browse verified properties across premium colonies</li>
-<li>à°Å¸®Å  Track your bookings and EMI schedule</li>
-<li>à°Å¸—™° Earn commissions through our MLM program</li>
-<li>à°Å¸®—ž Access all legal documents and agreements</li>
+<li>🏠 Browse verified properties across premium colonies</li>
+<li>📊 Track your bookings and EMI schedule</li>
+<li>💰 Earn commissions through our MLM program</li>
+<li>📄 Access all legal documents and agreements</li>
 <li>à°Å¸—�—� Get real-time notifications for updates</li>
 </ul>
-<p><a href="{$propertiesUrl}">Explore Properties à¢— —™</a></p>
+<p><a href="{$propertiesUrl}">Explore Properties →</a></p>
 <p>Need help? Contact us at <a href="mailto:{$supportEmail}">{$supportEmail}</a></p>
 </div>
 <div class="footer">
-<p>à‚© {date('Y')} APS Dream Home. All rights reserved.</p>
+<p>&copy; {date('Y')} APS Dream Home. All rights reserved.</p>
 <p>This email was sent to you because you registered at APS Dream Home.</p>
 </div>
 </div></body></html>
@@ -457,29 +457,29 @@ body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;background:#f4f6
 </style></head><body>
 <div class="container">
 <div class="header">
-<h1>à°Å¸—�ï¿½ New Login Detected</h1>
+<h1>🛡️ New Login Detected</h1>
 </div>
 <div class="body">
 <h2>Hello {$name}</h2>
 <p>We detected a new login to your APS Dream Home account.</p>
 <div class="details">
 <table>
-<tr><td>à¢ï¿½° Time</td><td>{$time}</td></tr>
-<tr><td>à°Å¸®± Device</td><td>{$device}</td></tr>
-<tr><td>à°Å¸Å'ï¿½ IP Address</td><td>{$ip}</td></tr>
-<tr><td>à°Å¸®ï¿½ Location</td><td>{$location}</td></tr>
-<tr><td>à°Å¸—�—˜ Method</td><td>{$method}</td></tr>
+<tr><td>🕒 Time</td><td>{$time}</td></tr>
+<tr><td>📱 Device</td><td>{$device}</td></tr>
+<tr><td>🌐 IP Address</td><td>{$ip}</td></tr>
+<tr><td>📍 Location</td><td>{$location}</td></tr>
+<tr><td>🔑 Method</td><td>{$method}</td></tr>
 </table>
 </div>
 <div class="alert-box">
-<strong>à¢Å¡Â à¯Â¸ï¿½ Wasn't you?</strong><br>
+<strong>⚠️ Wasn't you?</strong><br>
 If you don't recognize this login, please change your password immediately and contact our support team.
 </div>
 <a href="{$supportUrl}" class="btn">Report Unauthorized Login</a>
 <p class="style-12737">For your security, we monitor all login activity on your account.</p>
 </div>
 <div class="footer">
-<p>à‚© {date('Y')} APS Dream Home. All rights reserved.</p>
+<p>&copy; {date('Y')} APS Dream Home. All rights reserved.</p>
 <p>This is a security notification for your account.</p>
 </div>
 </div></body></html>

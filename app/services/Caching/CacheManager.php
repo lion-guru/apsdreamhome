@@ -225,7 +225,7 @@ class RedisCacheLayer
     public function get($key)
     {
         $value = $this->redis->get($key);
-        return $value !== false ? unserialize($value) : null;
+        return $value !== false ? unserialize($value, ['allowed_classes' => false]) : null;
     }
 
     public function set($key, $value, $ttl)

@@ -539,11 +539,17 @@ class WhatsAppService
         $db = Database::getInstance();
         $tid = $this->tenantId();
 
-        $columns = "phone_number, message_type, message_data, direction, created_at";
+        // S771: live column is `message`, not `message_data`. Whitelist the
+        // message_type enum so an unexpected webhook type cannot 1265.
+        $mType = (string)($message['type'] ?? 'text');
+        if (!in_array($mType, ['text', 'image', 'document', 'location', 'contact'], true)) {
+            $mType = 'text';
+        }
+        $columns = "phone_number, message_type, message, direction, created_at";
         $values = "?, ?, ?, 'inbound', NOW()";
         $params = [
             $message['from'],
-            $message['type'],
+            $mType,
             json_encode($message)
         ];
         if ($tid > 1) {

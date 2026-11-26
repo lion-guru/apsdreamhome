@@ -86,7 +86,7 @@ $page_title = $page_title ?? 'Wallet Activation Packages';
                         $isHigher = $userPurchase && in_array($userPurchase['slug'], ['pro', 'premium']) && $pkg['slug'] === 'basic';
                         ?>
                         <button class="btn btn-primary w-100 mt-auto" 
-                                onclick="purchasePackage(<?= $pkg['id'] ?>)" 
+                                onclick="purchasePackage(<?= $pkg['id'] ?>, this)" 
                                 <?= $isOwned || $isHigher ? 'disabled' : '' ?>>
                             <?php if ($isOwned): ?>
                                 <i class="fas fa-check me-2"></i>Already Active
@@ -120,6 +120,63 @@ $page_title = $page_title ?? 'Wallet Activation Packages';
 .features-list li { font-size: .75rem; }
 .btn-primary { border-radius: 8px; font-weight: 600; padding: .75rem; }
 </style>
+
+<script nonce="<?= htmlspecialchars($GLOBALS['csp_nonce'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+// S765: activation buttons called purchasePackage() from the public auth view,
+// which is never loaded in this portal. Wire the real portal endpoints here.
+async function purchasePackage(packageId, btn) {
+    var el = btn || (window.event && window.event.target && window.event.target.closest('button'));
+    var original = el ? el.innerHTML : '';
+    var token = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>';
+    var base = '<?= BASE_URL ?>/associate/wallet';
+    if (el) { el.disabled = true; el.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...'; }
+    try {
+        var res = await fetch(base + '/purchase', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+            body: JSON.stringify({ package_id: packageId, payment_mode: 'razorpay' })
+        });
+        var data = await res.json();
+        if (!data.success) { throw new Error(data.message || 'Could not start activation'); }
+
+        if (data.payment_ref && typeof Razorpay !== 'undefined') {
+            var rzp = new Razorpay({
+                key: '<?= htmlspecialchars(getenv('RAZORPAY_KEY_ID') ?: '', ENT_QUOTES, 'UTF-8') ?>',
+                amount: Math.round((data.amount || 0) * 100),
+                currency: 'INR',
+                name: 'APS Dream Home',
+                description: 'Wallet Activation',
+                order_id: data.payment_ref,
+                handler: async function (resp) {
+                    try {
+                        var v = await fetch(base + '/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+                            body: JSON.stringify({
+                                purchase_id: data.purchase_id,
+                                razorpay_payment_id: resp.razorpay_payment_id,
+                                razorpay_order_id: resp.razorpay_order_id,
+                                razorpay_signature: resp.razorpay_signature
+                            })
+                        });
+                        var vr = await v.json();
+                        alert(vr.message || (vr.success ? 'Wallet activated!' : 'Verification failed'));
+                        if (vr.success) { window.location.reload(); }
+                    } catch (e) { alert('Payment verification failed: ' + e.message); }
+                }
+            });
+            rzp.on('payment.failed', function (r) { alert('Payment failed: ' + (r.error && r.error.description || 'unknown')); });
+            rzp.open();
+        } else {
+            alert(data.message || 'Wallet activated!');
+            window.location.reload();
+        }
+    } catch (e) {
+        alert(e.message || 'Activation failed. Please try again.');
+        if (el) { el.disabled = false; el.innerHTML = original; }
+    }
+}
+</script>
 
 <?php $content = ob_get_clean(); ?>
 <?php include __DIR__ . '/../layouts/associate.php'; ?>

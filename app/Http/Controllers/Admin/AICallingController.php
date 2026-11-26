@@ -556,10 +556,14 @@ class AICallingController extends AdminController
         // WhatsApp
         try {
             $whatsapp = new \App\Services\Communication\WhatsAppWebService();
-            $waConnected = $whatsapp->isConnected();
+            $waStatus = $whatsapp->isConnected();
+            // S793: isConnected() returns an ARRAY ({connected:bool,...} or
+            // {error:...}). A raw array is always truthy, so the old check
+            // reported "connected" even when the bridge was down.
+            $waConnected = !empty($waStatus['connected']);
             $results['whatsapp'] = $waConnected
-                ? ['status' => 'ok', 'message' => 'WhatsApp connected']
-                : ['status' => 'error', 'message' => 'WhatsApp not connected — scan QR first'];
+                ? ['status' => 'ok', 'message' => 'WhatsApp connected' . (isset($waStatus['number']) ? ' — ' . $waStatus['number'] : '')]
+                : ['status' => 'error', 'message' => $waStatus['error'] ?? 'WhatsApp not connected — scan QR first'];
         } catch (\Throwable $e) {
             $results['whatsapp'] = ['status' => 'error', 'message' => $e->getMessage()];
         }

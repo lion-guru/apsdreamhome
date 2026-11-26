@@ -6,8 +6,10 @@
                 <div class="card-body text-center">
                     <h5>Unqualified Leads</h5>
                     <h2 class="text-warning"><?= (int)($stats['unqualified'] ?? 0) ?></h2>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/ai-system/qualifier/run">
+                    <form method="POST" action="<?= BASE_URL ?>/admin/ai-system/run">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                        <input type="hidden" name="agent_type" value="qualifier">
+                        <input type="hidden" name="action" value="batch">
                         <button type="submit" class="btn btn-success mt-2"><i class="fas fa-play me-1"></i>Run Qualifier</button>
                     </form>
                 </div>

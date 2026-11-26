@@ -41,7 +41,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
     </div>
 </div>
 
-<form method="POST" action="<?= $base ?>/admin/settings/crm">
+<form method="POST" action="<?= $base ?>/admin/crm/settings/save">
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 
     <!-- Global CRM Toggle -->

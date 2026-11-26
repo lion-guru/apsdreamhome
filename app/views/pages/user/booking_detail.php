@@ -10,6 +10,7 @@ $total_paid = $total_paid ?? 0;
 $user = $user ?? [];
 
 $statusColors = [
+    'pending' => 'warning',
     'token_paid' => 'primary',
     'agreement_signed' => 'indigo',
     'emi_active' => 'amber',
@@ -20,7 +21,8 @@ $statusColors = [
     'registration_done' => 'success',
 ];
 $statusLabels = [
-    'token_paid' => __('user_booking_detail_status_token_paid', 'Token Paid'),
+    'pending' => __('user_booking_detail_status_pending', 'Review Pending'),
+    'token_paid' => __('user_booking_detail_status_token_paid', 'Token Paid / Allotted'),
     'agreement_signed' => __('user_booking_detail_status_agreement_signed', 'Agreement Signed'),
     'emi_active' => __('user_booking_detail_status_emi_active', 'EMI Active'),
     'partially_paid' => __('user_booking_detail_status_partially_paid', 'Partially Paid'),
@@ -409,50 +411,68 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 <?php endif; ?>
 
 <div class="row g-3 mb-4">
-    <?php if ($bStatus === 'token_paid'): ?>
-    <div class="col-md-4">
-        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/pay-token" class="btn btn-success w-100 py-3">
-            <i class="fas fa-credit-card me-2"></i><?= __('user_booking_detail_pay_token', 'Pay Token Amount') ?>
+    <?php if ($bStatus === 'pending'): ?>
+    <div class="col-12">
+        <div class="alert alert-warning mb-2 d-flex align-items-center">
+            <i class="fas fa-clock fa-2x me-3 text-warning"></i>
+            <div>
+                <strong>वरिष्ठ समीक्षा लंबित (Senior Verification Pending):</strong>
+                <p class="mb-0 small">यह बुकिंग आवेदन वर्तमान में वरिष्ठ अधिकारियों द्वारा सत्यापन अधीन है। अनुमोदन के उपरांत आपका प्लॉट आवंटन सुनिश्चित कर दिया जाएगा।</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <a href="<?= BASE_URL ?>/associate/booking/<?= (int)$booking['id'] ?>/receipt" target="_blank" class="btn btn-outline-info w-100 py-3">
+            <i class="fas fa-receipt me-2"></i><?= __('user_booking_detail_view_receipt', 'Preview Draft Receipt') ?>
         </a>
     </div>
-    <div class="col-md-4">
-        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100">
+    <div class="col-md-6">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100 py-3">
             <i class="fas fa-arrow-left me-2"></i><?= __('user_booking_detail_back_to_my_bookings', 'Back to My Bookings') ?>
         </a>
     </div>
+    <?php elseif ($bStatus === 'token_paid'): ?>
     <div class="col-md-4">
-        <button class="btn btn-outline-danger w-100" onclick="if(confirm('<?= __('user_booking_detail_cancel_confirm', 'Are you sure you want to cancel this booking? This action cannot be undone.') ?>')) { /* Cancel logic */ }">
-            <i class="fas fa-times-circle me-2"></i><?= __('user_booking_detail_cancel_booking', 'Cancel Booking') ?>
-        </button>
-    </div>
-    <?php elseif ($bStatus === 'agreement_signed'): ?>
-    <div class="col-md-4">
-        <span class="btn btn-success w-100 py-3 disabled">
-            <i class="fas fa-check-circle me-2"></i><?= __('user_booking_detail_payment_complete', 'Payment Complete') ?>
-        </span>
-    </div>
-    <div class="col-md-4">
-        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100">
-            <i class="fas fa-arrow-left me-2"></i><?= __('user_booking_detail_back_to_my_bookings', 'Back to My Bookings') ?>
+        <a href="<?= BASE_URL ?>/associate/booking/<?= (int)$booking['id'] ?>/receipt" target="_blank" class="btn btn-success w-100 py-3">
+            <i class="fas fa-receipt me-2"></i><?= __('user_booking_detail_view_receipt', 'Official Receipt & EMI Schedule') ?>
         </a>
     </div>
     <div class="col-md-4">
-        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>" class="btn btn-outline-info w-100">
-            <i class="fas fa-eye me-2"></i><?= __('user_booking_detail_view_details', 'View Details') ?>
+        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/nach" class="btn btn-primary w-100 py-3">
+            <i class="fas fa-university me-2"></i><?= __('user_booking_detail_nach', 'Register NACH Auto-Debit') ?>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100 py-3">
+            <i class="fas fa-arrow-left me-2"></i><?= __('user_booking_detail_back_to_my_bookings', 'Back to My Bookings') ?>
+        </a>
+    </div>
+    <?php elseif ($bStatus === 'agreement_signed' || $bStatus === 'emi_active'): ?>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/associate/booking/<?= (int)$booking['id'] ?>/receipt" target="_blank" class="btn btn-outline-info w-100 py-3">
+            <i class="fas fa-receipt me-2"></i><?= __('user_booking_detail_view_receipt', 'Official Receipt') ?>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings/<?= (int)$booking['id'] ?>/nach" class="btn btn-outline-primary w-100 py-3">
+            <i class="fas fa-university me-2"></i><?= __('user_booking_detail_nach', 'NACH Mandate') ?>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-secondary w-100 py-3">
+            <i class="fas fa-arrow-left me-2"></i><?= __('user_booking_detail_back_to_my_bookings', 'Back to My Bookings') ?>
         </a>
     </div>
     <?php else: ?>
     <div class="col-md-6">
-        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-outline-primary w-100 py-3">
             <i class="fas fa-arrow-left me-2"></i><?= __('user_booking_detail_back_to_my_bookings', 'Back to My Bookings') ?>
         </a>
     </div>
     <div class="col-md-6">
-        <?php if ($bStatus !== 'cancelled' && $bStatus !== 'fully_paid'): ?>
-        <button class="btn btn-outline-danger w-100" onclick="if(confirm('<?= __('user_booking_detail_cancel_confirm', 'Are you sure you want to cancel this booking? This action cannot be undone.') ?>')) { /* Cancel logic */ }">
-            <i class="fas fa-times-circle me-2"></i><?= __('user_booking_detail_cancel_booking', 'Cancel Booking') ?>
-        </button>
-        <?php endif; ?>
+        <a href="<?= BASE_URL ?>/associate/booking/<?= (int)$booking['id'] ?>/receipt" target="_blank" class="btn btn-outline-info w-100 py-3">
+            <i class="fas fa-receipt me-2"></i><?= __('user_booking_detail_view_receipt', 'Booking Summary') ?>
+        </a>
     </div>
     <?php endif; ?>
 </div>

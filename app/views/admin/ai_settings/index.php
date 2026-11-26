@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const allBtn = document.getElementById('testAllBtn');
     if (allBtn) {
         allBtn.addEventListener('click', function () {
-            ['groq', 'openrouter', 'gemini', 'ollama'].forEach(runTest);
+            ['groq', 'openrouter', 'gemini', 'hf', 'ollama'].forEach(runTest);
         });
     }
 
@@ -291,6 +291,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Auto-test all providers on page load
-    ['groq', 'openrouter', 'gemini', 'ollama'].forEach(runTest);
+    ['groq', 'openrouter', 'gemini', 'hf', 'ollama'].forEach(runTest);
 });
 </script>

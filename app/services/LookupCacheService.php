@@ -39,7 +39,7 @@ class LookupCacheService
 
         // Try read from cache
         if (is_file($file)) {
-            $data = @unserialize(file_get_contents($file));
+            $data = @unserialize(file_get_contents($file), ['allowed_classes' => false]);
             if (is_array($data) && ($data['expires'] ?? 0) > time()) {
                 return $data['value'];
             }
@@ -96,7 +96,7 @@ class LookupCacheService
         $active = 0;
         foreach ($files as $f) {
             $totalSize += filesize($f);
-            $data = @unserialize(file_get_contents($f));
+            $data = @unserialize(file_get_contents($f), ['allowed_classes' => false]);
             if (is_array($data) && ($data['expires'] ?? 0) > time()) {
                 $active++;
             } else {

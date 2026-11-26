@@ -494,6 +494,33 @@ class AIService
         return null;
     }
 
+    /** S784: WhatsApp keyword intents. The existing propertyKeywordMatch()
+     *  handles the shared buy/EMI/visit menu; this wrapper adds the two
+     *  phone-specific intents without inventing any RERA or price claim. */
+    private function keywordMatch(string $message, string $phone, array $context): ?array
+    {
+        $shared = $this->propertyKeywordMatch($message, $context);
+        if ($shared !== null) {
+            return $shared;
+        }
+
+        if (preg_match('/स्टेटस|status|बुकिंग/i', $message)) {
+            return [
+                'response' => "आपकी बुकिंग की स्थिति देखने के लिए My Bookings खोलें या हमारे कार्यकारी से बात करें: +91 70074 44842।",
+                'action'   => 'booking_status',
+            ];
+        }
+
+        if (preg_match('/एजेंट|agent|कॉल|call me|फोन/i', $message)) {
+            return [
+                'response' => "हम आपको कॉल बैक कर सकते हैं। कृपया हमारे कार्यकारी से संपर्क करें: +91 70074 44842 (Legal Desk)।",
+                'action'   => 'callback_request',
+            ];
+        }
+
+        return null;
+    }
+
     private function getAvailableColonies(): array
     {
         try {

@@ -167,7 +167,7 @@ class PerformanceConfigService
                     break;
             }
 
-            return $data !== null ? unserialize($data) : $default;
+            return $data !== null ? unserialize($data, ['allowed_classes' => false]) : $default;
 
         } catch (\Throwable $e) {
             $this->logger->error("Failed to get cached data", [
@@ -500,7 +500,7 @@ class PerformanceConfigService
             return null;
         }
 
-        $cacheData = unserialize(file_get_contents($filename));
+        $cacheData = unserialize(file_get_contents($filename), ['allowed_classes' => false]);
         
         if ($cacheData['expires_at'] < date('Y-m-d H:i:s')) {
             unlink($filename);
@@ -659,7 +659,7 @@ class PerformanceConfigService
             case self::CACHE_FILE:
                 $files = glob($this->config['cache_dir'] . '/*.cache');
                 foreach ($files as $file) {
-                    $cacheData = unserialize(file_get_contents($file));
+                    $cacheData = unserialize(file_get_contents($file), ['allowed_classes' => false]);
                     if ($cacheData['expires_at'] < date('Y-m-d H:i:s')) {
                         if (unlink($file)) {
                             $cleaned++;

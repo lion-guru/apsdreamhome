@@ -14,6 +14,12 @@ class DepartmentRequestController extends AdminController
 {
     use TenantAwareTrait;
 
+    /** S779: legacy CSRF helper - delegate to the canonical trait guard. */
+    private function validateCsrfFail(): void
+    {
+        $this->validateCsrfOrFail();
+    }
+
     private $requestService;
 
     public function __construct()

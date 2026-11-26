@@ -163,7 +163,10 @@ class AgenticCRMController extends AdminController
         }
 
         // Conversion analysis
-        $won = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads WHERE status='won' AND deleted_at IS NULL{$tidSql}", $tidParams)['cnt'] ?? 0;
+        // S765: leads.status has no 'won' member — the live conversion states
+        // are 'closed_won' / 'converted'. The old literal matched 0 rows and
+        // permanently reported 0% conversion.
+        $won = $this->db->fetch("SELECT COUNT(*) as cnt FROM leads WHERE status IN ('closed_won','converted') AND deleted_at IS NULL{$tidSql}", $tidParams)['cnt'] ?? 0;
         $convRate = $total > 0 ? round(($won / $total) * 100, 1) : 0;
 
         if ($newLeads > 50) {

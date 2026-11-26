@@ -1701,6 +1701,15 @@ class LeadService
         }
     }
 
+    /**
+     * S784: convertLeadToCustomer() and getAssignableUsers() called this name,
+     * but the class only declared tenantId(). Same contract — keep one source.
+     */
+    private function getTenantId(): int
+    {
+        return $this->tenantId();
+    }
+
     private function tenantSql(): string
     {
         return $this->tenantId() > 1 ? " AND tenant_id = ?" : "";

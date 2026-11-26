@@ -127,7 +127,7 @@ class CacheService
             switch ($this->driver) {
                 case 'redis':
                     $value = $this->redis->get($fullKey);
-                    return $value !== false ? unserialize($value) : $default;
+                    return $value !== false ? unserialize($value, ['allowed_classes' => false]) : $default;
                     
                 case 'memcached':
                     $value = $this->memcached->get($fullKey);
@@ -300,7 +300,7 @@ class CacheService
             if ($this->driver === 'file') {
                 $files = glob($this->fileCachePath . '*.cache');
                 foreach ($files as $file) {
-                    $data = unserialize(file_get_contents($file));
+                    $data = unserialize(file_get_contents($file), ['allowed_classes' => false]);
                     if (isset($data['tags']) && in_array($tag, $data['tags'])) {
                         unlink($file);
                     }
@@ -351,7 +351,7 @@ class CacheService
             return $default;
         }
         
-        $data = unserialize(file_get_contents($file));
+        $data = unserialize(file_get_contents($file), ['allowed_classes' => false]);
         
         if ($data['expires'] < time()) {
             unlink($file);

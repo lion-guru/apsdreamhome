@@ -54,8 +54,7 @@ $engine_status = $engine_status ?? [];
     <div class="card">
         <div class="card-body p-4">
             <form method="POST">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-    <?php echo CSRFProtection::csrfField(); ?>
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 <div class="row g-4">
                     <!-- Groq -->
                     <div class="col-md-6">
@@ -64,7 +63,8 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">Groq API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input aria-label="Groq api key" type="password" name="groq_api_key" class="api-input" value="<?= htmlspecialchars($settings['groq_api_key'] ?? '') ?>" placeholder="gsk_...">
-                        <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank" >Get key →'</a> Fastest inference (~500 tok/s)</div>
+                        <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank">Get key →</a> Fastest inference (~500 tok/s)</div>
+                        <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="groq" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-bolt me-1"></i>Test Connection</button>
                     </div>
 
                     <!-- OpenRouter -->
@@ -74,7 +74,8 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">OpenRouter API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input aria-label="Openrouter api key" type="password" name="openrouter_api_key" class="api-input" value="<?= htmlspecialchars($settings['openrouter_api_key'] ?? '') ?>" placeholder="sk-or-...">
-                        <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank" >Get key →'</a></div>
+                        <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank">Get key →</a></div>
+                        <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="openrouter" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-bolt me-1"></i>Test</button>
                     </div>
 
                     <!-- Gemini -->
@@ -84,7 +85,8 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">Google Gemini API Key <span class="free-badge">FREE</span></label>
                         </div>
                         <input aria-label="Gemini api key" type="password" name="gemini_api_key" class="api-input" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>" placeholder="AIza...">
-                        <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" >Get key →'</a></div>
+                        <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank">Get key →</a></div>
+                        <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="gemini" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-bolt me-1"></i>Test</button>
                     </div>
 
                     <!-- Hugging Face (RAG Embeddings) -->
@@ -93,8 +95,9 @@ $engine_status = $engine_status ?? [];
                             <span class="engine-status <?= !empty($engine_status['hf']['available'] ?? true) ? 'active' : 'inactive' ?>"></span>
                             <label class="api-label mb-0">Hugging Face API Key (RAG Embeddings) <span class="free-badge">FREE</span></label>
                         </div>
-                        <input aria-label="Hf api key" type="password" name="hf_api_key" class="api-input" value="<?= htmlspecialchars($settings['hf_api_key'] ?? '') ?>" placeholder="hf_...">
-                        <div class="api-hint">Real 384-dim embeddings for RAG (sentence-transformers/all-MiniLM-L6-v2). <a href="https://hugging.co/settings/tokens" target="_blank">Get key →</a></div>
+                        <input aria-label="HF api key" type="password" name="hf_api_key" class="api-input" value="<?= htmlspecialchars($config['hf_api_key'] ?? '') ?>" placeholder="hf_...">
+                        <div class="api-hint">Real 384-dim embeddings for RAG (sentence-transformers/all-MiniLM-L6-v2). <a href="https://huggingface.co/settings/tokens" target="_blank">Get key →</a></div>
+                        <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="hf" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-bolt me-1"></i>Test</button>
                     </div>
 
                     <!-- Ollama -->
@@ -104,16 +107,37 @@ $engine_status = $engine_status ?? [];
                             <label class="api-label mb-0">Ollama (Local) <span class="free-badge">UNLIMITED</span></label>
                         </div>
                         <input aria-label="Ollama url" type="text" name="ollama_url" class="api-input" value="<?= htmlspecialchars($settings['ollama_url'] ?? 'http://localhost:11434') ?>" placeholder="http://localhost:11434">
-                        <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank" >Install →'</a> Run: <code>ollama pull llama3.1:8b</code></div>
+                        <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank">Install →</a> Run: <code>ollama pull llama3.1:8b</code></div>
+                        <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="ollama" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-bolt me-1"></i>Test Connection</button>
+                    </div>
+                    <div class="mt-2">
+                        <label class="api-label mb-0">Ollama Model</label>
                         <input aria-label="Ollama model" type="text" name="ollama_model" class="api-input mt-2" value="<?= htmlspecialchars($settings['ollama_model'] ?? 'llama3.1:8b') ?>" placeholder="llama3.1:8b">
                     </div>
                 </div>
 
                 <div class="mt-4 d-flex gap-3">
                     <button type="submit" class="save-btn"><i class="fas fa-save me-2"></i>Save Settings</button>
+                    <button type="button" class="btn btn-primary" onclick="testAllProviders()"><i class="fas fa-bolt me-1"></i>Test All Providers</button>
                     <a href="<?= BASE_URL ?>/admin/ai-system" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
+
+            <!-- Quick Test All Banner -->
+            <div class="alert alert-info mt-3 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <i class="fas fa-robot me-2"></i>
+                        <strong>Quick Test All</strong><br>
+                        <small class="text-muted">Test all AI providers at once</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="ollama" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-plug me-1"></i>Ollama</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="groq" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-bolt me-1"></i>Groq</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="openrouter" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-rocket me-1"></i>OpenRouter</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="gemini" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-brain me-1"></i>Gemini</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary test-provider-btn" data-provider="hf" data-endpoint="/admin/ai_settings/test_provider"><i class="fas fa-hugging-face me-1"></i>HuggingFace</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -137,4 +161,126 @@ $engine_status = $engine_status ?? [];
             </div>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.test-provider-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const provider = this.dataset.provider;
+                const endpoint = this.dataset.endpoint;
+                const btn = this;
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin me-1"></i>Testing...';
+                btn.disabled = true;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('provider', provider);
+                    formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
+
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        btn.innerHTML = '<i class="fas fa-check me-1"></i>Connected';
+                        btn.classList.remove('btn-outline-primary');
+                        btn.classList.add('btn-success');
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.classList.remove('btn-success');
+                            btn.classList.add('btn-outline-primary');
+                            btn.disabled = false;
+                        }, 3000);
+                    } else {
+                        btn.innerHTML = '<i class="fas fa-times me-1"></i>Failed';
+                        btn.classList.remove('btn-outline-primary');
+                        btn.classList.add('btn-danger');
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.classList.remove('btn-danger');
+                            btn.classList.add('btn-outline-primary');
+                            btn.disabled = false;
+                        }, 3000);
+                    }
+                } catch (err) {
+                    btn.innerHTML = '<i class="fas fa-times me-1"></i>Error';
+                    btn.classList.remove('btn-outline-primary');
+                    btn.classList.add('btn-danger');
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.remove('btn-danger');
+                        btn.classList.add('btn-outline-primary');
+                        btn.disabled = false;
+                    }, 3000);
+                }
+            });
+        });
+    }
+
+    async function testAllProviders() {
+        const buttons = document.querySelectorAll('.test-provider-btn');
+        const results = [];
+
+        for (let btn of buttons) {
+            const provider = btn.dataset.provider;
+            const endpoint = btn.dataset.endpoint;
+
+            // Skip if already processing
+            if (btn.disabled) continue;
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin me-1"></i>Testing...';
+            btn.disabled = true;
+            btn.classList.add('btn-warning');
+            btn.classList.remove('btn-outline-primary');
+
+            try {
+                const formData = new FormData();
+                formData.append('provider', provider);
+                formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?? '' ?>');
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i>OK';
+                    btn.classList.remove('btn-warning', 'btn-outline-primary');
+                    btn.classList.add('btn-success');
+                } else {
+                    btn.innerHTML = '<i class="fas fa-times me-1"></i>Fail';
+                    btn.classList.remove('btn-warning', 'btn-outline-primary');
+                    btn.classList.add('btn-danger');
+                }
+            } catch (err) {
+                btn.innerHTML = '<i class="fas fa-times me-1"></i>Err';
+                btn.classList.remove('btn-warning', 'btn-outline-primary');
+                btn.classList.add('btn-danger');
+            }
+        }
+
+        setTimeout(() => {
+            buttons.forEach(btn => {
+                const provider = btn.dataset.provider;
+                if (btn.classList.contains('btn-success')) {
+                    btn.innerHTML = `<i class="fas fa-bolt me-1"></i>${provider.charAt(0).toUpperCase() + provider.slice(1)}`;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-primary');
+                    btn.disabled = false;
+                } else if (btn.classList.contains('btn-danger')) {
+                    btn.innerHTML = `<i class="fas fa-bolt me-1"></i>${provider.charAt(0).toUpperCase() + provider.slice(1)}`;
+                    btn.classList.remove('btn-danger');
+                    btn.classList.add('btn-outline-primary');
+                    btn.disabled = false;
+                }
+            });
+        }, 2000);
+    }
+</script>
 </div>

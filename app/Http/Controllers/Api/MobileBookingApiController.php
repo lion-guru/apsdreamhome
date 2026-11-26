@@ -36,7 +36,7 @@ class MobileBookingApiController extends BaseController
             $input = $validated;
             $inquiry_id = $this->createInquiry($input);
             if ($inquiry_id) {
-                $emailNotification = new \EmailNotification();
+                $emailNotification = new \App\Core\EmailNotification();
                 $emailNotification->sendInquiryNotification($inquiry_id);
                 echo json_encode([
                     'success' => true,
@@ -525,5 +525,101 @@ private function getUserSiteVisits($userId)
         if ($tid > 1) $params[] = $tid;
         $stmt = $this->db->prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND customer_id = ?{$tidSql}");
         $stmt->execute($params);
+    }
+
+    private function createInquiry(array $data): int
+    {
+        $tid = (int)$this->tenantId();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0) ?: null;
+        $stmt = $this->db->prepare(
+            "INSERT INTO inquiries (tenant_id, user_id, name, email, phone, subject, message, property_id, type, status, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'property', 'new', NOW())"
+        );
+        $stmt->execute([
+            $tid,
+            $userId,
+            (string)$data['name'],
+            (string)$data['email'],
+            (string)$data['phone'],
+            $data['subject'] ?? null,
+            (string)$data['message'],
+            (int)$data['property_id'],
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    private function startSiteVisitSession(int $leadId, int $agentId): int
+    {
+        $tid = (int)$this->tenantId();
+        $stmt = $this->db->prepare(
+            "INSERT INTO site_visits (tenant_id, lead_id, agent_id, assigned_to, visit_date, visit_time, status, checkin_time, created_at)
+             VALUES (?, ?, ?, ?, CURDATE(), CURTIME(), 'in_progress', NOW(), NOW())"
+        );
+        $stmt->execute([$tid, $leadId, $agentId, $agentId]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    private function updateVisitLocation(int $visitId, float $lat, float $lng): void
+    {
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $params = [$lat, $lng, $visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
+        $stmt = $this->db->prepare(
+            "UPDATE site_visits SET checkin_lat = ?, checkin_lng = ?, checkin_time = COALESCE(checkin_time, NOW()) WHERE id = ?{$tidSql}"
+        );
+        $stmt->execute($params);
+    }
+
+    private function completeVisitSession(int $visitId, string $outcome, string $notes): void
+    {
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $params = [$outcome, $notes, $visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
+        $stmt = $this->db->prepare(
+            "UPDATE site_visits SET status = 'completed', feedback = ?, notes = ?, completed_at = NOW() WHERE id = ?{$tidSql}"
+        );
+        $stmt->execute($params);
+    }
+
+    private function getVisitStatus(int $visitId): ?array
+    {
+        $tid = (int)$this->tenantId();
+        $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+        $params = [$visitId];
+        if ($tid > 1) {
+            $params[] = $tid;
+        }
+        $stmt = $this->db->prepare(
+            "SELECT id, lead_id, agent_id, property_id, visit_date, visit_time, status, checkin_lat, checkin_lng, checkin_time, completed_at, feedback, notes
+             FROM site_visits WHERE id = ?{$tidSql} LIMIT 1"
+        );
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    private function createSiteVisitBooking(array $data): int
+    {
+        $tid = (int)$this->tenantId();
+        $stmt = $this->db->prepare(
+            "INSERT INTO site_visits (tenant_id, property_id, user_id, visitor_name, visitor_phone, visit_date, visit_time, status, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'scheduled', NOW())"
+        );
+        $stmt->execute([
+            $tid,
+            (int)$data['property_id'],
+            (int)$data['customer_id'],
+            (string)$data['name'],
+            (string)$data['phone'],
+            (string)$data['date'],
+            (string)$data['slot'],
+        ]);
+        return (int)$this->db->lastInsertId();
     }
 }

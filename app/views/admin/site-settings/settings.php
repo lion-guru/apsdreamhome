@@ -3,6 +3,21 @@ $page_title = $page_title ?? 'Site Settings';
 $settings = $settings ?? [];
 $active_tab = $active_tab ?? 'general';
 
+$rootDir = defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 4);
+if (!function_exists('assetExists')) {
+    function assetExists($path, $rootDir) {
+        if (empty($path)) return false;
+        return file_exists($rootDir . '/' . ltrim($path, '/'));
+    }
+}
+$maintenance = $maintenance ?? [
+    'enabled' => false,
+    'message' => '',
+    'eta' => '',
+    'ips' => '',
+    'client_ip' => '127.0.0.1'
+];
+
 function sc($settings, $key, $default = '') {
     return htmlspecialchars($settings[$key] ?? $default);
 }
@@ -56,6 +71,9 @@ $tabs = [
             </nav>
         </div>
         <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-outline-warning btn-sm" onclick="clearSiteSettingsCache()">
+                <i class="fas fa-sync-alt me-1"></i>Clear Cache
+            </button>
             <a href="<?= BASE_URL ?>/admin/site-content" class="btn btn-outline-info btn-sm">
                 <i class="fas fa-layer-group me-1"></i>Content Manager
             </a>
@@ -121,7 +139,7 @@ $tabs = [
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Logo</label>
-                            <?php if (!empty($settings['company_logo']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_logo'], '/'))): ?>
+                            <?php if (!empty($settings['company_logo']) && assetExists($settings['company_logo'], $rootDir)): ?>
                                 <div class="mb-2"><img src="<?= BASE_URL ?>/<?= sc($settings, 'company_logo') ?>" class="img-preview" alt="Logo"></div>
                             <?php elseif (!empty($settings['company_logo'])): ?>
                                 <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded"><small class="text-muted">Logo file missing</small></div></div>
@@ -164,7 +182,7 @@ $tabs = [
                     <h6><i class="fas fa-image me-2"></i>Brand Assets</h6>
                     <div class="mb-3">
                         <label class="form-label">Favicon</label>
-                        <?php if (!empty($settings['company_favicon']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['company_favicon'], '/'))): ?>
+                        <?php if (!empty($settings['company_favicon']) && assetExists($settings['company_favicon'], $rootDir)): ?>
                             <div class="mb-2 text-center">
                                 <img src="<?= BASE_URL ?>/<?= sc($settings, 'company_favicon') ?>" class="img-preview" alt="Favicon" >
                             </div>
@@ -183,6 +201,48 @@ $tabs = [
                         <tr><td class="text-muted">Reg #:</td><td class="small"><?= sc($settings, 'company_reg_number', '-') ?></td></tr>
                         <tr><td class="text-muted">GST:</td><td class="small"><?= sc($settings, 'company_gst', '-') ?></td></tr>
                     </table></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="settings-group">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h6 class="mb-0"><i class="fas fa-tools me-2"></i>Site Status & Maintenance Mode</h6>
+                        <span class="badge bg-<?= !empty($maintenance['enabled']) ? 'danger' : 'success' ?> px-3 py-2">
+                            <i class="fas fa-<?= !empty($maintenance['enabled']) ? 'lock' : 'check-circle' ?> me-1"></i>
+                            <?= !empty($maintenance['enabled']) ? 'Maintenance Mode Active' : 'Site Live & Active' ?>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">System Mode</label>
+                            <select name="settings[maintenance_mode]" class="form-select">
+                                <option value="0" <?= empty($maintenance['enabled']) ? 'selected' : '' ?>>🟢 Live (Public Access Enabled)</option>
+                                <option value="1" <?= !empty($maintenance['enabled']) ? 'selected' : '' ?>>🔴 Maintenance Mode (Offline for public)</option>
+                            </select>
+                            <div class="form-text">Logged-in admins and whitelisted IPs can always access the site.</div>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Whitelisted Admin IPs (Comma separated)</label>
+                            <div class="input-group">
+                                <input type="text" name="settings[maintenance_ips]" class="form-control" id="maintenanceIps" value="<?= htmlspecialchars($maintenance['ips'] ?? '') ?>" placeholder="127.0.0.1, 192.168.1.1">
+                                <button type="button" class="btn btn-outline-secondary" onclick="addMyIp('<?= $maintenance['client_ip'] ?? '127.0.0.1' ?>')">
+                                    <i class="fas fa-plus me-1"></i>Add My IP (<?= $maintenance['client_ip'] ?? '127.0.0.1' ?>)
+                                </button>
+                            </div>
+                            <div class="form-text">These IPs will bypass maintenance mode completely.</div>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Public Maintenance Message</label>
+                            <input type="text" name="settings[maintenance_message]" class="form-control" value="<?= htmlspecialchars($maintenance['message'] ?? "We're performing scheduled maintenance. We'll be back soon.") ?>">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Expected Completion (ETA)</label>
+                            <input type="text" name="settings[maintenance_eta]" class="form-control" value="<?= htmlspecialchars($maintenance['eta'] ?? '') ?>" placeholder="e.g. 2 hours / 06:00 PM">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -261,6 +321,15 @@ $tabs = [
                             <label class="form-label">Longitude</label>
                             <input aria-label="Settings contact map lng" type="text" name="settings[contact_map_lng]" class="form-control" value="<?= sc($settings, 'contact_map_lng') ?>">
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Toll-Free / Helpline Number</label>
+                            <input type="text" name="settings[contact_tollfree]" class="form-control" value="<?= sc($settings, 'contact_tollfree', '1800-120-1112') ?>" placeholder="1800-XXX-XXXX">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Google Maps Embed Embed URL (iframe src)</label>
+                            <input type="text" name="settings[contact_map_iframe]" class="form-control" value="<?= sc($settings, 'contact_map_iframe') ?>" placeholder="https://www.google.com/maps/embed?pb=...">
+                            <div class="form-text">Embed URL for interactive map on the contact page.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -326,7 +395,7 @@ $tabs = [
             <div class="col-lg-4">
                 <div class="settings-group">
                     <h6><i class="fas fa-image me-2"></i>OG Image (Social Share)</h6>
-                    <?php if (!empty($settings['seo_og_image']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($settings['seo_og_image'], '/'))): ?>
+                    <?php if (!empty($settings['seo_og_image']) && assetExists($settings['seo_og_image'], $rootDir)): ?>
                         <div class="mb-2 text-center">
                             <img src="<?= BASE_URL ?>/<?= sc($settings, 'seo_og_image') ?>" class="img-fluid rounded" alt="OG Image">
                         </div>
@@ -343,6 +412,36 @@ $tabs = [
                         <div class="fw-bold text-primary" id="seoPreviewTitle"><?= sc($settings, 'seo_title', 'Page Title') ?></div>
                         <div class="text-success small" id="seoPreviewUrl">apsdreamhome.com</div>
                         <div class="text-muted small" id="seoPreviewDesc"><?= sc($settings, 'seo_description', 'Page description...') ?></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="settings-group">
+                    <h6><i class="fas fa-chart-line me-2"></i>Analytics, Tracking Pixels & Header Scripts</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Google Analytics Measurement ID</label>
+                            <input type="text" name="settings[google_analytics_id]" class="form-control" value="<?= sc($settings, 'google_analytics_id') ?>" placeholder="G-XXXXXXXXXX">
+                            <div class="form-text">GA4 Measurement ID (starts with G-)</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Google Tag Manager ID</label>
+                            <input type="text" name="settings[google_tag_manager_id]" class="form-control" value="<?= sc($settings, 'google_tag_manager_id') ?>" placeholder="GTM-XXXXXXX">
+                            <div class="form-text">GTM Container ID</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Meta / Facebook Pixel ID</label>
+                            <input type="text" name="settings[meta_pixel_id]" class="form-control" value="<?= sc($settings, 'meta_pixel_id') ?>" placeholder="e.g. 123456789012345">
+                            <div class="form-text">For Facebook/Instagram conversion tracking</div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Custom Header Scripts & Meta Verification</label>
+                            <textarea name="settings[custom_header_scripts]" class="form-control font-monospace" rows="3" placeholder="<meta name='google-site-verification' content='...' />"><?= sc($settings, 'custom_header_scripts') ?></textarea>
+                            <div class="form-text">HTML / JavaScript injected inside &lt;head&gt; across public pages.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -446,7 +545,31 @@ $tabs = [
                     </div>
                     <div class="alert alert-info small mb-0">
                         <i class="fas fa-info-circle me-1"></i>
-                        WhatsApp number is taken from the <strong>Contact</strong> tab →' WhatsApp Number field.
+                        WhatsApp number is taken from the <strong>Contact</strong> tab → WhatsApp Number field.
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="settings-group">
+                    <h6><i class="fas fa-headset text-primary me-2"></i>Live Chat Widget (Tawk.to)</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Enable Live Chat</label>
+                        <select aria-label="Settings tawkto" name="settings[tawkto_enabled]" class="form-select">
+                            <option value="1" <?= ($settings['tawkto_enabled'] ?? '') === '1' ? 'selected' : '' ?>>Enabled</option>
+                            <option value="0" <?= ($settings['tawkto_enabled'] ?? '0') === '0' ? 'selected' : '' ?>>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Property ID</label>
+                        <input aria-label="Settings tawkto property id" type="text" name="settings[tawkto_property_id]" class="form-control" value="<?= sc($settings, 'tawkto_property_id') ?>" placeholder="e.g. 64a1b2c3d4e5f6...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Widget ID</label>
+                        <input aria-label="Settings tawkto widget id" type="text" name="settings[tawkto_widget_id]" class="form-control" value="<?= sc($settings, 'tawkto_widget_id', 'default') ?>" placeholder="default">
+                    </div>
+                    <div class="alert alert-info small mb-0">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Free live chat script from <a href="https://www.tawk.to" target="_blank" rel="noopener">tawk.to</a>.
                     </div>
                 </div>
             </div>
@@ -585,11 +708,48 @@ $tabs = [
                     <h6><i class="fas fa-info-circle me-2"></i>Payment Notes</h6>
                     <div class="alert alert-info small mb-2">
                         <i class="fas fa-info-circle me-1"></i>
-                        Razorpay is used for online card/netbanking/wallet payments. UPI is for direct bank transfers.
+                        Razorpay is used for online card/netbanking/wallet payments. UPI and Bank details are for direct client transfers.
                     </div>
                     <div class="alert alert-warning small mb-0">
                         <i class="fas fa-exclamation-triangle me-1"></i>
-                        <strong>Production:</strong> Replace test keys with live keys from <a href="https://dashboard.razorpay.com/app/keys" target="_blank">Razorpay Dashboard</a>
+                        <strong>Production:</strong> Replace test keys with live keys from <a href="https://dashboard.razorpay.com/app/keys" target="_blank" rel="noopener">Razorpay Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="settings-group">
+                    <h6><i class="fas fa-university me-2"></i>Official Bank Account (For NEFT / RTGS / IMPS Direct Transfers)</h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Bank Name</label>
+                            <input type="text" name="settings[bank_name]" class="form-control" value="<?= sc($settings, 'bank_name', 'HDFC Bank') ?>" placeholder="e.g. HDFC Bank">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Account Holder Name</label>
+                            <input type="text" name="settings[bank_account_holder]" class="form-control" value="<?= sc($settings, 'bank_account_holder', 'APS Dream Home') ?>">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" name="settings[bank_account_number]" class="form-control" value="<?= sc($settings, 'bank_account_number') ?>" placeholder="50100xxxxxxxx">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">IFSC Code</label>
+                            <input type="text" name="settings[bank_ifsc]" class="form-control" value="<?= sc($settings, 'bank_ifsc') ?>" placeholder="HDFC0001234">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Branch Name</label>
+                            <input type="text" name="settings[bank_branch]" class="form-control" value="<?= sc($settings, 'bank_branch', 'Gorakhpur Branch') ?>">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Account Type</label>
+                            <select name="settings[bank_account_type]" class="form-select">
+                                <option value="current" <?= ($settings['bank_account_type'] ?? '') === 'current' ? 'selected' : '' ?>>Current Account</option>
+                                <option value="savings" <?= ($settings['bank_account_type'] ?? '') === 'savings' ? 'selected' : '' ?>>Savings Account</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -730,3 +890,34 @@ function testSmtpConnection() {
 }
 </script>
 <?php endif; ?>
+
+<script>
+function clearSiteSettingsCache() {
+    if (!confirm('Clear all settings and template cache?')) return;
+    var fd = new FormData();
+    fd.append('csrf_token', '<?= $_SESSION["csrf_token"] ?? "" ?>');
+    fetch('<?= BASE_URL ?>/admin/site-settings/clear-cache', { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            alert(d.message || (d.success ? 'Cache cleared successfully!' : 'Failed to clear cache'));
+            if (d.success) location.reload();
+        })
+        .catch(function(e) {
+            alert('Error clearing cache: ' + e);
+        });
+}
+
+function addMyIp(ip) {
+    var input = document.getElementById('maintenanceIps');
+    if (!input) return;
+    var cur = input.value.trim();
+    if (cur === '') {
+        input.value = ip;
+    } else {
+        var parts = cur.split(',').map(function(s) { return s.trim(); });
+        if (parts.indexOf(ip) === -1) {
+            input.value = cur + ', ' + ip;
+        }
+    }
+}
+</script>

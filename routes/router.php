@@ -225,9 +225,25 @@ class Router
                 '#^/admin/auctions/delete/[^/]+$#',
                 '#^/admin/blogs/comment/[^/]+/(delete|approve|reject)$#',
                 '#^/admin/campaign-templates/delete/[^/]+$#',
+                // S790: campaign launch mutates status + notifies the audience.
+                '#^/admin/campaigns/[^/]+/launch$#',
+                // S792: further mutating GETs confirmed by handler read — they
+                // finalize auctions, fire NPS triggers, close surveys and
+                // approve commissions. Cross-origin only; same-origin unaffected.
+                '#^/admin/auctions/process-ending$#',
+                '#^/admin/nps/process-triggers$#',
+                '#^/admin/engagement/surveys/(activate|close)/[^/]+$#',
+                '#^/admin/commission-manage/approve/[^/]+$#',
                 '#^/admin/coding-challenges/delete/[^/]+$#',
                 '#^/admin/crm/drip/[^/]+/delete$#',
-                '#^/admin/drip-campaigns/(delete|toggle)$#',
+                '#^/admin/drip-campaigns/(delete|toggle|process)$#',
+                // S765: six more mutating GETs found by the admin audit — they
+                // send mail, assign/close chats, start auctions, complete visits
+                // and write usage history. Same cross-origin guard applies.
+                '#^/admin/live-chat/(assign|close)$#',
+                '#^/admin/auctions/start/[^/]+$#',
+                '#^/admin/visits/complete$#',
+                '#^/admin/saved-searches/apply/[^/]+$#',
                 '#^/admin/faqs/[^/]+/delete$#',
                 '#^/admin/financial-inquiries/[^/]+/delete$#',
                 '#^/admin/gallery/[^/]+/destroy$#',
@@ -324,6 +340,11 @@ class Router
                 $params = $matchedRoute['params'];
             }
         }
+
+        // S779: expose named route params to controllers. Several legacy
+        // controllers call $this->getRouteParam($key), which used to be an
+        // undefined method; the positional params are already in $params.
+        $GLOBALS['route_params'] = $params;
 
         // Step 7: Handle no match
         if ($routeData === null) {

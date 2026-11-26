@@ -518,4 +518,10 @@ class FileService
             return false;
         }
     }
+
+    /** S784: batchProcess() called this name for a stored mime_type value. */
+    private function isImageFile(?string $mime): bool
+    {
+        return $mime !== null && str_starts_with(strtolower(trim($mime)), 'image/');
+    }
 }

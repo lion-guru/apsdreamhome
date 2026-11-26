@@ -94,7 +94,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 .props-grid-card .prop-features .feat{flex:1;text-align:center;font-size:0.75rem;color:#64748b}
 .props-grid-card .prop-features .feat i{display:block;font-size:0.85rem;color:#0d9488;margin-bottom:3px}
 .props-grid-card .prop-features .feat strong{display:block;color:#1e293b;font-size:0.82rem}
-.props-grid-card .prop-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.props-grid-card .prop-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;gap:8px;flex-wrap:wrap}
 .props-grid-card .prop-price{font-size:1.3rem;font-weight:800;color:#0d9488;line-height:1}
 .props-grid-card .prop-price small{font-size:0.7rem;font-weight:500;color:#94a3b8}
 .props-grid-card .prop-actions{display:flex;gap:6px;position:relative;z-index:2}

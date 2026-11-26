@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 // NOTE (S448): without this import TenantContext:: resolved to
 // App\Http\Controllers\Associate\TenantContext -> class not found -> fatal.
 use App\Core\Middleware\TenantContext;
+use App\Traits\TenantAwareTrait;
 
 /**
  * AssociateAuthController
@@ -13,6 +14,8 @@ use App\Core\Middleware\TenantContext;
  */
 class AuthController extends BaseController
 {
+    use TenantAwareTrait;
+
     public function __construct()
     {
         parent::__construct();

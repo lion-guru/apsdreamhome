@@ -31,7 +31,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                     <h5 class="mb-0 text-primary"><i class="fas fa-envelope me-2"></i> Compose Test Email</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST" action="<?= $base ?>/admin/communication/send-test-email">
+                    <form method="POST" action="<?= $base ?>/admin/communication/test-email">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
                         <div class="mb-3">

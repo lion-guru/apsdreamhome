@@ -23,7 +23,7 @@ class QueryCache {
         $cacheFile = self::$cacheDir . "/" . md5($key) . ".cache";
 
         if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $ttl) {
-            return unserialize(file_get_contents($cacheFile));
+            return unserialize(file_get_contents($cacheFile), ['allowed_classes' => false]);
         }
 
         return false;

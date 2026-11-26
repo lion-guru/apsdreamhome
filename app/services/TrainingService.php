@@ -140,17 +140,127 @@ class TrainingService
         try {
             $tid = $this->tenantId();
             $stmt = $this->db->prepare(
-                "SELECT tc.*, tc.course_id, c.title as course_title
+                "SELECT tc.*, tc.course_id, c.course_title as course_title
                  FROM training_certifications tc
                  LEFT JOIN training_courses c ON c.id = tc.course_id
                  WHERE tc.employee_id = ?" . ($tid > 1 ? " AND tc.tenant_id = ?" : "") . "
                  ORDER BY tc.issued_at DESC"
             );
             $stmt->execute($tid > 1 ? [$employeeId, $tid] : [$employeeId]);
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            // S782: the admin create/edit forms post to employee_certifications,
+            // not this course-based table. Merge those rows into the same shape
+            // the view already renders (certification_name/issuing_body/...).
+            try {
+                $ext = $this->db->prepare(
+                    "SELECT ec.*, u.name AS employee_name
+                     FROM employee_certifications ec
+                     LEFT JOIN users u ON u.id = ec.employee_id
+                     WHERE ec.employee_id = ?" . ($tid > 1 ? " AND ec.tenant_id = ?" : "") . "
+                     ORDER BY ec.issue_date DESC"
+                );
+                $ext->execute($tid > 1 ? [$employeeId, $tid] : [$employeeId]);
+                foreach ($ext->fetchAll(\PDO::FETCH_ASSOC) ?: [] as $e) {
+                    $rows[] = [
+                        'id' => $e['id'],
+                        'employee_id' => $e['employee_id'],
+                        'employee_name' => $e['employee_name'] ?? '',
+                        'course_title' => null,
+                        'certification_name' => $e['certification_name'],
+                        'issuing_body' => $e['issuing_body'],
+                        'certificate_number' => $e['credential_id'],
+                        'credential_url' => $e['credential_url'],
+                        'issued_at' => $e['issue_date'],
+                        'expires_at' => $e['expiry_date'],
+                        'status' => $e['status'],
+                        'source' => 'external',
+                    ];
+                }
+            } catch (\Throwable $e) {
+                error_log('[TrainingService::getEmployeeCertifications:external] ' . $e->getMessage());
+            }
+            return $rows;
         } catch (\Throwable $e) {
             error_log('[TrainingService::getEmployeeCertifications] ' . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * S782: create an external certification from the admin form. The previous
+     * HRController@certificationCreate called a method that never existed (500).
+     */
+    public function addCertification(array $data): array
+    {
+        try {
+            $employeeId = (int)($data['employee_id'] ?? 0);
+            $name = trim((string)($data['certification_name'] ?? ''));
+            $issue = (string)($data['issue_date'] ?? '');
+            if ($employeeId <= 0 || $name === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $issue)) {
+                return ['success' => false, 'message' => 'Employee, certification name and a valid issue date are required'];
+            }
+            $status = (string)($data['status'] ?? 'active');
+            if (!in_array($status, ['active', 'expired', 'revoked'], true)) $status = 'active';
+            $expiry = (string)($data['expiry_date'] ?? '');
+            $stmt = $this->db->prepare(
+                "INSERT INTO employee_certifications
+                 (tenant_id, employee_id, certification_name, issuing_body, issue_date, expiry_date, credential_id, credential_url, status)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            $stmt->execute([
+                $this->tenantId(), $employeeId, $name,
+                trim((string)($data['issuing_body'] ?? '')) ?: null,
+                $issue,
+                preg_match('/^\d{4}-\d{2}-\d{2}$/', $expiry) ? $expiry : null,
+                trim((string)($data['credential_id'] ?? '')) ?: null,
+                trim((string)($data['credential_url'] ?? '')) ?: null,
+                $status,
+            ]);
+            return ['success' => true, 'message' => 'Certification added', 'id' => (int)$this->db->lastInsertId()];
+        } catch (\Throwable $e) {
+            error_log('[TrainingService::addCertification] ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Could not add certification'];
+        }
+    }
+
+    /** S782: update an external certification by id (tenant-scoped). */
+    public function updateCertification(int $id, array $data): array
+    {
+        try {
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare("SELECT id FROM employee_certifications WHERE id = ? AND tenant_id = ?");
+            $stmt->execute([$id, $tid]);
+            if (!$stmt->fetch()) return ['success' => false, 'message' => 'Certification not found'];
+            $map = [
+                'certification_name' => 'certification_name', 'issuing_body' => 'issuing_body',
+                'issue_date' => 'issue_date', 'expiry_date' => 'expiry_date',
+                'credential_id' => 'credential_id', 'credential_url' => 'credential_url',
+                'status' => 'status',
+            ];
+            $sets = []; $params = [];
+            foreach ($map as $input => $column) {
+                if (!array_key_exists($input, $data)) continue;
+                $v = trim((string)$data[$input]);
+                if ($column === 'status') {
+                    if (!in_array($v, ['active', 'expired', 'revoked'], true)) continue;
+                } elseif (in_array($column, ['issue_date', 'expiry_date'], true)) {
+                    if ($v !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $v)) continue;
+                    $v = $v !== '' ? $v : null;
+                } elseif ($column === 'certification_name' && $v === '') {
+                    continue;
+                } else {
+                    $v = $v !== '' ? $v : null;
+                }
+                $sets[] = "$column = ?";
+                $params[] = $v;
+            }
+            if (!$sets) return ['success' => true, 'message' => 'No changes'];
+            $params[] = $id;
+            $this->db->execute("UPDATE employee_certifications SET " . implode(', ', $sets) . " WHERE id = ? AND tenant_id = ?", array_merge($params, [$tid]));
+            return ['success' => true, 'message' => 'Certification updated'];
+        } catch (\Throwable $e) {
+            error_log('[TrainingService::updateCertification] ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Could not update certification'];
         }
     }
 
@@ -176,7 +286,7 @@ class TrainingService
             }
             if ($tid > 1) { $where[] = 'ca.tenant_id = ?'; $params[] = $tid; }
             $stmt = $this->db->prepare(
-                "SELECT ca.*, c.title as course_title, e.name as employee_name
+                "SELECT ca.*, c.course_title as course_title, e.name as employee_name
                  FROM course_assignments ca
                  LEFT JOIN training_courses c ON c.id = ca.course_id
                  LEFT JOIN employees e ON e.id = ca.employee_id
@@ -202,7 +312,7 @@ class TrainingService
         try {
             $tid = $this->tenantId();
             $stmt = $this->db->prepare(
-                "SELECT tc.*, tc.course_id, c.title as course_title, e.name as employee_name
+                "SELECT tc.*, tc.course_id, c.course_title as course_title, e.name as employee_name
                  FROM training_certifications tc
                  LEFT JOIN training_courses c ON c.id = tc.course_id
                  LEFT JOIN employees e ON e.id = tc.employee_id

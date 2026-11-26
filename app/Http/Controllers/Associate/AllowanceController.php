@@ -17,6 +17,12 @@ class AllowanceController extends BaseController
 {
     use TenantAwareTrait;
 
+    /** S779: legacy CSRF helper - delegate to the canonical trait guard. */
+    private function verifyCsrfOrDie(): void
+    {
+        $this->validateCsrfOrFail();
+    }
+
     private LeadershipExpenseFundService $fundService;
 
     public function __construct()

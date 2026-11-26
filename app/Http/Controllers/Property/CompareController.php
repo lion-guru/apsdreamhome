@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Property;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 
 /**
  * Property Comparison Controller
@@ -11,6 +12,8 @@ use App\Core\Database\Database;
  */
 class CompareController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
     protected $pdo;
 

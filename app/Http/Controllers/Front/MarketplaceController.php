@@ -8,9 +8,12 @@ use App\Services\NotificationService;
 use App\Services\Gateway\RazorpayService;
 use App\Core\Database\Database;
 use App\Services\CacheService;
+use App\Traits\TenantAwareTrait;
 
 class MarketplaceController extends BaseController
 {
+    use TenantAwareTrait;
+
     private $marketplaceService;
     private $resellTxnService;
 

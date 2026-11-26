@@ -33,6 +33,7 @@ class AISettingsController extends AdminController
             'ollama_url' => 'http://localhost:11434', 'ollama_model' => 'llama3.1:8b',
             'tts_engine' => 'google', 'stt_engine' => 'groq', 'is_active' => 1,
         ];
+        $cfg = []; // Ensure defined even if config load fails
         try {
             $row = $this->db->fetch("SELECT api_key, is_active, settings, groq_api_key, openrouter_api_key, ollama_url, ollama_model FROM ai_settings WHERE id = 1");
             if ($row) {
@@ -261,6 +262,21 @@ class AISettingsController extends AdminController
                 $msg = $ok ? (empty($models) ? 'Ollama reachable but NO models pulled — chain skips it' : 'Ollama OK — models: ' . implode(', ', array_slice($models, 0, 5))) : 'Unreachable: ' . ($err ?: "HTTP {$code}");
                 $result = ['success' => $ok, 'message' => $msg];
                 break;
+
+            case 'hf':
+                $key = trim((string)($cfg['hf_api_key'] ?? ''));
+                if ($key === '') { $result['message'] = 'No Hugging Face token saved'; break; }
+                $ch = curl_init('https://huggingface.co/api/whoami-v2');
+                curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15, CURLOPT_HTTPHEADER => ["Authorization: Bearer {$key}"]]);
+                $resp = curl_exec($ch);
+                $err = curl_error($ch);
+                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                $data = json_decode((string)$resp, true);
+                $username = $data['name'] ?? $data['user'] ?? '';
+                $ok = $code === 200 && is_array($data);
+                $result = ['success' => $ok, 'message' => $ok ? ("HF token valid" . ($username ? " — account: {$username}" : '')) : "HTTP {$code}: " . substr($err ?: (string)$resp, 0, 160)];
+                break;
         }
 
         $result['latency_ms'] = (int)round((microtime(true) - $start) * 1000);
@@ -404,20 +420,7 @@ class AISettingsController extends AdminController
                 $result = $this->geminiService->customerSupport($prompt);
                 break;
 
-            case 'hf':
-                $key = trim((string)($cfg['hf_api_key'] ?? ''));
-                if ($key === '') { $result['message'] = 'No Hugging Face token saved'; break; }
-                $ch = curl_init('https://huggingface.co/api/whoami');
-                curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15, CURLOPT_HTTPHEADER => ["Authorization: Bearer {$key}"]]);
-                $resp = curl_exec($ch);
-                $err = curl_error($ch);
-                $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
-                $data = json_decode((string)$resp, true);
-                $username = $data['name'] ?? $data['username'] ?? '';
-                $ok = $code === 200 && !empty($data);
-                $result = ['success' => $ok, 'message' => $ok ? ("HF token valid" . ($username ? " - account: {$username}" : '')) : "HTTP {$code}: " . substr($err ?: (string)$resp, 0, 160)];
-                break;
+            default:
                 $result = $this->geminiService->generateContent($prompt);
         }
         

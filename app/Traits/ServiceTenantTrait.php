@@ -151,4 +151,20 @@ trait ServiceTenantTrait
     {
         return $this->tenantParams();
     }
+
+    /**
+     * Short aliases matching the private tJoin()/tEnd() implementations already
+     * present in ReportService, FinancialService and DailyOperationsService.
+     * Both are PLACEHOLDER fragments — pair with tVal() bindings. Classes that
+     * declare their own private versions keep precedence (S160/S683).
+     */
+    protected function tJoin(string $alias): string
+    {
+        return $this->tenantWhereForAlias($alias);
+    }
+
+    protected function tEnd(): string
+    {
+        return $this->tenantWhere();
+    }
 }

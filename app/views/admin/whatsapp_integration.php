@@ -149,7 +149,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
 <script>
 async function testConnection() {
     try {
-        const res = await fetch('<?= BASE_URL ?>/admin/ai-calling/health-check');
+        const res = await fetch('<?= BASE_URL ?>/admin/ai-calling/health');
         const data = await res.json();
         const status = data.services?.whatsapp?.status || 'unknown';
         showToast({type: 'info', body: 'WhatsApp Status: ' + (data.services?.whatsapp?.message || status)});

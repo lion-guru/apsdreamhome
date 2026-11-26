@@ -10,7 +10,8 @@ function getCampaignTypeColor($type) {
 }
 
 function getCampaignStatusColor($status) {
-    $colors = ['planned' => 'secondary', 'active' => 'success', 'completed' => 'primary', 'cancelled' => 'danger'];
+    // S780: live marketing_campaigns.status enum (old planned/active/completed never existed here)
+    $colors = ['draft' => 'secondary', 'scheduled' => 'info', 'sending' => 'warning', 'sent' => 'success', 'paused' => 'primary', 'cancelled' => 'danger'];
     return $colors[$status] ?? 'secondary';
 }
 ?>

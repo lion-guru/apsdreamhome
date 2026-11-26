@@ -25,7 +25,10 @@ class CampaignController extends AdminController
     {
 
         $this->requireAdmin();
-        $campaigns = $this->campaignService->getActiveCampaigns();
+        // S772: getActiveCampaigns() filtered status='active', but the live
+        // marketing_campaigns enum is draft/scheduled/sending/sent/paused/cancelled
+        // — no 'active' member — so this page was always empty. List all.
+        $campaigns = $this->campaignService->getCampaigns([], 100);
 
         $this->data['campaigns'] = $campaigns;
         $this->data['page_title'] = 'Campaign Management - APS Dream Home';
@@ -42,8 +45,11 @@ class CampaignController extends AdminController
         $this->middleware('admin.auth');
 
         $this->data['page_title'] = 'Create Campaign - APS Dream Home';
-        $this->data['campaign_types'] = ['general', 'offer', 'promotion', 'announcement'];
-        $this->data['target_audiences'] = ['all', 'users', 'users', 'users', 'admin'];
+        // S772: CampaignService::createCampaign() validates type against
+        // CHANNELS = email/sms/whatsapp; the old form posted 'general' etc.,
+        // which threw InvalidArgumentException on every create.
+        $this->data['campaign_types'] = ['email', 'sms', 'whatsapp'];
+        $this->data['target_audiences'] = ['all_users', 'customers', 'associates', 'employees', 'admin'];
 
         $this->render('admin/campaigns/create');
     }
@@ -61,16 +67,18 @@ class CampaignController extends AdminController
         }
 
         try {
+            // S774: CampaignService::createCampaign() reads `audience`, `content`
+            // and a valid channel type. The old keys silently defaulted targeting.
+            $startDate = (string)($_POST['start_date'] ?? date('Y-m-d'));
             $campaignData = [
                 'name' => $_POST['name'] ?? '',
                 'description' => $_POST['description'] ?? '',
-                'type' => $_POST['type'] ?? 'general',
-                'target_audience' => $_POST['target_audience'] ?? 'all',
-                'start_date' => $_POST['start_date'] ?? date('Y-m-d'),
-                'end_date' => $_POST['end_date'] ?? null,
+                'content' => $_POST['content'] ?? $_POST['description'] ?? '',
+                'type' => $_POST['type'] ?? 'email',
+                'audience' => $_POST['target_audience'] ?? $_POST['audience'] ?? 'all_users',
+                'target_audience' => $_POST['target_audience'] ?? 'all', // kept for the view
+                'scheduled_at' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate) ? $startDate . ' 00:00:00' : null,
                 'budget' => $_POST['budget'] ?? 0,
-                'expected_revenue' => $_POST['expected_revenue'] ?? 0,
-                'status' => 'planned',
                 'created_by' => $_SESSION['admin_id'] ?? 1
             ];
 
@@ -115,7 +123,7 @@ class CampaignController extends AdminController
         $this->data['campaign'] = $campaign;
         $this->data['page_title'] = 'Edit Campaign - APS Dream Home';
         $this->data['campaign_types'] = ['general', 'offer', 'promotion', 'announcement'];
-        $this->data['target_audiences'] = ['all', 'users', 'users', 'users', 'admin'];
+        $this->data['target_audiences'] = ['all', 'customers', 'associates', 'employees', 'admin'];
 
         $this->render('admin/campaigns/edit');
     }
@@ -217,9 +225,20 @@ class CampaignController extends AdminController
      */
     private function getCampaignById($campaignId)
     {
+        // S772: CampaignService creates into marketing_campaigns (live table);
+        // this controller used to read legacy `campaigns` only, so every live
+        // campaign opened as "Campaign not found". Read the live table first and
+        // expose the keys the edit/analytics views expect; legacy rows still work.
         try {
-            $query = "SELECT * FROM campaigns WHERE campaign_id = ?";
-            return $this->db->fetch($query, [$campaignId]);
+            $row = $this->db->fetch("SELECT * FROM marketing_campaigns WHERE id = ?", [$campaignId]);
+            if ($row) {
+                $row['campaign_id'] = $row['id'];
+                $row['start_date'] = !empty($row['scheduled_at']) ? substr((string)$row['scheduled_at'], 0, 10) : null;
+                $row['end_date'] = null; // no live end-date column
+                $row['expected_revenue'] = 0; // no live column - honest zero
+                return $row;
+            }
+            return $this->db->fetch("SELECT * FROM campaigns WHERE campaign_id = ?", [$campaignId]) ?: null;
         } catch (\Throwable $e) {
             error_log("Error getting campaign: " . $e->getMessage());
             return null;
@@ -231,22 +250,67 @@ class CampaignController extends AdminController
      */
     private function updateCampaign($campaignId, $data)
     {
+        // S772: only write columns that exist on marketing_campaigns. The edit
+        // form still posts legacy keys (start_date/end_date/expected_revenue).
+        $map = [
+            'name' => 'name',
+            'description' => 'description',
+            'budget' => 'budget',
+            'target_audience' => 'target_audience',
+            'subject' => 'subject',
+            'content' => 'content',
+        ];
+        $statusMap = [
+            'planned' => 'draft',
+            'active' => 'sending',
+            'paused' => 'paused',
+            'completed' => 'sent',
+            'draft' => 'draft',
+            'scheduled' => 'scheduled',
+            'sending' => 'sending',
+            'sent' => 'sent',
+            'cancelled' => 'cancelled',
+        ];
+        $validTypes = ['email', 'sms', 'whatsapp', 'push', 'multi'];
         try {
-            $setClause = [];
-            $params = [];
-
-            foreach ($data as $key => $value) {
-                if ($key !== 'campaign_id') {
-                    $setClause[] = "$key = ?";
-                    $params[] = $value;
+            $live = $this->db->fetch("SELECT id, type FROM marketing_campaigns WHERE id = ?", [$campaignId]);
+            if (!$live) {
+                // legacy campaign row: keep the old update path
+                $setClause = [];
+                $params = [];
+                foreach ($data as $key => $value) {
+                    if ($key !== 'campaign_id') { $setClause[] = "$key = ?"; $params[] = $value; }
                 }
+                $params[] = $campaignId;
+                $this->db->execute("UPDATE campaigns SET " . implode(', ', $setClause) . " WHERE campaign_id = ?", $params);
+                return true;
             }
 
+            $setClause = [];
+            $params = [];
+            foreach ($map as $input => $column) {
+                if (array_key_exists($input, $data)) {
+                    $setClause[] = "$column = ?";
+                    $params[] = $data[$input];
+                }
+            }
+            if (!empty($data['start_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$data['start_date'])) {
+                $setClause[] = 'scheduled_at = ?';
+                $params[] = $data['start_date'] . ' 00:00:00';
+            }
+            $postedType = (string)($data['type'] ?? '');
+            if (in_array($postedType, $validTypes, true)) {
+                $setClause[] = 'type = ?';
+                $params[] = $postedType;
+            } // otherwise keep the live channel - the view's general/offer/... are not channels
+            $postedStatus = (string)($data['status'] ?? '');
+            if (isset($statusMap[$postedStatus])) {
+                $setClause[] = 'status = ?';
+                $params[] = $statusMap[$postedStatus];
+            }
+            if (!$setClause) { return true; } // nothing mappable = no-op, not a 1054
             $params[] = $campaignId;
-
-            $query = "UPDATE campaigns SET " . implode(', ', $setClause) . " WHERE campaign_id = ?";
-
-            $this->db->execute($query, $params);
+            $this->db->execute("UPDATE marketing_campaigns SET " . implode(', ', $setClause) . " WHERE id = ?", $params);
             return true;
         } catch (\Throwable $e) {
             error_log("Error updating campaign: " . $e->getMessage());
@@ -261,15 +325,15 @@ class CampaignController extends AdminController
     {
         $tid = (int)$this->tenantId();
         try {
-            try {
-                // Delete campaign members first
-                $this->db->execute("DELETE FROM campaign_members WHERE campaign_id = ? AND tenant_id = ?", [$campaignId, $tid]);
-            } catch (\Throwable $e) {
-            // Gracefully handle dropped table ref
-            error_log($e->getMessage());
-            }
+            // S772: campaign_members is a 4-column stub (id/tenant_id/timestamps)
+            // with no campaign_id column and 0 rows — the old member DELETE was
+            // a phantom-column write that 1054'd on every campaign delete.
+            // No schema invented; nothing to clean.
 
-            // Delete campaign
+            // S772: live campaigns are in marketing_campaigns (PK id); the
+            // legacy table is cleaned too for old rows.
+            $this->db->execute("DELETE FROM marketing_campaign_recipients WHERE campaign_id = ? AND tenant_id = ?", [$campaignId, $tid]);
+            $this->db->execute("DELETE FROM marketing_campaigns WHERE id = ? AND tenant_id = ?", [$campaignId, $tid]);
             $this->db->execute("DELETE FROM campaigns WHERE campaign_id = ? AND tenant_id = ?", [$campaignId, $tid]);
 
             return true;
@@ -343,13 +407,14 @@ class CampaignController extends AdminController
             $params = [];
 
             switch ($targetAudience) {
-                case 'users':
+                case 'customers':
+                case 'users': // legacy value kept for existing campaigns
                     $query .= " WHERE role = 'customer'";
                     break;
-                case 'users':
+                case 'associates':
                     $query .= " WHERE role = 'associate'";
                     break;
-                case 'users':
+                case 'employees':
                     $query .= " WHERE role = 'employee'";
                     break;
                 case 'admin':
@@ -517,7 +582,7 @@ class CampaignController extends AdminController
         $this->data['page_title'] = 'SMS Campaigns';
         try {
             $this->data['campaigns'] = $this->db->fetchAll(
-                "SELECT * FROM campaigns WHERE channel = 'sms' OR channel IS NULL ORDER BY created_at DESC"
+                "SELECT * FROM campaigns WHERE type = 'sms' OR type IS NULL ORDER BY created_at DESC"
             ) ?: [];
             $this->data['stats'] = [
                 'total' => count($this->data['campaigns']),
@@ -541,7 +606,8 @@ class CampaignController extends AdminController
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
 
-            $templates = $db->query("SELECT template_name, language FROM whatsapp_templates WHERE status = 'approved' ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
+            // S771: live enum is active/inactive/pending_approval/rejected - 'approved' never matched.
+            $templates = $db->query("SELECT template_name, language FROM whatsapp_templates WHERE status = 'active' ORDER BY template_name")->fetchAll(\PDO::FETCH_ASSOC);
 
             [$tidSql, $tidParams] = $this->tenantWhere();
             $stmtUsers = $db->prepare("SELECT COUNT(*) as cnt FROM users WHERE phone IS NOT NULL AND phone != ''{$tidSql}");
@@ -579,12 +645,16 @@ class CampaignController extends AdminController
                 foreach ($phones as $phone) {
                     try {
                         $wa = new \App\Services\Communication\WhatsAppSenderService();
-                        if (!empty($templateName)) {
-                            $wa->sendTemplate($phone, $templateName, ['message' => $message]);
+                        // S771: the sender returns ['success'=>false] on failure;
+                        // counting every call as sent fabricated the broadcast report.
+                        $res = !empty($templateName)
+                            ? $wa->sendTemplate($phone, $templateName, ['message' => $message])
+                            : $wa->sendMessage($phone, $message);
+                        if (!empty($res['success'])) {
+                            $sent++;
                         } else {
-                            $wa->sendMessage($phone, $message);
+                            $failed++;
                         }
-                        $sent++;
                     } catch (\Throwable $e) {
                         $failed++;
                     }

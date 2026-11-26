@@ -9,6 +9,29 @@ class UserPackageController extends BaseController
 {
     use TenantAwareTrait;
 
+    /** S779: these two helpers were called but never defined - every boost flow fataled. */
+    private function requireCustomerLogin(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) { @session_start(); }
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
+            exit;
+        }
+        $role = (string)($_SESSION['role'] ?? '');
+        if (!in_array($role, ['', 'customer', 'user'], true)) {
+            header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/login');
+            exit;
+        }
+    }
+
+    private function getUser(): array
+    {
+        if (session_status() === PHP_SESSION_NONE) { @session_start(); }
+        $id = (int)($_SESSION['user_id'] ?? 0);
+        if ($id <= 0) { return []; }
+        return $this->db->fetch('SELECT * FROM users WHERE id = ?', [$id]) ?: [];
+    }
+
     public function __construct()
     {
         parent::__construct();

@@ -193,10 +193,15 @@ class EmailSettingsController extends AdminController
             
             $result = $emailService->send($testEmail, $subject, $body);
             
-            echo json_encode(['success' => $result]);
+            if ($result) {
+                echo json_encode(['success' => true, 'message' => "Test email successfully sent to {$testEmail}!"]);
+            } else {
+                $err = $emailService->getLastError() ?: 'Failed to send test email. Please check your SMTP settings and app password.';
+                echo json_encode(['success' => false, 'message' => $err, 'error' => $err]);
+            }
             
         } catch (\Throwable $e) {
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => $e->getMessage(), 'message' => $e->getMessage()]);
         }
         exit;
     }

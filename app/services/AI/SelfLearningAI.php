@@ -890,10 +890,14 @@ class SelfLearningAI
                  GROUP BY detected_intent ORDER BY count DESC LIMIT 5"
             ) ?: [];
 
-            // Feedback score
+            // S797: the live ai_learning_data schema stores feedback in
+            // action_type / feedback_score / learned_at (see the INSERT at
+            // line ~853). The old rating/interaction_type/created_at names
+            // 1054'd here and the outer catch dropped the ENTIRE stats array,
+            // so every self-learning stat silently read as empty.
             $fb = $this->db->fetch(
-                "SELECT AVG(rating) as avg_rating, COUNT(*) as total_feedback
-                 FROM ai_learning_data WHERE interaction_type = 'feedback' AND DATE(created_at) = CURDATE()"
+                "SELECT AVG(feedback_score) as avg_rating, COUNT(*) as total_feedback
+                 FROM ai_learning_data WHERE action_type = 'feedback' AND DATE(learned_at) = CURDATE()"
             );
             $stats['avg_rating'] = round((float)($fb['avg_rating'] ?? 0), 1);
             $stats['total_feedback'] = (int)($fb['total_feedback'] ?? 0);

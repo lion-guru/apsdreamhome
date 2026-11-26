@@ -10,6 +10,12 @@ use Exception;
 class AgreementController extends AdminController
 {
     use \App\Traits\TenantAwareTrait;
+
+    /** S779: legacy CSRF helper - delegate to the canonical trait guard. */
+    private function verifyCsrf(): void
+    {
+        $this->validateCsrfOrFail();
+    }
     private $agreementService;
     private $notificationService;
 

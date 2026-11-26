@@ -290,9 +290,17 @@ class UserController extends BaseController
         $this->requireCustomerLogin();
         $user = $this->getUser();
         $userId = (int)$user['id'];
+        $userPhone = trim($user['phone'] ?? '');
+        $userEmail = trim($user['email'] ?? '');
 
         $bookings = [];
         try {
+            $phoneSql = !empty($userPhone) ? " OR pb.customer_phone = ?" : "";
+            $emailSql = !empty($userEmail) ? " OR (pb.customer_email IS NOT NULL AND pb.customer_email != '' AND pb.customer_email = ?)" : "";
+            $params = [$userId];
+            if (!empty($userPhone)) $params[] = $userPhone;
+            if (!empty($userEmail)) $params[] = $userEmail;
+
             $bookings = $this->db->fetchAll("
                 SELECT pb.*,
                        p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
@@ -305,9 +313,9 @@ class UserController extends BaseController
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
                 LEFT JOIN colonies c ON p.colony_id = c.id
-                WHERE pb.customer_id = ?
+                WHERE (pb.customer_id = ?{$phoneSql}{$emailSql})
                 ORDER BY pb.created_at DESC
-            ", [$userId]);
+            ", $params);
         } catch (\Throwable $e) {
             error_log("UserController::myBookings - " . $e->getMessage());
         }
@@ -325,6 +333,8 @@ class UserController extends BaseController
         $this->requireCustomerLogin();
         $user = $this->getUser();
         $userId = (int)$user['id'];
+        $userPhone = trim($user['phone'] ?? '');
+        $userEmail = trim($user['email'] ?? '');
         $bookingId = (int)$id;
 
         if ($bookingId <= 0) {
@@ -334,6 +344,12 @@ class UserController extends BaseController
 
         $booking = null;
         try {
+            $phoneSql = !empty($userPhone) ? " OR pb.customer_phone = ?" : "";
+            $emailSql = !empty($userEmail) ? " OR (pb.customer_email IS NOT NULL AND pb.customer_email != '' AND pb.customer_email = ?)" : "";
+            $params = [$bookingId, $userId];
+            if (!empty($userPhone)) $params[] = $userPhone;
+            if (!empty($userEmail)) $params[] = $userEmail;
+
             $booking = $this->db->fetch("
                 SELECT pb.*,
                        p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
@@ -342,15 +358,25 @@ class UserController extends BaseController
                        c.name as colony_name, c.contact_phone as colony_phone,
                        c.contact_email as colony_email,
                        d.name as district_name, s.name as state_name,
-                       u.name as customer_name, u.email as customer_email, u.phone as customer_phone
+                       COALESCE(u.name, pb.customer_name, 'Valued Customer') as customer_name,
+                       COALESCE(u.email, pb.customer_email, '—') as customer_email,
+                       COALESCE(u.phone, pb.customer_phone, '—') as customer_phone
                 FROM plot_bookings pb
                 LEFT JOIN plots p ON pb.plot_id = p.id
                 LEFT JOIN colonies c ON p.colony_id = c.id
                 LEFT JOIN districts d ON c.district_id = d.id
                 LEFT JOIN states s ON d.state_id = s.id
                 LEFT JOIN users u ON pb.customer_id = u.id
-                WHERE pb.id = ? AND pb.customer_id = ?
-            ", [$bookingId, $userId]);
+                WHERE pb.id = ? AND (pb.customer_id = ?{$phoneSql}{$emailSql})
+            ", $params);
+
+            // Auto-link customer_id if unlinked
+            if ($booking && empty($booking['customer_id'])) {
+                try {
+                    $this->db->prepare("UPDATE plot_bookings SET customer_id = ? WHERE id = ? AND customer_id IS NULL")->execute([$userId, $bookingId]);
+                    $booking['customer_id'] = $userId;
+                } catch (\Throwable $linkEx) {}
+            }
         } catch (\Throwable $e) {
             error_log("UserController::bookingDetail - " . $e->getMessage());
         }
@@ -1768,11 +1794,18 @@ class UserController extends BaseController
             exit;
         }
 
-        // Already paid token — redirect to detail
-        if (($booking['status'] ?? '') !== 'token_paid') {
+        // Already advanced beyond token payment stage — redirect to detail
+        if (in_array(($booking['status'] ?? ''), ['agreement_signed', 'emi_active', 'partially_paid', 'fully_paid', 'cancelled', 'defaulted'], true)) {
             header('Location: ' . BASE_URL . '/user/bookings/' . $bookingId);
             exit;
         }
+
+        // Fetch customer wallet balance
+        $walletBalance = 0.0;
+        try {
+            $walletService = new \App\Services\WalletService();
+            $walletBalance = $walletService->getBalance($userId);
+        } catch (\Throwable $e) {}
 
         // Create Razorpay order for the token amount
         $tokenAmount = (float)($booking['booking_amount'] ?? 25000);
@@ -1798,12 +1831,13 @@ class UserController extends BaseController
 
         $this->layout = 'layouts/customer';
         $this->render('pages/user/pay_token', [
-            'page_title'   => 'Pay Token Amount — APS Dream Home',
-            'user'         => $user,
-            'booking'      => $booking,
-            'token_amount' => $tokenAmount,
-            'order_id'     => $orderId,
-            'razorpay'     => [
+            'page_title'     => 'Pay Token Amount — APS Dream Home',
+            'user'           => $user,
+            'booking'        => $booking,
+            'token_amount'   => $tokenAmount,
+            'wallet_balance' => $walletBalance,
+            'order_id'       => $orderId,
+            'razorpay'       => [
                 'key_id'  => $razorpaySvc->getKeyId(),
                 'test'    => $razorpaySvc->isTestMode() || !$razorpaySvc->isConfigured(),
             ],
@@ -1833,25 +1867,116 @@ class UserController extends BaseController
             return;
         }
 
-        $razorpay_order_id   = $_POST['razorpay_order_id']   ?? '';
-        $razorpay_payment_id  = $_POST['razorpay_payment_id']  ?? '';
-        $razorpay_signature   = $_POST['razorpay_signature']   ?? '';
-
-        if (!$razorpay_order_id || !$razorpay_payment_id || !$razorpay_signature) {
-            $this->json(['success' => false, 'error' => 'Missing payment response data.'], 400);
-            return;
-        }
-
         $booking = $this->fetchBookingWithPlot($bookingId, $userId);
         if (!$booking) {
             $this->json(['success' => false, 'error' => 'Booking not found.'], 404);
             return;
         }
 
-        if (($booking['status'] ?? '') !== 'token_paid') {
-            $this->json(['success' => false, 'error' => 'Token already paid or booking in unexpected state.'], 400);
-            return;
+        $paymentMethod = $_POST['payment_method'] ?? 'razorpay';
+        $tokenAmount = (float)($booking['booking_amount'] ?? 51000);
+
+        // Branch 1: Customer Wallet Token Payment
+        if ($paymentMethod === 'wallet') {
+            $walletService = new \App\Services\WalletService();
+            $currentWalletBalance = $walletService->getBalance($userId);
+
+            if ($currentWalletBalance < $tokenAmount) {
+                $this->json([
+                    'success' => false,
+                    'error'   => 'Insufficient wallet balance. Available: ₹' . number_format($currentWalletBalance, 2) . ', Required: ₹' . number_format($tokenAmount, 2) . '. Please top up your wallet or pay via UPI.'
+                ], 400);
+                return;
+            }
+
+            try {
+                $this->db->beginTransaction();
+
+                $plotNum = $booking['plot_number'] ?? 'Plot';
+                $colonyName = $booking['colony_name'] ?? 'Colony';
+                $debitDesc = "Token payment for Plot #{$plotNum} ({$colonyName}) - Booking #{$booking['booking_number']}";
+
+                $debitOk = $walletService->debit($userId, $tokenAmount, $debitDesc, 'emi_transfer');
+                if (!$debitOk) {
+                    $this->db->rollBack();
+                    $this->json(['success' => false, 'error' => 'Unable to debit wallet balance.'], 400);
+                    return;
+                }
+
+                $receiptNumber = 'APS-WLT-' . date('Ymd') . '-' . str_pad((string)mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+                $wltTxnRef = 'WLT-TKN-' . strtoupper(substr(uniqid(), -8));
+
+                // Update booking status
+                $this->db->prepare("
+                    UPDATE plot_bookings
+                    SET status = 'token_paid', approval_status = 'approved', approved_by = ?, approved_at = NOW(),
+                        approval_notes = 'Token paid from customer wallet balance', updated_at = NOW()
+                    WHERE id = ? AND (customer_id = ? OR customer_phone = ?)
+                ")->execute([$userId, $bookingId, $userId, $_SESSION['user_phone'] ?? '']);
+
+                // Insert into booking_payment_receipts with status cleared
+                $this->db->prepare("
+                    INSERT INTO booking_payment_receipts
+                        (booking_id, receipt_number, amount, payment_mode,
+                         transaction_ref, status, receipt_date, notes, created_at)
+                    VALUES (?, ?, ?, 'wallet', ?, 'cleared', NOW(), 'Token payment debited from customer wallet', NOW())
+                ")->execute([$bookingId, $receiptNumber, $tokenAmount, $wltTxnRef]);
+
+                // Insert into payment_transactions
+                $this->db->prepare("
+                    INSERT INTO payment_transactions
+                        (transaction_id, user_id, booking_id, amount, currency, payment_method,
+                         payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, 'INR', 'wallet', 'completed', ?, ?, NOW(), NOW())
+                ")->execute([
+                    $receiptNumber, $userId, $bookingId, $tokenAmount,
+                    $wltTxnRef,
+                    json_encode([
+                        'channel'        => 'customer_wallet',
+                        'booking_id'     => $bookingId,
+                        'customer_id'    => $userId,
+                        'paid_at'        => date('Y-m-d H:i:s'),
+                    ])
+                ]);
+
+                // Record in booking_status_history
+                try {
+                    $this->db->prepare("
+                        INSERT INTO booking_status_history
+                            (booking_id, from_status, to_status, changed_by, reason, created_at)
+                        VALUES (?, NULL, 'token_paid', ?, 'Token payment completed from customer wallet', NOW())
+                    ")->execute([$bookingId, $userId]);
+                } catch (\Throwable $e) {}
+
+                $this->db->commit();
+
+                try {
+                    $user = $this->getUser();
+                    $notifier = new \App\Services\BookingNotificationService();
+                    $notifier->sendPaymentReceipt($booking, $user, $tokenAmount, $wltTxnRef);
+                } catch (\Throwable $e) {}
+
+                $this->json([
+                    'success'  => true,
+                    'message'  => 'Token amount paid successfully from your wallet balance!',
+                    'redirect' => BASE_URL . '/user/bookings/' . $bookingId . '/payment-success?receipt=' . urlencode($receiptNumber),
+                ]);
+                return;
+            } catch (\Throwable $e) {
+                if ($this->db->inTransaction()) {
+                    $this->db->rollBack();
+                }
+                error_log("UserController::processTokenPayment wallet error: " . $e->getMessage());
+                $this->json(['success' => false, 'error' => 'Wallet payment failed: ' . $e->getMessage()], 500);
+                return;
+            }
         }
+
+        // Branch 2: Razorpay Online Gateway
+
+        $razorpay_order_id   = $_POST['razorpay_order_id'] ?? '';
+        $razorpay_payment_id = $_POST['razorpay_payment_id'] ?? '';
+        $razorpay_signature  = $_POST['razorpay_signature'] ?? '';
 
         // Verify HMAC-SHA256 signature
         $razorpaySvc = new \App\Services\Gateway\RazorpayService();
@@ -1974,6 +2099,15 @@ class UserController extends BaseController
     private function fetchBookingWithPlot(int $bookingId, int $userId): ?array
     {
         try {
+            $user = $this->getUser();
+            $userPhone = trim($user['phone'] ?? '');
+            $userEmail = trim($user['email'] ?? '');
+            $phoneSql = !empty($userPhone) ? " OR pb.customer_phone = ?" : "";
+            $emailSql = !empty($userEmail) ? " OR (pb.customer_email IS NOT NULL AND pb.customer_email != '' AND pb.customer_email = ?)" : "";
+            $params = [$bookingId, $userId];
+            if (!empty($userPhone)) $params[] = $userPhone;
+            if (!empty($userEmail)) $params[] = $userEmail;
+
             return $this->db->fetch("
                 SELECT pb.*,
                        p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
@@ -1984,8 +2118,8 @@ class UserController extends BaseController
                 LEFT JOIN plots p ON pb.plot_id = p.id
                 LEFT JOIN colonies c ON p.colony_id = c.id
                 LEFT JOIN districts d ON c.district_id = d.id
-                WHERE pb.id = ? AND pb.customer_id = ?
-            ", [$bookingId, $userId]);
+                WHERE pb.id = ? AND (pb.customer_id = ?{$phoneSql}{$emailSql})
+            ", $params);
         } catch (\Throwable $e) {
             error_log("UserController::fetchBookingWithPlot - " . $e->getMessage());
             return null;
@@ -2070,19 +2204,27 @@ class UserController extends BaseController
             $orderId = $orderResp['data']['id'];
         }
 
+        // Fetch customer wallet balance
+        $walletBalance = 0.0;
+        try {
+            $walletService = new \App\Services\WalletService();
+            $walletBalance = $walletService->getBalance($userId);
+        } catch (\Throwable $e) {}
+
         $this->layout = 'layouts/customer';
         $this->render('pages/user/pay_installment', [
-            'page_title'   => 'Pay Installment — APS Dream Home',
-            'user'         => $user,
-            'installment'  => $installment,
-            'booking'      => $installment,
-            'amount_due'   => $amountDue,
-            'emi_amount'   => $emiAmount,
-            'paid_amount'  => $paidAmount,
-            'late_fee'     => $lateFee,
-            'penalty'      => $accruedPenalty,
-            'order_id'     => $orderId,
-            'razorpay'     => [
+            'page_title'     => 'Pay Installment — APS Dream Home',
+            'user'           => $user,
+            'installment'    => $installment,
+            'booking'        => $installment,
+            'amount_due'     => $amountDue,
+            'emi_amount'     => $emiAmount,
+            'paid_amount'    => $paidAmount,
+            'late_fee'       => $lateFee,
+            'penalty'        => $accruedPenalty,
+            'wallet_balance' => $walletBalance,
+            'order_id'       => $orderId,
+            'razorpay'       => [
                 'key_id' => $razorpaySvc->getKeyId(),
                 'test'   => $razorpaySvc->isTestMode() || !$razorpaySvc->isConfigured(),
             ],
@@ -2144,7 +2286,120 @@ class UserController extends BaseController
         $amountDue = max(0, ($emiAmount - $oldPaid) + $lateFee + $accruedPenalty);
         $bookingId = (int) $installment['booking_id'];
 
-        // Branch 1: Manual UPI QR / UTR reference submission
+        // Branch 1: Customer Wallet Balance Payment (Instant Cleared Settlement)
+        if ($paymentMethod === 'wallet') {
+            $walletService = new \App\Services\WalletService();
+            $currentWalletBalance = $walletService->getBalance($userId);
+
+            if ($currentWalletBalance < $amountDue) {
+                $this->json([
+                    'success' => false,
+                    'error'   => 'Insufficient wallet balance. Available: ₹' . number_format($currentWalletBalance, 2) . ', Required: ₹' . number_format($amountDue, 2) . '. Please top up your wallet or use UPI.'
+                ], 400);
+                return;
+            }
+
+            try {
+                $this->db->beginTransaction();
+
+                $plotNum = $installment['plot_number'] ?? 'Plot';
+                $instNo = $installment['installment_number'] ?? $instId;
+                $bkNo = $installment['booking_number'] ?? ('BK' . $bookingId);
+                $debitDesc = "EMI Installment #{$instNo} payment for Plot #{$plotNum} (Booking #{$bkNo})";
+
+                $debitOk = $walletService->debit($userId, $amountDue, $debitDesc, 'emi_transfer');
+                if (!$debitOk) {
+                    $this->db->rollBack();
+                    $this->json(['success' => false, 'error' => 'Unable to debit wallet balance. Please check your balance and try again.'], 400);
+                    return;
+                }
+
+                $newPaid = $oldPaid + $amountDue;
+                $newStatus = ($newPaid >= $emiAmount) ? 'paid' : 'partial';
+                $paidDate = ($newStatus === 'paid') ? date('Y-m-d H:i:s') : null;
+
+                $this->db->prepare("
+                    UPDATE booking_payment_schedules
+                    SET paid_amount = ?, status = ?, paid_date = COALESCE(?, paid_date),
+                        updated_at = NOW()
+                    WHERE id = ?
+                ")->execute([$newPaid, $newStatus, $paidDate, $instId]);
+
+                $receiptNumber = 'APS-WLT-' . date('Ymd') . '-' . str_pad((string)mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+                $wltTxnRef = 'WLT-EMI-' . strtoupper(substr(uniqid(), -8));
+
+                // Insert into booking_payment_receipts with status cleared
+                $this->db->prepare("
+                    INSERT INTO booking_payment_receipts
+                        (booking_id, installment_id, receipt_number, amount, payment_mode,
+                         transaction_ref, status, receipt_date, notes, created_at)
+                    VALUES (?, ?, ?, ?, 'wallet', ?, 'cleared', NOW(), 'Paid from Customer Wallet Balance', NOW())
+                ")->execute([$bookingId, $instId, $receiptNumber, $amountDue, $wltTxnRef]);
+
+                // Insert into payment_transactions
+                $this->db->prepare("
+                    INSERT INTO payment_transactions
+                        (transaction_id, user_id, booking_id, amount, currency, payment_method,
+                         payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, 'INR', 'wallet', 'completed', ?, ?, NOW(), NOW())
+                ")->execute([
+                    $receiptNumber, $userId, $bookingId, $amountDue,
+                    $wltTxnRef,
+                    json_encode([
+                        'channel'        => 'customer_wallet',
+                        'installment_id' => $instId,
+                        'customer_id'    => $userId,
+                        'paid_at'        => date('Y-m-d H:i:s'),
+                    ])
+                ]);
+
+                // Check if all installments for this booking are paid
+                $stmtCheck = $this->db->prepare("
+                    SELECT COUNT(*) as unpaid
+                    FROM booking_payment_schedules
+                    WHERE booking_id = ? AND status NOT IN ('paid')
+                ");
+                $stmtCheck->execute([$bookingId]);
+                $unpaidRow = $stmtCheck->fetch(\PDO::FETCH_ASSOC);
+                if (((int) ($unpaidRow['unpaid'] ?? 1)) === 0) {
+                    $this->db->prepare("
+                        UPDATE plot_bookings
+                        SET status = 'fully_paid', updated_at = NOW()
+                        WHERE id = ? AND status NOT IN ('cancelled', 'transferred')
+                    ")->execute([$bookingId]);
+                }
+
+                $this->db->commit();
+
+                // Send payment receipt notification
+                try {
+                    $notifier = new \App\Services\BookingNotificationService();
+                    $notifyUser = $this->db->fetch("SELECT * FROM users WHERE id = ?", [$userId]) ?: ['id' => $userId, 'name' => '', 'email' => ''];
+                    $notifier->sendPaymentReceipt(
+                        ['booking_number' => $installment['booking_number'], 'id' => $bookingId],
+                        $notifyUser,
+                        $amountDue,
+                        $wltTxnRef
+                    );
+                } catch (\Throwable $e) {}
+
+                $this->json([
+                    'success'  => true,
+                    'message'  => 'Installment paid successfully from your wallet balance!',
+                    'redirect' => BASE_URL . '/user/installments/' . $instId . '/success?receipt=' . urlencode($receiptNumber),
+                ]);
+                return;
+            } catch (\Throwable $e) {
+                if ($this->db->inTransaction()) {
+                    $this->db->rollBack();
+                }
+                error_log("UserController::processInstallmentPayment wallet error: " . $e->getMessage());
+                $this->json(['success' => false, 'error' => 'Wallet payment failed: ' . $e->getMessage()], 500);
+                return;
+            }
+        }
+
+        // Branch 2: Manual UPI QR / UTR reference submission
         if ($paymentMethod === 'upi_manual') {
             $utrNumber = trim((string)($_POST['utr_number'] ?? ''));
             if (empty($utrNumber) || strlen($utrNumber) < 6) {
@@ -2245,7 +2500,7 @@ class UserController extends BaseController
                 INSERT INTO booking_payment_receipts
                     (booking_id, installment_id, receipt_number, amount, payment_mode,
                      transaction_ref, status, receipt_date, created_at)
-                VALUES (?, ?, ?, ?, 'razorpay', ?, 'completed', NOW(), NOW())
+                VALUES (?, ?, ?, ?, 'online', ?, 'cleared', NOW(), NOW())
             ")->execute([$bookingId, $instId, $receiptNumber, $amountDue, $razorpay_payment_id]);
 
             $this->db->prepare("

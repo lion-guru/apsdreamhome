@@ -105,7 +105,7 @@ $employee_id = $employee_id ?? 0;
                                 'active' => 'success',
                                 'expired' => 'danger',
                                 'revoked' => 'secondary',
-                                'pending_verification' => 'warning'
+                                'pending_verification' => 'warning' // legacy rows only; live enum is active/expired/revoked
                             ][$c['status']] ?? 'secondary';
                         ?>
                         <tr>
@@ -211,7 +211,8 @@ $employee_id = $employee_id ?? 0;
                         <label class="form-label fw-semibold">Status</label>
                         <select aria-label="Status" name="status" class="form-select">
                             <option value="active">Active</option>
-                            <option value="pending_verification">Pending Verification</option>
+                            <option value="expired">Expired</option>
+                            <option value="revoked">Revoked</option>
                         </select>
                     </div>
                 </div>
@@ -269,7 +270,6 @@ $employee_id = $employee_id ?? 0;
                                 <option value="active">Active</option>
                                 <option value="expired">Expired</option>
                                 <option value="revoked">Revoked</option>
-                                <option value="pending_verification">Pending Verification</option>
                             </select>
                         </div>
                     </div>

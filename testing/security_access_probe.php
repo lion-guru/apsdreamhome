@@ -22,7 +22,12 @@ function fetch($url, $jar, $post = null) {
     curl_close($ch);
     return [$html, $info];
 }
-function isLoginRedirect($url) { return strpos($url, '/login') !== false || strpos($url, '/admin/login') !== false || strpos($url, '/associate/login') !== false; }
+function isBlockedRedirect($url) {
+    return strpos($url, '/login') !== false
+        || strpos($url, '/admin/login') !== false
+        || strpos($url, '/associate/login') !== false
+        || strpos($url, '/user/dashboard') !== false;
+}
 
 $jar = sys_get_temp_dir() . '/sec_probe.txt'; @unlink($jar);
 fetch($base . '/login?test_login=7', $jar); // customer
@@ -36,17 +41,19 @@ $tests = [
 $fail = 0;
 foreach ($tests as [$path, $label]) {
   list($h, $inf) = fetch($base . $path, $jar);
-  $ok = ($inf['http_code'] !== 200) || isLoginRedirect($inf['url']);
-  // If 200 but final url is dashboard, that's a leak
-  if ($inf['http_code'] === 200 && !isLoginRedirect($inf['url'])) {
+  $ok = ($inf['http_code'] !== 200) || isBlockedRedirect($inf['url']);
+  // If 200 and stayed on the target admin/associate path, that's a leak
+  if ($inf['http_code'] === 200 && !isBlockedRedirect($inf['url'])) {
     $ok = false;
   }
   echo ($ok ? 'PASS' : 'FAIL') . " $label HTTP {$inf['http_code']} final={$inf['url']}\n";
   if (!$ok) $fail++;
 }
-// Unauthenticated CSRF POST (no session) -> should NOT succeed as 200 with success flag
+// Unauthenticated CSRF POST (no session) -> should redirect away from /admin/service-configs/update and not return success
 $jarAnon = sys_get_temp_dir() . '/sec_probe_anon.txt'; @unlink($jarAnon);
 list($h, $inf) = fetch($base . '/admin/service-configs/update', $jarAnon, ['configs' => ['x' => 'y']]);
-echo "Unauth POST service-configs/update HTTP {$inf['http_code']} final={$inf['url']} (expect redirect, not success)\n";
+$postOk = (strpos($inf['url'], '/admin/service-configs/update') === false) && (strpos((string)$h, '"success":true') === false);
+echo ($postOk ? 'PASS' : 'FAIL') . " Unauth POST service-configs/update HTTP {$inf['http_code']} final={$inf['url']}\n";
+if (!$postOk) $fail++;
 echo $fail === 0 ? "SECURITY PROBE PASS\n" : "SECURITY PROBE FAIL ($fail)\n";
 exit($fail === 0 ? 0 : 1);

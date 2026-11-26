@@ -271,4 +271,46 @@ class MobileSyncApiController extends BaseController
         }
         return $bookingId;
     }
+
+    private function createLead(array $data): int
+    {
+        $tid = (int)$this->tenantId();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0) ?: null;
+        $stmt = $this->db->prepare(
+            "INSERT INTO leads (tenant_id, name, email, phone, source, notes, status, created_by, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, 'new', ?, NOW())"
+        );
+        $stmt->execute([
+            $tid,
+            trim((string)($data['name'] ?? 'Mobile Lead')),
+            isset($data['email']) ? trim((string)$data['email']) : null,
+            isset($data['phone']) ? trim((string)$data['phone']) : null,
+            trim((string)($data['source'] ?? 'mobile_sync')),
+            isset($data['notes']) ? trim((string)$data['notes']) : null,
+            $userId,
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
+
+    private function addInteraction(array $data): int
+    {
+        $tid = (int)$this->tenantId();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0) ?: null;
+        $leadId = (int)($data['lead_id'] ?? 0);
+        if ($leadId < 1) {
+            return 0;
+        }
+        $stmt = $this->db->prepare(
+            "INSERT INTO lead_activities (tenant_id, lead_id, activity_type, description, created_by, created_at)
+             VALUES (?, ?, ?, ?, ?, NOW())"
+        );
+        $stmt->execute([
+            $tid,
+            $leadId,
+            trim((string)($data['activity_type'] ?? $data['type'] ?? 'interaction')),
+            trim((string)($data['description'] ?? $data['notes'] ?? '')),
+            $userId,
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
 }

@@ -48,7 +48,7 @@ class SiteContentService
         if (!file_exists($path)) return null;
         $age = time() - filemtime($path);
         if ($age > $this->cacheTtl) return null;
-        $data = @unserialize(file_get_contents($path));
+        $data = @unserialize(file_get_contents($path), ['allowed_classes' => false]);
         return is_array($data) ? $data : null;
     }
 
@@ -62,6 +62,19 @@ class SiteContentService
         unset(self::$memCache[$section]);
         $path = $this->cachePath($section);
         if (file_exists($path)) @unlink($path);
+    }
+
+    public function clearAllCache(): void
+    {
+        self::$memCache = [];
+        if (is_dir($this->cacheDir)) {
+            $files = glob($this->cacheDir . '/*.cache');
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    if (file_exists($file)) @unlink($file);
+                }
+            }
+        }
     }
 
     /**

@@ -582,6 +582,17 @@ class AuthController extends BaseController
         $_SESSION['user_name']   = $admin['name'] ?? 'Admin';
         $_SESSION['logged_in']   = true;
 
+        // Employee portal session shape — mirrors what real EmployeeController::authenticate() sets,
+        // so dev bypass lands on /employee/dashboard instead of the login page.
+        if (($admin['role'] ?? '') === 'employee') {
+            $_SESSION['employee_id']       = (int)$admin['id'];
+            $_SESSION['employee_user_id']  = (int)$admin['id'];
+            $_SESSION['employee_email']    = $admin['email'] ?? '';
+            $_SESSION['employee_name']     = $admin['name'] ?? '';
+            $_SESSION['employee_role']     = 'employee';
+            $_SESSION['csrf_token']        = $this->getCsrfToken();
+        }
+
         $adminRoles = ['admin', 'super_admin', 'manager', 'ceo', 'cfo', 'coo', 'cto', 'cmo', 'chro',
             'sales_director', 'marketing_director', 'construction_director', 'finance_director',
             'hr_director', 'operations_director', 'legal_head', 'finance_head', 'hr_head',

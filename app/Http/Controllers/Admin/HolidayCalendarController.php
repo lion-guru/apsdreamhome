@@ -171,13 +171,29 @@ class HolidayCalendarController extends BaseController
             $holidays = json_decode($_POST['holidays'], true);
         }
 
+        $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            || stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
+
         if (empty($holidays)) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'No holiday data provided']);
+                exit;
+            }
             $_SESSION['error'] = 'No holiday data provided';
             $this->redirect(BASE_URL . '/admin/holiday-calendar');
             return;
         }
 
         $result = $this->holidayService->bulkImport($holidays);
+
+        // S765: bulk_import.php awaits response.json() and reads created/skipped;
+        // the old redirect-to-HTML made the results panel never appear.
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(array_merge(['success' => true], $result));
+            exit;
+        }
 
         $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
         $this->redirect(BASE_URL . '/admin/holiday-calendar');

@@ -230,9 +230,11 @@ function getAmenityIcon($amenity) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="interestForm">
+                <form id="interestForm" action="<?= BASE_URL ?>/inquiry" method="POST">
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="hidden" id="colony_id" name="colony_id">
+                    <input type="hidden" name="subject" value="Colony Interest">
+                    <input type="hidden" name="terms_consent" value="1">
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_name') ?></label>
                         <input aria-label="Name" type="text" class="form-control" name="name" required>
@@ -257,3 +259,18 @@ function getAmenityIcon($amenity) {
         </div>
     </div>
 </div>
+
+<script nonce="<?= htmlspecialchars($GLOBALS['csp_nonce'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+// S765: the "I'm Interested" button previously called showInterest() from
+// public/js/colonies.js, which was never included on this page — clicking it
+// threw ReferenceError. Define it inline and submit the modal to the canonical
+// /inquiry endpoint so the lead is actually persisted.
+function showInterest(colonyId) {
+    var input = document.getElementById('colony_id');
+    if (input) { input.value = colonyId; }
+    var modalEl = document.getElementById('interestModal');
+    if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+        window.bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
+}
+</script>

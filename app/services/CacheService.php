@@ -147,7 +147,7 @@ class CacheService
             $inst = self::getInstance();
             $cached = $inst->get($key);
             if ($cached !== null && $cached !== '') {
-                $unserialized = @unserialize($cached);
+                $unserialized = @unserialize($cached, ['allowed_classes' => false]);
                 if ($unserialized !== false || $cached === 'b:0;') {
                     return $unserialized;
                 }

@@ -887,31 +887,32 @@ class BookingLifecycleController extends AdminController
     }
 
     /* =========================================================
-     *  Booking Approval (associate-submitted bookings)
+     *  Booking Approval (associate-submitted bookings & maker-checker queue)
      * ========================================================= */
 
     public function approvalList()
     {
         $this->requireAdmin();
         $status = $_GET['status'] ?? 'pending';
-        $search = $_GET['search'] ?? '';
+        $search = trim($_GET['search'] ?? '');
         $page = max(1, (int)($_GET['page'] ?? 1));
         $perPage = 20;
 
         try {
-            $where = "WHERE pb.created_by IS NOT NULL";
+            $where = "WHERE (pb.approval_status IS NOT NULL OR pb.channel = 'associate' OR pb.created_by IS NOT NULL)";
             $params = [];
 
             if ($status === 'pending') {
-                $where .= " AND (pb.approval_status IS NULL OR pb.approval_status = 'pending')";
+                $where .= " AND (pb.approval_status IS NULL OR pb.approval_status = 'pending' OR pb.status = 'pending')";
             } elseif ($status !== 'all') {
                 $where .= " AND pb.approval_status = ?";
                 $params[] = $status;
             }
 
             if ($search) {
-                $where .= " AND (pb.booking_number LIKE ? OR u.name LIKE ? OR p.plot_code LIKE ?)";
+                $where .= " AND (pb.booking_number LIKE ? OR COALESCE(u.name, pb.customer_name) LIKE ? OR p.plot_number LIKE ? OR p.plot_code LIKE ?)";
                 $searchParam = "%{$search}%";
+                $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
                 $params[] = $searchParam;
@@ -929,12 +930,22 @@ class BookingLifecycleController extends AdminController
             $offset = ($page - 1) * $perPage;
 
             $stmt = $this->db->prepare(
-                "SELECT pb.*, u.name AS customer_name, p.plot_code, a.name AS associate_name,
+                "SELECT pb.*, 
+                        COALESCE(u.name, pb.customer_name, 'Direct Client') AS customer_name,
+                        COALESCE(u.phone, pb.customer_phone, '—') AS customer_phone,
+                        COALESCE(u.email, pb.customer_email, '—') AS customer_email,
+                        COALESCE(p.plot_number, p.plot_code, '—') AS plot_code,
+                        p.area_sqft AS plot_area,
+                        c.name AS colony_name,
+                        COALESCE(a.name, assoc_u.name, 'Direct Company') AS associate_name,
+                        COALESCE(a.phone, assoc_u.phone, '—') AS associate_phone,
                         cbu.name AS created_by_name
                  FROM plot_bookings pb
                  LEFT JOIN users u ON u.id = pb.customer_id
                  LEFT JOIN plots p ON p.id = pb.plot_id
-                 LEFT JOIN associates a ON a.id = pb.associate_id
+                 LEFT JOIN colonies c ON (c.id = pb.colony_id OR c.id = p.colony_id)
+                 LEFT JOIN associates a ON (a.id = pb.associate_id OR a.user_id = pb.associate_id)
+                 LEFT JOIN users assoc_u ON assoc_u.id = pb.associate_id
                  LEFT JOIN users cbu ON cbu.id = pb.created_by
                  {$where}
                  ORDER BY pb.id DESC
@@ -943,9 +954,33 @@ class BookingLifecycleController extends AdminController
             $stmt->execute($params);
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+            // Fetch attached documents and receipts for these bookings
+            if (!empty($bookings)) {
+                $bookingIds = array_column($bookings, 'id');
+                $inClause = implode(',', array_map('intval', $bookingIds));
+                
+                $docRows = $this->db->query("SELECT booking_id, document_type, document_name, file_path, file_url, status FROM booking_documents WHERE booking_id IN ({$inClause}) ORDER BY id DESC")->fetchAll(\PDO::FETCH_ASSOC);
+                $docsByBooking = [];
+                foreach ($docRows as $dr) {
+                    $docsByBooking[$dr['booking_id']][] = $dr;
+                }
+
+                $receiptRows = $this->db->query("SELECT booking_id, receipt_number, amount, payment_mode, transaction_ref, status FROM booking_payment_receipts WHERE booking_id IN ({$inClause}) ORDER BY id DESC")->fetchAll(\PDO::FETCH_ASSOC);
+                $receiptsByBooking = [];
+                foreach ($receiptRows as $rr) {
+                    $receiptsByBooking[$rr['booking_id']][] = $rr;
+                }
+
+                foreach ($bookings as &$b) {
+                    $b['documents'] = $docsByBooking[$b['id']] ?? [];
+                    $b['receipts'] = $receiptsByBooking[$b['id']] ?? [];
+                }
+                unset($b);
+            }
+
             // Pending count for badge
             $pendingStmt = $this->db->query(
-                "SELECT COUNT(*) FROM plot_bookings WHERE approval_status IS NULL OR approval_status = 'pending'"
+                "SELECT COUNT(*) FROM plot_bookings WHERE approval_status IS NULL OR approval_status = 'pending' OR status = 'pending'"
             );
             $pendingCount = (int)$pendingStmt->fetchColumn();
         } catch (\Throwable $e) {
@@ -982,19 +1017,40 @@ class BookingLifecycleController extends AdminController
             $notes = (string)($_POST['approval_notes'] ?? 'Approved by admin');
             [$tenantSql, $tenantParams] = $this->tenantWhere();
             $tid = (int)$this->tenantId();
-            $this->db->prepare(
-                "UPDATE plot_bookings SET approval_status = 'approved', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?" . $tenantSql
-            )->execute(array_merge([$notes, $_SESSION['admin_id'] ?? null, $id], $tenantParams));
 
-            // Log status history
+            // 1. Advance status from pending to token_paid
+            $newStatus = ($booking['status'] === 'pending' || empty($booking['status'])) ? 'token_paid' : $booking['status'];
+            $this->db->prepare(
+                "UPDATE plot_bookings SET approval_status = 'approved', status = ?, approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?" . $tenantSql
+            )->execute(array_merge([$newStatus, $notes, $_SESSION['admin_id'] ?? null, $id], $tenantParams));
+
+            // 2. Ensure plot is booked
+            if (!empty($booking['plot_id'])) {
+                $this->db->prepare("UPDATE plots SET status = 'booked', customer_id = ?, updated_at = NOW() WHERE id = ?")
+                    ->execute([(int)($booking['customer_id'] ?? 0) ?: null, (int)$booking['plot_id']]);
+            }
+
+            // 3. Clear pending token payment receipts
+            $this->db->prepare("UPDATE booking_payment_receipts SET status = 'cleared', updated_at = NOW() WHERE booking_id = ? AND status = 'pending'")
+                ->execute([$id]);
+
+            // 4. Mark pending booking documents as verified
+            $this->db->prepare("UPDATE booking_documents SET status = 'verified', verified_by = ?, verified_at = NOW(), updated_at = NOW() WHERE booking_id = ? AND status = 'pending'")
+                ->execute([$_SESSION['admin_id'] ?? null, $id]);
+
+            // 5. Log status history (mapped to valid ENUM values)
+            $validStatuses = ['token_paid','agreement_signed','emi_active','partially_paid','fully_paid','cancelled','transferred','registration_done'];
+            $fromStatus = in_array($booking['status'] ?? '', $validStatuses, true) ? $booking['status'] : null;
+            $toStatus = in_array($newStatus, $validStatuses, true) ? $newStatus : 'token_paid';
+
             $tenantCol = $tid > 1 ? ", tenant_id" : "";
             $tenantVal = $tid > 1 ? ", ?" : "";
             $tenantInsert = $tid > 1 ? [$tid] : [];
             $this->db->prepare(
-                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at{$tenantCol}) VALUES (?, ?, 'approved', ?, ?, NOW(){$tenantVal})"
-            )->execute(array_merge([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
+                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at{$tenantCol}) VALUES (?, ?, ?, ?, ?, NOW(){$tenantVal})"
+            )->execute(array_merge([$id, $fromStatus, $toStatus, $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
 
-            $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' approved');
+            $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' approved and plot allotment confirmed.');
         } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] approveBooking() exception: " . $e->getMessage());
             $this->setFlash('error', 'Approval failed: ' . $e->getMessage());
@@ -1018,19 +1074,47 @@ class BookingLifecycleController extends AdminController
             $notes = (string)($_POST['rejection_reason'] ?? 'Rejected by admin');
             [$tenantSql, $tenantParams] = $this->tenantWhere();
             $tid = (int)$this->tenantId();
+
+            // 1. Update plot_bookings: approval_status = 'rejected', status = 'cancelled'
             $this->db->prepare(
-                "UPDATE plot_bookings SET approval_status = 'rejected', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?" . $tenantSql
+                "UPDATE plot_bookings SET approval_status = 'rejected', status = 'cancelled', approval_notes = ?, approved_by = ?, approved_at = NOW() WHERE id = ?" . $tenantSql
             )->execute(array_merge([$notes, $_SESSION['admin_id'] ?? null, $id], $tenantParams));
 
-            // Log status history
+            // 2. CRITICAL: Release the plot back to available!
+            if (!empty($booking['plot_id'])) {
+                $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL, customer_id = NULL, updated_at = NOW() WHERE id = ?")
+                    ->execute([(int)$booking['plot_id']]);
+            }
+
+            // 3. Mark pending receipts as cancelled
+            $this->db->prepare("UPDATE booking_payment_receipts SET status = 'cancelled', updated_at = NOW() WHERE booking_id = ? AND status = 'pending'")
+                ->execute([$id]);
+
+            // 4. Mark pending documents as rejected
+            $this->db->prepare("UPDATE booking_documents SET status = 'rejected', verified_by = ?, verified_at = NOW(), updated_at = NOW() WHERE booking_id = ? AND status = 'pending'")
+                ->execute([$_SESSION['admin_id'] ?? null, $id]);
+
+            // 5. If linked lead, revert status to 'contacted'
+            if (!empty($booking['lead_id'])) {
+                $this->db->prepare("UPDATE leads SET status = 'contacted', updated_at = NOW() WHERE id = ?")->execute([$booking['lead_id']]);
+                try {
+                    $this->db->prepare("INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_by, created_at) VALUES (?, 'status_change', ?, 'closed_won', 'contacted', ?, NOW())")
+                        ->execute([$booking['lead_id'], 'Booking rejected by admin: ' . substr($notes, 0, 100), $_SESSION['admin_id'] ?? null]);
+                } catch (\Throwable $le) {}
+            }
+
+            // 6. Log status history (mapped to valid ENUM values)
+            $validStatuses = ['token_paid','agreement_signed','emi_active','partially_paid','fully_paid','cancelled','transferred','registration_done'];
+            $fromStatus = in_array($booking['status'] ?? '', $validStatuses, true) ? $booking['status'] : null;
+
             $tenantCol = $tid > 1 ? ", tenant_id" : "";
             $tenantVal = $tid > 1 ? ", ?" : "";
             $tenantInsert = $tid > 1 ? [$tid] : [];
             $this->db->prepare(
-                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at{$tenantCol}) VALUES (?, ?, 'rejected', ?, ?, NOW(){$tenantVal})"
-            )->execute(array_merge([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
+                "INSERT INTO booking_status_history (booking_id, from_status, to_status, changed_by, reason, created_at{$tenantCol}) VALUES (?, ?, 'cancelled', ?, ?, NOW(){$tenantVal})"
+            )->execute(array_merge([$id, $fromStatus, $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
 
-            $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' rejected');
+            $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' rejected and plot has been released back to available.');
         } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] rejectBooking() exception: " . $e->getMessage());
             $this->setFlash('error', 'Rejection failed: ' . $e->getMessage());

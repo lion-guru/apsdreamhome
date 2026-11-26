@@ -1728,4 +1728,24 @@ class MobileAdminApiController extends BaseController
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
+
+    private function createLead(array $data): int
+    {
+        $tid = (int)$this->tenantId();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0) ?: null;
+        $stmt = $this->db->prepare(
+            "INSERT INTO leads (tenant_id, name, email, phone, source, property_interest, status, created_by, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, 'new', ?, NOW())"
+        );
+        $stmt->execute([
+            $tid,
+            trim((string)($data['name'] ?? '')),
+            isset($data['email']) ? trim((string)$data['email']) : null,
+            isset($data['phone']) ? trim((string)$data['phone']) : null,
+            trim((string)($data['source'] ?? 'mobile_app')),
+            isset($data['property_id']) ? (string)$data['property_id'] : null,
+            $userId,
+        ]);
+        return (int)$this->db->lastInsertId();
+    }
 }

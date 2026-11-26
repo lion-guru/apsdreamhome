@@ -401,9 +401,11 @@ class BookingLifecycleService
                 return ['success' => false, 'error' => 'Booking not found'];
             }
 
-            // Net principal = agreement_value - token already paid
-            $principal = (float)$booking['total_plot_value']
-                       - (float)$booking['booking_amount'];
+            // Net principal = agreement_value (factoring in discounts) - token already paid
+            $baseVal = (float)(!empty($booking['agreement_value']) && (float)$booking['agreement_value'] > 0 
+                ? $booking['agreement_value'] 
+                : $booking['total_plot_value']);
+            $principal = $baseVal - (float)$booking['booking_amount'];
             if ($principal <= 0) {
                 return ['success' => false, 'error' => 'No principal left to schedule (booking already covers full value)'];
             }
@@ -989,6 +991,14 @@ class BookingLifecycleService
 
             // Claw back all commissions associated with this booking
             $this->clawbackBookingCommissions($bookingId);
+
+            // Release the plot back to available
+            if (!empty($booking['plot_id'])) {
+                $relPlotSql = "UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL, customer_id = NULL, updated_at = NOW() WHERE id = ?";
+                $relPlotParams = [(int)$booking['plot_id']];
+                if ($tidPlot = $this->tid()) { $relPlotSql .= " AND tenant_id = ?"; $relPlotParams[] = $tidPlot; }
+                $this->db->prepare($relPlotSql)->execute($relPlotParams);
+            }
 
             $this->db->commit();
 

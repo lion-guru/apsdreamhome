@@ -19,7 +19,8 @@ class _SplashPageState extends State<SplashPage>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  bool _navigating = false;
+  bool _navigated = false;
+  Timer? _escapeTimer;
 
   @override
   void initState() {
@@ -35,14 +36,26 @@ class _SplashPageState extends State<SplashPage>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
     _controller.forward();
 
+    // Guaranteed escape hatch: the splash must never be visible for long,
+    // even if every storage read or network call hangs (e.g. secure-storage
+    // wedge on emulators). Always fall back to '/home' after 10s.
+    _escapeTimer = Timer(const Duration(seconds: 10), () {
+      _navigate('/home');
+    });
+
     Timer(const Duration(seconds: 3), () {
-      if (mounted && !_navigating) _checkAuthAndNavigate();
+      _checkAuthAndNavigate();
     });
   }
 
+  void _navigate(String route) {
+    if (!mounted || _navigated) return;
+    _navigated = true;
+    _escapeTimer?.cancel();
+    context.go(route);
+  }
+
   Future<void> _checkAuthAndNavigate() async {
-    if (_navigating) return;
-    _navigating = true;
     try {
       final authService = AuthService();
       await authService.refreshLoginState();
@@ -52,22 +65,23 @@ class _SplashPageState extends State<SplashPage>
         if (mounted) {
           AuthBridge.instance.currentUser.value = userData;
           if (userData != null) {
-            context.go(defaultRouteForRole(userData));
+            _navigate(defaultRouteForRole(userData));
           } else {
-            context.go('/home');
+            _navigate('/home');
           }
         }
       } else {
-        if (mounted) context.go('/home');
+        _navigate('/home');
       }
     } catch (_) {
-      if (mounted) context.go('/home');
+      _navigate('/home');
     }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _escapeTimer?.cancel();
     super.dispose();
   }
 

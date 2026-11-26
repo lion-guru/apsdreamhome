@@ -1,0 +1,92 @@
+{
+  "steps": [
+    {
+      "step": "Associate Auth",
+      "status": "PASS",
+      "message": "Successfully authenticated as Associate. Landed on: http://localhost/apsdreamhome/associate/dashboard"
+    },
+    {
+      "step": "Dashboard Content",
+      "status": "PASS",
+      "message": "Associate Dashboard loaded with title: \"Associate Dashboard - APS Dream Home\""
+    },
+    {
+      "step": "Navigation Structure",
+      "status": "PASS",
+      "message": "Sidebar navigation and navigation hierarchy present."
+    },
+    {
+      "step": "Bookings Legal Notice",
+      "status": "PASS",
+      "message": "Non-refundable token statutory alert (Master Deed 2.1 & 2.9) is visible."
+    },
+    {
+      "step": "Bookings Stats & Table",
+      "status": "PASS",
+      "message": "My Bookings summary metrics and table rendered."
+    },
+    {
+      "step": "Receipt Header",
+      "status": "PASS",
+      "message": "APS Dream Home Official Allotment Receipt header rendered."
+    },
+    {
+      "step": "EMI 0% Subvention",
+      "status": "PASS",
+      "message": "0% Promotional Subvention is explicitly highlighted in financial snapshot."
+    },
+    {
+      "step": "Bank-Grade Loan Rules",
+      "status": "PASS",
+      "message": "3-Month Consecutive Default Clause and cheque bounce penalties clearly displayed."
+    },
+    {
+      "step": "WhatsApp 1-Click Share",
+      "status": "PASS",
+      "message": "1-Click WhatsApp share button with pre-formatted message is present."
+    },
+    {
+      "step": "Print Button",
+      "status": "PASS",
+      "message": "Print Receipt & Schedule button with @media print CSS is present."
+    },
+    {
+      "step": "EMI Calculator UI",
+      "status": "PASS",
+      "message": "EMI Calculator page rendered with sliders, input fields, and quick presets."
+    },
+    {
+      "step": "EMI Calculator Interaction",
+      "status": "PASS",
+      "message": "Clicked ₹15L quick preset button."
+    },
+    {
+      "step": "Stamp Duty Calculator",
+      "status": "PASS",
+      "message": "Stamp Duty calculator loaded with UP state rules and female rebate."
+    },
+    {
+      "step": "Plot Converter Matrix",
+      "status": "PASS",
+      "message": "Multi-unit plot converter matrix (Sq.Ft, Gaj, Biswa, Bigha, Acre) rendered."
+    },
+    {
+      "step": "Advances Layout",
+      "status": "PASS",
+      "message": "Commission Advances & Festival Loans rendered cleanly within associate layout."
+    },
+    {
+      "step": "CRM Pipeline",
+      "status": "PASS",
+      "message": "CRM Pipeline dashboard with lead stages and funnel rendered."
+    },
+    {
+      "step": "Smart Chatbot Toggle",
+      "status": "PASS",
+      "message": "Chatbot container embedded on page."
+    }
+  ],
+  "errors": [],
+  "passed": 17,
+  "failed": 0
+}

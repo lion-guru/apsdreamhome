@@ -192,7 +192,7 @@ class LeadController extends AdminController
                         error_log("LeadController::store smart-assign lead #{$result['lead_id']} to user #{$smartResult['assigned_to']} score={$smartResult['score']}");
                     } else {
                         // Fall back to legacy assignment when skill data is insufficient
-                        $legacySvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+                        $legacySvc = new \App\Services\AI\SmartLeadAssignmentService(\App\Core\Database\Database::getInstance());
                         $legacySvc->assignLead((int)$result['lead_id']);
                         error_log("LeadController::store smart-assign skipped (no skill data), used legacy round-robin for lead #{$result['lead_id']}");
                     }
@@ -231,7 +231,7 @@ class LeadController extends AdminController
         }
 
         try {
-            $assignSvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+            $assignSvc = new \App\Services\AI\SmartLeadAssignmentService(\App\Core\Database\Database::getInstance());
             $result = $assignSvc->assignLead($id);
             return $this->jsonResponse($result, $result['success'] ? 200 : 404);
         } catch (\Throwable $e) {
@@ -249,7 +249,7 @@ class LeadController extends AdminController
         $limit = min((int)($_POST['limit'] ?? 50), 200);
 
         try {
-            $assignSvc = new \App\Services\CRM\LeadAssignmentService(\App\Core\Database\Database::getInstance());
+            $assignSvc = new \App\Services\AI\SmartLeadAssignmentService(\App\Core\Database\Database::getInstance());
             $result = $assignSvc->autoAssignBatch($limit);
             return $this->jsonResponse([
                 'success' => true,

@@ -389,13 +389,16 @@ class MobileMLMApiController extends BaseController
         $this->setCorsHeaders();
         try {
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $userId = (int)($input['user_id'] ?? $GLOBALS['api_user_id'] ?? 0);
+            // S765: the client used to be able to send any `user_id` here and
+            // attribute a referral to another account (IDOR). The Bearer token
+            // is the only trusted identity — never read user_id from the body.
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             $referralCode = \App\Core\Security::sanitize($input['referral_code'] ?? '');
             $source = \App\Core\Security::sanitize($input['source'] ?? 'mobile');
 
             if (!$userId || empty($referralCode)) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'error' => 'User ID and referral code are required']);
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication and referral code are required']);
                 return;
             }
 
@@ -848,5 +851,49 @@ class MobileMLMApiController extends BaseController
         } catch (\Throwable $e) {
             echo json_encode(['success'=>false,'error'=>'Failed to get form data']);
         }
+    }
+
+    private function getPendingMlmPayouts(): array
+    {
+        $tid = (int)$this->tenantId();
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        $role = strtolower((string)($GLOBALS['api_user_role'] ?? ''));
+        $isAdmin = in_array($role, ['admin', 'super_admin', 'superadmin'], true);
+
+        $sql = "SELECT id, associate_id, associate_user_id, gross_amount, tds_amount, net_amount, payment_mode, status, created_at
+                FROM mlm_payouts WHERE status = 'pending'";
+        $params = [];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
+        if (!$isAdmin) {
+            $sql .= " AND associate_user_id = ?";
+            $params[] = $userId;
+        }
+        $sql .= " ORDER BY id DESC LIMIT 100";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    private function processMlmPayouts(): int
+    {
+        $role = strtolower((string)($GLOBALS['api_user_role'] ?? ''));
+        if (!in_array($role, ['admin', 'super_admin', 'superadmin'], true)) {
+            throw new \RuntimeException('Admin access required to process payouts');
+        }
+        $tid = (int)$this->tenantId();
+        $adminId = (int)($GLOBALS['api_user_id'] ?? 0);
+        $sql = "UPDATE mlm_payouts SET status = 'processing', processed_by = ?, updated_at = NOW() WHERE status = 'pending'";
+        $params = [$adminId ?: null];
+        if ($tid > 1) {
+            $sql .= " AND tenant_id = ?";
+            $params[] = $tid;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
     }
 }

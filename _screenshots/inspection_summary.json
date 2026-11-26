@@ -1,0 +1,88 @@
+{
+  "steps": [
+    {
+      "step": "Login",
+      "status": "FAIL",
+      "message": "Failed to land on associate dashboard. Current URL: http://localhost/apsdreamhome/auth/login"
+    },
+    {
+      "step": "Dashboard Layout",
+      "status": "FAIL",
+      "message": "Sidebar navigation container not found"
+    },
+    {
+      "step": "Bookings Legal Notice",
+      "status": "FAIL",
+      "message": "Statutory alert not found on bookings page."
+    },
+    {
+      "step": "Bookings Stat Cards",
+      "status": "FAIL",
+      "message": "Expected 4 stat cards, found 0"
+    },
+    {
+      "step": "Receipt Header",
+      "status": "FAIL",
+      "message": "Official letterhead not rendered on receipt page."
+    },
+    {
+      "step": "EMI 0% Subvention",
+      "status": "PASS",
+      "message": "0% Promotional Subvention is explicitly highlighted in financial snapshot."
+    },
+    {
+      "step": "Bank-Grade Loan Rules",
+      "status": "FAIL",
+      "message": "Default rules box missing from receipt view."
+    },
+    {
+      "step": "WhatsApp 1-Click Share",
+      "status": "PASS",
+      "message": "1-Click WhatsApp share button with pre-formatted message is present."
+    },
+    {
+      "step": "EMI Calculator Live Calc",
+      "status": "PASS",
+      "message": "EMI Calculator rendered cleanly."
+    },
+    {
+      "step": "Stamp Duty Calculator",
+      "status": "FAIL",
+      "message": "Stamp duty calculator page failed to render."
+    },
+    {
+      "step": "Plot Converter Matrix",
+      "status": "FAIL",
+      "message": "Plot converter matrix failed to load."
+    },
+    {
+      "step": "Advances Layout",
+      "status": "FAIL",
+      "message": "Advances page failed to load."
+    },
+    {
+      "step": "CRM Pipeline",
+      "status": "FAIL",
+      "message": "CRM dashboard failed to render."
+    },
+    {
+      "step": "Smart Chatbot",
+      "status": "PASS",
+      "message": "Chatbot container embedded on page."
+    }
+  ],
+  "errors": [
+    "Login: Failed to land on associate dashboard. Current URL: http://localhost/apsdreamhome/auth/login",
+    "Dashboard Layout: Sidebar navigation container not found",
+    "Bookings Legal Notice: Statutory alert not found on bookings page.",
+    "Bookings Stat Cards: Expected 4 stat cards, found 0",
+    "Receipt Header: Official letterhead not rendered on receipt page.",
+    "Bank-Grade Loan Rules: Default rules box missing from receipt view.",
+    "Stamp Duty Calculator: Stamp duty calculator page failed to render.",
+    "Plot Converter Matrix: Plot converter matrix failed to load.",
+    "Advances Layout: Advances page failed to load.",
+    "CRM Pipeline: CRM dashboard failed to render."
+  ],
+  "passed": 4,
+  "failed": 10
+}

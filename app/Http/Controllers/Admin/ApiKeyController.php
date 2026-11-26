@@ -33,10 +33,13 @@ class ApiKeyController extends AdminController
     public function create()
     {
         $this->requireAdmin();
-        $name = trim($_POST['name'] ?? '');
+        $name = trim($_POST['name'] ?? $_POST['key_name'] ?? '');
         $service = trim($_POST['service_name'] ?? '');
         $type = $_POST['key_type'] ?? 'api_key';
         $description = trim($_POST['description'] ?? '');
+        // S786: the create form submits key_value. Pass it through instead of
+        // silently generating a different key than the operator typed.
+        $keyValue = trim((string)($_POST['key_value'] ?? '')) ?: null;
 
         if (!$name) {
             $_SESSION['flash_error'] = 'Name is required';
@@ -45,7 +48,7 @@ class ApiKeyController extends AdminController
         }
 
         $svc = new ApiKeyService($this->db);
-        $newKey = $svc->create($name, $service, $type, $description);
+        $newKey = $svc->create($name, $service, $type, $description, $keyValue);
         $_SESSION['new_api_key'] = $newKey;
         header('Location: ' . BASE_URL . '/admin/api-keys');
         exit;

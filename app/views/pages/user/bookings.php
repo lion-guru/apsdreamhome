@@ -4,6 +4,7 @@ $current_page = 'bookings';
 $bookings = $bookings ?? [];
 $user = $user ?? [];
 $statusColors = [
+    'pending' => 'warning',
     'token_paid' => 'primary',
     'agreement_signed' => 'indigo',
     'emi_active' => 'amber',
@@ -14,7 +15,8 @@ $statusColors = [
     'registration_done' => 'success',
 ];
 $statusLabels = [
-    'token_paid' => __('user_bookings_status_token_paid', 'Token Paid'),
+    'pending' => __('user_bookings_status_pending', 'Review Pending'),
+    'token_paid' => __('user_bookings_status_token_paid', 'Token Paid / Allotted'),
     'agreement_signed' => __('user_bookings_status_agreement_signed', 'Agreement Signed'),
     'emi_active' => __('user_bookings_status_emi_active', 'EMI Active'),
     'partially_paid' => __('user_bookings_status_partially_paid', 'Partially Paid'),

@@ -29,6 +29,77 @@ class ContactCareerPageController extends BaseController
 
     public function contact()
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name    = trim($_POST['name'] ?? '');
+            $email   = trim($_POST['email'] ?? '');
+            $phone   = trim($_POST['phone'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+            $subject = trim($_POST['subject'] ?? '') ?: 'Website Contact Form';
+
+            $errors = [];
+            if ($name === '') $errors[] = 'Name is required';
+            if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+            if ($phone === '') $errors[] = 'Phone is required';
+            if ($message === '') $errors[] = 'Message is required';
+
+            $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+                || stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
+
+            if (!empty($errors)) {
+                $msg = implode(' ', $errors);
+                if ($isAjax) {
+                    $this->jsonResponse(['success' => false, 'message' => $msg], 422);
+                    return;
+                }
+                $_SESSION['error'] = $msg;
+                $this->redirect('/contact');
+                return;
+            }
+
+            try {
+                $db = Database::getInstance();
+                $tid = (int)$this->tenantId();
+                $stmt = $db->prepare(
+                    "INSERT INTO inquiries (name, email, phone, subject, message, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, 'new', ?, NOW())"
+                );
+                $stmt->execute([$name, $email, $phone, $subject, $message, $tid > 1 ? $tid : 1]);
+                $id = (int)$db->lastInsertId();
+                $msg = 'Thank you! Your message has been received. We will contact you within 24 hours.';
+
+                // Notify admin/sales using the same path as the main inquiry form.
+                try {
+                    $notif = new \App\Services\NotificationService($db);
+                    $notif->notify(
+                        'inquiry',
+                        "New website contact from {$name} ({$phone}): " . (strlen($message) > 80 ? substr($message, 0, 80) . '...' : $message),
+                        null,
+                        "/admin/inquiries/view/{$id}",
+                        "New Website Contact: {$name}"
+                    );
+                } catch (\Throwable $e) {
+                    error_log('Contact notification failed: ' . $e->getMessage());
+                }
+
+                if ($isAjax) {
+                    $this->jsonResponse(['success' => true, 'message' => $msg, 'id' => $id]);
+                    return;
+                }
+                $_SESSION['success'] = $msg;
+                $this->redirect('/contact');
+                return;
+            } catch (\Throwable $e) {
+                error_log('Contact form save failed: ' . $e->getMessage());
+                $msg = 'Sorry, we could not save your message. Please try again or call us.';
+                if ($isAjax) {
+                    $this->jsonResponse(['success' => false, 'message' => $msg], 500);
+                    return;
+                }
+                $_SESSION['error'] = $msg;
+                $this->redirect('/contact');
+                return;
+            }
+        }
+
         $this->render('pages/contact', [
             'page_title' => 'Contact Us - APS Dream Home',
             'page_description' => 'Get in touch with APS Dream Home.',

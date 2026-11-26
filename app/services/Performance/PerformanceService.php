@@ -35,6 +35,31 @@ class PerformanceService
         $this->initializeCache();
     }
 
+    /** S784: the constructor called initializeCache(), but only the per-driver
+     *  variants existed. Dispatch to those; for the default file driver make
+     *  sure the cache directory exists (getCacheFilePath() writes there). */
+    private function initializeCache(): void
+    {
+        try {
+            switch ($this->cacheConfig['driver'] ?? 'file') {
+                case 'redis':
+                    $this->initializeRedisCache();
+                    break;
+                case 'apcu':
+                    $this->initializeApcuCache();
+                    break;
+                default:
+                    $dir = rtrim((string)($this->cacheConfig['path'] ?? ''), '/\\');
+                    if ($dir !== '' && !is_dir($dir)) {
+                        @mkdir($dir, 0775, true);
+                    }
+                    break;
+            }
+        } catch (\Throwable $e) {
+            $this->logger->warning('Cache init skipped: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Get cached value
      */

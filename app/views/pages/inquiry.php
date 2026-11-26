@@ -47,8 +47,6 @@ $current_page = 'inquiry';
                             <a href="<?= BASE_URL ?>/" class="btn btn-secondary"><?= __('contact_form_cancel') ?></a>
                             <button type="submit" class="btn btn-primary"><?= __('inquiry_submit_btn') ?></button>
                         </div>
-                    </form>
-
                     <div class="form-check mb-3 mt-3">
                         <input aria-label="Terms consent" class="form-check-input" type="checkbox" name="terms_consent" id="terms_consent" required>
                         <label class="form-check-label small text-muted" for="terms_consent">
@@ -59,6 +57,7 @@ $current_page = 'inquiry';
                         </label>
                         <div class="invalid-feedback">You must accept the legal terms and cancellation policy to proceed.</div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>

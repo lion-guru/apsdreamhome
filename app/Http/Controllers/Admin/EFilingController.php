@@ -24,6 +24,12 @@ class EFilingController extends AdminController
         $this->gstFiling = new GSTFilingService();
     }
 
+    /** S779: read a named route param (falls back to query/POST for legacy links). */
+    private function getRouteParam(string $key)
+    {
+        return $GLOBALS['route_params'][$key] ?? ($_GET[$key] ?? ($_POST[$key] ?? null));
+    }
+
     // ========== Dashboard ==========
 
     public function index()

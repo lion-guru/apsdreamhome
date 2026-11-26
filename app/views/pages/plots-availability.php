@@ -31,7 +31,7 @@ foreach ($plots as $plot) {
 
 <style>
 .availability-hero {
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(30, 64, 175, 0.9)), url('/assets/img/plots-hero.jpg') center/cover;
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.9), rgba(30, 64, 175, 0.9)), url('<?= BASE_URL ?>/assets/img/plots-hero.jpg') center/cover;
     color: white;
     padding: 60px 0;
     border-radius: 20px;

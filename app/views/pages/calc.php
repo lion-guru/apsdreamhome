@@ -37,7 +37,7 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
     <div class="row g-4">
         <!-- Calculator Form -->
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100" data-aos="fade-right">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100" data-aos="fade-right" style="max-width:100%">
                 <h2 class="fs-4 fw-bold text-dark mb-4"><?php echo __('emi_calculate_your_emi', 'Calculate Your EMI'); ?></h2>
                 <form action="" method="post">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -71,7 +71,7 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
 
         <!-- Calculation Results -->
         <div class="col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100 bg-white" data-aos="fade-left">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100 bg-white" data-aos="fade-left" style="max-width:100%">
                 <h2 class="fs-4 fw-bold text-dark mb-4"><?php echo __('emi_results_summary', 'Results Summary'); ?></h2>
                 
                 <?php if ($amount > 0): ?>

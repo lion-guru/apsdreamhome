@@ -58,7 +58,13 @@
     "**/vendor/**/{Tests,tests}/**",
     "**/.history/**",
     "**/vendor/**/vendor/**",
-    "**/_archive/**"
+    "**/_archive/**",
+    "**/backups/**",
+    "**/storage/**",
+    "**/logs/**",
+    "**/test-results/**",
+    "**/playwright-report/**",
+    "**/_experimental_mobile/**"
   ],
   "database-client.autoConnect": false,
   "database-client.defaultPort": 3307,

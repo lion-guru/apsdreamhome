@@ -305,11 +305,21 @@ $apsYoutubeUrl = aps_youtube_embed((string)($colony['youtube_video_url'] ?? ''))
 
 <!-- Map -->
 <?php if ($colony['map_link'] ?? ''): ?>
+<?php
+// Normalize map_link for iframe embedding: Google refuses to frame maps.google.com/?q=... (X-Frame-Options).
+// Convert to the embeddable /maps?q=...&output=embed format; non-Google or already-embed URLs pass through.
+$__mapSrc = htmlspecialchars($colony['map_link'] ?? '');
+if (preg_match('~maps\.google\.com/?\?q=([^&]+)~i', $colony['map_link'] ?? '', $__mm)) {
+    $__mapSrc = 'https://maps.google.com/maps?q=' . urlencode($__mm[1]) . '&z=14&output=embed';
+} elseif (preg_match('~maps\.google\.com/maps\?q=~i', $colony['map_link'] ?? '') && stripos($colony['map_link'], 'output=embed') === false) {
+    $__mapSrc = htmlspecialchars($colony['map_link']) . '&output=embed';
+}
+?>
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i><?= __('colony_location_map_heading') ?></h2>
         <div class="rounded-4 overflow-hidden shadow">
-            <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="400" allowfullscreen loading="lazy" title="Colony location map"></iframe>
+            <iframe src="<?= $__mapSrc ?>" width="100%" height="400" allowfullscreen loading="lazy" title="Colony location map"></iframe>
         </div>
     </div>
 </section>

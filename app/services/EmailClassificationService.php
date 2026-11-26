@@ -7,9 +7,12 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Config\Config;
+use App\Traits\ServiceTenantTrait;
 
 class EmailClassificationService
 {
+    use ServiceTenantTrait;
+
     private $db;
     private $categories = [
         'inquiry' => [
@@ -115,7 +118,7 @@ class EmailClassificationService
     {
         $result = $this->classify($text, $metadata);
         try {
-            $tenantId = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
+            $tenantId = $this->tenantId();
             $this->db->insert('email_classification_log', [
                 'category' => $result['category'],
                 'confidence' => $result['confidence'],

@@ -21,6 +21,44 @@ class OffboardingController extends BaseController
         $this->offboardingService = new OffboardingService();
     }
 
+    /** S790: the detail view's checklist toggles post here; no route or
+     *  handler existed. Delegate to the service's existing status updater. */
+    public function updateItem()
+    {
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
+        }
+        $itemId = (int)($_POST['item_id'] ?? 0);
+        $employeeId = (int)($_POST['employee_id'] ?? 0);
+        $status = (string)($_POST['status'] ?? '');
+        if ($itemId <= 0 || $employeeId <= 0 || !in_array($status, ['pending','in_progress','completed','skipped','waived'], true)) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid checklist update'], 400);
+        }
+        $result = $this->offboardingService->updateItemStatus($itemId, $employeeId, $status, [
+            'notes' => $_POST['notes'] ?? null,
+        ]);
+        return $this->jsonResponse($result, !empty($result['success']) ? 200 : 404);
+    }
+
+    /** S798: the detail view's Assign Template modal posts here; no route or
+     *  handler existed. Delegate to the service's existing assignTemplate(). */
+    public function assignTemplate()
+    {
+        $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!$this->validateCsrfToken($token)) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid CSRF token'], 403);
+        }
+        $employeeId = (int)($_POST['employee_id'] ?? 0);
+        $templateId = (int)($_POST['template_id'] ?? 0);
+        $assignedBy = (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0);
+        if ($employeeId <= 0 || $templateId <= 0) {
+            return $this->jsonResponse(['success' => false, 'message' => 'Invalid template assignment'], 400);
+        }
+        $result = $this->offboardingService->assignTemplate($employeeId, $templateId, $assignedBy);
+        return $this->jsonResponse($result, !empty($result['success']) ? 200 : 404);
+    }
+
     /**
      * Offboarding dashboard
      */
@@ -84,6 +122,14 @@ class OffboardingController extends BaseController
         ];
 
         $result = $this->offboardingService->initiateOffboarding($data['employee_id'], $data['initiated_by'], $data);
+
+        // S765: the offboarding index also calls this endpoint with fetch().json();
+        // answer JSON to that caller while leaving the plain form POST unchanged.
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+            header('Content-Type: application/json');
+            echo json_encode($result);
+            exit;
+        }
 
         $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
         if ($result['success']) {

@@ -32,6 +32,74 @@ class MobileUserApiController extends BaseController
         }
     }
 
+    /**
+     * S765: public company info for the Flutter About page. It called
+     * /api/v2/mobile/site-settings, which had no backend route, so the
+     * company block never loaded.
+     */
+    public function getSiteSettings()
+    {
+        $this->setCorsHeaders();
+        try {
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare(
+                "SELECT company_name, phone, email, address, description, website, city, state, pincode FROM company_settings WHERE tenant_id = ? ORDER BY id ASC LIMIT 1"
+            );
+            $stmt->execute([$tid > 1 ? $tid : 1]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            echo json_encode(['success' => true, 'data' => $row]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Site Settings API error');
+        }
+    }
+
+    /** S765: public gallery for the Flutter Gallery page. */
+    public function getGallery()
+    {
+        $this->setCorsHeaders();
+        try {
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare(
+                "SELECT id, title, image_path, category, caption, description, sort_order FROM gallery WHERE status = 'active' AND tenant_id = ? ORDER BY sort_order ASC, id ASC LIMIT 200"
+            );
+            $stmt->execute([$tid > 1 ? $tid : 1]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            echo json_encode(['success' => true, 'data' => $rows]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Gallery API error');
+        }
+    }
+
+    /** S765: the signed-in user's agreements, ownership-scoped. */
+    public function getUserAgreements()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+            $tid = (int)$this->tenantId();
+            $stmt = $this->db->prepare(
+                "SELECT a.id, a.agreement_number, a.status, a.total_value, a.agreement_date, a.created_at,
+                        p.plot_number, c.name AS colony_name, pb.booking_number
+                 FROM agreements a
+                 LEFT JOIN plots p ON p.id = a.plot_id
+                 LEFT JOIN colonies c ON c.id = p.colony_id
+                 LEFT JOIN plot_bookings pb ON pb.id = a.booking_id
+                 WHERE a.tenant_id = ? AND (a.party_b_id = ? OR a.party_a_id = ? OR a.created_by = ?)
+                 ORDER BY a.created_at DESC LIMIT 100"
+            );
+            $stmt->execute([$tid > 1 ? $tid : 1, $userId, $userId, $userId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            echo json_encode(['success' => true, 'data' => $rows]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'User Agreements API error');
+        }
+    }
+
     public function getDocuments()
     {
         $this->setCorsHeaders();

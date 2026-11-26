@@ -65,7 +65,6 @@ class VoiceService
         'failed'       => 'Failed',
         'busy'         => 'Busy',
         'no-answer'    => 'No Answer',
-        'no-answer'    => 'No Answer',
         'cancelled'    => 'Cancelled',
     ];
 
@@ -242,7 +241,7 @@ class VoiceService
         }
 
         // Build the TwiML URL Twilio fetches - it IS the existing /api/twilio/voice IVR
-        $schemeHost = rtrim(defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome', '/');
+        $schemeHost = rtrim(defined('BASE_URL') ? \BASE_URL : 'http://localhost/apsdreamhome', '/');
         $twimlUrl = $schemeHost . '/api/twilio/voice?type=' . rawurlencode($agentType) . '&schedule_id=' . (int)$scheduleId . '&script=' . rawurlencode($tpl);
 
         $tid = $this->tenantId();
@@ -345,15 +344,18 @@ class VoiceService
 
     private function callExotel(array $params): array
     {
-        if (empty($this->apiKey) || empty($this->fromNumber)) {
+        $cfg = $this->providers['exotel'] ?? [];
+        $apiKey = $cfg['api_key'] ?? '';
+        $fromNumber = $cfg['from_number'] ?? '';
+        if ($apiKey === '' || $fromNumber === '') {
             return ['success' => false, 'error' => 'Exotel not configured'];
         }
 
-        $url = "https://api.exotel.com/v1/Accounts/{$this->apiKey}/Calls/connect.json";
+        $url = "https://api.exotel.com/v1/Accounts/{$apiKey}/Calls/connect.json";
         $postData = [
-            'From' => $params['from'] ?? $this->fromNumber,
+            'From' => $params['from'] ?? $fromNumber,
             'To' => $params['to'],
-            'CallerId' => $params['from'] ?? $this->fromNumber,
+            'CallerId' => $params['from'] ?? $fromNumber,
             'Url' => $params['webhook_url'] ?? '',
             'StatusCallback' => $params['statusCallback'] ?? null,
             'StatusCallbackEvents' => 'initiated,ringing,answered,completed,failed,busy,no-answer',
@@ -430,12 +432,15 @@ class VoiceService
 
     private function callPlivo(array $params): array
     {
-        if (!$this->apiKey) {
+        $cfg = $this->providers['plivo'] ?? [];
+        $apiKey = $cfg['api_key'] ?? '';
+        $fromNumber = $cfg['from_number'] ?? '';
+        if ($apiKey === '') {
             return ['success' => false, 'error' => 'Plivo not configured'];
         }
-        $url = 'https://api.plivo.com/v1/Account/' . $this->apiKey . '/Call/';
+        $url = 'https://api.plivo.com/v1/Account/' . $apiKey . '/Call/';
         $payload = [
-            'from' => $params['from'] ?? $this->fromNumber,
+            'from' => $params['from'] ?? $fromNumber,
             'to' => $params['to'],
             'answer_url' => $params['webhook_url'] ?? '',
             'hangup_url' => $params['webhook_url'] ?? '',
@@ -446,7 +451,7 @@ class VoiceService
             CURLOPT_POSTFIELDS => json_encode($payload),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
-                'auth-key: ' . $this->apiKey,
+                'auth-key: ' . $apiKey,
                 'Content-Type: application/json',
             ],
         ]);
@@ -468,13 +473,16 @@ class VoiceService
 
     private function callKnowlarity(array $params): array
     {
-        if (!$this->apiKey) {
+        $cfg = $this->providers['knowlarity'] ?? [];
+        $apiKey = $cfg['api_key'] ?? '';
+        $fromNumber = $cfg['from_number'] ?? '';
+        if ($apiKey === '') {
             return ['success' => false, 'error' => 'Knowlarity not configured'];
         }
         $url = 'https://api.knowlarity.com/API/v1.0/call/click2call';
         $payload = [
-            'api_key' => $this->apiKey,
-            'from' => $params['from'] ?? $this->fromNumber,
+            'api_key' => $apiKey,
+            'from' => $params['from'] ?? $fromNumber,
             'to' => $params['to'],
             'no_of_calls' => 1,
             'url' => $params['webhook_url'] ?? '',
@@ -505,13 +513,16 @@ class VoiceService
 
     private function callKaleyra(array $params): array
     {
-        if (!$this->apiKey) {
+        $cfg = $this->providers['kaleyra'] ?? [];
+        $apiKey = $cfg['api_key'] ?? '';
+        $fromNumber = $cfg['from_number'] ?? '';
+        if ($apiKey === '') {
             return ['success' => false, 'error' => 'Kaleyra not configured'];
         }
         $url = 'https://api.kaleyra.com/v1/call';
         $payload = [
-            'api_key' => $this->apiKey,
-            'from' => $params['from'] ?? $this->fromNumber,
+            'api_key' => $apiKey,
+            'from' => $params['from'] ?? $fromNumber,
             'to' => $params['to'],
             'url' => $params['webhook_url'] ?? '',
         ];
@@ -521,7 +532,7 @@ class VoiceService
             CURLOPT_POSTFIELDS => json_encode($payload),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
-                'api_key: ' . $this->apiKey,
+                'api_key: ' . $apiKey,
                 'Content-Type: application/json',
             ],
         ]);
@@ -568,7 +579,7 @@ class VoiceService
                     continue;
                 }
                 $email = $emails[$nextStep];
-                $vars = ['name' => $enr['name'] ?? 'Customer', 'link' => BASE_URL . '/properties', 'phone' => '+91 92771 21112'];
+                $vars = ['name' => $enr['name'] ?? 'Customer', 'link' => \BASE_URL . '/properties', 'phone' => '+91 92771 21112'];
                 $renderedSubject = $this->renderDripTemplate($email['subject'], $vars);
                 $renderedBody = $this->renderDripTemplate($email['body'], $vars);
                 $channel = $email['channel'] ?? 'email';
@@ -654,76 +665,12 @@ class VoiceService
 
     public function send(string $phone, string $message, $useQueue = false): array
     {
-        $phone = $this->cleanPhone($phone);
-
-        try {
-            if ($useQueue) {
-                return $this->queue($phone, $message);
-            }
-
-            $result = match ($this->provider) {
-                self::PROVIDER_TWILIO => $this->sendViaTwilio($phone, $message),
-                self::PROVIDER_MSG91 => $this->sendViaMsg91($phone, $message),
-                default => $this->sendViaLog($phone, $message),
-            };
-
-            $this->logToQueue($phone, $message, $result['status'] ?? 'sent', $result['error'] ?? null);
-            return $result;
-        } catch (\Throwable $e) {
-            error_log("SmsService: Send failed: " . $e->getMessage());
-            $this->logToQueue($phone, $message, 'failed', $e->getMessage());
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
+        return (new \App\Services\Communication\SmsService())->send($phone, $message, $useQueue);
     }
 
     public function sendOTP($mobile, $otp = null, $templateId = null): array
     {
-        try {
-            if (!$otp) {
-                $otp = $this->generateOTP();
-            }
-
-            $mobile = $this->cleanPhone($mobile);
-            $this->saveOTP($mobile, $otp);
-
-            $effectiveTemplateId = $templateId ?? $this->templateId;
-
-            if (empty($effectiveTemplateId)) {
-                error_log("SMS OTP skipped for {$mobile}: MSG91_TEMPLATE_ID not configured (DLT template required). OTP generated locally: valid in DB.");
-                return [
-                    'success' => false,
-                    'otp' => $otp,
-                    'error' => 'SMS template not configured',
-                    'skipped' => true
-                ];
-            }
-
-            $payload = [
-                'template_id' => $effectiveTemplateId,
-                'short_url' => '0',
-                'realTimeResponse' => 'true',
-                'recipients' => [
-                    [
-                        'mobiles' => $mobile,
-                        'OTP' => $otp
-                    ]
-                ]
-            ];
-
-            $result = $this->callAPI($this->apiUrl, $payload);
-
-            $this->logSMS($mobile, 'OTP', "Your OTP is: {$otp}", $result['type'] ?? 'unknown');
-
-            return [
-                'success' => true,
-                'otp' => $otp,
-                'message_id' => $result['message_id'] ?? null
-            ];
-
-        } catch (\Throwable $e) {
-            error_log("SMS OTP send failed: " . $e->getMessage());
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
+        return (new \App\Services\Communication\SmsService())->sendOTP($mobile, $otp, $templateId);
     }
 
     public function verifyOTP($mobile, $otp): array
@@ -758,8 +705,8 @@ class VoiceService
     public function sendWelcomeSMS($mobile, $name, $userType = 'customer'): array
     {
         $message = $userType === 'associate'
-            ? "Hi {$name}, Welcome to APS Dream Home Associate Program! Your referral journey starts now. Login: " . BASE_URL . "/associate/login"
-            : "Hi {$name}, Welcome to APS Dream Home! Your dream property awaits. Start browsing: " . BASE_URL . "/properties";
+            ? "Hi {$name}, Welcome to APS Dream Home Associate Program! Your referral journey starts now. Login: " . \BASE_URL . "/associate/login"
+            : "Hi {$name}, Welcome to APS Dream Home! Your dream property awaits. Start browsing: " . \BASE_URL . "/properties";
 
         return $this->send($mobile, $message, 'WELCOME');
     }
@@ -799,7 +746,7 @@ class VoiceService
     {
         $message = "APS Dream Home: New login to your account at {$time} from {$device}. ";
         $message .= "If this wasn't you, change your password immediately. ";
-        $message .= "Contact support: " . BASE_URL . "/support";
+        $message .= "Contact support: " . \BASE_URL . "/support";
         return $this->send($mobile, $message, 'LOGIN_ALERT');
     }
 
@@ -819,90 +766,13 @@ class VoiceService
     // HELPER METHODS
     // ========================================================================
 
-    private function callAPI($url, $payload): array
+    private function cleanPhone(string $phone): string
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'authkey: ' . $this->apiKey,
-            'accept: application/json',
-            'content-type: application/json',
-        ]);
-        $response = curl_exec($ch);
-        $error = curl_error($ch);
-        curl_close($ch);
-
-        if ($error) {
-            throw new \Exception("CURL Error: " . $error);
+        $phone = preg_replace('/\D/', '', $phone);
+        if (strlen($phone) === 10) {
+            $phone = '91' . $phone;
         }
-
-        $result = json_decode($response, true);
-
-        if (isset($result['type']) && $result['type'] === 'error') {
-            throw new \Exception("MSG91 Error: " . ($result['message'] ?? 'Unknown error'));
-        }
-
-        return $result;
-    }
-
-    private function generateOTP($length = 6): string
-    {
-        return str_pad(mt_rand(0, pow(10, $length) - 1), $length, '0', STR_PAD_LEFT);
-    }
-
-    private function cleanPhone($phone): string
-    {
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        if (strlen($phone) === 10) $phone = '91' . $phone;
         return $phone;
-    }
-
-    private function saveOTP($mobile, $otp): void
-    {
-        try {
-            $this->db->query(
-                "UPDATE otp_verifications SET expires_at = NOW() WHERE identifier = ? AND used_at IS NULL AND expires_at > NOW()",
-                [$mobile]
-            );
-        } catch (\Throwable $e) {
-            error_log("SmsService saveOTP invalidate failed: " . $e->getMessage());
-        }
-
-        try {
-            $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
-            $this->db->insert('otp_verifications', [
-                'tenant_id' => $tid,
-                'identifier' => $mobile,
-                'otp_code' => $otp,
-                'type' => 'sms',
-                'purpose' => 'account_verification',
-                'expires_at' => date('Y-m-d H:i:s', strtotime('+10 minutes')),
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        } catch (\Throwable $e) {
-            error_log("SmsService saveOTP insert failed: " . $e->getMessage());
-        }
-    }
-
-    private function logSMS($mobile, $type, $message, $status): void
-    {
-        try {
-            $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
-            $this->db->insert('notifications_unified', [
-                'tenant_id' => $tid,
-                'recipient' => $mobile,
-                'notification_type' => 'sms',
-                'subject' => $type,
-                'message' => substr($message, 0, 500),
-                'status' => $status,
-                'created_at' => date('Y-m-d H:i:s')
-            ]);
-        } catch (\Throwable $e) {
-            error_log("SMS logging failed: " . $e->getMessage());
-        }
     }
 
     public function getStats(int $days = 30): array
@@ -1259,5 +1129,54 @@ class VoiceService
             error_log("VoiceService::cancelSchedule failed: " . $e->getMessage());
             return false;
         }
+    }
+
+    private function logActivity(string $type, string $description, int $leadId): void
+    {
+        try {
+            $tid = $this->tenantId();
+            $this->db->execute(
+                "INSERT INTO lead_activities (tenant_id, lead_id, activity_type, description, created_at) VALUES (?, ?, ?, ?, NOW())",
+                [$tid > 1 ? $tid : 1, $leadId, $type, $description]
+            );
+        } catch (\Throwable $e) {
+            error_log("VoiceService::logActivity failed: " . $e->getMessage());
+        }
+    }
+
+    private function getDripEmails(int $campaignId): array
+    {
+        $tid = $this->tenantId();
+        $sql = "SELECT * FROM drip_emails WHERE campaign_id = ? AND is_active = 1" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY sequence_order ASC";
+        $params = $tid > 1 ? [$campaignId, $tid] : [$campaignId];
+        return $this->db->fetchAll($sql, $params) ?: [];
+    }
+
+    private function markDripCompleted(int $enrollmentId): void
+    {
+        $tid = $this->tenantId();
+        $sql = "UPDATE drip_enrollments SET status = 'completed', completed_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        $params = $tid > 1 ? [$enrollmentId, $tid] : [$enrollmentId];
+        $this->db->execute($sql, $params);
+    }
+
+    private function renderDripTemplate(string $template, array $vars): string
+    {
+        $replace = [];
+        foreach ($vars as $k => $v) {
+            $replace['{{' . $k . '}}'] = (string)$v;
+        }
+        return strtr($template, $replace);
+    }
+
+    private function logEnrollment(int $enrollmentId, int $campaignId, string $status, ?string $message = null, ?int $emailId = null): int
+    {
+        $tid = $this->tenantId();
+        $safeStatus = in_array($status, ['queued', 'sent', 'failed', 'bounced'], true) ? $status : 'queued';
+        $this->db->execute(
+            "INSERT INTO drip_email_log (tenant_id, enrollment_id, campaign_id, email_id, status, error_message, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())",
+            [$tid > 1 ? $tid : 1, $enrollmentId, $campaignId, $emailId, $safeStatus, $safeStatus === 'failed' ? $message : null]
+        );
+        return (int)$this->db->lastInsertId();
     }
 }

@@ -24,7 +24,7 @@ $promoQuery = !empty($_GET['promo']) ? '?promo=' . urlencode(trim((string)$_GET[
                 <div class="aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h3 class="fw-bold mb-1"><?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h3>
+                            <h1 class="fw-bold mb-1"><?= __('browse_plot') ?> <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h1>
                             <p class="text-muted mb-0">
                                 <i class="fas fa-building me-1"></i><?= htmlspecialchars($plot['colony_name'] ?? '') ?>
                                 <?php if (!empty($plot['block'])): ?>

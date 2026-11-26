@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -12,6 +13,8 @@ use Exception;
  */
 class WorkDistributionController extends BaseController
 {
+    use TenantAwareTrait;
+
     protected $db;
 
     public function __construct()
@@ -222,7 +225,7 @@ class WorkDistributionController extends BaseController
             $taskData['deadline'],
             $assignedTo,
             $taskData['assigned_by'],
-            $this->tenantId() ?? 1
+            $this->tenantId()
         ];
         
         $this->db->execute($query, $params);
@@ -250,7 +253,7 @@ class WorkDistributionController extends BaseController
             'Task Assigned',
             $message,
             $taskId,
-            $this->tenantId() ?? 1
+            $this->tenantId()
         ]);
         
         // Send email notification (if configured)
@@ -762,6 +765,6 @@ class WorkDistributionController extends BaseController
                     user_id, type, message, related_id, created_at, status, tenant_id
                 ) VALUES (?, ?, ?, ?, NOW(), 'unread', ?)";
         
-        $this->db->execute($query, [$employeeId, $type, $message, $relatedId, $this->tenantId() ?? 1]);
+        $this->db->execute($query, [$employeeId, $type, $message, $relatedId, $this->tenantId()]);
     }
 }

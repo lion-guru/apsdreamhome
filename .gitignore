@@ -273,3 +273,6 @@ storage/keys/
 # Scratch probe files (throwaway probes from per-session scripts)
 storage/app/tmp/
 !storage/app/tmp/.gitkeep
+
+# VAPID private key — live Web Push signing credential (NEVER commit)
+config/vapid_private.key

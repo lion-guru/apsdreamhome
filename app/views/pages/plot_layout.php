@@ -39,6 +39,7 @@
     .map-toolbar {
         display: flex; align-items: center; gap: 12px; padding: 10px 20px;
         background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;
+        flex-wrap: wrap; row-gap: 8px;
     }
     .back-nav-btn {
         display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px;
@@ -49,7 +50,8 @@
     .back-nav-btn:hover { background: #e2e8f0; color: #0f172a; text-decoration: none; }
     .map-toolbar input[type="text"] {
         padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
-        font-size: 13px; width: 220px; outline: none;
+        font-size: 13px; width: 220px; max-width: 100%; outline: none;
+        flex: 1 1 160px; min-width: 120px;
     }
     .map-toolbar input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
     .filter-btn {

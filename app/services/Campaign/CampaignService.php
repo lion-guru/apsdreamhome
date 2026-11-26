@@ -32,6 +32,7 @@ class CampaignService
     private $pdo;
     private $audit;
     private $twilio;
+    private $notificationService = null;
     private $rateState = [];
 
     public const RATE_LIMITS = [
@@ -49,6 +50,24 @@ class CampaignService
     ];
 
     public const CHANNELS = ['email', 'sms', 'whatsapp'];
+
+    /** S784: in-process throttle used by sendCampaign(). $rateState was already
+     *  declared for this purpose; RATE_LIMITS defines the per-minute ceilings.
+     *  A fresh PHP process starts at zero, which is correct for request-scoped sends. */
+    private function checkRateLimit(string $channel): bool
+    {
+        $limit = self::RATE_LIMITS[$channel] ?? self::RATE_LIMITS['email'];
+        $minute = (int)floor(time() / 60);
+        $bucket = $this->rateState[$channel]['minute'] ?? null;
+        if ($bucket !== $minute) {
+            $this->rateState[$channel] = ['minute' => $minute, 'count' => 0];
+        }
+        if ($this->rateState[$channel]['count'] >= $limit) {
+            return false;
+        }
+        $this->rateState[$channel]['count']++;
+        return true;
+    }
 
     public const CAMPAIGN_TYPES = [
         'email'   => 'Email Campaign',
@@ -96,6 +115,70 @@ class CampaignService
      *              created_by?:int} $data
      * @return int Campaign ID
      */
+    /**
+     * S772: appendUnsubscribe() and unsubscribeUrl() were called by
+     * createCampaign()/updateCampaign()/sendCampaign() but never existed -
+     * every campaign creation fatalled with "Call to undefined method".
+     * The unsubscribe link is a {{unsubscribe_url}} token resolved at send time.
+     */
+    /** S772: 11 call sites used logAudit() but the method never existed. */
+    private function logAudit(string $action, int $entityId, string $description): void
+    {
+        if ($this->audit === null) { return; }
+        try {
+            $this->audit->log($action, null, null, 'campaign', $entityId, $description);
+        } catch (\Throwable $e) {
+            error_log('[CampaignService::logAudit] ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * S796: Admin\CampaignController::createCampaignNotifications() called this
+     * method on campaign launch, but it never existed — every launch logged
+     * "createNotification undefined" and silently skipped ALL audience
+     * notifications. Delegate to the canonical NotificationService::notify()
+     * (which writes the live notifications schema and dispatches push) rather
+     * than duplicating the insert here.
+     */
+    public function createNotification(int $userId, string $title, string $message, string $type = 'campaign', int $relatedId = 0): bool
+    {
+        try {
+            $notifier = $this->notificationService;
+            if ($notifier === null || !method_exists($notifier, 'notify')) {
+                $notifier = new \App\Services\NotificationService($this->pdo);
+            }
+            $actionUrl = $relatedId > 0 ? '/admin/campaigns/' . $relatedId . '/analytics' : null;
+            return (bool) $notifier->notify($type, $message, $userId, $actionUrl, $title);
+        } catch (\Throwable $e) {
+            error_log('[CampaignService::createNotification] ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function appendUnsubscribe(string $content, string $channel): string
+    {
+        if ($channel !== 'email' || strpos($content, '{{unsubscribe_url}}') !== false) {
+            return $content;
+        }
+        return $content . '<p style="font-size:12px;color:#666;margin-top:24px;">'
+            . 'You are receiving this from APS Dream Home. '
+            . '<a href="{{unsubscribe_url}}">Unsubscribe</a> to opt out.</p>';
+    }
+
+    public function unsubscribeUrl(array $user, string $channel): string
+    {
+        // S793: the endpoint classifies the opt-out by '@' in the target, so an
+        // SMS/WhatsApp link must carry the PHONE, not the email. The old
+        // email-first fallback recorded a wrong identity for every non-email
+        // channel that had both values on the audience row.
+        $email = trim((string)($user['email'] ?? ''));
+        $phone = trim((string)($user['phone'] ?? $user['mobile'] ?? ''));
+        $isEmailChannel = ($channel === 'email');
+        $target = $isEmailChannel ? ($email !== '' ? $email : $phone) : ($phone !== '' ? $phone : $email);
+        $base = rtrim((string)(defined('BASE_URL') ? BASE_URL : ''), '/');
+        return $base . '/unsubscribe?c=' . rawurlencode($channel) . '&t=' . rawurlencode($target);
+    }
+
     public function createCampaign(array $data): int
     {
         if (!in_array($data['type'] ?? 'email', self::CHANNELS, true)) {
@@ -961,6 +1044,7 @@ class CampaignService
         $delivered = 0;
 
         foreach ($targetUsers as $user) {
+            $deliveryId = 0;
             try {
                 $deliveryId = $this->createDeliveryRecord($campaign['campaign_id'], $user['id'], $deliveryType);
 
@@ -1022,7 +1106,9 @@ class CampaignService
 
             } catch (\Throwable $e) {
                 error_log("Delivery error for user {$user['id']}: " . $e->getMessage());
-                $this->updateDeliveryStatus($deliveryId, 'failed', $e->getMessage());
+                if ($deliveryId > 0) {
+                    $this->updateDeliveryStatus($deliveryId, 'failed', $e->getMessage());
+                }
             }
         }
 
@@ -1040,6 +1126,9 @@ class CampaignService
             'campaign_id' => $campaign['campaign_id']
         ];
 
+        if ($this->notificationService === null || !method_exists($this->notificationService, 'createNotification')) {
+            return false;
+        }
         return $this->notificationService->createNotification($notificationData) !== false;
     }
 
@@ -1057,6 +1146,9 @@ class CampaignService
             'campaign_id' => $campaign['campaign_id']
         ];
 
+        if ($this->notificationService === null || !method_exists($this->notificationService, 'createPopup')) {
+            return false;
+        }
         return $this->notificationService->createPopup($popupData) !== false;
     }
 
@@ -1196,11 +1288,12 @@ class CampaignService
 
         try {
             $stmt = $this->pdo->prepare("UPDATE campaign_deliveries SET {$timestampField} = NOW(), status = ? WHERE id = ?" . $this->tenantWhere());
-            $params = [$status, $deliveryId];
+            $params = [$action, $deliveryId];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             return $stmt->execute($params);
         } catch (\Throwable $e) {
             error_log($e->getMessage());
+            return false;
         }
     }
 
@@ -1743,6 +1836,126 @@ class CampaignService
     public function getAudienceList(array $criteria = [], string $audienceType = 'all_users'): array
     {
         return $this->getAudience($criteria, $audienceType);
+    }
+
+    /**
+     * S783: resolve the delivery contact for a channel from an audience row.
+     * Callers (sendCampaign/preview) treat a falsy return as "cannot deliver".
+     */
+    private function resolveContact(array $user, string $channel): ?string
+    {
+        if ($channel === 'email') {
+            $v = trim((string)($user['email'] ?? ''));
+            return filter_var($v, FILTER_VALIDATE_EMAIL) ? $v : null;
+        }
+        $v = trim((string)($user['phone'] ?? $user['mobile'] ?? ''));
+        if ($v === '') return null;
+        $digits = preg_replace('/\D/', '', $v);
+        return strlen($digits) >= 8 ? $v : null;
+    }
+
+    /**
+     * S783: record a lead-scoped analytics event. lead_activities is the
+     * canonical store for lead status/score events (10 existing writers);
+     * marketing_analytics is a 4-column stub with no event columns.
+     */
+    private function logAnalytics(int $leadId, string $event, array $data = []): void
+    {
+        try {
+            $this->pdo->prepare(
+                "INSERT INTO lead_activities (lead_id, activity_type, description, metadata, tenant_id, created_at)
+                 VALUES (?, ?, ?, ?, ?, NOW())"
+            )->execute([
+                $leadId,
+                substr($event, 0, 255),
+                json_encode($data, JSON_UNESCAPED_UNICODE),
+                json_encode($data, JSON_UNESCAPED_UNICODE),
+                $this->tenantId(),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('[CampaignService::logAnalytics] ' . $e->getMessage());
+        }
+    }
+
+    /** S784: getAudience() called this name; the trait exposes tenantId(). */
+    private function getTenantId(): int
+    {
+        return $this->tenantId();
+    }
+
+    /**
+     * S784: deliverCampaign() called this name. The audience contract is the
+     * same one getAudience() already implements from the campaign's filters.
+     */
+    private function getTargetUsers(array $campaign): array
+    {
+        try {
+            return $this->getAudience([], (string)($campaign['target_audience'] ?? 'all_users'));
+        } catch (\Throwable $e) {
+            error_log('[CampaignService::getTargetUsers] ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /** S784: captureLead() called this name to de-duplicate by email. */
+    private function getLeadByEmail(string $email): ?array
+    {
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT * FROM marketing_leads WHERE email = ?" . $this->tenantWhere() . " ORDER BY id DESC LIMIT 1"
+            );
+            $stmt->execute($this->tenantId() > 1 ? [$email, $this->tenantId()] : [$email]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[CampaignService::getLeadByEmail] ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Send an automated email to a marketing lead using an email_templates row.
+     */
+    private function sendAutomatedEmail(int $leadId, $templateId, string $subject = ''): bool
+    {
+        try {
+            $tid = $this->tenantId();
+            $leadStmt = $this->pdo->prepare(
+                "SELECT id, first_name, last_name, email FROM marketing_leads WHERE id = ?" . $this->tenantWhere() . " LIMIT 1"
+            );
+            $leadStmt->execute($tid > 1 ? [$leadId, $tid] : [$leadId]);
+            $lead = $leadStmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$lead || empty($lead['email']) || !filter_var($lead['email'], FILTER_VALIDATE_EMAIL)) {
+                return false;
+            }
+
+            $tplStmt = $this->pdo->prepare(
+                "SELECT subject, body_html, html_content, body_text, text_content FROM email_templates WHERE id = ? AND is_active = 1" . $this->tenantWhere() . " LIMIT 1"
+            );
+            $tplStmt->execute($tid > 1 ? [(int)$templateId, $tid] : [(int)$templateId]);
+            $tpl = $tplStmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$tpl) {
+                return false;
+            }
+
+            $fullName = trim(($lead['first_name'] ?? '') . ' ' . ($lead['last_name'] ?? '')) ?: 'Customer';
+            $vars = [
+                '{{name}}' => $fullName,
+                '{{first_name}}' => (string)($lead['first_name'] ?? 'Customer'),
+                '{{email}}' => (string)$lead['email'],
+            ];
+            $finalSubject = strtr($subject !== '' ? $subject : (string)($tpl['subject'] ?? 'APS Dream Home'), $vars);
+            $rawBody = (string)($tpl['body_html'] ?: ($tpl['html_content'] ?: ($tpl['body_text'] ?: ($tpl['text_content'] ?? ''))));
+            $finalBody = strtr($rawBody, $vars);
+
+            $res = (new \App\Services\Gateway\CommunicationGateway())->sendEmail($lead['email'], $finalSubject, $finalBody);
+            $sent = !empty($res['success']);
+            $this->logAnalytics($leadId, 'automated_email', ['template_id' => (int)$templateId, 'sent' => $sent]);
+            return $sent;
+        } catch (\Throwable $e) {
+            error_log('[CampaignService::sendAutomatedEmail] ' . $e->getMessage());
+            return false;
+        }
     }
 
 }

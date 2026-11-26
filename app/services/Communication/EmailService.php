@@ -22,6 +22,12 @@ class EmailService
     private $config = [];
     private $fromEmail;
     private $fromName;
+    private $lastError = '';
+
+    public function getLastError(): string
+    {
+        return $this->lastError;
+    }
 
     public function __construct()
     {
@@ -32,14 +38,50 @@ class EmailService
 
     private function loadConfig()
     {
+        $host = $_ENV['SMTP_HOST'] ?? $_ENV['MAIL_HOST'] ?? '';
+        $port = (int)($_ENV['SMTP_PORT'] ?? $_ENV['MAIL_PORT'] ?? 587);
+        $user = $_ENV['SMTP_USER'] ?? $_ENV['MAIL_USERNAME'] ?? '';
+        $pass = $_ENV['SMTP_PASS'] ?? $_ENV['MAIL_PASSWORD'] ?? '';
+        $encryption = $_ENV['SMTP_ENCRYPTION'] ?? $_ENV['MAIL_ENCRYPTION'] ?? 'tls';
+        $fromEmail = $_ENV['SMTP_FROM_EMAIL'] ?? $_ENV['MAIL_FROM_ADDRESS'] ?? '';
+        $fromName = $_ENV['SMTP_FROM_NAME'] ?? $_ENV['MAIL_FROM_NAME'] ?? 'APS Dream Home';
+
+        // Dynamic fallback: read from site_content and app_settings if database has them
+        try {
+            $db = Database::getInstance();
+            $rows = $db->fetchAll("SELECT content_key, content_value FROM site_content WHERE section = 'settings' AND content_key LIKE 'smtp_%'");
+            $dbConfig = [];
+            foreach ($rows as $r) {
+                $dbConfig[$r['content_key']] = $r['content_value'];
+            }
+            if (!empty($dbConfig['smtp_host'])) $host = $dbConfig['smtp_host'];
+            if (!empty($dbConfig['smtp_port'])) $port = (int)$dbConfig['smtp_port'];
+            if (!empty($dbConfig['smtp_username'])) $user = $dbConfig['smtp_username'];
+            if (!empty($dbConfig['smtp_password'])) $pass = $dbConfig['smtp_password'];
+            if (!empty($dbConfig['smtp_encryption'])) $encryption = $dbConfig['smtp_encryption'];
+            if (!empty($dbConfig['smtp_from_email'])) $fromEmail = $dbConfig['smtp_from_email'];
+            if (!empty($dbConfig['smtp_from_name'])) $fromName = $dbConfig['smtp_from_name'];
+
+            $appRows = $db->fetchAll("SELECT setting_key, setting_value FROM app_settings WHERE setting_key LIKE 'smtp_%'");
+            foreach ($appRows as $ar) {
+                if ($ar['setting_key'] === 'smtp_password' && !empty($ar['setting_value'])) $pass = $ar['setting_value'];
+                if ($ar['setting_key'] === 'smtp_username' && !empty($ar['setting_value'])) $user = $ar['setting_value'];
+            }
+        } catch (\Throwable $e) {}
+
+        // Normalize app password (strip any spaces or hyphens)
+        if (!empty($pass)) {
+            $pass = str_replace([' ', '-'], '', $pass);
+        }
+
         $this->config = [
-            'host' => $_ENV['SMTP_HOST'] ?? $_ENV['MAIL_HOST'] ?? 'smtp.gmail.com',
-            'port' => (int)($_ENV['SMTP_PORT'] ?? $_ENV['MAIL_PORT'] ?? 587),
-            'user' => $_ENV['SMTP_USER'] ?? $_ENV['MAIL_USERNAME'] ?? '',
-            'pass' => $_ENV['SMTP_PASS'] ?? $_ENV['MAIL_PASSWORD'] ?? '',
-            'encryption' => $_ENV['SMTP_ENCRYPTION'] ?? $_ENV['MAIL_ENCRYPTION'] ?? 'tls',
-            'from_email' => $_ENV['SMTP_FROM_EMAIL'] ?? $_ENV['MAIL_FROM_ADDRESS'] ?? 'noreply@apsdreamhome.com',
-            'from_name' => $_ENV['SMTP_FROM_NAME'] ?? $_ENV['MAIL_FROM_NAME'] ?? 'APS Dream Home',
+            'host' => $host ?: 'smtp.gmail.com',
+            'port' => $port ?: 587,
+            'user' => $user ?: 'apsdreamhomes44@gmail.com',
+            'pass' => $pass,
+            'encryption' => $encryption ?: 'tls',
+            'from_email' => $fromEmail ?: 'apsdreamhomes44@gmail.com',
+            'from_name' => $fromName ?: 'APS Dream Home',
         ];
 
         $this->fromEmail = $this->config['from_email'];
@@ -50,6 +92,8 @@ class EmailService
     {
         $this->mailer = new PHPMailer(true);
         try {
+            $this->mailer->CharSet = 'UTF-8';
+            $this->mailer->Encoding = 'base64';
             $this->mailer->isSMTP();
             $this->mailer->Host = $this->config['host'];
             $this->mailer->SMTPAuth = true;
@@ -64,6 +108,29 @@ class EmailService
         }
     }
 
+    /**
+     * Check if email domain is a synthetic local or test domain (.local, .test, example.com, etc.)
+     */
+    public function isTestOrDummyEmail(string $email): bool
+    {
+        $email = strtolower(trim($email));
+        $dummyPatterns = [
+            '/\.local$/i',
+            '/\.test$/i',
+            '/\.example$/i',
+            '/\.invalid$/i',
+            '/@example\.(com|org|net)$/i',
+            '/@localhost$/i',
+            '/@t\.local$/i',
+        ];
+        foreach ($dummyPatterns as $pattern) {
+            if (preg_match($pattern, $email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ==================== CORE SEND METHODS ====================
 
     /**
@@ -71,6 +138,13 @@ class EmailService
      */
     public function send($to, $subject, $bodyHtml, $bodyText = '', $attachments = [])
     {
+        if ($this->isTestOrDummyEmail($to)) {
+            // Simulated delivery for synthetic test domains (.local, .test, example.com)
+            // Bypasses live SMTP to prevent Google Mailer-Daemon NDR / bounce emails to admin
+            $this->logEmail($to, $subject, $bodyHtml, 'sent');
+            return true;
+        }
+
         try {
             $this->mailer->clearAddresses();
             $this->mailer->clearAttachments();
@@ -103,12 +177,14 @@ class EmailService
 
             return $result;
         } catch (PHPMailerException $e) {
-            error_log("EmailService: Send failed: " . $e->getMessage());
-            $this->logEmail($to, $subject, $bodyHtml, 'failed', $e->getMessage());
+            $this->lastError = $this->mailer->ErrorInfo ?: $e->getMessage();
+            error_log("EmailService: Send failed: " . $this->lastError);
+            $this->logEmail($to, $subject, $bodyHtml, 'failed', $this->lastError);
             return false;
         } catch (\Throwable $e) {
-            error_log("EmailService: Unexpected error: " . $e->getMessage());
-            $this->logEmail($to, $subject, $bodyHtml, 'failed', $e->getMessage());
+            $this->lastError = $e->getMessage();
+            error_log("EmailService: Unexpected error: " . $this->lastError);
+            $this->logEmail($to, $subject, $bodyHtml, 'failed', $this->lastError);
             return false;
         }
     }

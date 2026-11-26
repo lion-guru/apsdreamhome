@@ -135,7 +135,7 @@ $replies = $ticket['replies'] ?? [];
                     <h5 class="mb-0"><i class="fas fa-reply me-2"></i>Add Reply</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= BASE_URL ?>/employee/self-service/helpdesk/<?= $ticket['id'] ?>/reply" id="addReplyForm" enctype="multipart/form-data">
+                    <form method="POST" action="<?= BASE_URL ?>/employee/self-service/helpdesk/<?= $ticket['id'] ?>" id="addReplyForm" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="row mb-3">
                             <div class="col-12">
@@ -169,15 +169,20 @@ $replies = $ticket['replies'] ?? [];
                 </div>
                 <div class="card-body">
                     <p class="text-muted">If this issue is resolved to your satisfaction, please confirm closure.</p>
-                    <form method="POST" action="<?= BASE_URL ?>/employee/self-service/helpdesk/<?= $ticket['id'] ?>/close" class="d-inline">
+                    <form method="POST" action="<?= BASE_URL ?>/employee/self-service/helpdesk/<?= $ticket['id'] ?>" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <input type="hidden" name="ticket_action" value="close">
                         <button type="submit" class="btn btn-warning" onclick="return confirm('Confirm closing this ticket?')">
                             <i class="fas fa-check-circle me-1"></i> Confirm & Close
                         </button>
                     </form>
-                    <a href="<?= BASE_URL ?>/employee/self-service/helpdesk/<?= $ticket['id'] ?>/reopen" class="btn btn-outline-secondary ms-2" onclick="return confirm('Reopen this ticket?')">
-                        <i class="fas fa-redo me-1"></i> Reopen
-                    </a>
+                    <form method="POST" action="<?= BASE_URL ?>/employee/self-service/helpdesk/<?= $ticket['id'] ?>" class="d-inline ms-2">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                        <input type="hidden" name="ticket_action" value="reopen">
+                        <button type="submit" class="btn btn-outline-secondary" onclick="return confirm('Reopen this ticket?')">
+                            <i class="fas fa-redo me-1"></i> Reopen
+                        </button>
+                    </form>
                 </div>
             </div>
             <?php endif; ?>

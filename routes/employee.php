@@ -48,6 +48,7 @@ $router->get('/employee/self-service/grievances/create', 'Employee\\EmployeeSelf
 $router->post('/employee/self-service/grievances/create', 'Employee\\EmployeeSelfServiceController@grievanceStore');
 $router->get('/employee/self-service/grievances/{id}', 'Employee\\EmployeeSelfServiceController@grievanceDetail');
 $router->post('/employee/self-service/grievances/{id}/comment', 'Employee\\EmployeeSelfServiceController@grievanceComment');
+$router->get('/employee/self-service/grievances/{id}/close', 'Employee\\EmployeeSelfServiceController@grievanceClose');
 $router->post('/employee/self-service/grievances/{id}/close', 'Employee\\EmployeeSelfServiceController@grievanceClose');
 $router->get('/employee/self-service/tax-calculator', 'Employee\\EmployeeSelfServiceController@taxCalculator');
 $router->get('/employee/self-service/tax-regime', 'Employee\\EmployeeSelfServiceController@taxRegime');

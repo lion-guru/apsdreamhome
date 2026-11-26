@@ -161,14 +161,16 @@ class SmsService
     {
         $tid = $this->tenantId();
         $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        // S771: sms_queue has no `priority` column - the CASE below 1054'd every
+        // queue run. Order by creation time and keep placeholders in SQL order
+        // (tenant filter appears BEFORE LIMIT).
         $sql = "SELECT * FROM sms_queue
                 WHERE status = 'pending' AND attempts < 3" . $tenantFilter . "
-                ORDER BY
-                    CASE priority WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END,
-                    created_at ASC
+                ORDER BY created_at ASC
                 LIMIT ?";
-        $params = [$limit];
+        $params = [];
         if ($tid > 1) $params[] = $tid;
+        $params[] = $limit;
         $items = $this->db->fetchAll($sql, $params);
         $results = ['processed' => 0, 'sent' => 0, 'failed' => 0];
         foreach ($items as $item) {

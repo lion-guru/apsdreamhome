@@ -1,7 +1,7 @@
 <?php
 $campaign = $campaign ?? [];
 $campaign_types = $campaign_types ?? ['general', 'offer', 'promotion', 'announcement'];
-$target_audiences = $target_audiences ?? ['all', 'users', 'users', 'users', 'admin'];
+$target_audiences = $target_audiences ?? ['all', 'customers', 'associates', 'employees', 'admin'];
 $page_title = $page_title ?? 'Edit Campaign';
 $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
 ?>
@@ -87,10 +87,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select aria-label="Status" class="form-select" id="status" name="status">
-                                    <option value="planned" <?php echo ($campaign['status'] ?? '') === 'planned' ? 'selected' : ''; ?>>Planned</option>
-                                    <option value="active" <?php echo ($campaign['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Active</option>
+                                    <?php // S780: live marketing_campaigns.status enum — the old planned/active/completed values did not exist, so a sending/sent row showed no selection and silently re-saved as draft. ?>
+                                    <option value="draft" <?php echo ($campaign['status'] ?? '') === 'draft' ? 'selected' : ''; ?>>Draft</option>
+                                    <option value="scheduled" <?php echo ($campaign['status'] ?? '') === 'scheduled' ? 'selected' : ''; ?>>Scheduled</option>
+                                    <option value="sending" <?php echo ($campaign['status'] ?? '') === 'sending' ? 'selected' : ''; ?>>Sending</option>
+                                    <option value="sent" <?php echo ($campaign['status'] ?? '') === 'sent' ? 'selected' : ''; ?>>Sent</option>
                                     <option value="paused" <?php echo ($campaign['status'] ?? '') === 'paused' ? 'selected' : ''; ?>>Paused</option>
-                                    <option value="completed" <?php echo ($campaign['status'] ?? '') === 'completed' ? 'selected' : ''; ?>>Completed</option>
+                                    <option value="cancelled" <?php echo ($campaign['status'] ?? '') === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
                                 </select>
                             </div>
                             

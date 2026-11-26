@@ -26,6 +26,18 @@ class OnboardingController extends BaseController
         return new OnboardingService();
     }
 
+    private function getPostInput(): array
+    {
+        $raw = file_get_contents('php://input');
+        if (is_string($raw) && $raw !== '') {
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+        return $_POST;
+    }
+
     /**
      * Index: employee onboarding dashboard (stats, templates, employees in flow)
      */

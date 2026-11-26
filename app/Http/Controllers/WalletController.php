@@ -93,11 +93,30 @@ class WalletController extends BaseController
             $userReferralCode = $userData['referral_code'] ?? '';
         } catch (\Throwable $e) { error_log('WalletController exception: ' . $e->getMessage()); }
 
+        // Fetch user's pending installments from booking_payment_schedules
+        $upcomingEmis = [];
+        try {
+            $upcomingEmis = $this->db->fetchAll("
+                SELECT bps.*, bps.installment_no as installment_number, pb.booking_number, p.plot_number, c.name as colony_name
+                FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON bps.booking_id = pb.id
+                LEFT JOIN plots p ON pb.plot_id = p.id
+                LEFT JOIN colonies c ON pb.colony_id = c.id
+                WHERE (pb.customer_id = ? OR pb.user_id = ?)
+                  AND bps.status IN ('pending', 'overdue')
+                ORDER BY bps.due_date ASC
+                LIMIT 5
+            ", [$userId, $userId]);
+        } catch (\Throwable $e) {
+            error_log("WalletController::index upcoming EMIs error: " . $e->getMessage());
+        }
+
         $data = [
             'wallet' => $wallet,
             'recentTransactions' => $recentTransactions,
             'referralStats' => $referralStats,
             'config' => $walletConfig,
+            'upcomingEmis' => $upcomingEmis,
             'user_name' => $_SESSION['user_name'] ?? 'User',
             'user_email' => $_SESSION['user_email'] ?? '',
             'user_referral_code' => $userReferralCode,
@@ -107,6 +126,80 @@ class WalletController extends BaseController
 
         $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/base';
         $this->render('wallet/dashboard', $data);
+    }
+
+    /**
+     * Top-up Wallet Balance via UPI / Deposit
+     */
+    public function topUp()
+    {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
+        }
+
+        if (!isset($_SESSION['user_id'])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Please log in to continue']);
+                exit;
+            }
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $amount = round((float)($_POST['amount'] ?? 0), 2);
+        $method = trim($_POST['payment_method'] ?? 'upi');
+        $utr = trim($_POST['utr_number'] ?? '');
+
+        if ($amount <= 0) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Invalid top-up amount']);
+                exit;
+            }
+            $_SESSION['flash_error'] = 'Invalid top-up amount.';
+            header('Location: ' . BASE_URL . '/wallet/dashboard');
+            exit;
+        }
+
+        try {
+            $walletService = new \App\Services\WalletService();
+            $desc = "Wallet deposit via " . strtoupper($method) . ($utr ? " (Ref: {$utr})" : "");
+            $credited = $walletService->credit($userId, $amount, 'adjustment', $desc, $userId, 'user');
+
+            if ($credited) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => true,
+                        'message' => '₹' . number_format($amount, 2) . ' credited to your wallet successfully!',
+                        'new_balance' => $walletService->getBalance($userId)
+                    ]);
+                    exit;
+                }
+                $_SESSION['flash_success'] = '₹' . number_format($amount, 2) . ' added to your wallet successfully!';
+            } else {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'message' => 'Failed to credit wallet']);
+                    exit;
+                }
+                $_SESSION['flash_error'] = 'Failed to top up wallet.';
+            }
+        } catch (\Throwable $e) {
+            error_log("WalletController::topUp error: " . $e->getMessage());
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Server error during top-up']);
+                exit;
+            }
+            $_SESSION['flash_error'] = 'Server error during top-up.';
+        }
+
+        $isAssociate = (($_SESSION['role'] ?? '') === 'associate');
+        header('Location: ' . BASE_URL . ($isAssociate ? '/associate/wallet' : '/wallet'));
+        exit;
     }
 
     /**

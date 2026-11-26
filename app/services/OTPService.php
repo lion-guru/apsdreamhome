@@ -264,11 +264,26 @@ class OTPService
     {
         $message = $this->getWhatsAppMessage($otpCode, $purpose);
 
-        // For demo purposes, just log the message
-        error_log("WhatsApp OTP to $phone: $message");
-
-        // In production, integrate with WhatsApp Business API
-        return true;
+        // S793: this used to error_log() the OTP in plaintext and return true,
+        // reporting "OTP sent" when nothing was delivered. Never log the code;
+        // use the connected WhatsApp Web bridge (owner opts in by scanning its
+        // QR) and fail closed when the bridge is unreachable or refuses.
+        try {
+            $web = new \App\Services\Communication\WhatsAppWebService();
+            $status = $web->isConnected();
+            if (!empty($status['connected'])) {
+                $result = $web->sendMessage($phone, $message);
+                if (!empty($result['success'])) {
+                    return true;
+                }
+                error_log('OTP WhatsApp Web send failed: ' . ($result['error'] ?? 'unknown'));
+            } else {
+                error_log('OTP WhatsApp Web bridge not connected; OTP not sent.');
+            }
+        } catch (\Throwable $e) {
+            error_log('OTP WhatsApp Web error: ' . $e->getMessage());
+        }
+        return false;
     }
 
     /**

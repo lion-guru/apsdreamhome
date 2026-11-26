@@ -277,6 +277,12 @@ $isAssociate = (!empty($is_associate) || ($_SESSION['role'] ?? '') === 'associat
             </div>
             
             <div class="wallet-nav">
+                <button type="button" class="btn text-dark fw-bold rounded-pill px-3 py-2 border-0 shadow-sm" data-bs-toggle="modal" data-bs-target="#topUpWalletModal" style="background: #fef08a;">
+                    <i class="fas fa-plus-circle me-1 text-success"></i>Add Funds
+                </button>
+                <a href="<?php echo $isAssociate ? BASE_URL . '/associate/book-plot' : BASE_URL . '/user/new-booking'; ?>" class="fw-bold">
+                    <i class="fas fa-layer-group me-2"></i>Book Plot
+                </a>
                 <a href="<?php echo BASE_URL; ?>/wallet/transactions"><i class="fas fa-history me-2"></i>Transactions</a>
                 <a href="<?php echo BASE_URL; ?>/wallet/transfer-emi"><i class="fas fa-exchange-alt me-2"></i>Transfer to EMI</a>
                 <a href="<?php echo $isAssociate ? BASE_URL . '/associate/wallet/withdraw' : BASE_URL . '/wallet/withdrawal'; ?>"><i class="fas fa-wallet me-2"></i>Withdraw</a>
@@ -344,8 +350,58 @@ $isAssociate = (!empty($is_associate) || ($_SESSION['role'] ?? '') === 'associat
     </div>
 
     <div class="row">
-        <!-- Recent Transactions -->
+        <!-- Main Content Area: Upcoming EMIs & Recent Transactions -->
         <div class="col-lg-8 mb-4">
+            <?php if (!empty($upcomingEmis)): ?>
+                <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3 px-4">
+                        <h5 class="mb-0 text-white"><i class="fas fa-calendar-check me-2 text-warning"></i>Upcoming Plot Installments (Pay with Wallet)</h5>
+                        <span class="badge bg-warning text-dark px-3 py-1 fw-bold rounded-pill">Active Schedule</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Plot & Colony</th>
+                                        <th>Installment</th>
+                                        <th>Due Date</th>
+                                        <th>Amount</th>
+                                        <th class="text-end pe-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($upcomingEmis as $emi): ?>
+                                        <tr>
+                                            <td class="ps-4">
+                                                <strong>Plot #<?= htmlspecialchars($emi['plot_number'] ?? 'N/A') ?></strong>
+                                                <small class="d-block text-muted"><?= htmlspecialchars($emi['colony_name'] ?? 'Colony') ?> (<?= htmlspecialchars($emi['booking_number'] ?? '') ?>)</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary-subtle text-secondary border">#<?= (int)($emi['installment_number'] ?? $emi['id']) ?></span>
+                                            </td>
+                                            <td>
+                                                <span class="<?= strtotime($emi['due_date'] ?? 'now') < time() ? 'text-danger fw-bold' : 'text-dark' ?>">
+                                                    <?= date('d M Y', strtotime($emi['due_date'] ?? 'now')) ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <strong class="text-primary">₹<?= number_format((float)($emi['amount'] ?? 0)) ?></strong>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <a href="<?= BASE_URL ?>/user/installments/<?= (int)$emi['id'] ?>/pay" class="btn btn-sm btn-success rounded-pill px-3 fw-bold">
+                                                    <i class="fas fa-wallet me-1"></i>Pay with Wallet
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <h4 class="section-title">
                 <i class="fas fa-history"></i>Recent Transactions
             </h4>
@@ -405,6 +461,26 @@ $isAssociate = (!empty($is_associate) || ($_SESSION['role'] ?? '') === 'associat
             
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body aps-cp-card-body">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#topUpWalletModal" class="d-flex align-items-center text-decoration-none text-dark mb-3">
+                        <div class="text-white rounded-circle p-3 me-3" style="background:#10b981;">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">Add Funds / Top-Up</div>
+                            <small class="text-muted">Deposit via UPI QR or NetBanking</small>
+                        </div>
+                    </a>
+
+                    <a href="<?php echo $isAssociate ? BASE_URL . '/associate/book-plot' : BASE_URL . '/user/new-booking'; ?>" class="d-flex align-items-center text-decoration-none text-dark mb-3">
+                        <div class="text-white rounded-circle p-3 me-3" style="background:#6366f1;">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">Book Plot with Wallet</div>
+                            <small class="text-muted">Instant ₹51,000 allotment token</small>
+                        </div>
+                    </a>
+
                     <a href="<?php echo BASE_URL; ?>/wallet/withdrawal" class="d-flex align-items-center text-decoration-none text-dark mb-3">
                         <div class="bg-success text-white rounded-circle p-3 me-3">
                             <i class="fas fa-wallet"></i>
@@ -475,7 +551,71 @@ $isAssociate = (!empty($is_associate) || ($_SESSION['role'] ?? '') === 'associat
     </div>
 </div>
 
+<!-- Top-Up Wallet Modal -->
+<div class="modal fade" id="topUpWalletModal" tabindex="-1" aria-labelledby="topUpWalletModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header bg-success text-white py-3 px-4">
+                <h5 class="modal-title" id="topUpWalletModalLabel"><i class="fas fa-plus-circle me-2"></i>Add Funds to Wallet</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="topUpWalletForm" method="POST" action="<?php echo $isAssociate ? BASE_URL . '/associate/wallet/topup' : BASE_URL . '/wallet/topup'; ?>">
+                <div class="modal-body p-4">
+                    <div class="mb-3 text-center">
+                        <small class="text-muted text-uppercase fw-bold">Select Top-Up Amount</small>
+                        <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
+                            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="selectTopUp(5000)">₹5,000</button>
+                            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="selectTopUp(10000)">₹10,000</button>
+                            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="selectTopUp(25000)">₹25,000</button>
+                            <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold" onclick="selectTopUp(51000)">₹51,000 (Plot Token)</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Amount to Add (₹) *</label>
+                        <input type="number" name="amount" id="topUpAmount" class="form-control form-control-lg fw-bold text-success" required min="100" step="100" value="51000">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Payment Method</label>
+                        <select name="payment_method" id="topUpMethod" class="form-select fw-semibold">
+                            <option value="upi" selected>UPI Transfer (Google Pay / PhonePe / Paytm)</option>
+                            <option value="bank_transfer">Bank Transfer (NEFT / RTGS)</option>
+                            <option value="online">Online Payment Gateway</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-light p-3 rounded-3 mb-3 border">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-qrcode text-primary fs-4 me-2"></i>
+                            <div>
+                                <strong class="small">Company UPI VPA:</strong> <code>apsdreamhome@icici</code>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block">कंपनी खाते में जमा करने के बाद 12-अंकों का UTR / Transaction No नीचे दर्ज करें:</small>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Transaction Reference / UTR Number</label>
+                        <input type="text" name="utr_number" id="topUpUtr" class="form-control" placeholder="e.g. 432156789012" required>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0 py-3 px-4">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="btnSubmitTopUp" class="btn btn-success rounded-pill px-4 fw-bold">
+                        <i class="fas fa-check-circle me-1"></i>Confirm Deposit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
+function selectTopUp(amt) {
+    document.getElementById('topUpAmount').value = amt;
+}
+
 function copyReferralCode() {
     const referralCode = '<?php echo e($user_referral_code); ?>';
     navigator.clipboard.writeText(referralCode).then(() => {

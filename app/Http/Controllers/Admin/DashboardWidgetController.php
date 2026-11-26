@@ -96,6 +96,27 @@ class DashboardWidgetController extends AdminController
         $this->jsonResponse(['success' => true, 'data' => $data]);
     }
 
+    /** S790: the recent_activity widget posts its data_source here and reads
+     *  data.activities[{title,description,date}]. Reuse tableDataset() and map
+     *  its rows into that shape instead of returning raw DB columns. */
+    public function widgetDataRecentActivity()
+    {
+        $this->requireAdmin();
+        $tid = (int)$this->tenantId();
+        $dataSource = trim((string)($_GET['data_source'] ?? 'recent_leads'));
+        $limit = max(1, min(50, (int)($_GET['limit'] ?? 10)));
+        $records = $this->tableDataset($dataSource, $limit, $tid);
+        $activities = [];
+        foreach ($records as $row) {
+            $activities[] = [
+                'title'       => $row['name'] ?? ('Booking #' . ($row['id'] ?? '')),
+                'description' => trim(($row['status'] ?? '') . ' ' . ($row['phone'] ?? ($row['plot_id'] ?? ''))),
+                'date'        => $row['created_at'] ?? ($row['next_activity_date'] ?? null),
+            ];
+        }
+        $this->jsonResponse(['success' => true, 'data' => ['activities' => $activities]]);
+    }
+
     public function widgetDataTable()
     {
         $this->requireAdmin();

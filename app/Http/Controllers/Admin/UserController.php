@@ -18,6 +18,22 @@ class UserController extends AdminController
 {
     use \App\Traits\TenantAwareTrait;
 
+    /** S780: 2FA enable called base32Encode() but it never existed (RFC 4648). */
+    private function base32Encode(string $data): string
+    {
+        $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        $bits = '';
+        foreach (str_split($data) as $byte) {
+            $bits .= str_pad(decbin(ord($byte)), 8, '0', STR_PAD_LEFT);
+        }
+        $out = '';
+        foreach (str_split($bits, 5) as $chunk) {
+            if (strlen($chunk) < 5) { $chunk = str_pad($chunk, 5, '0'); }
+            $out .= $alphabet[bindec($chunk)];
+        }
+        return $out;
+    }
+
     private $loggingService;
 
     public function __construct()

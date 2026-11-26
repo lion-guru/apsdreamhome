@@ -1517,6 +1517,14 @@ public function viewEmployee($id)
     {
         $this->requireAdmin();
         $result = (new \App\Services\TrainingService())->updateAssignmentProgress((int)($_POST['assignment_id'] ?? 0), $_POST);
+        // S765: the assignments page calls this with fetch().json(); a 302 into
+        // the HTML page made r.json() throw so the UI appeared frozen. Keep the
+        // form-post path intact, answer JSON only for AJAX callers.
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) || stripos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+            header('Content-Type: application/json');
+            echo json_encode($result);
+            exit;
+        }
         $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
         header('Location: ' . BASE_URL . '/admin/training/assignments');
         exit;

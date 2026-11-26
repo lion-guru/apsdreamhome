@@ -30,7 +30,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <p class="text-muted mb-0"><?php echo htmlspecialchars($campaign['description'] ?? ''); ?></p>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <span class="badge bg-<?php echo ($campaign['status'] ?? '') === 'active' ? 'success' : (($campaign['status'] ?? '') === 'planned' ? 'warning' : 'secondary'); ?> me-2">
+                        <span class="badge bg-<?php $s = $campaign['status'] ?? ''; echo $s === 'sent' ? 'success' : ($s === 'sending' ? 'warning' : ($s === 'scheduled' ? 'info' : ($s === 'paused' ? 'primary' : ($s === 'cancelled' ? 'danger' : 'secondary')))); ?> me-2">
                             <?php echo ucfirst($campaign['status'] ?? 'unknown'); ?>
                         </span>
                         <span class="badge bg-info">
@@ -130,9 +130,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <h6 class="mt-3">Quick Actions</h6>
                         <div class="row g-2">
                             <div class="col-6">
-                                <a href="<?php echo e($base); ?>/admin/campaigns/<?php echo (int)($campaign['campaign_id'] ?? 0); ?>/launch" class="btn btn-success w-100" <?php echo ($campaign['status'] ?? '') === 'active' ? 'disabled' : ''; ?>>
-                                    <i class="fas fa-rocket me-2"></i>Launch
-                                </a>
+                                <?php // S790: mutating GET replaced by a CSRF-protected POST form. ?>
+                                <form method="POST" action="<?php echo e($base); ?>/admin/campaigns/<?php echo (int)($campaign['campaign_id'] ?? 0); ?>/launch">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                    <button type="submit" class="btn btn-success w-100" <?php echo in_array(($campaign['status'] ?? ''), ['sending','sent','cancelled'], true) ? 'disabled' : ''; ?>>
+                                        <i class="fas fa-rocket me-2"></i>Launch
+                                    </button>
+                                </form>
                             </div>
                             <div class="col-6">
                                 <button onclick="exportReport(<?php echo (int)($campaign['campaign_id'] ?? 0); ?>)" class="btn btn-outline-primary w-100">

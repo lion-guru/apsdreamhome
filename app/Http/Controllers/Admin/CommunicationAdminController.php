@@ -183,12 +183,23 @@ class CommunicationAdminController extends AdminController
         
         try {
             $id = $_POST['template_id'] ?? 0;
+            // S771: live columns are template_name/template_type; `name`/`category`
+            // never existed and html_content is NOT NULL with no default.
+            $name = trim((string)($_POST['template_name'] ?? $_POST['name'] ?? ''));
+            $type = (string)($_POST['template_type'] ?? $_POST['category'] ?? 'general');
+            $allowedTypes = ['registration','login','password_reset','property_inquiry','payment_success','payment_failed','payment_reminder','booking_confirmation','property_alert','newsletter','general'];
+            if (!in_array($type, $allowedTypes, true)) { $type = 'general'; }
+            $html = (string)($_POST['body_html'] ?? '');
+            if ($html === '') { $html = (string)($_POST['html_content'] ?? ''); }
+            $text = (string)($_POST['body_text'] ?? $_POST['text_content'] ?? '');
             $data = [
-                'name' => $_POST['name'] ?? '',
+                'template_name' => $name,
+                'template_type' => $type,
                 'subject' => $_POST['subject'] ?? '',
-                'body_html' => $_POST['body_html'] ?? '',
-                'body_text' => $_POST['body_text'] ?? '',
-                'category' => $_POST['category'] ?? 'general',
+                'body_html' => $html,
+                'body_text' => $text,
+                'html_content' => $html,
+                'text_content' => $text,
                 'variables' => $_POST['variables'] ?? '[]',
                 'is_active' => isset($_POST['is_active']) ? 1 : 0,
                 'updated_at' => date('Y-m-d H:i:s')

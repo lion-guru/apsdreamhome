@@ -466,6 +466,15 @@ class AssociateController extends BaseController
                     $prefill = ['name' => $lr['name'] ?? '', 'phone' => $lr['phone'] ?? '', 'email' => $lr['email'] ?? ''];
                 }
             }
+            // Fetch associate wallet balance
+            $walletBalance = 0.0;
+            try {
+                $walletService = new \App\Services\WalletService();
+                $walletBalance = $walletService->getBalance($userId);
+            } catch (\Throwable $wEx) {
+                error_log("AssociateController::bookPlot wallet error: " . $wEx->getMessage());
+            }
+
             $this->render('associate/book_plot', [
                 'page_title' => 'Book Plot - Associate Portal',
                 'colonies' => $colonies,
@@ -475,6 +484,7 @@ class AssociateController extends BaseController
                 'can_offline_book' => $canOfflineBook,
                 'can_collect_cash' => $canCollectCash,
                 'daily_cash_limit' => $dailyCashLimit,
+                'wallet_balance' => $walletBalance,
             ], 'layouts/associate');
             return;
         }
@@ -543,11 +553,27 @@ class AssociateController extends BaseController
             $aadharNumber = trim($_POST['aadhar_number'] ?? '');
             $panNumber = trim($_POST['pan_number'] ?? '');
 
-            if ($plotId <= 0 || $colonyId <= 0) {
+            if ($plotId <= 0) {
                 $_SESSION['flash_error'] = 'Please select a plot.';
                 $this->redirect('/associate/book-plot');
                 return;
             }
+
+            // Check plot availability
+            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
+            $plotParams = [$plotId];
+            if ($tid > 1) $plotParams[] = $tid;
+            $plot = $db->fetchRow("SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.id = ? AND p.is_active = 1 AND p.status = 'available'{$tidSql}", $plotParams);
+            if (!$plot) {
+                $_SESSION['flash_error'] = 'Plot is no longer available.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            if ($colonyId <= 0 && !empty($plot['colony_id'])) {
+                $colonyId = (int)$plot['colony_id'];
+            }
+
             if (empty($customerName) || empty($customerPhone)) {
                 $_SESSION['flash_error'] = 'Customer name and phone are required.';
                 $this->redirect('/associate/book-plot');
@@ -567,15 +593,10 @@ class AssociateController extends BaseController
             // Verify associate offline booking & cash permissions
             $assocPerm = $db->fetchRow("SELECT can_offline_book, can_collect_cash, daily_cash_limit FROM associates WHERE user_id = ? LIMIT 1", [$userId]);
             $canOfflineBook = !empty($assocPerm['can_offline_book']);
-            if (!$canOfflineBook) {
-                $_SESSION['flash_error'] = 'Offline booking is disabled for your associate account. Please create an Online Lead or contact admin.';
-                $this->redirect('/associate/book-plot');
-                return;
-            }
 
+            // Cash collection strictly requires can_offline_book and can_collect_cash privileges
             if ($paymentMode === 'cash') {
-                $canCollectCash = !empty($assocPerm['can_collect_cash']);
-                if (!$canCollectCash) {
+                if (!$canOfflineBook || empty($assocPerm['can_collect_cash'])) {
                     $_SESSION['flash_error'] = 'Cash collection is strictly restricted for your account. Please guide the customer to pay directly via UPI QR or Bank Transfer to official APS Dream Home accounts.';
                     $this->redirect('/associate/book-plot');
                     return;
@@ -588,15 +609,15 @@ class AssociateController extends BaseController
                 }
             }
 
-            // Check plot availability
-            $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
-            $plotParams = [$plotId];
-            if ($tid > 1) $plotParams[] = $tid;
-            $plot = $db->fetchRow("SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.id = ? AND p.is_active = 1 AND p.status = 'available'{$tidSql}", $plotParams);
-            if (!$plot) {
-                $_SESSION['flash_error'] = 'Plot is no longer available.';
-                $this->redirect('/associate/book-plot');
-                return;
+            // Associate Wallet Payment Validation
+            if ($paymentMode === 'wallet') {
+                $walletService = new \App\Services\WalletService();
+                $currentWalletBalance = $walletService->getBalance($userId);
+                if ($currentWalletBalance < $bookingAmount) {
+                    $_SESSION['flash_error'] = 'Insufficient associate wallet balance (Available: ₹' . number_format($currentWalletBalance, 2) . ', Required: ₹' . number_format($bookingAmount, 2) . '). Please select another payment mode or top up your wallet.';
+                    $this->redirect('/associate/book-plot');
+                    return;
+                }
             }
 
             // Generate booking number
@@ -632,13 +653,43 @@ class AssociateController extends BaseController
 
             $agreementValue = max(0.0, $totalPlotVal - $discountAmount);
 
+            // Auto-resolve customer_id if a user account already exists with phone or email
+            $existingCustomer = $db->fetchRow(
+                "SELECT id FROM users WHERE (phone = ? AND phone != '') OR (email = ? AND email != '') LIMIT 1",
+                [$customerPhone, $customerEmail]
+            );
+            $customerId = $existingCustomer ? (int)$existingCustomer['id'] : null;
+
+            $isWalletPayment = ($paymentMode === 'wallet');
+
             $db->beginTransaction();
             try {
+                // If payment mode is wallet, debit associate's wallet atomically first
+                if ($isWalletPayment) {
+                    $walletService = new \App\Services\WalletService();
+                    $debitOk = $walletService->debit(
+                        $userId,
+                        $bookingAmount,
+                        "Plot token payment for Plot #" . ($plot['plot_number'] ?? $plotId) . " (" . ($plot['colony_name'] ?? 'Colony') . ") on behalf of " . $customerName,
+                        'emi_transfer'
+                    );
+                    if (!$debitOk) {
+                        throw new \Exception("Failed to debit associate wallet balance.");
+                    }
+                }
+
+                $initStatus = $isWalletPayment ? 'token_paid' : 'pending';
+                $initApproval = $isWalletPayment ? 'approved' : 'pending';
+                $initApprovedBy = $isWalletPayment ? $userId : null;
+                $initApprovedAt = $isWalletPayment ? date('Y-m-d H:i:s') : null;
+                $initApprovalNotes = $isWalletPayment ? ('Auto-approved: Token amount ₹' . number_format($bookingAmount, 2) . ' paid directly from Associate Wallet') : null;
+
                 // Insert into plot_bookings
                 $bookingId = $db->insert('plot_bookings', [
                     'tenant_id' => $tid,
                     'plot_id' => $plotId,
                     'colony_id' => $colonyId,
+                    'customer_id' => $customerId,
                     'customer_name' => $customerName,
                     'customer_phone' => $customerPhone,
                     'customer_email' => $customerEmail,
@@ -651,8 +702,11 @@ class AssociateController extends BaseController
                     'promotional_offer_id' => $promotionalOfferId,
                     'promo_code_applied' => $promoCodeApplied,
                     'agreement_value' => $agreementValue,
-                    'status' => 'pending',
-                    'approval_status' => 'pending',
+                    'status' => $initStatus,
+                    'approval_status' => $initApproval,
+                    'approved_by' => $initApprovedBy,
+                    'approved_at' => $initApprovedAt,
+                    'approval_notes' => $initApprovalNotes,
                     'associate_id' => $userId,
                     'channel' => 'associate',
                     'lead_id' => ($convLeadId > 0 ? $convLeadId : null),
@@ -669,12 +723,82 @@ class AssociateController extends BaseController
                     } catch (\Throwable $e) {}
                 }
 
+                // Attach master deed / signed form if uploaded
+                if (!empty($masterDeedPath) && $bookingId) {
+                    try {
+                        $db->insert('booking_documents', [
+                            'tenant_id' => $tid,
+                            'booking_id' => $bookingId,
+                            'document_type' => 'application_form',
+                            'document_name' => 'Signed Booking Form / Master Deed Acceptance',
+                            'file_path' => $masterDeedPath,
+                            'file_url' => '/' . ltrim($masterDeedPath, '/'),
+                            'uploaded_by' => $userId,
+                            'status' => $isWalletPayment ? 'verified' : 'pending',
+                            'notes' => 'Uploaded by associate during doorstep booking',
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ]);
+                    } catch (\Throwable $docEx) {
+                        error_log("AssociateController::bookPlot booking_documents error: " . $docEx->getMessage());
+                    }
+                }
+
+                // Record initial token receipt
+                if ($bookingAmount > 0 && $bookingId) {
+                    try {
+                        $receiptNumber = 'RCP-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
+                        $validModes = ['cash','cheque','dd','neft','rtgs','upi','card','bank_transfer','wallet','online'];
+                        $modeToStore = in_array(strtolower($paymentMode), $validModes, true) ? strtolower($paymentMode) : 'upi';
+                        $receiptStatus = $isWalletPayment ? 'cleared' : 'pending';
+                        $wltRef = $isWalletPayment ? ('WLT-' . strtoupper(substr(uniqid(), -8))) : (trim($_POST['transaction_ref'] ?? '') ?: null);
+                        $receiptNotes = $isWalletPayment
+                            ? ('Token payment of ₹' . number_format($bookingAmount) . ' debited from Associate Wallet. Cleared immediately.')
+                            : ('Token payment of ₹' . number_format($bookingAmount) . ' submitted via ' . strtoupper($paymentMode) . ' during doorstep booking');
+
+                        $db->insert('booking_payment_receipts', [
+                            'tenant_id' => $tid,
+                            'booking_id' => $bookingId,
+                            'receipt_number' => $receiptNumber,
+                            'receipt_date' => date('Y-m-d'),
+                            'amount' => $bookingAmount,
+                            'payment_mode' => $modeToStore,
+                            'transaction_ref' => $wltRef,
+                            'collected_by' => $userId,
+                            'status' => $receiptStatus,
+                            'notes' => $receiptNotes,
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ]);
+                    } catch (\Throwable $payEx) {
+                        error_log("AssociateController::bookPlot booking_payment_receipts error: " . $payEx->getMessage());
+                    }
+                }
+
+                // If instant wallet allotment, record status history audit
+                if ($isWalletPayment && $bookingId) {
+                    try {
+                        $db->insert('booking_status_history', [
+                            'booking_id' => $bookingId,
+                            'from_status' => null,
+                            'to_status' => 'token_paid',
+                            'changed_by' => $userId,
+                            'reason' => 'Instant plot allotment confirmed via Associate Wallet token payment',
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ]);
+                    } catch (\Throwable $bshEx) {
+                        error_log("AssociateController::bookPlot status history error: " . $bshEx->getMessage());
+                    }
+                }
+
                 // Update plot status to booked
                 // NOTE: Database::update() builds NAMED set-placeholders — the
                 // WHERE must be named too (positional ? + named mix = HY093).
                 $plotWhere = "id = :wid" . ($tid > 1 ? " AND tenant_id = :wtid" : "");
                 $plotWhereParams = ['wid' => $plotId] + ($tid > 1 ? ['wtid' => $tid] : []);
-                $db->update('plots', ['status' => 'booked', 'updated_at' => date('Y-m-d H:i:s')], $plotWhere, $plotWhereParams);
+                $plotUpdateData = ['status' => 'booked', 'updated_at' => date('Y-m-d H:i:s')];
+                if ($customerId) {
+                    $plotUpdateData['customer_id'] = $customerId;
+                }
+                $db->update('plots', $plotUpdateData, $plotWhere, $plotWhereParams);
 
                 // Converted lead → Won (same txn: booking + status move together or not at all).
                 if ($convLeadId > 0 && $convLead) {
@@ -715,8 +839,12 @@ class AssociateController extends BaseController
                     error_log('AssociateController::bookPlot notification error: ' . $notifEx->getMessage());
                 }
 
-                $_SESSION['flash_success'] = 'Plot booking submitted successfully! Booking #' . $bookingNumber . '. Waiting for admin approval.';
-                $this->redirect('/associate/dashboard');
+                if ($isWalletPayment) {
+                    $_SESSION['flash_success'] = 'Doorstep plot booking confirmed and allotted! ₹' . number_format($bookingAmount) . ' debited from your associate wallet, and official cleared receipt generated.';
+                } else {
+                    $_SESSION['flash_success'] = 'Doorstep plot booking submitted successfully! Booking #' . $bookingNumber . ' is queued for senior review.';
+                }
+                $this->redirect('/associate/booking/' . $bookingId . '/receipt');
             } catch (Exception $e) {
                 $db->rollBack();
                 error_log('AssociateController::bookPlot insert error: ' . $e->getMessage());

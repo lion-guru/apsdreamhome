@@ -83,6 +83,12 @@ class ExotelProvider extends AbstractVoiceProvider
         }
     }
 
+    /** S784: Exotel acknowledges unknown webhook events with plain "OK". */
+    protected function getDefaultResponse(string $event): string
+    {
+        return 'OK';
+    }
+
     /**
      * Generate ExoML for incoming call
      */

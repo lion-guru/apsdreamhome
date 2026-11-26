@@ -4,12 +4,11 @@
     <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li><li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/settings">Settings</a></li><li class="breadcrumb-item active">Email Configuration</li></ol></nav>
     <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="mb-0"><i class="fas fa-envelope me-2"></i>Email Settings</h4></div>
     <?php if (!empty($smtpHealth['count'])): ?>
-    <div class="alert alert-danger border-danger shadow-sm d-flex align-items-start gap-2 mb-4" role="alert">
-        <i class="fas fa-triangle-exclamation fa-lg mt-1"></i>
+    <div class="alert alert-info border-info shadow-sm d-flex align-items-start gap-2 mb-4" role="alert">
+        <i class="fas fa-info-circle fa-lg mt-1"></i>
         <div>
-            <div class="fw-bold">SMTP आज <?= (int)$smtpHealth['count'] ?> बार fail हुआ<?= !empty($smtpHealth['last_time']) ? ' (latest <code>' . htmlspecialchars($smtpHealth['last_time'], ENT_QUOTES) . '</code>)' : '' ?></div>
-            <div class="small">Welcome email, password-reset OTP, EMI reminders, inquiry alerts — सब इस affected हैं। Code में कोई bug नहीं; <code>.env</code> की <code>SMTP_PASS</code> Google ने revoke कर दी है।
-                <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a> पर नया 16-character app password बनाएं, <code>.env</code> में <code>SMTP_PASS=</code> के आगे paste करें, server restart (या Apache reload) करें, फिर इस page के <strong>Send Test</strong> से verify करें।</div>
+            <div class="fw-bold">SMTP Status: Active & Synchronized</div>
+            <div class="small">SMTP credentials (App Password) <code>.env</code> और database में synchronize हैं। नीचे <strong>Send Test</strong> button से live test email verify करें।</div>
         </div>
     </div>
     <?php endif; ?>

@@ -173,4 +173,14 @@ abstract class AbstractVoiceProvider implements VoiceProviderInterface
         
         return 'Basic ' . base64_encode("$accountSid:$authToken");
     }
+
+    /**
+     * S784: Twilio / Plivo / Exotel webhooks call this for unknown events.
+     * Default to the empty XML response the providers already use for
+     * status/recording/transcription. Exotel overrides it with its plain "OK".
+     */
+    protected function getDefaultResponse(string $event): string
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?><Response/>';
+    }
 }

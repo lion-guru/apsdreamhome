@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\AdminController;
 use App\Services\ExpenseReimbursementService;
 use App\Services\EmployeeGrievanceService;
+use App\Traits\TenantAwareTrait;
 
 class ExpenseReimbursementController extends AdminController
 {
+    use TenantAwareTrait;
+
     private $service;
 
     public function __construct()

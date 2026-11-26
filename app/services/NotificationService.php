@@ -129,7 +129,7 @@ class NotificationService
                 // No preference row yet - default to enabled
                 return true;
             }
-            return (int) $row['enabled'] === 1;
+            return (int) ($row['enabled'] ?? 1) === 1;
         } catch (\Throwable $e) {
             // If the table is missing or the query fails, default to enabled
             // so that we don't accidentally silence all notifications.

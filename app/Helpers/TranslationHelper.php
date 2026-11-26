@@ -42,8 +42,24 @@ if (!function_exists('__')) {
 
         $value = $svc->get($key, is_array($params) ? $params : [], null);
 
-        if ($value === $key && $default !== null && $default !== '') {
-            return $default;
+        if ($value === $key) {
+            // Key is missing from every language file.
+            if ($default !== null && $default !== '') {
+                return $default;
+            }
+            // Last-resort safety net: never leak a raw snake_case key to a
+            // buyer. Derive readable copy from the key itself (no invented
+            // facts). Real copy belongs in lang/en.php + lang/hi.php.
+            $words = preg_replace('/[_.]+/', ' ', (string)$key);
+            $words = trim((string)$words);
+            if ($words === '') {
+                return (string)$key;
+            }
+            $human = preg_replace_callback('/\b[\p{L}\p{N}]+\b/u', static function ($m) {
+                $w = $m[0];
+                return mb_strtoupper(mb_substr($w, 0, 1, 'UTF-8'), 'UTF-8') . mb_strtolower(mb_substr($w, 1, null, 'UTF-8'), 'UTF-8');
+            }, $words);
+            return (string)$human;
         }
         return $value;
     }

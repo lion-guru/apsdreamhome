@@ -180,26 +180,11 @@ class AnalyticsService
         }
     }
 
-    public function getMarketSummary(int $days = 30): array
-    {
-        $st = $this->db->prepare("SELECT * FROM market_analytics_summary WHERE summary_date > DATE_SUB(CURDATE(), INTERVAL :d DAY)" . $this->tenantSql() . " ORDER BY summary_date DESC LIMIT 30");
-        $st->execute([':d' => $days]);
-        if ($this->tenantId() > 1) $st->bindValue(':stid', $this->tenantId(), PDO::PARAM_INT);
-        return $st->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function recordMarketSummary(string $category, float $value, array $data = []): array
-    {
-        $insertData = $this->tenantInsertData();
-        $cols = "category, value, summary_data, summary_date, created_at" . (count($insertData) > 0 ? ', ' . implode(', ', array_keys($insertData)) : '');
-        $ph = "?, ?, ?, ?, NOW()" . (count($insertData) > 0 ? ', ' . implode(', ', array_fill(0, count($insertData), '?')) : '');
-        $params = [$category, $value, json_encode($data, JSON_UNESCAPED_UNICODE), date('Y-m-d')];
-        if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
-        $st = $this->db->prepare("INSERT INTO market_analytics_summary ($cols) VALUES ($ph)
-                                  ON DUPLICATE KEY UPDATE value = VALUES(value), summary_data = VALUES(summary_data)");
-        $st->execute($params);
-        return ['ok' => true];
-    }
+    // S778: getMarketSummary()/recordMarketSummary() were removed — both had
+    // ZERO callers and referenced market_analytics_summary, a table that was
+    // never migrated (S682 'designed but never wired'). Creating a table for
+    // dead code would be S221-class duplication; the schema gate now stays
+    // green without manufacturing a feature nobody calls.
 
     public function listDashboards(int $userId = 0): array
     {

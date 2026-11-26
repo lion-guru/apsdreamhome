@@ -71,6 +71,14 @@ class AgentAssignmentService
         }
     }
 
+    /** S786: ghost helper called from assignAgentToCustomer() when no agent is
+     *  found. The full office-assignment flow already exists below — delegate
+     *  to it instead of maintaining a second implementation. */
+    private function assignToOffice(int $customerId, array $preferences = []): array
+    {
+        return $this->assignOfficeToCustomer($customerId, $preferences);
+    }
+
     /**
      * Assign office to customer
      */
@@ -190,21 +198,16 @@ class AgentAssignmentService
         $propertyType = $preferences['property_type'] ?? '';
         $budgetRange = $preferences['budget_range'] ?? '';
 
-        try {
-            // Build query to find suitable users
-            $sql = "SELECT a.*, 
-                            COUNT(ca.id) as current_assignments,
-                            AVG(ar.rating) as avg_rating,
-                            COUNT(p.id) as properties_handled
-                     FROM users a
-                     LEFT JOIN customer_assignments ca ON a.id = ca.agent_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
-                     LEFT JOIN agent_reviews ar ON a.id = ar.agent_id" . $this->tenantSqlForAlias('ar') . "
-                     LEFT JOIN properties p ON a.id = p.agent_id" . $this->tenantSqlForAlias('p') . "
-                     WHERE a.status = 'active' AND a.workload < a.max_workload";
-        } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
-        }
+        // Build query to find suitable users
+        $sql = "SELECT a.*, 
+                        COUNT(ca.id) as current_assignments,
+                        AVG(ar.rating) as avg_rating,
+                        COUNT(p.id) as properties_handled
+                 FROM users a
+                 LEFT JOIN customer_assignments ca ON a.id = ca.agent_id AND ca.status = 'active'" . $this->tenantSqlForAlias('ca') . "
+                 LEFT JOIN agent_reviews ar ON a.id = ar.agent_id" . $this->tenantSqlForAlias('ar') . "
+                 LEFT JOIN properties p ON a.id = p.agent_id" . $this->tenantSqlForAlias('p') . "
+                 WHERE a.status = 'active' AND a.workload < a.max_workload";
 
         $params = [];
         

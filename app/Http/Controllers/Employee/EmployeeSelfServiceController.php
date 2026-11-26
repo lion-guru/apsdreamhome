@@ -542,6 +542,36 @@ class EmployeeSelfServiceController extends BaseController
         $comments = $this->helpdeskService->getTicketComments($id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_POST['ticket_action'] ?? 'reply';
+
+            if ($action === 'close' || $action === 'reopen') {
+                // S765: these buttons previously pointed at web routes that never
+                // existed (only the mobile Bearer API had close/reopen). Handle them
+                // here on the detail endpoint itself, tenant-scoped.
+                try {
+                    $db = \App\Core\Database\Database::getInstance();
+                    $tid = (int)$this->tenantId();
+                    if ($action === 'close') {
+                        $stmt = $db->prepare(
+                            "UPDATE helpdesk_tickets SET status='closed', resolved_at=NOW(), resolved_by=? WHERE id=? AND tenant_id=?"
+                        );
+                        $stmt->execute([$employeeId, $id, $tid]);
+                        $_SESSION['success'] = 'Ticket closed.';
+                    } else {
+                        $stmt = $db->prepare(
+                            "UPDATE helpdesk_tickets SET status='reopened', resolved_at=NULL, resolved_by=NULL WHERE id=? AND tenant_id=?"
+                        );
+                        $stmt->execute([$id, $tid]);
+                        $_SESSION['success'] = 'Ticket reopened.';
+                    }
+                } catch (\Throwable $e) {
+                    error_log('Helpdesk ' . $action . ' failed: ' . $e->getMessage());
+                    $_SESSION['error'] = 'Could not update the ticket. Please try again.';
+                }
+                $this->redirect(BASE_URL . "/employee/self-service/helpdesk/$id");
+                exit;
+            }
+
             $result = $this->helpdeskService->addComment($id, $employeeId, $_POST);
             $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
             $this->redirect(BASE_URL . "/employee/self-service/helpdesk/$id");
@@ -551,7 +581,9 @@ class EmployeeSelfServiceController extends BaseController
         return $this->render('employee/self_service/ticket_detail', [
             'page_title' => 'Ticket #' . $ticket['ticket_number'],
             'ticket' => $ticket,
-            'comments' => $comments
+            'comments' => $comments,
+            // The view reads $replies; the service/controller call it comments.
+            'replies' => $comments
         ]);
     }
 
