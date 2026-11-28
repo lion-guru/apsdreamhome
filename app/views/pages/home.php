@@ -314,62 +314,62 @@ document.addEventListener('DOMContentLoaded', function(){
                     <?= __('home_colony_desc') ?>
                 </p>
             </div>
-            
+
             <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal">
+                <?php
+                $showcaseColonies = !empty($showcase_colonies) ? $showcase_colonies : [
+                    ['name' => __('home_colony_suryoday'), 'slug' => 'suryoday-colony', 'description' => __('home_colony_suryoday_desc'), 'district_name' => __('loc_gorakhpur'), 'available_plots' => 337, 'image_path' => 'assets/images/projects/gorakhpur/suryoday.jpg'],
+                    ['name' => __('home_colony_braj_radha'), 'slug' => 'braj-radha-nagri', 'description' => __('home_colony_braj_radha_desc'), 'district_name' => __('loc_gorakhpur'), 'available_plots' => 40, 'image_path' => 'assets/images/projects/gorakhpur/braj-radha-nagri.jpg'],
+                    ['name' => 'Raghunath Nagri', 'slug' => 'raghunath-nagri-motiram', 'description' => 'Residential & commercial plots at Motiram Adda, Gorakhpur with wide roads and 36-month 0% EMI.', 'district_name' => __('loc_gorakhpur'), 'available_plots' => 241, 'image_path' => 'assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg'],
+                    ['name' => __('home_colony_budh_bihar'), 'slug' => 'budh-bihar-colony', 'description' => __('home_colony_budh_bihar_desc'), 'district_name' => __('loc_kushinagar'), 'available_plots' => 7, 'image_path' => 'assets/images/projects/kushinagar/budh-bihar.jpg'],
+                ];
+                foreach ($showcaseColonies as $scCol):
+                    $colName = $scCol['name'] ?? 'APS Colony';
+                    $colSlug = $scCol['slug'] ?? '';
+                    $colAvail = (int)($scCol['available_plots'] ?? 0);
+                    $colDistrict = $scCol['district_name'] ?? 'Gorakhpur';
+                    $colImg = $scCol['image_path'] ?? '';
+                    if (empty($colImg)) {
+                        if (stripos($colName, 'Raghunath') !== false) $colImg = 'assets/images/projects/gorakhpur/raghunath-nagri-motiram.jpg';
+                        elseif (stripos($colName, 'Braj') !== false) $colImg = 'assets/images/projects/gorakhpur/braj-radha-nagri.jpg';
+                        elseif (stripos($colName, 'Budh') !== false) $colImg = 'assets/images/projects/kushinagar/budh-bihar.jpg';
+                        else $colImg = 'assets/images/projects/gorakhpur/suryoday.jpg';
+                    }
+                    $colImgUrl = (strpos($colImg, 'http') === 0) ? $colImg : (BASE_URL . '/' . ltrim($colImg, '/'));
+                    $colDesc = !empty($scCol['description']) ? $scCol['description'] : "{$colAvail} available plots in {$colDistrict} with clear titles and 36-month 0% EMI.";
+                    $badgeCls = $colAvail >= 100 ? 'badge-delivered' : ($colAvail > 10 ? 'badge-ongoing' : 'badge-upcoming');
+                    $badgeLbl = $colAvail >= 100 ? __('home_colony_delivered') : ($colAvail > 10 ? __('home_colony_ongoing') : __('home_colony_upcoming'));
+                ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal d-flex flex-column">
                         <div class="position-relative colony-img-height">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" alt="<?= __('home_colony_suryoday') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
+                            <img src="<?= htmlspecialchars($colImgUrl, ENT_QUOTES, 'UTF-8') ?>"
+                                 alt="<?= htmlspecialchars($colName, ENT_QUOTES, 'UTF-8') ?>"
+                                 class="w-100 h-100 object-fit-cover"
+                                 loading="lazy"
+                                 onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
-                                <span class="capsule-badge badge-delivered text-white"><?= __('home_colony_delivered') ?></span>
+                                <span class="capsule-badge <?= $badgeCls ?> text-white"><?= htmlspecialchars($badgeLbl, ENT_QUOTES, 'UTF-8') ?></span>
                             </div>
                         </div>
-                        <div class="p-4">
-                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= __('home_colony_suryoday') ?></h3>
-                            <p class="text-muted small mb-3"><?= __('home_colony_suryoday_desc') ?></p>
-                            <div class="d-flex gap-3 small text-muted">
-                                <span><i class="fas fa-map-marker-alt me-1 text-success"></i><?= __('loc_gorakhpur') ?></span>
-                                <span><i class="fas fa-vector-square me-1 text-success"></i><?= __('home_colony_suryoday_plots') ?></span>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= htmlspecialchars($colName, ENT_QUOTES, 'UTF-8') ?></h3>
+                            <p class="text-muted small mb-3 flex-grow-1"><?= htmlspecialchars(mb_substr($colDesc, 0, 120), ENT_QUOTES, 'UTF-8') ?></p>
+                            <div class="d-flex justify-content-between align-items-center gap-2 pt-2 border-top">
+                                <div class="d-flex gap-3 small text-muted">
+                                    <span><i class="fas fa-map-marker-alt me-1 text-success"></i><?= htmlspecialchars($colDistrict, ENT_QUOTES, 'UTF-8') ?></span>
+                                    <span><i class="fas fa-vector-square me-1 text-success"></i><?= $colAvail ?> Plots</span>
+                                </div>
+                                <?php if ($colSlug !== ''): ?>
+                                    <a href="<?= BASE_URL ?>/colony/<?= htmlspecialchars($colSlug, ENT_QUOTES, 'UTF-8') ?>/plots" class="btn btn-sm btn-outline-success rounded-pill fw-semibold">
+                                        View Plots <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal">
-                        <div class="position-relative colony-img-height">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday1.jpeg" alt="<?= __('home_colony_braj_radha') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
-                            <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
-                                <span class="capsule-badge badge-ongoing text-white"><?= __('home_colony_ongoing') ?></span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= __('home_colony_braj_radha') ?></h3>
-                            <p class="text-muted small mb-3"><?= __('home_colony_braj_radha_desc') ?></p>
-                            <div class="d-flex gap-3 small text-muted">
-                                <span><i class="fas fa-map-marker-alt me-1 text-warning"></i><?= __('loc_gorakhpur') ?></span>
-                                <span><i class="fas fa-vector-square me-1 text-warning"></i><?= __('home_colony_braj_radha_plots') ?></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="service-card p-0 overflow-hidden hover-lift h-100 premium-reveal">
-                        <div class="position-relative colony-img-height">
-                            <img src="<?= BASE_URL ?>/assets/images/projects/kushinagar/budh-bihar.jpg" alt="<?= __('home_colony_budh_bihar') ?>" class="w-100 h-100 object-fit-cover" loading="lazy">
-                            <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient colony-overlay-gradient">
-                                <span class="capsule-badge badge-upcoming text-white badge-upcoming"><?= __('home_colony_upcoming') ?></span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= __('home_colony_budh_bihar') ?></h3>
-                            <p class="text-muted small mb-3"><?= __('home_colony_budh_bihar_desc') ?></p>
-                            <div class="d-flex gap-3 small text-muted">
-                                <span><i class="fas fa-map-marker-alt me-1 text-primary"></i><?= __('loc_kushinagar') ?></span>
-                                <span><i class="fas fa-vector-square me-1 text-primary"></i><?= __('home_colony_budh_bihar_plots') ?></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function(){
             <div class="mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <span class="small text-white-50"><?= __('home_re_cagr') ?></span>
-                    <span class="small fw-bold text-success" id="reValue">₹52,33,855</span>
+                    <span class="small fw-bold text-success" id="reValue">₹52,33,836</span>
                 </div>
                 <div class="progress mb-2 progress-thin">
                     <div class="progress-bar bg-success" id="reBar" ></div>
@@ -1805,7 +1805,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function showBootstrapModal(id) {
         if (typeof bootstrap !== 'undefined') {
-            new bootstrap.Modal(document.getElementById(id)).show();
+            bootstrap.Modal.getOrCreateInstance(document.getElementById(id)).show();
         } else {
             setTimeout(function() { showBootstrapModal(id); }, 200);
         }
@@ -1854,7 +1854,7 @@ document.addEventListener('DOMContentLoaded', function(){
             '<?= __("home_years_20") ?>' + '</option></select></div>' +
             '<div class="mt-3">' +
             '<div class="d-flex justify-content-between mb-1"><span>' + T.reEstate +
-            ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,855</span></div>' +
+            ' <span class="text-success">(18%)</span></span><span class="fw-bold text-success" id="mInvRE">₹52,33,836</span></div>' +
             '<div class="progress mb-2"><div class="progress-bar bg-success" id="mInvREBar" ></div></div>' +
             '<div class="d-flex justify-content-between mb-1"><span>' + T.fd +
             ' <span class="text-warning">(6%)</span></span><span class="fw-bold text-warning" id="mInvFD">₹17,90,848</span></div>' +

@@ -76,7 +76,11 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <meta name="twitter:image" content="<?php echo BASE_URL; ?>/assets/images/logo/apslogonew.jpg">
 
     <!-- Bootstrap JS (early load for modals) -->
-    <script defer src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+    <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        window.BASE_URL = <?= json_encode(defined('BASE_URL') ? BASE_URL : '') ?>;
+        var BASE_URL = window.BASE_URL;
+    </script>
+    <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -186,13 +190,13 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Design Tokens (Single Source of Truth) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=10" rel="stylesheet">
     <!-- Core Components -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=8" rel="stylesheet">
     <!-- Navigation & Header -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=11" rel="stylesheet">
     <!-- Real Estate Theme & Gradients -->
     <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=18" rel="stylesheet">
     <!-- Homepage Specific Extras -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=16" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=17" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
     <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=6" rel="stylesheet">

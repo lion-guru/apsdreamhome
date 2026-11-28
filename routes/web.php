@@ -658,6 +658,11 @@ $router->post('/user/notification-settings', 'Front\\UserController@updateNotifi
 $router->get('/user/notification-preferences', 'Front\\NotificationPreferenceController@index');
 $router->post('/user/notification-preferences', 'Front\\NotificationPreferenceController@update');
 $router->get('/api/user/notification-preferences', 'Front\\NotificationPreferenceController@getPreferences');
+
+// S840 — per-user opt-in outbound autopilot (paced queue, dry-run by default)
+$router->get('/user/autopilot', 'Front\\AutopilotController@index');
+$router->post('/user/autopilot/settings', 'Front\\AutopilotController@saveSettings');
+$router->post('/user/autopilot/enqueue', 'Front\\AutopilotController@enqueue');
 // S454: GET /user/favorites canonical handler registered at line 853 (DashboardController@favorites)
 
 // Installments list (missing route)
@@ -897,6 +902,7 @@ $router->get('/r/{code}', function ($code = '') {
 // ============================================================
 $router->get('/user/profile',            'App\\Http\\Controllers\\DashboardController@profile');
 $router->post('/user/profile',           'App\\Http\\Controllers\\DashboardController@updateProfile');
+$router->post('/user/claim-sponsor',     'App\\Http\\Controllers\\DashboardController@claimSponsor');
 $router->get('/user/favorites',          'App\\Http\\Controllers\\DashboardController@favorites');
 $router->post('/user/favorites/add',     'App\\Http\\Controllers\\DashboardController@addFavorite');
 $router->post('/user/favorites/remove',  'App\\Http\\Controllers\\DashboardController@removeFavorite');
@@ -2686,6 +2692,7 @@ $router->get('/admin/resell-properties/commission/{id}', 'App\\Http\\Controllers
 $router->post('/admin/resell-properties/update/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@update');
 $router->post('/admin/resell-properties/status/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@updateStatus');
 $router->post('/admin/resell-properties/delete/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@deleteProperty');
+$router->post('/admin/resell-properties/moderate/{id}', 'App\\Http\\Controllers\\Admin\\ResellPropertiesAdminController@moderateResell');
 
 // Note: admin_routes.php was removed in Phase 3+4 cleanup (2026-06-05).
 // All admin routes are now defined in this file. Legacy admin_routes.php
@@ -2748,6 +2755,11 @@ $router->post('/admin/jobs/manage/{id}/delete', 'App\\Http\\Controllers\\Admin\\
 
 // Plot Admin (alternative plot management) - REMOVED: PlotsAdminController archived
 $router->get('/admin/plots/categories', 'App\\Http\\Controllers\\Admin\\PlotManagementController@categories');
+// S801: the category desk's Save/Delete buttons had no routes. POST + the
+// router's CSRF gate; delete uses POST too (no destructive GET, S463).
+$router->post('/admin/plots/categories/store', 'App\\Http\\Controllers\\Admin\\PlotManagementController@storeCategory');
+$router->post('/admin/plots/categories/update', 'App\\Http\\Controllers\\Admin\\PlotManagementController@updateCategory');
+$router->post('/admin/plots/categories/delete/{id}', 'App\\Http\\Controllers\\Admin\\PlotManagementController@deleteCategory');
 
 // Property Images
 $router->get('/admin/properties/{id}/images', 'App\\Http\\Controllers\\Admin\\PropertyImageController@manage');
@@ -2892,6 +2904,8 @@ $router->post('/admin/team/destroy/{id}', 'App\\Http\\Controllers\\Admin\\TeamCo
 // Admin Expenses
 $router->get('/admin/expenses', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 $router->get('/admin/expenses/create', 'App\\Http\\Controllers\\Admin\\ExpensesController@create');
+// S801: the create form posts here; handler already exists and reads the same fields.
+$router->post('/admin/expenses/store', 'App\\Http\\Controllers\\Admin\\ExpensesController@store');
 $router->get('/admin/expense', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 
 // ============================================================
@@ -3082,6 +3096,7 @@ $router->get('/logging/stats', 'App\\Http\\Controllers\\LoggingController@getLog
 $router->get('/logging/search', 'App\\Http\\Controllers\\LoggingController@searchLogs');
 $router->get('/logging/details/{id}', 'App\\Http\\Controllers\\LoggingController@viewLogDetails');
 $router->post('/logging/dismiss-alert', 'App\\Http\\Controllers\\LoggingController@dismissAlert');
+$router->post('/logging/dismiss-all-alerts', 'App\\Http\\Controllers\\LoggingController@dismissAllAlerts'); // S828
 $router->get('/logging/stream', 'App\\Http\\Controllers\\LoggingController@getLogStream');
 
 // ============================================================
@@ -3609,6 +3624,8 @@ $router->get('/admin/land/create', 'App\\Http\\Controllers\\Admin\\LandControlle
 $router->post('/admin/land/store', 'App\\Http\\Controllers\\Admin\\LandController@store');
 $router->get('/admin/land/acquisitions', 'App\\Http\\Controllers\\Admin\\LandController@acquisitions');
 $router->get('/admin/land/records', 'App\\Http\\Controllers\\Admin\\LandController@records');
+// S800: the Add Record form on this page posts here; handler already exists.
+$router->post('/admin/land/records/store', 'App\\Http\\Controllers\\Admin\\LandController@storeRecord');
 $router->get('/admin/land/stats', 'App\\Http\\Controllers\\Admin\\LandController@getStats');
 $router->get('/admin/land/{id}', 'App\\Http\\Controllers\\Admin\\LandController@show');
 $router->get('/admin/land/{id}/edit', 'App\\Http\\Controllers\\Admin\\LandController@edit');

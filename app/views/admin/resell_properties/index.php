@@ -1,3 +1,14 @@
+<?php
+$base = $base ?? (defined('BASE_URL') ? BASE_URL : '');
+$status = $status ?? '';
+$search = $search ?? '';
+$total = (int)($total ?? 0);
+$page = max(1, (int)($page ?? 1));
+$totalPages = max(1, (int)($totalPages ?? 1));
+$properties = $properties ?? [];
+$resellSubmissions = $resellSubmissions ?? [];
+$stats = $stats ?? [];
+?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Resell Properties</h1>
@@ -154,4 +165,85 @@
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Public Resell Marketplace Submissions (resell_properties) -->
+<div class="card aps-cp-card mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="fs-6 fw-semibold mb-0">
+            <i class="fas fa-store me-2 text-primary"></i>Public Resell Submissions (<?= count($resellSubmissions ?? []) ?>)
+        </h2>
+        <a href="<?= $base ?>/resell-properties" target="_blank" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-external-link-alt me-1"></i>View Public Marketplace
+        </a>
+    </div>
+    <div class="card-body aps-cp-card-body">
+        <?php if (empty($resellSubmissions)): ?>
+            <p class="text-muted text-center py-3 mb-0">No public resell marketplace submissions yet.</p>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Seller</th>
+                            <th scope="col">Asking Price</th>
+                            <th scope="col">Area</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Moderate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($resellSubmissions as $rp): ?>
+                            <?php
+                            $rpStatus = $rp['status'] ?? 'pending';
+                            $rpColor = match ($rpStatus) {
+                                'approved', 'active' => 'success',
+                                'rejected' => 'danger',
+                                'sold' => 'secondary',
+                                default => 'warning',
+                            };
+                            ?>
+                            <tr>
+                                <td>
+                                    <strong><?= htmlspecialchars($rp['title'] ?? 'Untitled') ?></strong>
+                                    <div class="small text-muted"><?= htmlspecialchars($rp['location'] ?? '') ?></div>
+                                </td>
+                                <td><span class="badge bg-info text-dark"><?= ucfirst(htmlspecialchars($rp['property_type'] ?? '')) ?></span></td>
+                                <td>
+                                    <?= htmlspecialchars($rp['seller_name'] ?? 'User #' . (int)($rp['user_id'] ?? 0)) ?>
+                                    <?php if (!empty($rp['seller_phone'])): ?>
+                                        <div class="small text-muted"><?= htmlspecialchars($rp['seller_phone']) ?></div>
+                                    <?php endif; ?>
+                                </td>
+                                <td><strong>₹<?= number_format((float)($rp['asking_price'] ?? 0)) ?></strong></td>
+                                <td><?= number_format((float)($rp['area_sqft'] ?? 0)) ?> sqft</td>
+                                <td><span class="badge bg-<?= $rpColor ?>"><?= ucfirst(htmlspecialchars($rpStatus)) ?></span></td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <form method="POST" action="<?= $base ?>/admin/resell-properties/moderate/<?= (int)$rp['id'] ?>" class="d-inline">
+                                            <?= CSRFProtection::csrfField() ?>
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Approve">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="<?= $base ?>/admin/resell-properties/moderate/<?= (int)$rp['id'] ?>" class="d-inline">
+                                            <?= CSRFProtection::csrfField() ?>
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Reject">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
 

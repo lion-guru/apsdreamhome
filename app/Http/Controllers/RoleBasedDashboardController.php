@@ -16,8 +16,6 @@ class RoleBasedDashboardController extends AdminController
 {
     use TenantAwareTrait;
 
-    protected $db;
-
     public function __construct()
     {
         parent::__construct();

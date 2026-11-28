@@ -15,11 +15,6 @@ class ReferralController extends BaseController
 {
     use TenantAwareTrait;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * Require associate authentication
      */
@@ -39,7 +34,6 @@ class ReferralController extends BaseController
     {
         $this->requireAuth();
         $userId = $_SESSION['user_id'];
-        $tid = TenantContext::getId();
 
         try {
             $db = \App\Core\Database\Database::getInstance();
@@ -76,14 +70,25 @@ class ReferralController extends BaseController
             $tier = $this->getReferralTier($totalReferrals);
             $nextTier = $this->getNextTier($totalReferrals);
 
+            // Generate in-memory QR code data URI for the associate's share link (zero disk bloat)
+            $qrDataUri = '';
+            if ($referralCode !== '') {
+                $shareUrl = (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . urlencode($referralCode);
+                $qrDataUri = $this->buildReferralQrDataUri($shareUrl);
+            }
+
             $this->render('associate/referral', [
                 'page_title' => 'My Referrals - Associate Portal',
                 'page_description' => 'Manage your referral network',
                 'referral_code' => $referralCode,
+                'referral_count' => $totalReferrals,
+                'referral_earnings' => $referralCommissions,
+                'referred_users' => $direct,
                 'direct_referrals' => $direct,
                 'total_referrals' => $totalReferrals,
                 'active_referrals' => $activeReferrals,
                 'referral_commissions' => $referralCommissions,
+                'qr_data_uri' => $qrDataUri,
                 'tier' => $tier,
                 'next_tier' => $nextTier,
             ], 'layouts/associate');
@@ -97,10 +102,67 @@ class ReferralController extends BaseController
      */
     private function getReferralTier(int $count): array
     {
-        if ($count >= 50) return ['name' => 'Platinum', 'bonus' => 5000, 'per_booking' => 1000, 'color' => '#e5e7eb'];
-        if ($count >= 20) return ['name' => 'Gold', 'bonus' => 2500, 'per_booking' => 500, 'color' => '#fbbf24'];
-        if ($count >= 10) return ['name' => 'Silver', 'bonus' => 1000, 'per_booking' => 200, 'color' => '#9ca3af'];
-        return ['name' => 'Bronze', 'bonus' => 500, 'per_booking' => 100, 'color' => '#cd7f32'];
+        $tier = ['name' => 'Bronze', 'bonus' => 500, 'per_booking' => 100, 'color' => '#cd7f32'];
+        if ($count >= 50) {
+            $tier = ['name' => 'Platinum', 'bonus' => 5000, 'per_booking' => 1000, 'color' => '#e5e7eb'];
+        } elseif ($count >= 20) {
+            $tier = ['name' => 'Gold', 'bonus' => 2500, 'per_booking' => 500, 'color' => '#fbbf24'];
+        } elseif ($count >= 10) {
+            $tier = ['name' => 'Silver', 'bonus' => 1000, 'per_booking' => 200, 'color' => '#9ca3af'];
+        }
+        return $tier;
+    }
+
+    /**
+     * Build an in-memory PNG data URI QR code for a referral URL using BaconQrCode + GD.
+     */
+    private function buildReferralQrDataUri(string $text, int $size = 220): string
+    {
+        try {
+            $encoderClass = 'BaconQrCode\\Encoder\\Encoder';
+            $ecLevelClass = 'BaconQrCode\\Common\\ErrorCorrectionLevel';
+            if (!class_exists($encoderClass)) {
+                $autoload = (defined('APS_ROOT') ? APS_ROOT : dirname(__DIR__, 4)) . '/vendor/autoload.php';
+                if (file_exists($autoload)) {
+                    require_once $autoload;
+                }
+            }
+            if (!class_exists($encoderClass) || !class_exists($ecLevelClass) || !function_exists('imagecreatetruecolor')) {
+                return '';
+            }
+            $qr = $encoderClass::encode($text, $ecLevelClass::M());
+            $matrix = $qr->getMatrix();
+            $modules = $matrix->getWidth();
+            $margin = 2;
+            $scale = max(2, (int)($size / ($modules + $margin * 2)));
+            $imgSize = ($modules + $margin * 2) * $scale;
+            $img = imagecreatetruecolor($imgSize, $imgSize);
+            $white = imagecolorallocate($img, 255, 255, 255);
+            $black = imagecolorallocate($img, 15, 23, 42);
+            imagefill($img, 0, 0, $white);
+            for ($y = 0; $y < $modules; $y++) {
+                for ($x = 0; $x < $modules; $x++) {
+                    if ($matrix->get($x, $y) === 1) {
+                        imagefilledrectangle(
+                            $img,
+                            ($x + $margin) * $scale,
+                            ($y + $margin) * $scale,
+                            ($x + $margin + 1) * $scale - 1,
+                            ($y + $margin + 1) * $scale - 1,
+                            $black
+                        );
+                    }
+                }
+            }
+            ob_start();
+            imagepng($img);
+            $png = ob_get_clean();
+            imagedestroy($img);
+            return $png ? ('data:image/png;base64,' . base64_encode($png)) : '';
+        } catch (\Throwable $e) {
+            error_log('AssociateReferralController QR error: ' . $e->getMessage());
+            return '';
+        }
     }
 
     /**
@@ -108,10 +170,15 @@ class ReferralController extends BaseController
      */
     private function getNextTier(int $count): ?array
     {
-        if ($count < 10) return ['name' => 'Silver', 'need' => 10 - $count];
-        if ($count < 20) return ['name' => 'Gold', 'need' => 20 - $count];
-        if ($count < 50) return ['name' => 'Platinum', 'need' => 50 - $count];
-        return null;
+        $next = null;
+        if ($count < 10) {
+            $next = ['name' => 'Silver', 'need' => 10 - $count];
+        } elseif ($count < 20) {
+            $next = ['name' => 'Gold', 'need' => 20 - $count];
+        } elseif ($count < 50) {
+            $next = ['name' => 'Platinum', 'need' => 50 - $count];
+        }
+        return $next;
     }
 }
 

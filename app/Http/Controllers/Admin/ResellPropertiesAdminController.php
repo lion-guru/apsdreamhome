@@ -58,9 +58,25 @@ class ResellPropertiesAdminController extends AdminController
             'sold' => $db->fetchOne("SELECT COUNT(*) as c FROM user_properties WHERE listing_type = 'sell' AND status = 'sold' {$tSql}", $tParams)['c'] ?? 0,
         ];
 
+        $resellSubmissions = [];
+        try {
+            $resellSubmissions = $db->fetchAll(
+                "SELECT rp.*, u.name as seller_name, u.phone as seller_phone
+                 FROM resell_properties rp
+                 LEFT JOIN users u ON rp.user_id = u.id
+                 WHERE 1=1 {$tSql}
+                 ORDER BY FIELD(rp.status, 'pending', 'active', 'approved', 'rejected', 'sold'), rp.created_at DESC
+                 LIMIT 50",
+                $tParams
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('ResellPropertiesAdminController resell_properties fetch failed: ' . $e->getMessage());
+        }
+
         return $this->render('admin/resell_properties/index', [
             'page_title' => 'Resell Properties',
             'properties' => $properties,
+            'resellSubmissions' => $resellSubmissions,
             'stats' => $stats,
             'total' => $total,
             'page' => $page,
@@ -69,6 +85,28 @@ class ResellPropertiesAdminController extends AdminController
             'status' => $status,
             'base' => $base,
         ]);
+    }
+
+    /**
+     * Approve or reject a public resell_properties submission.
+     */
+    public function moderateResell($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+        $newStatus = trim((string)($_POST['status'] ?? ''));
+        if ($id <= 0 || !in_array($newStatus, ['approved', 'rejected', 'sold'], true)) {
+            $_SESSION['error'] = 'Invalid moderation request';
+            header('Location: ' . BASE_URL . '/admin/resell-properties');
+            exit;
+        }
+        $db = Database::getInstance();
+        [$tSql, $tParams] = $this->tenantWhere();
+        $params = array_merge([$newStatus, $id], $tParams);
+        $db->execute("UPDATE resell_properties SET status = ?, updated_at = NOW() WHERE id = ?{$tSql}", $params);
+        $_SESSION['success'] = 'Resell property marked as ' . ucfirst($newStatus) . '.';
+        header('Location: ' . BASE_URL . '/admin/resell-properties');
+        exit;
     }
     
     public function create() 

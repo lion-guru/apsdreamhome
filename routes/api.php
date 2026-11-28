@@ -1325,9 +1325,10 @@ $router->get('/api/v2/mobile/colonies/{colonyId}/properties', 'Api\MobilePropert
 $router->post('/api/v2/mobile/user/notifications/{id}/read', 'Api\MobileUserApiController@markNotificationRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->delete('/api/v2/mobile/user/notifications/{id}', 'Api\MobileUserApiController@deleteNotification')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// --- Referral (customer dashboard, share tracking) ---
+// --- Referral (customer dashboard, share tracking, sponsor claim) ---
 $router->get('/api/v2/mobile/user/referral/dashboard', 'Api\MobileUserApiController@getReferralDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/referral/share', 'Api\MobileUserApiController@trackReferralShare')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/claim-sponsor', 'Api\MobileUserApiController@claimSponsor')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // --- Support Tickets ---
 $router->get('/api/v2/mobile/user/support/tickets', 'Api\MobileUserApiController@getSupportTickets')->middleware('App\Http\Middleware\ApiAuthMiddleware');

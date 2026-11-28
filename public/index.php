@@ -74,9 +74,11 @@ if (!empty($_GET['ref'])) {
     }
 }
 
-// Error reporting — gated by env (never expose traces in prod)
+// Error reporting — gated by env (never expose traces in prod or when APP_DEBUG=false)
 error_reporting(E_ALL);
-if ((defined('APP_ENV') && APP_ENV === 'production') || getenv('APP_ENV') === 'production') {
+$appDebugEnv = getenv('APP_DEBUG');
+$isProdEnv = (defined('APP_ENV') && APP_ENV === 'production') || getenv('APP_ENV') === 'production';
+if ($isProdEnv || $appDebugEnv === 'false' || $appDebugEnv === '0') {
     ini_set('display_errors', 0);
 } else {
     ini_set('display_errors', (defined('APS_ENV') && APS_ENV === 'development') || getenv('APS_ENV') === 'development' ? 1 : 0);

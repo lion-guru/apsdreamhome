@@ -64,9 +64,9 @@ $content = $content ?? '';
     <?php else: foreach ($properties as $p): ?>
       <div class="col-md-4 mb-4">
         <div class="card shadow-sm h-100 hover-lift">
-          <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+          <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px; overflow: hidden;">
             <?php if (!empty($p['images'][0]['image_url'])): ?>
-              <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="w-100 h-100" alt="" />
+              <img src="<?= htmlspecialchars((preg_match('#^https?://#i', $p['images'][0]['image_url']) ? '' : BASE_URL . '/') . ltrim($p['images'][0]['image_url'], '/')) ?>" class="w-100 h-100 object-fit-cover" alt="<?= htmlspecialchars($p['title'] ?? 'Property') ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'" />
             <?php else: ?>
               <i class="fas fa-home fa-4x text-muted"></i>
             <?php endif; ?>
@@ -89,7 +89,7 @@ $content = $content ?? '';
               <?php endif; ?>
             </div>
             <div class="d-grid">
-              <a href="<?= BASE_URL ?>/resell/<?= (int)$p['id'] ?>" class="btn btn-outline-primary"><?= __('user_resell_public_view_details', 'View Details') ?></a>
+              <a href="<?= BASE_URL ?>/resell-properties/<?= (int)$p['id'] ?>" class="btn btn-outline-primary"><?= __('user_resell_public_view_details', 'View Details') ?></a>
             </div>
           </div>
           <div class="card-footer text-muted small">

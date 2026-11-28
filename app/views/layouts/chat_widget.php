@@ -14,13 +14,18 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
       Unified widget: AI chatbot + voice + WhatsApp + call — all in one place.
      ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• -->
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-.cw-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.cw-wrap{position:fixed;bottom:20px;right:16px;z-index:1040;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 @media(min-width:768px){.cw-wrap{bottom:24px;right:24px}}
 
-/* —€—€ Toggle Buttons (Chatbot + WhatsApp side by side) —€—€ */
-.cw-toggles{display:flex;gap:10px;align-items:center}
-.cw-toggle{width:56px;height:56px;border-radius:50%;border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.35s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;flex-shrink:0}
-@media(min-width:768px){.cw-toggle{width:60px;height:60px;font-size:24px}}
+/* Unified Floating Action Hub (Chat + Voice + WhatsApp + Call) */
+.cw-toggles{display:none;flex-direction:column;gap:10px;align-items:flex-end;margin-bottom:4px}
+.cw-wrap.cw-hub-open .cw-toggles{display:flex;animation:cwSlideUp 0.22s ease}
+.cw-hub-item{display:flex;align-items:center;gap:8px}
+.cw-hub-label{background:rgba(15,23,42,0.9);color:#fff;font-size:0.75rem;font-weight:600;padding:5px 10px;border-radius:8px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.18)}
+.cw-toggle{width:48px;height:48px;border-radius:50%;border:none;color:#fff;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.25s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;flex-shrink:0}
+#cwHubToggle{width:56px;height:56px;font-size:22px;background:linear-gradient(135deg,#0d9488,#0f766e);box-shadow:0 6px 22px rgba(13,148,136,0.45)}
+#cwVoiceHubToggle{background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 6px 20px rgba(245,158,11,0.4)}
+@media(min-width:768px){#cwHubToggle{width:60px;height:60px;font-size:24px}}
 .cw-toggle:hover{transform:scale(1.1)}
 .cw-toggle.cw-active i{animation:cwSpin 0.4s ease}
 @keyframes cwSpin{from{transform:rotate(0)}to{transform:rotate(180deg)}}
@@ -201,26 +206,46 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
         </div>
     </div>
 
-    <!-- Toggle Buttons: WhatsApp + Call + Chatbot side by side -->
-    <div class="cw-toggles">
-        <a href="https://wa.me/<?= $waPhone ?>?text=<?= urlencode('Hello APS Dream Homes! I would like to know about your properties.') ?>"
-           target="_blank" class="cw-toggle" id="cwWhatsAppToggle"
-           data-cw-track="main_button"
-           title="Chat on WhatsApp">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-        <a href="tel:<?= $callDigits ?>"
-           class="cw-toggle" id="cwCallToggle"
-           data-cw-track-call="header_call_button"
-           title="Call Now">
-            <i class="fas fa-phone-alt"></i>
-        </a>
-        <button class="cw-toggle" id="cwChatToggle">
-            <span class="cw-pulse"></span>
-            <i class="fas fa-comment-dots"></i>
-            <span class="cw-badge" id="cwBadge">1</span>
-        </button>
+    <!-- Unified Speed-Dial Menu (WhatsApp + Call + Voice + AI Chat) -->
+    <div class="cw-toggles" id="cwHubMenu">
+        <div class="cw-hub-item">
+            <span class="cw-hub-label">WhatsApp</span>
+            <a href="https://wa.me/<?= $waPhone ?>?text=<?= urlencode('Hello APS Dream Homes! I would like to know about your properties.') ?>"
+               target="_blank" class="cw-toggle" id="cwWhatsAppToggle"
+               data-cw-track="main_button"
+               title="Chat on WhatsApp" aria-label="Chat on WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+        <div class="cw-hub-item">
+            <span class="cw-hub-label">Call Us</span>
+            <a href="tel:<?= $callDigits ?>"
+               class="cw-toggle" id="cwCallToggle"
+               data-cw-track-call="header_call_button"
+               title="Call Now" aria-label="Call Now">
+                <i class="fas fa-phone-alt"></i>
+            </a>
+        </div>
+        <div class="cw-hub-item">
+            <span class="cw-hub-label">Voice Booking</span>
+            <button type="button" class="cw-toggle" id="cwVoiceHubToggle" title="Voice Booking Assistant" aria-label="Voice Booking Assistant">
+                <i class="fas fa-microphone"></i>
+            </button>
+        </div>
+        <div class="cw-hub-item">
+            <span class="cw-hub-label">AI Chat</span>
+            <button type="button" class="cw-toggle" id="cwChatToggle" title="AI Assistant" aria-label="Open AI Assistant">
+                <i class="fas fa-comment-dots"></i>
+            </button>
+        </div>
     </div>
+
+    <!-- Single Unified Floating Action Button -->
+    <button type="button" class="cw-toggle" id="cwHubToggle" aria-label="Open support & AI menu" aria-expanded="false" title="Chat, Voice, WhatsApp & Call">
+        <span class="cw-pulse"></span>
+        <i class="fas fa-headset" id="cwHubIcon"></i>
+        <span class="cw-badge" id="cwBadge">1</span>
+    </button>
 </div>
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -779,19 +804,41 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
 
     // CSP-safe event bindings (no inline onclick anywhere in this widget)
     function cwBindStatic() {
+        var wrap = document.getElementById('cwWrap');
+        var hubToggle = document.getElementById('cwHubToggle');
+        var hubIcon = document.getElementById('cwHubIcon');
         var closeBtn = document.getElementById('cwCloseBtn');
         var voiceBtn = document.getElementById('cwVoiceBtn');
+        var voiceHubToggle = document.getElementById('cwVoiceHubToggle');
         var sendBtn = document.getElementById('cwSendBtn');
         var chatToggle = document.getElementById('cwChatToggle');
         var waToggle = document.getElementById('cwWhatsAppToggle');
         var callToggle = document.getElementById('cwCallToggle');
         var input = document.getElementById('cwInput');
+        function closeHubMenu() {
+            if (wrap) wrap.classList.remove('cw-hub-open');
+            if (hubToggle) hubToggle.setAttribute('aria-expanded', 'false');
+            if (hubIcon) hubIcon.className = 'fas fa-headset';
+        }
+        if (hubToggle) hubToggle.addEventListener('click', function() {
+            if (!wrap) return;
+            var isOpen = wrap.classList.toggle('cw-hub-open');
+            hubToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (hubIcon) hubIcon.className = isOpen ? 'fas fa-times' : 'fas fa-headset';
+        });
         if (closeBtn) closeBtn.addEventListener('click', function() { window.cwToggle(); });
         if (voiceBtn) voiceBtn.addEventListener('click', function() { window.cwToggleVoice(); });
+        if (voiceHubToggle) voiceHubToggle.addEventListener('click', function() {
+            closeHubMenu();
+            if (typeof window.openVoiceBookingWidget === 'function') {
+                window.openVoiceBookingWidget();
+            }
+        });
         if (sendBtn) sendBtn.addEventListener('click', function() { window.cwSend(); });
-        if (chatToggle) chatToggle.addEventListener('click', function() { window.cwToggle(); });
-        if (waToggle) waToggle.addEventListener('click', function() { window.cwTrackWhatsApp('main_button'); });
+        if (chatToggle) chatToggle.addEventListener('click', function() { closeHubMenu(); window.cwToggle(); });
+        if (waToggle) waToggle.addEventListener('click', function() { closeHubMenu(); window.cwTrackWhatsApp('main_button'); });
         if (callToggle) callToggle.addEventListener('click', function() {
+            closeHubMenu();
             if (typeof ga === 'function') ga('send', 'event', 'CTA', 'click', 'header_call_button');
             if (window.dataLayer) dataLayer.push({event: 'cta_click', cta: 'header_call_button', source: 'chat_widget'});
         });

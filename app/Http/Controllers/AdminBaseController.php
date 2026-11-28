@@ -14,7 +14,6 @@ class AdminBaseController extends BaseController
 {
     use TenantAwareTrait;
 
-    protected $db;
     protected $currentUser;
     protected $currentRole;
     protected $dashboardType;

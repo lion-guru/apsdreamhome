@@ -8,10 +8,6 @@
 if (!defined('BASE_URL')) { define('BASE_URL', ''); }
 ?>
 <div id="voiceBookingWidget" class="vbw" aria-live="polite">
-    <button id="vbwToggle" class="vbw-toggle" type="button" aria-label="Voice booking assistant" title="बोलकर बुक करें / Book via voice">
-        <i class="fas fa-microphone"></i>
-    </button>
-
     <div id="vbwPanel" class="vbw-panel" hidden>
         <div class="vbw-header">
             <div class="vbw-title">
@@ -48,22 +44,12 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
 </div>
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-.vbw { position: fixed; left: 18px; bottom: 18px; z-index: 99990; font-family: 'Inter', system-ui, sans-serif; }
-.vbw-toggle {
-    width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
-    background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; font-size: 1.4rem;
-    box-shadow: 0 8px 24px rgba(13,148,136,0.45); transition: transform .2s, box-shadow .2s;
-    animation: vbwPulse 2.4s infinite;
-}
-.vbw-toggle:hover { transform: scale(1.08); }
-@keyframes vbwPulse {
-    0%,100% { box-shadow: 0 8px 24px rgba(13,148,136,0.45); }
-    50% { box-shadow: 0 8px 34px rgba(13,148,136,0.75); }
-}
+.vbw { position: fixed; right: 16px; bottom: 84px; z-index: 1042; font-family: 'Inter', system-ui, sans-serif; }
+@media(min-width:768px){ .vbw { right: 24px; bottom: 92px; } }
     .vbw-panel {
-        position: absolute; bottom: 76px; left: 0; width: 330px; max-width: 90vw;
+        position: absolute; bottom: 0; right: 0; width: 330px; max-width: calc(100vw - 24px);
         background: #fff; border-radius: 18px; box-shadow: 0 16px 50px rgba(0,0,0,0.22);
-        overflow: hidden; display: flex; flex-direction: column; max-height: 78vh;
+        overflow: hidden; display: flex; flex-direction: column; max-height: 75vh;
     }
     .vbw-panel[hidden] {
         display: none !important;
@@ -103,7 +89,7 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 (function () {
-    var BASE = window.BASE_URL || '';
+    var BASE = window.BASE_URL || '<?= BASE_URL ?>';
     var endpoint = BASE + '/api/v2/mobile/voice-chat';
 
     var toggle = document.getElementById('vbwToggle');
@@ -239,13 +225,20 @@ if (!defined('BASE_URL')) { define('BASE_URL', ''); }
         if (t) { sendToBot(t); textArea.value = ''; }
     });
 
-    toggle.addEventListener('click', function () {
-        panel.hidden = !panel.hidden;
-        if (!panel.hidden && SR && 'speechSynthesis' in window) {
-            // prime voices
+    window.openVoiceBookingWidget = function () {
+        panel.hidden = false;
+        if (SR && 'speechSynthesis' in window) {
             window.speechSynthesis.getVoices();
         }
-    });
+    };
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            panel.hidden = !panel.hidden;
+            if (!panel.hidden && SR && 'speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+        });
+    }
     closeBtn.addEventListener('click', function () { panel.hidden = true; });
 })();
 </script>

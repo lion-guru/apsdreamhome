@@ -181,9 +181,54 @@ class PlotIndexController extends PlotBaseController
             FROM plots WHERE colony_id = ? AND is_active = 1" . $tidPlots . "
         ", array_merge([$colony['id']], $tidPlotParam));
 
+        $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
+        $colonyUrl = $baseUrl . '/colony/' . rawurlencode($colony['slug']) . '/plots';
+        $metaDesc = $colony['meta_description'] ?: "Browse available residential & commercial plots in {$colony['name']}, " . ($colony['district_name'] ?? 'Gorakhpur') . " with 36-month 0% EMI plans.";
+        $seoJsonLd = [
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'RealEstateListing',
+                    'name' => $colony['name'] . ' — Plots in ' . ($colony['district_name'] ?? 'Gorakhpur'),
+                    'description' => $metaDesc,
+                    'url' => $colonyUrl,
+                    'offers' => [
+                        '@type' => 'AggregateOffer',
+                        'priceCurrency' => 'INR',
+                        'lowPrice' => (int)($stats['min_price'] ?? 0),
+                        'highPrice' => (int)($stats['max_price'] ?? 0),
+                        'offerCount' => (int)($stats['available'] ?? 0),
+                    ],
+                    'provider' => [
+                        '@type' => 'RealEstateAgent',
+                        'name' => 'APS Dream Home Pvt. Ltd.',
+                        'url' => $baseUrl ?: 'https://apsdreamhome.com',
+                    ],
+                ],
+                [
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $baseUrl . '/'],
+                        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Plots', 'item' => $baseUrl . '/plots'],
+                        ['@type' => 'ListItem', 'position' => 3, 'name' => $colony['name'], 'item' => $colonyUrl],
+                    ],
+                ],
+            ],
+        ];
+
+        $pageTitle = $colony['name'] . ' - Available Plots | APS Dream Home';
         $this->render('pages/colony_plots', [
-            'page_title' => $colony['name'] . ' - Available Plots',
-            'meta_description' => $colony['meta_description'] ?: "Browse available plots in {$colony['name']}, {$colony['district_name']}",
+            'page_title' => $pageTitle,
+            'meta_description' => $metaDesc,
+            'seo' => [
+                'title' => $pageTitle,
+                'description' => $metaDesc,
+                'og_title' => $pageTitle,
+                'og_description' => $metaDesc,
+                'og_url' => $colonyUrl,
+                'canonical' => $colonyUrl,
+                'json_ld' => $seoJsonLd,
+            ],
             'colony' => $colony,
             'plots' => $plots,
             'dimensions' => $dimensions,

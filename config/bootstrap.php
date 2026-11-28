@@ -42,7 +42,7 @@ ini_set('session.cookie_samesite', 'Lax');
 
 if (!defined('BASE_URL')) {
     $envBase = getenv('BASE_URL') ?: (getenv('APP_URL') ?: '');
-    if (!empty($envBase)) {
+    if (php_sapi_name() === 'cli' && !empty($envBase)) {
         define('BASE_URL', rtrim($envBase, '/'));
     } else {
         $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 

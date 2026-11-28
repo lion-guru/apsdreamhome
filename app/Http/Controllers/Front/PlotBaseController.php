@@ -49,8 +49,6 @@ abstract class PlotBaseController extends BaseController
     public const MAX_NOTES_LEN = 2000;
     public const MAX_REFERENCE_LEN = 100;
 
-    protected $db;
-
     public function __construct()
     {
         parent::__construct();

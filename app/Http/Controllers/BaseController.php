@@ -73,33 +73,43 @@ class BaseController
             || isset($_SESSION['associate_id'])
             || isset($_SESSION['agent_id'])
             || isset($_SESSION['employee_id']);
-        if (!$loggedIn) {
-            return '/admin/login';
+        $home = '/admin/login';
+        if ($loggedIn) {
+            switch ($role) {
+                case 'associate':
+                    $home = '/associate/dashboard';
+                    break;
+                case 'agent':
+                    $home = '/agent/dashboard';
+                    break;
+                case 'employee':
+                case 'telecaller':
+                    $home = '/employee/dashboard';
+                    break;
+                case 'customer':
+                case 'user':
+                    $home = '/user/dashboard';
+                    break;
+                default:
+                    $home = '/admin/login';
+                    break;
+            }
         }
-        switch ($role) {
-            case 'associate':
-                return '/associate/dashboard';
-            case 'agent':
-                return '/agent/dashboard';
-            case 'employee':
-            case 'telecaller':
-                return '/employee/dashboard';
-            case 'customer':
-            case 'user':
-                return '/user/dashboard';
-            default:
-                return '/admin/login';
-        }
+        return $home;
     }
 
-    protected array $models = [];
     protected string $layout = 'layouts/base';
     protected array $data = [];
+    /** @var object|null */
     protected $session;
+    /** @var Request|null */
     protected $request;
     protected array $middlewares = [];
+    /** @var LocalizationService|null */
     protected $mlSupport;
+    /** @var \App\Core\Database\Database */
     protected $db;
+    /** @var float|null */
     protected $start_time;
 
     /**
@@ -127,91 +137,76 @@ class BaseController
         }
     }
 
-    public function __construct()
+    private function registerGlobalExceptionHandler(): void
     {
-        // Initialize data array
-        $this->data = [];
-
-        // Initialize session
-        $this->session = $this;
-
-        // Initialize request
-        $this->request = Request::createFromGlobals();
-
-        // Initialize database
-        $this->db = Database::getInstance();
-
-        // Monitoring: register global exception handler (once per process).
-        // Captures uncaught Throwables into monitoring_errors without breaking
-        // any existing handler that PHP installed earlier.
-        if (!defined('APS_MONITORING_HANDLER_REGISTERED')) {
-            define('APS_MONITORING_HANDLER_REGISTERED', true);
-            if (class_exists(ErrorTrackerService::class)) {
-                $previous = set_exception_handler(null);
-                set_exception_handler(function ($exception) use ($previous) {
-                    try {
-                        ErrorTrackerService::captureException($exception, [
-                            'url'    => $_SERVER['REQUEST_URI'] ?? null,
-                            'method' => $_SERVER['REQUEST_METHOD'] ?? null,
-                        ]);
-                    } catch (\Throwable $e) {
-                        // never let monitoring break the app
-                        error_log($e->getMessage());
-                    }
-                    if (is_callable($previous)) {
-                        call_user_func($previous, $exception);
-                    } else {
-                        // Default rethrow so PHP prints/logs the error
-                        throw $exception;
-                    }
-                });
-            }
+        if (defined('APS_MONITORING_HANDLER_REGISTERED')) {
+            return;
         }
-
-        // Initialize Localization Service (mlSupport) if available
-        if (class_exists(LocalizationService::class)) {
-            if (method_exists(LocalizationService::class, 'getInstance')) {
-                try {
-                    // Try to get the instance - it will handle null deps gracefully
-                    $this->mlSupport = LocalizationService::getInstance();
-                } catch (\Throwable $e) {
-                    // LocalizationService requires deps not available - skip silently
-                    error_log($e->getMessage());
-                }
-            }
+        define('APS_MONITORING_HANDLER_REGISTERED', true);
+        if (!class_exists(ErrorTrackerService::class)) {
+            return;
         }
-
-        // A/B testing: assign user to running experiments and auto-track view event
-        $this->runExperimentMiddleware();
-
-        // Multi-tenant: resolve tenant context from request (header/subdomain/query/session/default)
-        if (class_exists(TenantContext::class)) {
+        $previous = set_exception_handler(null);
+        set_exception_handler(function ($exception) use ($previous) {
             try {
-                TenantContext::resolve();
+                ErrorTrackerService::captureException($exception, [
+                    'url'    => $_SERVER['REQUEST_URI'] ?? null,
+                    'method' => $_SERVER['REQUEST_METHOD'] ?? null,
+                ]);
             } catch (\Throwable $e) {
-                // TenantContext failure should not break the app
+                error_log($e->getMessage());
+            }
+            if (is_callable($previous)) {
+                call_user_func($previous, $exception);
+            } else {
+                throw $exception;
+            }
+        });
+    }
+
+    private function initLocalizationAndTenant(): void
+    {
+        if (class_exists(LocalizationService::class) && method_exists(LocalizationService::class, 'getInstance')) {
+            try {
+                $this->mlSupport = LocalizationService::getInstance();
+            } catch (\Throwable $e) {
                 error_log($e->getMessage());
             }
         }
 
-        // Tenant enforcement: block suspended/cancelled tenants from write operations
+        $this->runExperimentMiddleware();
+
+        if (class_exists(TenantContext::class)) {
+            try {
+                TenantContext::resolve();
+            } catch (\Throwable $e) {
+                error_log($e->getMessage());
+            }
+        }
+    }
+
+    public function __construct()
+    {
+        $this->data = [];
+        $this->session = $this;
+        $this->request = Request::createFromGlobals();
+        $this->db = Database::getInstance();
+
+        $this->registerGlobalExceptionHandler();
+        $this->initLocalizationAndTenant();
         $this->enforceTenantStatus();
 
-        // Per-request correlation id for log entries (X-Request-Id if upstream provided)
         if (class_exists(Log::class)) {
-            Log::setRequestId(
-                $_SERVER['HTTP_X_REQUEST_ID'] ?? null
-            );
+            Log::setRequestId($_SERVER['HTTP_X_REQUEST_ID'] ?? null);
         }
 
-        // Security: regenerate session ID periodically (every 5 minutes) to prevent fixation
         $this->initSessionSecurity();
-
-        // Security: set defense-in-depth HTTP headers on every response
         $this->setSecurityHeaders();
 
-        // Automated CSRF protection for POST requests (skip for public forms)
-        if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && !$this->skipCsrfProtection()) {
+        $method = $_SERVER['REQUEST_METHOD'] ?? '';
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        if ($method === 'POST' && !$this->skipCsrfProtection()) {
             $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!$this->validateCsrfToken($token)) {
                 ErrorHandler::render(403, "Invalid or missing CSRF token.");
@@ -219,14 +214,11 @@ class BaseController
             }
         }
 
-        // Rate limiting: prevent brute force attacks
-        // Only apply to POST requests and API/auth endpoints (not GET page loads)
-        if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' || strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') === 0) {
+        if ($method === 'POST' || strpos($uri, '/api/') === 0) {
             $this->enforceRateLimit();
         }
 
-        // CORS: set headers for API routes so browser-based clients (SPA, mobile web) work
-        if (strpos($_SERVER['REQUEST_URI'] ?? '', '/api/') === 0) {
+        if (strpos($uri, '/api/') === 0) {
             $this->setCorsHeaders();
         }
     }

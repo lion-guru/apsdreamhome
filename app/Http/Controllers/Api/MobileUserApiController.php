@@ -4706,6 +4706,74 @@ class MobileUserApiController extends BaseController
         return substr($digits, 0, 2) . str_repeat('*', max(strlen($digits) - 4, 4)) . substr($digits, -2);
     }
 
+    /**
+     * Allow a user who registered without a referral (or under company root APS0001)
+     * to claim/update their sponsor referral code once.
+     */
+    public function claimSponsor()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                $this->jsonError('Unauthorized', 401);
+            }
+
+            $raw = json_decode(file_get_contents('php://input'), true);
+            $code = trim((string)($raw['referral_code'] ?? $raw['sponsor_code'] ?? $_POST['referral_code'] ?? ''));
+            if ($code === '') {
+                $this->jsonError('Referral code is required', 422);
+            }
+
+            $userStmt = $this->db->prepare("SELECT id, referred_by FROM users WHERE id = ? LIMIT 1");
+            $userStmt->execute([$userId]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user) {
+                $this->jsonError('User not found', 404);
+            }
+
+            $rootStmt = $this->db->prepare("SELECT id FROM users WHERE referral_code = 'APS0001' OR email = 'company@apsdreamhome.com' ORDER BY id ASC LIMIT 1");
+            $rootStmt->execute();
+            $rootId = (int)($rootStmt->fetchColumn() ?: 0);
+
+            $currentSponsor = (int)($user['referred_by'] ?? 0);
+            if ($currentSponsor > 0 && $currentSponsor !== $rootId) {
+                $this->jsonError('Sponsor is already assigned and cannot be changed directly. Contact admin for changes.', 409);
+            }
+
+            $sponsorStmt = $this->db->prepare("SELECT id, name, referral_code FROM users WHERE referral_code = ? AND status = 'active' LIMIT 1");
+            $sponsorStmt->execute([$code]);
+            $sponsor = $sponsorStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$sponsor) {
+                $this->jsonError('Invalid or inactive referral code', 404);
+            }
+            if ((int)$sponsor['id'] === $userId) {
+                $this->jsonError('You cannot use your own referral code', 422);
+            }
+
+            $this->db->prepare("UPDATE users SET referred_by = ?, updated_at = NOW() WHERE id = ?")
+                ->execute([(int)$sponsor['id'], $userId]);
+            try {
+                $this->db->prepare("UPDATE associate_profiles SET sponsor_id = ? WHERE user_id = ?")
+                    ->execute([(int)$sponsor['id'], $userId]);
+            } catch (\Throwable $e) {
+                // Non-associate users may not have an associate_profiles row
+            }
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Sponsor updated successfully',
+                'data' => [
+                    'sponsor_id' => (int)$sponsor['id'],
+                    'sponsor_name' => $sponsor['name'],
+                    'sponsor_referral_code' => $sponsor['referral_code'],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Claim Sponsor API error');
+        }
+    }
+
     protected function jsonError(string $message, int $status = 400): void {
         http_response_code($status);
         echo json_encode(['success' => false, 'error' => $message]);

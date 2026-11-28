@@ -246,6 +246,11 @@ $GLOBALS['_html_doc_started'] = true;
 
         /* Responsive */
         @media (max-width: 1024px) {
+            html, body {
+                overflow-x: clip !important;
+                max-width: 100%;
+            }
+
             .sidebar {
                 transform: translateX(-100%);
             }
@@ -256,16 +261,36 @@ $GLOBALS['_html_doc_started'] = true;
 
             .main-content {
                 margin-left: 0;
+                max-width: 100%;
+                overflow-x: hidden;
             }
 
             .sidebar-toggle {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                top: 12px;
+                left: 12px;
             }
 
             .top-header {
-                padding-left: 70px;
+                padding: 12px 14px 12px 66px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .top-header > div:first-child {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+
+            .page-title {
+                font-size: 1.05rem;
+                overflow-wrap: break-word;
+            }
+
+            .content-wrapper {
+                padding: 14px 12px;
             }
         }
 

@@ -17,8 +17,6 @@ class EmployeeController extends BaseController
 {
     use TenantAwareTrait, AuthSessionTrait;
 
-    protected $db;
-
     public function __construct()
     {
         parent::__construct();
@@ -512,15 +510,27 @@ class EmployeeController extends BaseController
             $checkOutTime = date('Y-m-d H:i:s');
 
             // Update today's attendance record
-            $query = "SELECT id FROM employee_attendance WHERE employee_id = ? AND attendance_date = CURDATE()";
+            $query = "SELECT id, check_in_time FROM employee_attendance WHERE employee_id = ? AND attendance_date = CURDATE()";
             $attendance = $this->db->fetchOne($query, [$employeeId]);
 
             if (!$attendance) {
                 throw new Exception('No check-in record found for today');
             }
 
-            $updateQuery = "UPDATE employee_attendance SET check_out_time = ? WHERE id = ?";
-            $this->db->execute($updateQuery, [$checkOutTime, $attendance['id']]);
+            // S852: no writer or trigger ever populated hours_worked, while the
+            // self-service attendance report reads SUM(hours_worked) — every
+            // completed day showed 0.00 hours. Derive it from the real interval,
+            // clamped to [0, 24h] so a bad/legacy check-in cannot write a negative
+            // or out-of-range decimal(4,2) value. Overtime stays a policy decision.
+            $minutes = 0;
+            if (!empty($attendance['check_in_time'])) {
+                $minutes = (int)round((strtotime($checkOutTime) - strtotime($attendance['check_in_time'])) / 60);
+                $minutes = max(0, min($minutes, 24 * 60));
+            }
+            $hoursWorked = round($minutes / 60, 2);
+
+            $updateQuery = "UPDATE employee_attendance SET check_out_time = ?, hours_worked = ? WHERE id = ?";
+            $this->db->execute($updateQuery, [$checkOutTime, $hoursWorked, $attendance['id']]);
 
             $this->jsonResponse([
                 'success' => true,
@@ -2362,7 +2372,23 @@ class EmployeeController extends BaseController
         $user = ['id' => 7, 'name' => 'Employee User', 'email' => 'employee@test.com', 'password' => '', 'role' => 'employee'];
 
         $_SESSION['user_id']     = $user['id'];
-        $_SESSION['employee_id'] = $user['id'];
+        // S845: mirror AuthSessionTrait::establishSession() — employee_attendance
+        // FKs to employees.id, so the session must carry the canonical legacy id,
+        // not users.id (7 -> employees.id 112 here). Otherwise every check-in 1452s.
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $emp = $db->fetchOne('SELECT legacy_id FROM employee_profiles WHERE user_id = ? LIMIT 1', [$user['id']]);
+            $empId = ($emp && !empty($emp['legacy_id'])) ? (int)$emp['legacy_id'] : 0;
+            if (!$empId) {
+                $emp = $db->fetchOne('SELECT id FROM employees WHERE user_id = ? LIMIT 1', [$user['id']]);
+                $empId = $emp ? (int)$emp['id'] : 0;
+            }
+            $_SESSION['employee_id'] = $empId ?: (int)$user['id'];
+            if (!$empId) $_SESSION['employee_needs_resolution'] = true;
+        } catch (\Throwable $e) {
+            $_SESSION['employee_id'] = (int)$user['id'];
+            $_SESSION['employee_needs_resolution'] = true;
+        }
         $_SESSION['role']        = $user['role'];
         $_SESSION['user_email']  = $user['email'];
         $_SESSION['user_name']   = $user['name'];

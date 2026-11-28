@@ -126,6 +126,29 @@ class MobileAuthApiController extends BaseController
                 return $this->jsonError('Email already registered', 409);
             }
 
+            // Referral attribution: associate/agent MUST provide a valid sponsor referral code;
+            // customer/visitor falls back to the company root user (APS0001) if omitted.
+            $referralParam = trim((string)($data['referral_code'] ?? $data['parent_referral_code'] ?? $data['sponsor_code'] ?? ''));
+            $sponsorId = null;
+            if ($referralParam !== '') {
+                $sponsorStmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
+                $sponsorStmt->execute([$referralParam]);
+                $sponsorId = (int) ($sponsorStmt->fetchColumn() ?: 0) ?: null;
+            }
+
+            if (in_array($role, ['associate', 'agent'], true)) {
+                if ($referralParam === '') {
+                    return $this->jsonError('Referral / Sponsor code is required for ' . $role . ' registration', 422);
+                }
+                if ($sponsorId === null) {
+                    return $this->jsonError('Invalid referral / sponsor code', 422);
+                }
+            } elseif ($sponsorId === null) {
+                $rootStmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = 'APS0001' OR email = 'company@apsdreamhome.com' ORDER BY id ASC LIMIT 1");
+                $rootStmt->execute();
+                $sponsorId = (int) ($rootStmt->fetchColumn() ?: 0) ?: null;
+            }
+
             $hash = Security::hashPassword($password);
             $cols = "name, email, phone, password, role, status, created_at, updated_at";
             $vals = "?, ?, ?, ?, ?, 'active', NOW(), NOW()";
@@ -137,18 +160,6 @@ class MobileAuthApiController extends BaseController
             $userId = (int) $pdo->lastInsertId();
 
             $this->tenantTrackUsage('users');
-
-            // Referral attribution: honor an app-supplied sponsor code so the
-            // marketing loop (share apps -> install -> register with code)
-            // actually credits the referrer. Previously the payload arrived
-            // and was silently dropped.
-            $referralParam = trim((string)($data['referral_code'] ?? $data['parent_referral_code'] ?? ''));
-            $sponsorId = null;
-            if ($referralParam !== '') {
-                $sponsorStmt = $pdo->prepare("SELECT id FROM users WHERE referral_code = ? LIMIT 1");
-                $sponsorStmt->execute([$referralParam]);
-                $sponsorId = (int) ($sponsorStmt->fetchColumn() ?: 0) ?: null;
-            }
 
             $ownCode = null;
             try {

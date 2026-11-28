@@ -89,11 +89,23 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     </div>
     <div class="card-body">
         <div class="text-center mb-4">
-            <div class="d-inline-block p-4 rounded-3 border bg-light shadow-2xs">
-                <div class="small text-muted mb-2"><?= __('assoc_ref_your_code', [], 'Your Unique Referral Code') ?></div>
-                <code id="referralCodeDisplay" class="fs-3 fw-bold text-teal" style="color: #0d9488;">
-                    <?= htmlspecialchars($referral_code ?: __('assoc_ref_na', [], 'N/A')) ?>
-                </code>
+            <div class="d-inline-flex align-items-center gap-4 flex-wrap justify-content-center p-4 rounded-3 border bg-light shadow-2xs">
+                <div>
+                    <div class="small text-muted mb-2"><?= __('assoc_ref_your_code', [], 'Your Unique Referral Code') ?></div>
+                    <code id="referralCodeDisplay" class="fs-3 fw-bold text-teal" style="color: #0d9488;">
+                        <?= htmlspecialchars($referral_code ?: __('assoc_ref_na', [], 'N/A')) ?>
+                    </code>
+                </div>
+                <?php if (!empty($qr_data_uri)): ?>
+                <div class="border-start ps-4 text-center">
+                    <img src="<?= htmlspecialchars($qr_data_uri) ?>" alt="Referral QR Code" class="rounded border bg-white p-1" style="width: 120px; height: 120px;">
+                    <div class="mt-2">
+                        <a href="<?= htmlspecialchars($qr_data_uri) ?>" download="aps-referral-<?= htmlspecialchars($referral_code) ?>.png" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download me-1"></i>Download QR
+                        </a>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -270,11 +282,13 @@ const referralCode = <?= json_encode($referral_code) ?>;
 const shareUrl = <?= json_encode($shareUrl) ?>;
 const shareText = <?= json_encode($shareText) ?>;
 const baseUrl = <?= json_encode(BASE_URL) ?>;
+// S839: router gates every POST; a native fetch() must carry the session token.
+const SHARE_CSRF = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
 
 function trackShare(platform) {
     fetch(baseUrl + '/share/track', {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-Token': SHARE_CSRF},
         body: new URLSearchParams({platform: platform, referral_code: referralCode})
     }).catch(() => {});
 }

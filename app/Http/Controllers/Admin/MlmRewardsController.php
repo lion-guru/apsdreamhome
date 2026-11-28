@@ -6,8 +6,6 @@ use App\Http\Controllers\Admin\AdminController;
 
 class MlmRewardsController extends AdminController
 {
-    protected $db;
-
     public function __construct()
     {
         parent::__construct();

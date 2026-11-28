@@ -455,10 +455,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             const SizedBox(height: 16),
             _buildTextField(
               controller: _referralCodeController,
-              label: 'Referral Code (Optional)',
-              hint: 'Enter referral code if you have one',
+              label: _selectedRole == AppConstants.roleAssociate
+                  ? 'Sponsor / Referral Code *'
+                  : 'Referral Code (Optional)',
+              hint: _selectedRole == AppConstants.roleAssociate
+                  ? 'Enter sponsor referral code (Required)'
+                  : 'Enter referral code (defaults to APS0001 if empty)',
               icon: Icons.card_giftcard_outlined,
               textCapitalization: TextCapitalization.characters,
+              validator: (v) {
+                if (_selectedRole == AppConstants.roleAssociate &&
+                    (v == null || v.trim().isEmpty)) {
+                  return 'Sponsor referral code is required for Associate registration';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 10),
             Container(
@@ -470,18 +481,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   color: const Color(0xFFE8DFD0),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.info_outline,
                     color: AppTheme.accentColor,
                     size: 18,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Have a referral code? Enter it to join under an associate and start earning!',
-                      style: TextStyle(
+                      _selectedRole == AppConstants.roleAssociate
+                          ? 'Sponsor referral code is required to register as an Associate (e.g. your upline code or APS0001).'
+                          : 'Have a referral code? Enter it to join under an associate (or leave blank to default to APS Dream Home).',
+                      style: const TextStyle(
                         fontSize: 11,
                         color: Color(0xFF64748B),
                         fontWeight: FontWeight.w500,

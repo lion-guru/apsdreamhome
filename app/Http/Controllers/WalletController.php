@@ -10,8 +10,6 @@ class WalletController extends BaseController
 {
     use TenantAwareTrait;
 
-    protected $db;
-
     public function __construct()
     {
         parent::__construct();
@@ -145,6 +143,15 @@ class WalletController extends BaseController
             }
             header('Location: ' . BASE_URL . '/login');
             exit;
+        }
+
+        // S809: this controller skips the router's global CSRF gate (several
+        // sibling endpoints are Bearer/fetch driven), but topUp() is a plain
+        // form POST that CREDITS WALLET MONEY. Without its own check any
+        // third-party page could POST with a logged-in victim's cookie and
+        // create a fake balance. Validate per-method, keep the class skip.
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->validateCsrfOrFail();
         }
 
         $userId = (int)$_SESSION['user_id'];
